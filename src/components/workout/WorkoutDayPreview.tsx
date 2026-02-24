@@ -29,7 +29,7 @@ type Plan = {
   exercises: Exercise[];
 };
 
-export function WorkoutDayPreview({ plan }: { plan: Plan }) {
+export function WorkoutDayPreview({ plan, hideHeader }: { plan: Plan; hideHeader?: boolean }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -57,12 +57,14 @@ export function WorkoutDayPreview({ plan }: { plan: Plan }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">
-          Today&apos;s Workout
-        </h1>
-        <p className="text-muted-foreground">{plan.sessionName}</p>
-      </div>
+      {!hideHeader && (
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            Today&apos;s Workout
+          </h1>
+          <p className="text-muted-foreground">{plan.sessionName}</p>
+        </div>
+      )}
 
       {/* Summary card */}
       <Card>
