@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Dumbbell,
-  Accessibility,
+  PersonStanding,
   Apple,
   Scale,
+  Footprints,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -19,9 +20,10 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Workout", href: "/workout", icon: Dumbbell },
-  { label: "Mobility", href: "/mobility", icon: Accessibility },
+  { label: "Mobility", href: "/mobility", icon: PersonStanding },
   { label: "Nutrition", href: "/nutrition", icon: Apple },
   { label: "Weight", href: "/weight", icon: Scale },
+  { label: "Steps", href: "/steps", icon: Footprints },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 

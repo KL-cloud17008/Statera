@@ -6,12 +6,13 @@ import {
   TrendingDown,
   TrendingUp,
   Minus,
-  Moon,
+  Footprints,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase-server";
 import { prisma } from "@/lib/db";
 import { getWeightEntries } from "@/actions/weight";
+import { getTodaySteps } from "@/actions/steps";
 import { computeWeightStats } from "@/lib/weight";
 import { DashboardWeightChart } from "@/components/dashboard/DashboardWeightChart";
 
@@ -76,6 +77,9 @@ export default async function DashboardPage() {
         },
       })
     : null;
+
+  // Steps data
+  const todaySteps = dbUser ? await getTodaySteps(dbUser.id) : null;
 
   const formatted = today.toLocaleDateString("en-US", {
     weekday: "long",
@@ -173,21 +177,29 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Sleep */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Sleep
-              </CardTitle>
-              <Moon className="h-4 w-4 text-muted-foreground" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-foreground">&mdash; hrs</p>
-            <p className="text-xs text-muted-foreground">Not logged</p>
-          </CardContent>
-        </Card>
+        {/* Steps */}
+        <Link href="/steps">
+          <Card className="transition hover:bg-accent">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Today&apos;s Steps
+                </CardTitle>
+                <Footprints className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold text-foreground">
+                {todaySteps != null
+                  ? todaySteps.toLocaleString()
+                  : "\u2014"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {todaySteps != null ? "Logged today" : "Not logged"}
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Two-column section */}
