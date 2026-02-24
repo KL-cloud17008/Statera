@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Dumbbell,
+  Accessibility,
   Apple,
   Scale,
   Settings,
@@ -14,6 +15,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Workout", href: "/workout", icon: Dumbbell },
+  { label: "Mobility", href: "/mobility", icon: Accessibility },
   { label: "Nutrition", href: "/nutrition", icon: Apple },
   { label: "Weight", href: "/weight", icon: Scale },
   { label: "Settings", href: "/settings", icon: Settings },
