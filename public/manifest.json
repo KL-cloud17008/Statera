@@ -1,6 +1,6 @@
 {
-  "name": "Metabolic RW",
-  "short_name": "Metabolic RW",
+  "name": "ATHANOR",
+  "short_name": "ATHANOR",
   "description": "Personal fitness tracking PWA",
   "start_url": "/",
   "display": "standalone",

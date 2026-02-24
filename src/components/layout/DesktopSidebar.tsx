@@ -34,7 +34,7 @@ export function DesktopSidebar() {
     <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border bg-background">
       <div className="flex h-16 items-center gap-2 border-b border-border px-6">
         <Dumbbell className="h-6 w-6 text-primary" />
-        <span className="text-lg font-bold">Metabolic RW</span>
+        <span className="text-lg font-bold">ATHANOR</span>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">

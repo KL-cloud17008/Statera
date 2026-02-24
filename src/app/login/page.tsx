@@ -46,7 +46,7 @@ export default function LoginPage() {
           </div>
           <div className="space-y-1">
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Metabolic RW
+              ATHANOR
             </CardTitle>
             <CardDescription className="text-sm">
               {isSignUp

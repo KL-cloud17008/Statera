@@ -1,4 +1,4 @@
-export const APP_NAME = "Metabolic RW";
+export const APP_NAME = "ATHANOR";
 
 export const DEFAULT_TIMEZONE = "America/New_York";
 
