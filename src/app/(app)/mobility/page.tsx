@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase-server";
 import { prisma } from "@/lib/db";
-import { getTrainingDate } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
 import { getTodayMobilityLogs } from "@/actions/mobility";
 import { MobilityPageClient } from "@/components/mobility/MobilityPageClient";
 
@@ -16,11 +16,10 @@ export default async function MobilityPage() {
   });
   if (!dbUser) return null;
 
-  const trainingDate = getTrainingDate(new Date(), dbUser.timezone);
-  const dayOfWeek = trainingDate.getDay(); // 0=Sun...6=Sat
-  // Convert to schema dayOfWeek (1=Mon...5=Fri, 6=Sat, 0=Sun→7)
-  const schemaDow = dayOfWeek === 0 ? 7 : dayOfWeek;
-  const isTrainingDay = schemaDow >= 1 && schemaDow <= 5;
+  const now = new Date();
+  const trainingDayNum = getTrainingDayNumber(now); // 1-5 or null (rest)
+  const schemaDow = trainingDayNum ?? 6; // fallback for rest day
+  const isTrainingDay = trainingDayNum !== null;
 
   const logs = await getTodayMobilityLogs(dbUser.id, dbUser.timezone);
   const completedTypes = logs.map((l) => l.type);

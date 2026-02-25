@@ -4,7 +4,7 @@ import {
   getWorkoutPlans,
   getPreviousSessionSets,
 } from "@/actions/workout";
-import { getTrainingDate } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
 
 export default async function WorkoutPage() {
@@ -21,12 +21,14 @@ export default async function WorkoutPage() {
 
   const plans = await getWorkoutPlans(dbUser.id);
 
-  // Determine today's training day
-  const trainingDate = getTrainingDate(new Date(), dbUser.timezone);
-  const jsDay = trainingDate.getDay(); // 0=Sun...6=Sat
-  const schemaDow = jsDay === 0 ? 7 : jsDay;
-  const todayPlan = plans.find((p) => p.dayOfWeek === schemaDow) ?? null;
-  const todayDayOfWeek = todayPlan ? schemaDow : null;
+  // Determine today's training day (always America/New_York, noon boundary)
+  const now = new Date();
+  const trainingDate = getTrainingDate(now);
+  const trainingDayNum = getTrainingDayNumber(now); // 1-5 or null (rest)
+  const todayPlan = trainingDayNum
+    ? (plans.find((p) => p.dayOfWeek === trainingDayNum) ?? null)
+    : null;
+  const todayDayOfWeek = todayPlan ? trainingDayNum : null;
 
   // Fetch today's session if there's a plan
   let todaySession = null;

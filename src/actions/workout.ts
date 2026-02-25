@@ -24,14 +24,15 @@ export async function getWorkoutPlans(userId: string) {
   });
 }
 
-export async function getTodaysPlan(userId: string, timezone: string) {
-  const trainingDate = getTrainingDate(new Date(), timezone);
-  const dayOfWeek = trainingDate.getDay(); // 0=Sun...6=Sat
-  // Schema uses 1=Mon...5=Fri
-  const schemaDow = dayOfWeek === 0 ? 7 : dayOfWeek;
+export async function getTodaysPlan(userId: string, _timezone?: string) {
+  const now = new Date();
+  const { getTrainingDayNumber } = await import("@/lib/dates");
+  const dayNum = getTrainingDayNumber(now); // 1-5 or null (rest)
+
+  if (!dayNum) return null;
 
   return prisma.workoutPlan.findFirst({
-    where: { userId, dayOfWeek: schemaDow, isActive: true },
+    where: { userId, dayOfWeek: dayNum, isActive: true },
     include: {
       exercises: { orderBy: { sortOrder: "asc" } },
     },

@@ -60,8 +60,8 @@ export default async function WorkoutHistoryPage() {
           return (
             <Card key={session.id}>
               <CardContent className="flex items-center gap-4 py-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-primary">
-                  {session.workoutPlan?.dayOfWeek ?? "?"}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
+                  {session.workoutPlan?.dayOfWeek ? `D${session.workoutPlan.dayOfWeek}` : "?"}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-foreground truncate">

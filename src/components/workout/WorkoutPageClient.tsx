@@ -53,11 +53,11 @@ type TodaySession = {
 } | null;
 
 const DAY_LABELS: Record<number, string> = {
-  1: "Day 1: Upper A",
-  2: "Day 2: Lower A",
-  3: "Day 3: Upper B",
-  4: "Day 4: Lower B",
-  5: "Day 5: Full Body",
+  1: "Day 1",
+  2: "Day 2",
+  3: "Day 3",
+  4: "Day 4",
+  5: "Day 5",
 };
 
 export function WorkoutPageClient({

@@ -15,6 +15,8 @@ import { getWeightEntries } from "@/actions/weight";
 import { getTodaySteps } from "@/actions/steps";
 import { computeWeightStats } from "@/lib/weight";
 import { DashboardWeightChart } from "@/components/dashboard/DashboardWeightChart";
+import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
+import { TRAINING_DAY_LABELS } from "@/lib/constants";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -65,14 +67,14 @@ export default async function DashboardPage() {
     return Math.round((recent.weight - weekAgoEntry.weight) * 10) / 10;
   })();
 
-  // Today's workout (placeholder until workout module is wired)
+  // Today's workout — use training date logic (noon boundary, America/New_York)
   const today = new Date();
-  const dayOfWeek = today.getDay(); // 0=Sun
-  const todayPlan = dbUser
+  const trainingDayNum = getTrainingDayNumber(today); // 1-5 or null (rest)
+  const todayPlan = dbUser && trainingDayNum
     ? await prisma.workoutPlan.findFirst({
         where: {
           userId: dbUser.id,
-          dayOfWeek: dayOfWeek === 0 ? 7 : dayOfWeek, // convert to 1=Mon
+          dayOfWeek: trainingDayNum,
           isActive: true,
         },
       })
@@ -161,12 +163,12 @@ export default async function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {todayPlan ? (
+            {todayPlan && trainingDayNum ? (
               <>
                 <p className="text-lg font-bold text-foreground leading-tight">
                   {todayPlan.sessionName}
                 </p>
-                <p className="text-xs text-muted-foreground">Scheduled today</p>
+                <p className="text-xs text-muted-foreground">{TRAINING_DAY_LABELS[trainingDayNum]}</p>
               </>
             ) : (
               <>
@@ -227,7 +229,9 @@ export default async function DashboardPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-foreground">
-                {todayPlan ? "Today\u2019s Plan" : "This Week"}
+                {todayPlan && trainingDayNum
+                  ? `${TRAINING_DAY_LABELS[trainingDayNum]} Plan`
+                  : "Training Week"}
               </CardTitle>
               {todayPlan && (
                 <Link
@@ -251,25 +255,26 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="flex justify-between">
-                {(["S", "M", "T", "W", "T", "F", "S"] as const).map(
-                  (day, i) => {
-                    const isTrainingDay = dbUser?.trainingDays?.includes(
-                      i === 0 ? 0 : i
-                    );
-                    return (
-                      <div
-                        key={i}
-                        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
-                          isTrainingDay
-                            ? "bg-primary/20 text-primary"
-                            : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {day}
-                      </div>
-                    );
-                  }
-                )}
+                {([
+                  { label: "D1", training: true },
+                  { label: "D2", training: true },
+                  { label: "D3", training: true },
+                  { label: "D4", training: true },
+                  { label: "D5", training: true },
+                  { label: "R", training: false },
+                  { label: "R", training: false },
+                ] as const).map((day, i) => (
+                  <div
+                    key={i}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium ${
+                      day.training
+                        ? "bg-primary/20 text-primary"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {day.label}
+                  </div>
+                ))}
               </div>
             )}
           </CardContent>

@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 const DAY_NAMES: Record<number, string> = {
-  1: "Monday",
-  2: "Tuesday",
-  3: "Wednesday",
-  4: "Thursday",
-  5: "Friday",
+  1: "Day 1",
+  2: "Day 2",
+  3: "Day 3",
+  4: "Day 4",
+  5: "Day 5",
 };
 
 export default async function WorkoutPlanPage() {
@@ -54,7 +54,7 @@ export default async function WorkoutPlanPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-foreground text-base">
-                Day {plan.dayOfWeek} &mdash; {DAY_NAMES[plan.dayOfWeek]}
+                {DAY_NAMES[plan.dayOfWeek]}
               </CardTitle>
               <Badge variant="secondary" className="text-xs">
                 {plan.exercises.filter((e) => e.exerciseType === "WORKING")
