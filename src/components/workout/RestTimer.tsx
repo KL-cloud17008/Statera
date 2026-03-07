@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Timer, X } from "lucide-react";
+import { Timer, X, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function RestTimer({ defaultSeconds }: { defaultSeconds: number }) {
+export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) {
   const [isRunning, setIsRunning] = useState(false);
+  const [duration, setDuration] = useState(defaultSeconds);
   const [timeLeft, setTimeLeft] = useState(defaultSeconds);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hasVibratedRef = useRef(false);
@@ -14,15 +15,23 @@ export function RestTimer({ defaultSeconds }: { defaultSeconds: number }) {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = null;
     setIsRunning(false);
-    setTimeLeft(defaultSeconds);
+    setTimeLeft(duration);
     hasVibratedRef.current = false;
-  }, [defaultSeconds]);
+  }, [duration]);
 
   const start = useCallback(() => {
-    setTimeLeft(defaultSeconds);
+    setTimeLeft(duration);
     setIsRunning(true);
     hasVibratedRef.current = false;
-  }, [defaultSeconds]);
+  }, [duration]);
+
+  function adjustDuration(delta: number) {
+    setDuration((prev) => {
+      const next = Math.max(15, prev + delta);
+      setTimeLeft(next);
+      return next;
+    });
+  }
 
   useEffect(() => {
     if (!isRunning) return;
@@ -36,7 +45,6 @@ export function RestTimer({ defaultSeconds }: { defaultSeconds: number }) {
             if (typeof navigator !== "undefined" && navigator.vibrate) {
               navigator.vibrate([200, 100, 200, 100, 200]);
             }
-            // Simple beep using Web Audio API
             try {
               const ctx = new AudioContext();
               const osc = ctx.createOscillator();
@@ -69,15 +77,34 @@ export function RestTimer({ defaultSeconds }: { defaultSeconds: number }) {
 
   if (!isRunning) {
     return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={start}
-        className="h-8 gap-1 text-xs text-muted-foreground"
-      >
-        <Timer className="h-3 w-3" />
-        {defaultSeconds}s
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => adjustDuration(-15)}
+          disabled={duration <= 15}
+        >
+          <Minus className="h-3 w-3" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={start}
+          className="h-8 gap-1 text-xs text-muted-foreground"
+        >
+          <Timer className="h-3 w-3" />
+          {duration}s
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => adjustDuration(15)}
+        >
+          <Plus className="h-3 w-3" />
+        </Button>
+      </div>
     );
   }
 

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 import { logSet } from "@/actions/workout";
 
 type SetData = {
@@ -27,6 +28,8 @@ export function SetInput({
   logged,
   previous,
   onSaved,
+  completed,
+  onCompletedChange,
 }: {
   sessionId: string;
   planExerciseId: string;
@@ -36,6 +39,8 @@ export function SetInput({
   logged: SetData | null;
   previous: PrevSet | null;
   onSaved: () => void;
+  completed: boolean;
+  onCompletedChange: (checked: boolean) => void;
 }) {
   const [weight, setWeight] = useState(
     logged?.weightUsed?.toString() ?? ""
@@ -80,10 +85,17 @@ export function SetInput({
 
   return (
     <div
-      className={`grid grid-cols-[2rem_1fr_1fr_3rem_2rem] gap-2 items-center ${
-        saved ? "opacity-70" : ""
+      className={`grid grid-cols-[1.5rem_1.5rem_1fr_1fr_3rem_2rem] gap-2 items-center ${
+        completed ? "opacity-50" : ""
       }`}
     >
+      {/* Completion checkbox */}
+      <Checkbox
+        checked={completed}
+        onCheckedChange={(checked) => onCompletedChange(!!checked)}
+        className="h-4 w-4"
+      />
+
       {/* Set number */}
       <span className="text-xs font-medium text-muted-foreground text-center">
         {setNumber}
