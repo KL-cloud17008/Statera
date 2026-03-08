@@ -1,10 +1,11 @@
 ﻿"use server";
 
-import type { WeighInStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseDate } from "@/lib/dates";
 import { revalidatePath } from "next/cache";
+
+type WeighInStatus = "BASELINE" | "FASTING" | "NORMAL";
 
 type BackupProfile = {
   email?: string;
@@ -143,6 +144,31 @@ type BackupPayload = {
   savedFoods?: BackupSavedFood[];
   savedMeals?: BackupSavedMeal[];
   progressPhotos?: BackupProgressPhoto[];
+};
+
+type ExportedDailyLog = {
+  date: Date;
+  sleepHours: number | null;
+  moodRating: number | null;
+  steps: number | null;
+  notes: string | null;
+};
+
+type ExportedSessionSet = {
+  exerciseName: string;
+  setNumber: number;
+  weightUsed: number | null;
+  repsCompleted: number | null;
+  actualRPE: number | null;
+  notes: string | null;
+};
+
+type ExportedWorkoutSession = {
+  trainingDate: Date;
+  workoutPlanId: string | null;
+  notes: string | null;
+  completed: boolean;
+  sets: ExportedSessionSet[];
 };
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -298,15 +324,15 @@ export async function exportUserData() {
   const stepsCsv = [
     "Date,Steps,Sleep Hours,Mood Rating,Notes",
     ...dailyLogs.map(
-      (log) =>
+      (log: ExportedDailyLog) =>
         `${log.date.toISOString().split("T")[0]},${log.steps ?? ""},${log.sleepHours ?? ""},${log.moodRating ?? ""},${JSON.stringify(log.notes ?? "")}`
     ),
   ].join("\n");
 
   const workoutsCsv = [
     "Training Date,Session,Completed,Exercise,Set,Weight,Reps,RPE,Notes",
-    ...workoutSessions.flatMap((session) =>
-      session.sets.map((set) => {
+    ...workoutSessions.flatMap((session: ExportedWorkoutSession) =>
+      session.sets.map((set: ExportedSessionSet) => {
         const label = session.notes || session.workoutPlanId || "Free Session";
         return `${session.trainingDate.toISOString().split("T")[0]},${JSON.stringify(label)},${session.completed},${JSON.stringify(set.exerciseName)},${set.setNumber},${set.weightUsed ?? ""},${set.repsCompleted ?? ""},${set.actualRPE ?? ""},${JSON.stringify(set.notes ?? "")}`;
       })
