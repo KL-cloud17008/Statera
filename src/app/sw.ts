@@ -9,6 +9,12 @@ declare global {
   }
 }
 
+declare const self: ServiceWorkerGlobalScope &
+  typeof globalThis &
+  SerwistGlobalConfig & {
+    __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
+  };
+
 const PWA_CONTROL_PATHS = new Set([
   "/manifest.json",
   "/sw.js",
@@ -19,7 +25,8 @@ const PWA_CONTROL_PATHS = new Set([
 
 const pwaControlCaching = [
   {
-    matcher: ({ sameOrigin, url }) => sameOrigin && PWA_CONTROL_PATHS.has(url.pathname),
+    matcher: ({ sameOrigin, url }: { sameOrigin: boolean; url: URL }) =>
+      sameOrigin && PWA_CONTROL_PATHS.has(url.pathname),
     handler: new NetworkOnly(),
   },
 ];
