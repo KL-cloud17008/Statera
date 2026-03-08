@@ -4,10 +4,10 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Dumbbell, Loader2, Play } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { startWorkoutSession } from "@/actions/workout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Exercise = {
   id: string;
@@ -60,54 +60,40 @@ export function WorkoutDayPreview({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {!hideHeader ? (
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Today&apos;s Workout
-          </h1>
-          <p className="text-muted-foreground">{plan.sessionName}</p>
-        </div>
+        <Card className="overflow-hidden">
+          <CardContent className="space-y-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                    <Dumbbell className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="eyebrow">Today&apos;s Plan</p>
+                    <h2>{plan.sessionName}</h2>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+                  <span className="rounded-full bg-muted/70 px-3 py-1.5">
+                    {workingExercises.length} exercises
+                  </span>
+                  <span className="rounded-full bg-muted/70 px-3 py-1.5">
+                    {totalWorkingSets} working sets
+                  </span>
+                </div>
+              </div>
+              <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="gap-2">
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                Start Session
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       ) : null}
 
-      <Card>
-        <CardContent className="space-y-4 py-6">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
-                <Dumbbell className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold text-foreground">{plan.sessionName}</p>
-                <p className="text-xs text-muted-foreground">
-                  {workingExercises.length} exercises · {totalWorkingSets} working
-                  sets
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <Button
-            className="w-full gap-2"
-            size="lg"
-            type="button"
-            onClick={handleStart}
-            disabled={isPending}
-          >
-            {isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Play className="h-4 w-4" />
-            )}
-            Start Session
-          </Button>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
-          Exercise List
-        </h2>
+      <div className="space-y-3">
         {plan.exercises.map((exercise, index) => (
           <Card
             key={exercise.id}
@@ -115,34 +101,30 @@ export function WorkoutDayPreview({
               exercise.exerciseType === "WARMUP"
                 ? "bg-muted/30"
                 : exercise.exerciseType === "FINISHER"
-                  ? "bg-orange-500/5"
+                  ? "bg-warning/8"
                   : ""
             }
           >
-            <CardContent className="flex items-center gap-3 py-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
+            <CardContent className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-muted text-sm font-semibold text-muted-foreground data-number">
                 {exercise.supersetGroup ?? index + 1}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-foreground">
+                <p className="text-sm font-semibold text-foreground">
                   {exercise.exerciseName}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="mt-1 text-sm text-muted-foreground">
                   {exercise.reps}
-                  {exercise.tempo ? ` · ${exercise.tempo}` : ""}
-                  {exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}
+                  {exercise.tempo ? ` • Tempo ${exercise.tempo}` : ""}
+                  {exercise.targetRPE ? ` • RPE ${exercise.targetRPE}` : ""}
+                  {exercise.restSeconds ? ` • Rest ${exercise.restSeconds}s` : ""}
                 </p>
               </div>
               {exercise.exerciseType === "WARMUP" ? (
-                <Badge variant="secondary" className="text-[10px]">
-                  Warm-up
-                </Badge>
+                <Badge variant="secondary">Warm-up</Badge>
               ) : null}
               {exercise.exerciseType === "FINISHER" ? (
-                <Badge
-                  variant="secondary"
-                  className="bg-orange-500/20 text-[10px] text-orange-400"
-                >
+                <Badge variant="outline" className="border-warning/40 text-warning">
                   Finisher
                 </Badge>
               ) : null}

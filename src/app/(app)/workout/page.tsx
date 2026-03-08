@@ -1,9 +1,15 @@
+﻿import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
 import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
+
+export const metadata: Metadata = {
+  title: "Workout | ATHANOR",
+  description: "Run today’s programmed session, build custom workouts, save templates, and log every set.",
+};
 
 export default async function WorkoutPage() {
   const user = await getOrCreateCurrentUser();

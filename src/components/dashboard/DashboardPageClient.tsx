@@ -8,11 +8,15 @@ import {
   ArrowUp,
   Dumbbell,
   Footprints,
+  PlayCircle,
   Scale,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
+import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { StatCard } from "@/components/ui/stat-card";
 import { computeStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { convertWeight, formatWeight } from "@/lib/units";
 
@@ -65,130 +69,146 @@ export function DashboardPageClient({
         : ArrowRight;
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
-          {greeting}
-        </p>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Your current training snapshot across steps, weight, and workouts.
-        </p>
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow={greeting}
+        title="Everything important, above the fold"
+        description="See today’s movement, your bodyweight trajectory, training volume, and streaks without digging through the app."
+        action={
+          <Link href="/workout">
+            <Button size="lg" className="gap-2">
+              <PlayCircle className="h-4 w-4" />
+              Today&apos;s Workout
+            </Button>
+          </Link>
+        }
+      >
+        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+          <span className="rounded-full bg-white/8 px-3 py-1.5">
+            {stepStats.streak} day streak
+          </span>
+          <span className="rounded-full bg-white/8 px-3 py-1.5">
+            {workoutSummary.weeklySessions} sessions this week
+          </span>
+        </div>
+      </SectionHeader>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <Link href="/steps">
-          <Card className="h-full transition hover:bg-accent/60">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.9fr_0.9fr]">
+        <Link href="/steps" className="block">
+          <Card className="h-full">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-foreground">
-                  Today&apos;s Steps
-                </CardTitle>
-                <Footprints className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="eyebrow">Steps</p>
+                  <CardTitle className="mt-2">Today&apos;s goal progress</CardTitle>
+                </div>
+                <Footprints className="h-5 w-5 text-primary" />
               </div>
             </CardHeader>
-            <CardContent className="flex items-center justify-between gap-4">
-              <StepsProgressRing current={todaySteps} goal={settings.stepGoal} />
-              <div className="space-y-2 text-right">
-                <p className="text-3xl font-bold text-foreground">
+            <CardContent className="flex flex-col items-center gap-5 xl:flex-row xl:items-center xl:justify-between">
+              <StepsProgressRing current={todaySteps} goal={settings.stepGoal} size={156} />
+              <div className="space-y-3 text-center xl:text-left">
+                <p className="text-3xl font-semibold text-foreground data-number">
                   {todaySteps.toLocaleString()}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Goal {settings.stepGoal.toLocaleString()}
+                  Goal {settings.stepGoal.toLocaleString()} steps
+                </p>
+                <p className="text-sm text-primary">
+                  {stepStats.goalMetCount} days have already cleared goal
                 </p>
               </div>
             </CardContent>
           </Card>
         </Link>
 
-        <Link href="/weight">
-          <Card className="h-full transition hover:bg-accent/60">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-foreground">Current Weight</CardTitle>
-                <Scale className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-3xl font-bold text-foreground">
-                  {formatWeight(weightStats.currentWeight, settings.weightUnit)}
-                </p>
-                <TrendIcon className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Trend is currently {weightStats.trend}.
-              </p>
-            </CardContent>
-          </Card>
+        <Link href="/weight" className="block">
+          <StatCard
+            label="Weight"
+            value={formatWeight(weightStats.currentWeight, settings.weightUnit)}
+            hint={`Trend is ${weightStats.trend}`}
+            icon={<Scale className="h-5 w-5" />}
+            className="h-full"
+          >
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <TrendIcon className="h-4 w-4 text-primary" />
+              <span>Tap to open full chart and projection</span>
+            </div>
+          </StatCard>
         </Link>
 
-        <Link href="/workout/history">
-          <Card className="h-full transition hover:bg-accent/60">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-foreground">
-                  This Week&apos;s Volume
-                </CardTitle>
-                <Dumbbell className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="text-3xl font-bold text-foreground">
-                {weeklyVolume} {settings.weightUnit}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Across {workoutSummary.weeklySessions} completed sessions
-              </p>
-            </CardContent>
-          </Card>
+        <Link href="/workout/history" className="block">
+          <StatCard
+            label="Training Volume"
+            value={`${weeklyVolume} ${settings.weightUnit}`}
+            hint={`Across ${workoutSummary.weeklySessions} completed sessions`}
+            icon={<Dumbbell className="h-5 w-5" />}
+            className="h-full"
+          >
+            <p className="text-sm text-muted-foreground">This week&apos;s total load moved.</p>
+          </StatCard>
+        </Link>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <Link href="/steps" className="block">
+          <StatCard
+            label="Consistency"
+            value={`${stepStats.streak} days`}
+            hint={`${stepStats.goalMetCount} lifetime goal hits`}
+            icon={<Activity className="h-5 w-5" />}
+          >
+            <p className="text-sm text-muted-foreground">
+              Keep momentum by staying above {settings.stepGoal.toLocaleString()} daily steps.
+            </p>
+          </StatCard>
         </Link>
 
-        <Link href="/steps">
-          <Card className="h-full transition hover:bg-accent/60">
+        <Link href="/workout/history" className="block">
+          <Card className="h-full">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-foreground">Streaks</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <p className="text-3xl font-bold text-foreground">
-                {stepStats.streak} days
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {stepStats.goalMetCount} goal hits total
-              </p>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/workout/history">
-          <Card className="h-full transition hover:bg-accent/60 md:col-span-2 xl:col-span-2">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-foreground">Last Workout</CardTitle>
-                <Dumbbell className="h-4 w-4 text-muted-foreground" />
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="eyebrow">Last Workout</p>
+                  <CardTitle className="mt-2">Quick session recap</CardTitle>
+                </div>
+                <Dumbbell className="h-5 w-5 text-primary" />
               </div>
             </CardHeader>
             <CardContent>
               {workoutSummary.lastWorkout ? (
-                <div className="space-y-2">
-                  <p className="text-xl font-semibold text-foreground">
-                    {workoutSummary.lastWorkout.label}
-                  </p>
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                    <span>{workoutSummary.lastWorkout.trainingDate}</span>
-                    <span>{workoutSummary.lastWorkout.setCount} sets</span>
-                    <span>
-                      {lastWorkoutVolume} {settings.weightUnit}
-                    </span>
+                <div className="grid gap-4 sm:grid-cols-[1.2fr_repeat(3,minmax(0,1fr))]">
+                  <div>
+                    <p className="text-xl font-semibold text-foreground">
+                      {workoutSummary.lastWorkout.label}
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {workoutSummary.lastWorkout.trainingDate}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="eyebrow">Sets</p>
+                    <p className="mt-2 text-2xl font-semibold text-foreground data-number">
+                      {workoutSummary.lastWorkout.setCount}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="eyebrow">Volume</p>
+                    <p className="mt-2 text-2xl font-semibold text-foreground data-number">
+                      {lastWorkoutVolume}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="eyebrow">Unit</p>
+                    <p className="mt-2 text-2xl font-semibold text-foreground data-number">
+                      {settings.weightUnit}
+                    </p>
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  No completed workouts yet.
-                </p>
+                <div className="rounded-[1.25rem] border border-dashed border-border px-4 py-8 text-sm text-muted-foreground">
+                  No completed workouts yet. Start a session and your recap will appear here.
+                </div>
               )}
             </CardContent>
           </Card>

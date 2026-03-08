@@ -1,10 +1,12 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import { buildWorkoutCalendar } from "@/lib/workout-stats";
 
 type HistorySession = {
@@ -47,97 +49,131 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
   const filteredSessions = selectedDate ? sessionMap.get(selectedDate) ?? [] : sessions;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Workout History</h1>
-        <p className="text-muted-foreground">Calendar view, session volume, and personal-record highlights.</p>
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow="Workout History"
+        title="Review performance over time"
+        description="Use the calendar to scan training frequency, then drill into sessions, volume, duration, and PR activity."
+      />
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>
-              {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-            </CardTitle>
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" size="icon" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="outline" size="icon" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-7 gap-2 text-center text-xs font-medium text-muted-foreground">
-            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-              <div key={day}>{day}</div>
-            ))}
-          </div>
-          <div className="grid grid-cols-7 gap-2">
-            {Array.from({ length: calendar[0]?.weekday ?? 0 }).map((_, index) => (
-              <div key={`pad-${index}`} className="h-16 rounded-lg border border-transparent" />
-            ))}
-            {calendar.map((day) => {
-              const daySessions = sessionMap.get(day.date) ?? [];
-              const isSelected = selectedDate === day.date;
-              return (
-                <button
-                  key={day.date}
-                  type="button"
-                  onClick={() => setSelectedDate(isSelected ? null : day.date)}
-                  className={`flex h-16 flex-col rounded-lg border p-2 text-left ${isSelected ? 'border-primary bg-primary/10' : 'border-border bg-background'}`}
-                >
-                  <span className="text-sm font-medium text-foreground">{day.day}</span>
-                  <div className="mt-auto flex flex-wrap gap-1">
-                    {daySessions.slice(0, 3).map((session) => (
-                      <span key={session.id} className="h-2 w-2 rounded-full bg-primary" />
-                    ))}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{selectedDate ? `Sessions for ${selectedDate}` : 'All Sessions'}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {filteredSessions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No completed sessions in this view yet.</p>
-          ) : (
-            filteredSessions.map((session) => (
-              <div key={session.id} className="rounded-lg border border-border p-4">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-foreground">{session.label}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(`${session.trainingDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
-                    </p>
-                  </div>
-                  <div className="text-right text-xs text-muted-foreground">
-                    <p>{session.setCount} sets</p>
-                    <p>{Math.round(session.volume).toLocaleString()} lbs</p>
-                    {session.durationMinutes != null ? <p>{session.durationMinutes} min</p> : null}
-                    {session.prCount > 0 ? <p className="font-medium text-green-500">{session.prCount} PRs</p> : null}
-                  </div>
+      {sessions.length === 0 ? (
+        <EmptyState
+          icon={History}
+          title="No completed sessions yet"
+          description="Finish a workout and the calendar, exercise links, and PR summaries will appear here."
+        />
+      ) : (
+        <>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="eyebrow">Calendar</p>
+                  <CardTitle className="mt-2">
+                    {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                  </CardTitle>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {session.exercises.map((exercise) => (
-                    <Link key={`${session.id}-${exercise}`} href={`/workout/exercise/${encodeURIComponent(exercise)}`} className="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground hover:text-foreground">
-                      {exercise}
-                    </Link>
-                  ))}
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}>
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Previous month</span>
+                  </Button>
+                  <Button type="button" variant="outline" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}>
+                    <ChevronRight className="h-4 w-4" />
+                    <span className="sr-only">Next month</span>
+                  </Button>
                 </div>
               </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-7 gap-2 text-center text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                  <div key={day}>{day}</div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 gap-2">
+                {Array.from({ length: calendar[0]?.weekday ?? 0 }).map((_, index) => (
+                  <div key={`pad-${index}`} className="h-18 rounded-[1rem] border border-transparent" />
+                ))}
+                {calendar.map((day) => {
+                  const daySessions = sessionMap.get(day.date) ?? [];
+                  const isSelected = selectedDate === day.date;
+                  return (
+                    <button
+                      key={day.date}
+                      type="button"
+                      onClick={() => setSelectedDate(isSelected ? null : day.date)}
+                      className={`flex h-18 flex-col rounded-[1rem] border px-3 py-3 text-left transition-colors ${isSelected ? "border-primary/40 bg-primary/10" : "border-border bg-muted/25 hover:bg-accent/70"}`}
+                    >
+                      <span className="text-sm font-semibold text-foreground data-number">{day.day}</span>
+                      <div className="mt-auto flex flex-wrap gap-1">
+                        {daySessions.slice(0, 4).map((session) => (
+                          <span key={session.id} className="h-2 w-2 rounded-full bg-primary" />
+                        ))}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {selectedDate ? `Sessions for ${selectedDate}` : "All sessions"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {filteredSessions.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No completed sessions in this view yet.</p>
+              ) : (
+                filteredSessions.map((session) => (
+                  <div key={session.id} className="rounded-[1.25rem] border border-border bg-muted/30 p-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <p className="text-lg font-semibold text-foreground">{session.label}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {new Date(`${session.trainingDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+                        <div>
+                          <p className="eyebrow">Sets</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground data-number">{session.setCount}</p>
+                        </div>
+                        <div>
+                          <p className="eyebrow">Volume</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground data-number">{Math.round(session.volume).toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="eyebrow">Duration</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground data-number">{session.durationMinutes != null ? `${session.durationMinutes}m` : "--"}</p>
+                        </div>
+                        <div>
+                          <p className="eyebrow">PRs</p>
+                          <p className="mt-2 text-lg font-semibold text-primary data-number">{session.prCount}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {session.exercises.map((exercise) => (
+                        <Link
+                          key={`${session.id}-${exercise}`}
+                          href={`/workout/exercise/${encodeURIComponent(exercise)}`}
+                          className="rounded-full border border-border bg-background/80 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                        >
+                          {exercise}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

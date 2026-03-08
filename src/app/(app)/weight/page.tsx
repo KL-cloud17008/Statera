@@ -1,11 +1,18 @@
+﻿import type { Metadata } from "next";
 import { getWeightEntries } from "@/actions/weight";
-import { computeWeightStats } from "@/lib/weight";
-import { WeightStatsCards } from "@/components/weight/WeightStatsCards";
 import { WeightChart } from "@/components/weight/WeightChart";
 import { WeightEntryForm } from "@/components/weight/WeightEntryForm";
 import { WeightHistoryList } from "@/components/weight/WeightHistoryList";
 import { WeightPageActions } from "@/components/weight/WeightPageActions";
+import { WeightStatsCards } from "@/components/weight/WeightStatsCards";
+import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { computeWeightStats } from "@/lib/weight";
+
+export const metadata: Metadata = {
+  title: "Weight | ATHANOR",
+  description: "Track weigh-ins, see your 7-day trend, compare to goal weight, and monitor projected progress.",
+};
 
 export default async function WeightPage() {
   const user = await getOrCreateCurrentUser();
@@ -34,19 +41,20 @@ export default async function WeightPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Weight Tracking</h1>
-          <p className="text-muted-foreground">Log weigh-ins, monitor trend, and compare against your goal.</p>
-        </div>
-        <WeightPageActions />
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow="Weight Tracker"
+        title="See trend, pace, and goal alignment"
+        description="Track raw weigh-ins alongside the 7-day moving average, BMI, goal marker, and projected trajectory."
+        action={<WeightPageActions />}
+      />
 
       <WeightStatsCards stats={stats} />
       <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
-      <WeightEntryForm />
-      <WeightHistoryList entries={serializedEntries} />
+      <div className="grid gap-4 xl:grid-cols-[0.88fr_1.12fr]">
+        <WeightEntryForm />
+        <WeightHistoryList entries={serializedEntries} />
+      </div>
     </div>
   );
 }

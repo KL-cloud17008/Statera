@@ -1,7 +1,13 @@
+﻿import type { Metadata } from "next";
 import { getTodayMobilityLogs } from "@/actions/mobility";
 import { MobilityPageClient } from "@/components/mobility/MobilityPageClient";
 import { getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+
+export const metadata: Metadata = {
+  title: "Mobility | ATHANOR",
+  description: "Run pre-workout, post-workout, and undo-sitting mobility flows and log completion.",
+};
 
 export default async function MobilityPage() {
   const user = await getOrCreateCurrentUser();

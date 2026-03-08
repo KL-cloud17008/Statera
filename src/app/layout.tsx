@@ -1,9 +1,24 @@
 ﻿import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/layout/ThemeProvider";
-import { Toaster } from "@/components/ui/sonner";
 import { AppSettingsProvider } from "@/components/settings/AppSettingsProvider";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
+import { Toaster } from "@/components/ui/sonner";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans-base",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-base",
+  weight: ["400", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "ATHANOR",
@@ -17,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#080d16",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -30,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">
+      <body className={`${inter.variable} ${jetBrainsMono.variable} antialiased`}>
         <ThemeProvider>
           <AppSettingsProvider>
             <ServiceWorkerRegistration />

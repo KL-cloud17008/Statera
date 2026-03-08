@@ -1,78 +1,73 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Dumbbell,
-  PersonStanding,
-  Apple,
-  Scale,
-  Footprints,
-  Settings,
-  LogOut,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./ThemeToggle";
+import { Activity, LogOut } from "lucide-react";
 import { signOut } from "@/actions/auth";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { Button } from "@/components/ui/button";
-
-const navItems = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Workout", href: "/workout", icon: Dumbbell },
-  { label: "Mobility", href: "/mobility", icon: PersonStanding },
-  { label: "Nutrition", href: "/nutrition", icon: Apple },
-  { label: "Weight", href: "/weight", icon: Scale },
-  { label: "Steps", href: "/steps", icon: Footprints },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
+import { cn } from "@/lib/utils";
 
 export function DesktopSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border bg-background">
-      <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-        <Dumbbell className="h-6 w-6 text-primary" />
-        <span className="text-lg font-bold">ATHANOR</span>
+    <aside className="app-shell-grid fixed inset-y-0 left-0 z-30 hidden w-[18rem] border-r border-sidebar-border bg-sidebar/80 px-5 py-6 backdrop-blur-xl md:flex md:flex-col">
+      <div className="surface-elevated rounded-[1.75rem] p-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_16px_32px_rgba(68,227,157,0.22)]">
+            <Activity className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="eyebrow">Fittrack</p>
+            <p className="text-lg font-semibold text-foreground">ATHANOR</p>
+          </div>
+        </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Build consistency across training, recovery, bodyweight, and daily movement.
+        </p>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
-
+      <nav className="mt-6 flex-1 space-y-2">
+        {NAV_ITEMS.map((item) => {
+          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
                 isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                  ? "surface-elevated text-foreground"
+                  : "text-muted-foreground hover:bg-accent/70 hover:text-foreground"
               )}
             >
-              <item.icon className="h-5 w-5" />
-              {item.label}
+              <span
+                className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-2xl border border-transparent transition-colors",
+                  isActive ? "bg-primary/14 text-primary" : "bg-muted/50 text-muted-foreground group-hover:text-foreground"
+                )}
+              >
+                <item.icon className="h-5 w-5" strokeWidth={2.2} />
+              </span>
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-border p-3 space-y-2">
-        <div className="flex items-center justify-between px-3">
-          <span className="text-xs text-muted-foreground">Theme</span>
+      <div className="surface-card mt-6 space-y-4 rounded-[1.5rem] p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-foreground">Appearance</p>
+            <p className="text-xs text-muted-foreground">Dark is default. Flip anytime.</p>
+          </div>
           <ThemeToggle />
         </div>
         <form action={signOut}>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="h-5 w-5" />
+          <Button variant="outline" className="w-full justify-start gap-2">
+            <LogOut className="h-4 w-4" />
             Sign Out
           </Button>
         </form>

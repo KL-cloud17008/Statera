@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Footprints, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logSteps, updateStepsEntry } from "@/actions/steps";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { logSteps, updateStepsEntry } from "@/actions/steps";
 
 type StepsEntry = {
   id: string;
@@ -24,7 +24,6 @@ export function StepsEntryForm({
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
-
   const today = new Date().toISOString().split("T")[0];
 
   async function handleSubmit(formData: FormData) {
@@ -49,14 +48,20 @@ export function StepsEntryForm({
   }
 
   return (
-    <Card>
+    <Card className={editEntry ? "border-primary/35" : ""}>
       <CardHeader>
-        <CardTitle className="text-foreground">
-          {editEntry ? "Edit Step Entry" : "Log Steps"}
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+            <Footprints className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="eyebrow">Quick Add</p>
+            <CardTitle>{editEntry ? "Edit step entry" : "Log today or backfill a day"}</CardTitle>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={handleSubmit} className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <form ref={formRef} action={handleSubmit} className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
           <div className="space-y-2">
             <Label htmlFor={editEntry ? `edit-date-${editEntry.id}` : "steps-date"}>Date</Label>
             <Input
@@ -65,6 +70,7 @@ export function StepsEntryForm({
               type="date"
               defaultValue={editEntry?.date ?? today}
               required
+              className="h-12"
             />
           </div>
           <div className="space-y-2">
@@ -75,20 +81,21 @@ export function StepsEntryForm({
               type="number"
               min="0"
               max="200000"
-              placeholder="e.g. 8500"
+              placeholder="e.g. 8,500"
               defaultValue={editEntry?.steps ?? ""}
               required
+              className="h-12"
             />
           </div>
-          <div className="flex gap-2 sm:justify-end">
+          <div className="flex gap-2 md:justify-end">
             {editEntry ? (
               <Button type="button" variant="outline" onClick={onDone}>
                 Cancel
               </Button>
             ) : null}
-            <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {editEntry ? "Save" : "Log"}
+            <Button type="submit" className="min-w-32" disabled={isPending}>
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {editEntry ? "Save changes" : "Save steps"}
             </Button>
           </div>
         </form>

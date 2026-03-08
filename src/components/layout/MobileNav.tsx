@@ -1,58 +1,30 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Dumbbell,
-  PersonStanding,
-  Apple,
-  Scale,
-  Footprints,
-  Settings,
-} from "lucide-react";
+import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Workout", href: "/workout", icon: Dumbbell },
-  { label: "Mobility", href: "/mobility", icon: PersonStanding },
-  { label: "Nutrition", href: "/nutrition", icon: Apple },
-  { label: "Weight", href: "/weight", icon: Scale },
-  { label: "Steps", href: "/steps", icon: Footprints },
-  { label: "Settings", href: "/settings", icon: Settings },
-];
 
 export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 md:hidden">
-      <div className="flex h-16 items-center justify-around pb-[env(safe-area-inset-bottom)]">
-        {navItems.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
-
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-background/70 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 backdrop-blur-xl md:hidden">
+      <div className="surface-card hide-scrollbar flex items-center gap-2 overflow-x-auto rounded-[1.6rem] px-2 py-2">
+        {NAV_ITEMS.map((item) => {
+          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-1.5 text-[11px] font-medium transition-colors",
+                "flex min-h-[3.5rem] min-w-[4.8rem] flex-col items-center justify-center gap-1 rounded-[1.2rem] px-3 py-2 text-[11px] font-medium transition-all duration-150",
                 isActive
-                  ? "text-primary"
-                  : "text-muted-foreground active:text-foreground"
+                  ? "bg-primary/14 text-primary shadow-[0_10px_24px_rgba(68,227,157,0.18)]"
+                  : "text-muted-foreground"
               )}
             >
-              <item.icon
-                className={cn(
-                  "h-5 w-5 transition-transform",
-                  isActive && "scale-110"
-                )}
-                strokeWidth={isActive ? 2.5 : 2}
-              />
+              <item.icon className="h-5 w-5" strokeWidth={isActive ? 2.35 : 2} />
               <span>{item.label}</span>
             </Link>
           );

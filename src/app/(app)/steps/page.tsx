@@ -1,6 +1,12 @@
+﻿import type { Metadata } from "next";
 import { getStepsEntries } from "@/actions/steps";
 import { StepsPageClient } from "@/components/steps/StepsPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+
+export const metadata: Metadata = {
+  title: "Steps | ATHANOR",
+  description: "Track daily steps, goal progress, weekly bars, and a monthly movement heatmap.",
+};
 
 export default async function StepsPage() {
   const user = await getOrCreateCurrentUser();

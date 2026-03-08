@@ -1,16 +1,17 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { CalendarClock, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { deleteWeightEntry } from "@/actions/weight";
-import { WeightEntryForm } from "./WeightEntryForm";
-import type { SerializedWeightEntry } from "@/lib/weight";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
+import { WeightEntryForm } from "@/components/weight/WeightEntryForm";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import type { SerializedWeightEntry } from "@/lib/weight";
 import { formatWeight } from "@/lib/units";
 
 const statusVariant = {
@@ -65,42 +66,75 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-foreground">History</CardTitle>
+          <CardTitle>Entry history</CardTitle>
         </CardHeader>
         <CardContent>
           {entries.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              No weight entries yet. Log your first entry above.
-            </p>
+            <EmptyState
+              icon={CalendarClock}
+              title="No weigh-ins yet"
+              description="Add your first entry to unlock trend analysis, BMI, and projected goal pacing."
+              className="border-none bg-transparent px-0 py-6 shadow-none"
+            />
           ) : (
-            <div className="max-h-[480px] space-y-4 overflow-y-auto pr-1">
+            <div className="max-h-[38rem] space-y-5 overflow-y-auto pr-1">
               {Array.from(grouped.entries()).map(([date, dateEntries]) => (
-                <div key={date}>
-                  <div className="sticky top-0 z-10 bg-card pb-1.5 text-xs font-medium text-muted-foreground">
+                <div key={date} className="space-y-2">
+                  <div className="sticky top-0 z-10 -mx-2 rounded-full bg-background/85 px-2 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-md">
                     {formatGroupDate(date)}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {dateEntries.map((entry) =>
                       editingId === entry.id ? (
-                        <WeightEntryForm key={entry.id} editEntry={entry} onDone={() => setEditingId(null)} />
+                        <WeightEntryForm
+                          key={entry.id}
+                          editEntry={entry}
+                          onDone={() => setEditingId(null)}
+                        />
                       ) : (
-                        <div key={entry.id} className="flex items-center gap-3 rounded-lg border border-border bg-background p-3">
+                        <div
+                          key={entry.id}
+                          className="group flex items-start justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/30 p-4 transition-colors hover:bg-accent/70"
+                        >
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
-                              <span className="font-semibold text-foreground">{formatWeight(entry.weight, settings.weightUnit)}</span>
-                              <Badge variant={statusVariant[entry.status]}>{statusLabel[entry.status]}</Badge>
+                              <span className="text-lg font-semibold text-foreground data-number">
+                                {formatWeight(entry.weight, settings.weightUnit)}
+                              </span>
+                              <Badge variant={statusVariant[entry.status]}>
+                                {statusLabel[entry.status]}
+                              </Badge>
                               {entry.bodyFatPercent != null ? (
-                                <span className="text-xs text-muted-foreground">{entry.bodyFatPercent}% bf</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {entry.bodyFatPercent}% bf
+                                </span>
                               ) : null}
                             </div>
-                            {entry.notes ? <p className="mt-0.5 truncate text-xs text-muted-foreground">{entry.notes}</p> : null}
+                            {entry.notes ? (
+                              <p className="mt-2 text-sm text-muted-foreground">
+                                {entry.notes}
+                              </p>
+                            ) : null}
                           </div>
-                          <div className="flex shrink-0 gap-1">
-                            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => setEditingId(entry.id)} aria-label={`Edit weight entry for ${date}`}>
-                              <Pencil className="h-3.5 w-3.5" />
+                          <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon-sm"
+                              onClick={() => setEditingId(entry.id)}
+                              aria-label={`Edit weight entry for ${date}`}
+                            >
+                              <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" onClick={() => setDeleteId(entry.id)} aria-label={`Delete weight entry for ${date}`}>
-                              <Trash2 className="h-3.5 w-3.5" />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon-sm"
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => setDeleteId(entry.id)}
+                              aria-label={`Delete weight entry for ${date}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </div>
@@ -118,14 +152,16 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete this entry?</DialogTitle>
-            <DialogDescription>This action cannot be undone.</DialogDescription>
+            <DialogDescription>
+              This action cannot be undone.
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>
               Cancel
             </Button>
             <Button type="button" variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? "Deleting..." : "Delete entry"}
             </Button>
           </DialogFooter>
         </DialogContent>

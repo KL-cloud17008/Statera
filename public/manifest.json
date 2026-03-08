@@ -1,12 +1,12 @@
-{
+﻿{
   "name": "ATHANOR",
   "short_name": "ATHANOR",
   "description": "Personal fitness tracking PWA",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#080d16",
+  "theme_color": "#080d16",
   "icons": [
     {
       "src": "/icons/icon-192.png",

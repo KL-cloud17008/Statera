@@ -1,12 +1,19 @@
-"use client";
+﻿"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Flame, Footprints, Target, TrendingUp } from "lucide-react";
+import { SectionHeader } from "@/components/ui/section-header";
+import { StatCard } from "@/components/ui/stat-card";
 import { StepsChart } from "@/components/steps/StepsChart";
 import { StepsEntryForm } from "@/components/steps/StepsEntryForm";
+import { StepsHeatmap } from "@/components/steps/StepsHeatmap";
 import { StepsHistoryList } from "@/components/steps/StepsHistoryList";
 import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { computeStepStats, getWeeklyStepChange, type SerializedStepsEntry } from "@/lib/steps";
+import {
+  computeStepStats,
+  getWeeklyStepChange,
+  type SerializedStepsEntry,
+} from "@/lib/steps";
 import { formatDistance } from "@/lib/units";
 
 export function StepsPageClient({
@@ -21,59 +28,67 @@ export function StepsPageClient({
   const weeklyChange = getWeeklyStepChange(entries, timezone);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Steps</h1>
-        <p className="text-muted-foreground">Track daily totals, progress to goal, and multi-period trends.</p>
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow="Step Counter"
+        title="Build daily movement momentum"
+        description="Track today’s total, review your weekly and monthly trends, and keep your streak alive with a clear goal target."
+      >
+        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+          <span className="rounded-full bg-white/8 px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
+          <span className="rounded-full bg-white/8 px-3 py-1.5">{formatDistance(stats.todaySteps, settings.distanceUnit)}</span>
+        </div>
+      </SectionHeader>
 
-      <Card>
-        <CardContent className="flex flex-col gap-6 py-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex justify-center">
-            <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
+      <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="surface-elevated flex flex-col items-center justify-center rounded-[1.75rem] px-6 py-8">
+          <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
+            <span className="rounded-full bg-primary/12 px-3 py-1.5 text-primary">
+              {stats.goalMetCount} goal hits total
+            </span>
+            <span>{stats.completionRate}% completion rate</span>
           </div>
-          <div className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg border border-border p-4">
-              <p className="text-sm text-muted-foreground">Today</p>
-              <p className="text-2xl font-bold text-foreground">{stats.todaySteps.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">{formatDistance(stats.todaySteps, settings.distanceUnit)} walked</p>
-            </div>
-            <div className="rounded-lg border border-border p-4">
-              <p className="text-sm text-muted-foreground">7-Day Avg</p>
-              <p className="text-2xl font-bold text-foreground">{stats.average.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">{weeklyChange >= 0 ? "+" : ""}{weeklyChange.toLocaleString()} vs 7 days ago</p>
-            </div>
-            <div className="rounded-lg border border-border p-4">
-              <p className="text-sm text-muted-foreground">Goal Streak</p>
-              <p className="text-2xl font-bold text-foreground">{stats.streak}</p>
-              <p className="text-xs text-muted-foreground">consecutive goal days</p>
-            </div>
-            <div className="rounded-lg border border-border p-4">
-              <p className="text-sm text-muted-foreground">Best Day</p>
-              <p className="text-2xl font-bold text-foreground">{stats.bestDay?.steps?.toLocaleString() ?? "--"}</p>
-              <p className="text-xs text-muted-foreground">{stats.bestDay?.date ?? "No data yet"}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <StatCard
+            label="Today"
+            value={stats.todaySteps.toLocaleString()}
+            hint={formatDistance(stats.todaySteps, settings.distanceUnit)}
+            icon={<Footprints className="h-5 w-5" />}
+          />
+          <StatCard
+            label="7-Day Average"
+            value={stats.average.toLocaleString()}
+            hint={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`}
+            icon={<TrendingUp className="h-5 w-5" />}
+          />
+          <StatCard
+            label="Streak"
+            value={`${stats.streak}`}
+            hint="Consecutive goal days"
+            icon={<Flame className="h-5 w-5" />}
+          />
+          <StatCard
+            label="Best Day"
+            value={stats.bestDay?.steps?.toLocaleString() ?? "--"}
+            hint={stats.bestDay?.date ?? "No data yet"}
+            icon={<Target className="h-5 w-5" />}
+          />
+        </div>
+      </section>
 
       <StepsChart entries={entries} goal={settings.stepGoal} timezone={timezone} />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-        <div className="space-y-6">
+      <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-4">
           <StepsEntryForm />
-          <Card>
-            <CardHeader>
-              <CardTitle>Goal Progress</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm text-muted-foreground">
-              <p>{stats.goalMetCount} logged days have met or exceeded your {settings.stepGoal.toLocaleString()} step goal.</p>
-              <p>{stats.completionRate}% of logged days have cleared the goal so far.</p>
-            </CardContent>
-          </Card>
+          <StepsHeatmap entries={entries} goal={settings.stepGoal} />
         </div>
         <StepsHistoryList entries={entries} />
       </div>
     </div>
   );
 }
+

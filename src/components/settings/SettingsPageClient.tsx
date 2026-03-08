@@ -1,8 +1,17 @@
 ﻿"use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useTheme } from "next-themes";
-import { Download, Loader2, Trash2, Upload } from "lucide-react";
+import {
+  Download,
+  Loader2,
+  MoonStar,
+  Paintbrush,
+  ShieldAlert,
+  Trash2,
+  Upload,
+  UserRound,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   clearAllUserData,
@@ -24,6 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SectionHeader } from "@/components/ui/section-header";
 import type { AppSettings } from "@/lib/app-settings";
 
 type SettingsPageClientProps = {
@@ -125,21 +135,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         return;
       }
 
-      downloadTextFile(
-        "fittrack-weight.csv",
-        weightCsv.csv,
-        "text/csv;charset=utf-8;"
-      );
-      downloadTextFile(
-        "fittrack-steps.csv",
-        csv.steps,
-        "text/csv;charset=utf-8;"
-      );
-      downloadTextFile(
-        "fittrack-workouts.csv",
-        csv.workouts,
-        "text/csv;charset=utf-8;"
-      );
+      downloadTextFile("fittrack-weight.csv", weightCsv.csv, "text/csv;charset=utf-8;");
+      downloadTextFile("fittrack-steps.csv", csv.steps, "text/csv;charset=utf-8;");
+      downloadTextFile("fittrack-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
       toast.success("CSV exports downloaded");
     } finally {
       setIsExporting(false);
@@ -194,72 +192,65 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage profile details, units, goals, theme, and backups.
-        </p>
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow="Settings"
+        title="Profile, preferences, and data safety"
+        description="Manage units, theme, goals, backups, and the profile values that power BMI and goal projections."
+      />
 
       <Card>
         <CardHeader>
-          <CardTitle>Profile</CardTitle>
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+              <UserRound className="h-5 w-5" />
+            </div>
+            <CardTitle>Profile</CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
-          <form action={handleProfileSave} className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="heightInches">Height (inches)</Label>
-              <Input
-                id="heightInches"
-                name="heightInches"
-                type="number"
-                min="36"
-                max="96"
-                defaultValue={profile.heightInches ?? ""}
-              />
+          <form action={handleProfileSave} className="grid gap-4 md:grid-cols-2">
+            <Field label="Height (inches)" htmlFor="heightInches">
+              <Input id="heightInches" name="heightInches" type="number" min="36" max="96" defaultValue={profile.heightInches ?? ""} className="h-12" />
+            </Field>
+            <Field label="Timezone" htmlFor="timezone">
+              <Input id="timezone" name="timezone" type="text" defaultValue={profile.timezone} className="h-12" />
+            </Field>
+            <Field label="Start Weight (lbs)" htmlFor="startWeight">
+              <Input id="startWeight" name="startWeight" type="number" step="0.1" min="50" max="999" defaultValue={profile.startWeight ?? ""} className="h-12" />
+            </Field>
+            <Field label="Goal Weight (lbs)" htmlFor="goalWeight">
+              <Input id="goalWeight" name="goalWeight" type="number" step="0.1" min="50" max="999" defaultValue={profile.goalWeight ?? ""} className="h-12" />
+            </Field>
+            <div className="md:col-span-2">
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Save Profile
+              </Button>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
-              <Input
-                id="timezone"
-                name="timezone"
-                type="text"
-                defaultValue={profile.timezone}
-              />
+          </form>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary/40 text-secondary-foreground">
+                <Paintbrush className="h-5 w-5" />
+              </div>
+              <CardTitle>Units & Goals</CardTitle>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="startWeight">Start Weight (lbs)</Label>
-              <Input
-                id="startWeight"
-                name="startWeight"
-                type="number"
-                step="0.1"
-                min="50"
-                max="999"
-                defaultValue={profile.startWeight ?? ""}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goalWeight">Goal Weight (lbs)</Label>
-              <Input
-                id="goalWeight"
-                name="goalWeight"
-                type="number"
-                step="0.1"
-                min="50"
-                max="999"
-                defaultValue={profile.goalWeight ?? ""}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="stepGoal">Daily Step Goal</Label>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Field label="Daily Step Goal" htmlFor="stepGoal">
               <Input
                 id="stepGoal"
                 type="number"
                 min="1000"
                 max="50000"
                 value={settings.stepGoal}
+                className="h-12"
                 onChange={(event) => {
                   const next = Number.parseInt(event.target.value || "0", 10);
                   updateSettings((current) => ({
@@ -270,13 +261,13 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                   }));
                 }}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goalDate">Goal Target Date</Label>
+            </Field>
+            <Field label="Goal Target Date" htmlFor="goalDate">
               <Input
                 id="goalDate"
                 type="date"
                 value={settings.weightGoalTargetDate ?? ""}
+                className="h-12"
                 onChange={(event) => {
                   updateSettings((current) => ({
                     ...current,
@@ -284,78 +275,63 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                   }));
                 }}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="weightUnit">Weight Unit</Label>
-              <select
-                id="weightUnit"
-                value={settings.weightUnit}
-                onChange={(event) => {
-                  updateSettings((current) => ({
-                    ...current,
-                    weightUnit: event.target.value === "kg" ? "kg" : "lb",
-                  }));
-                }}
-                className="border-input h-9 w-full rounded-md border bg-background px-3 text-sm"
-              >
-                <option value="lb">Pounds</option>
-                <option value="kg">Kilograms</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="distanceUnit">Distance Unit</Label>
-              <select
-                id="distanceUnit"
-                value={settings.distanceUnit}
-                onChange={(event) => {
-                  updateSettings((current) => ({
-                    ...current,
-                    distanceUnit: event.target.value === "km" ? "km" : "mi",
-                  }));
-                }}
-                className="border-input h-9 w-full rounded-md border bg-background px-3 text-sm"
-              >
-                <option value="mi">Miles</option>
-                <option value="km">Kilometers</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label>Theme</Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant={theme === "dark" ? "default" : "outline"}
-                  onClick={() => setTheme("dark")}
+            </Field>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Weight Unit" htmlFor="weightUnit">
+                <select
+                  id="weightUnit"
+                  value={settings.weightUnit}
+                  onChange={(event) => {
+                    updateSettings((current) => ({
+                      ...current,
+                      weightUnit: event.target.value === "kg" ? "kg" : "lb",
+                    }));
+                  }}
+                  className="h-12 w-full rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
                 >
-                  Dark
-                </Button>
-                <Button
-                  type="button"
-                  variant={theme === "light" ? "default" : "outline"}
-                  onClick={() => setTheme("light")}
+                  <option value="lb">Pounds</option>
+                  <option value="kg">Kilograms</option>
+                </select>
+              </Field>
+              <Field label="Distance Unit" htmlFor="distanceUnit">
+                <select
+                  id="distanceUnit"
+                  value={settings.distanceUnit}
+                  onChange={(event) => {
+                    updateSettings((current) => ({
+                      ...current,
+                      distanceUnit: event.target.value === "km" ? "km" : "mi",
+                    }));
+                  }}
+                  className="h-12 w-full rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
                 >
-                  Light
-                </Button>
-                <Button
-                  type="button"
-                  variant={theme === "system" ? "default" : "outline"}
-                  onClick={() => setTheme("system")}
-                >
-                  System
-                </Button>
+                  <option value="mi">Miles</option>
+                  <option value="km">Kilometers</option>
+                </select>
+              </Field>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+                <MoonStar className="h-5 w-5" />
               </div>
+              <CardTitle>Theme</CardTitle>
             </div>
-            <div className="sm:col-span-2">
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                Save Profile
-              </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">Dark mode is the default visual system. Light mode is still fully supported.</p>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant={theme === "dark" ? "default" : "outline"} onClick={() => setTheme("dark")}>Dark</Button>
+              <Button type="button" variant={theme === "light" ? "default" : "outline"} onClick={() => setTheme("light")}>Light</Button>
+              <Button type="button" variant={theme === "system" ? "default" : "outline"} onClick={() => setTheme("system")}>System</Button>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader>
@@ -363,43 +339,16 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleExportJson}
-              disabled={isExporting}
-            >
-              {isExporting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="mr-2 h-4 w-4" />
-              )}
+            <Button type="button" variant="outline" onClick={handleExportJson} disabled={isExporting}>
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               Export JSON Backup
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleExportCsv}
-              disabled={isExporting}
-            >
-              {isExporting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Download className="mr-2 h-4 w-4" />
-              )}
+            <Button type="button" variant="outline" onClick={handleExportCsv} disabled={isExporting}>
+              {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               Export CSV Files
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isImporting}
-            >
-              {isImporting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Upload className="mr-2 h-4 w-4" />
-              )}
+            <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isImporting}>
+              {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
               Import JSON Backup
             </Button>
             <input
@@ -416,57 +365,55 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             />
           </div>
 
-          <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
-            JSON backups include tracker data plus local app preferences. CSV
-            exports download separate weight, steps, and workout files for
-            spreadsheet use.
+          <div className="rounded-[1.25rem] border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+            JSON backups include tracker data plus local app preferences. CSV exports produce separate weight, steps, and workout files for spreadsheet use.
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Danger Zone</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={() => setIsClearOpen(true)}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Clear All Tracker Data
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>About</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>ATHANOR is a local-first fitness operating system for tracking movement, bodyweight, training volume, and recovery in one place.</p>
+            <p>Backups include server-side tracker data and local presentation preferences so the app can be restored without rebuilding your setup.</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-destructive/25">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive/12 text-destructive">
+                <ShieldAlert className="h-5 w-5" />
+              </div>
+              <CardTitle>Danger Zone</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button type="button" variant="destructive" onClick={() => setIsClearOpen(true)}>
+              <Trash2 className="h-4 w-4" />
+              Clear All Tracker Data
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
 
       <Dialog open={isClearOpen} onOpenChange={setIsClearOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Clear all data?</DialogTitle>
             <DialogDescription>
-              This deletes your steps, weight entries, workouts, mobility logs,
-              nutrition records, and saved items. Your account stays intact.
+              This deletes steps, weight entries, workouts, mobility logs, nutrition records, and saved items. Your account stays intact.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsClearOpen(false)}
-              disabled={isClearing}
-            >
+            <Button type="button" variant="outline" onClick={() => setIsClearOpen(false)} disabled={isClearing}>
               Cancel
             </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleClearAllData}
-              disabled={isClearing}
-            >
-              {isClearing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
+            <Button type="button" variant="destructive" onClick={handleClearAllData} disabled={isClearing}>
+              {isClearing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Clear Everything
             </Button>
           </DialogFooter>
@@ -475,3 +422,21 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     </div>
   );
 }
+
+function Field({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={htmlFor}>{label}</Label>
+      {children}
+    </div>
+  );
+}
+

@@ -1,16 +1,16 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { completeSession } from "@/actions/workout";
 import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
-import { completeSession } from "@/actions/workout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { calculateSessionVolume } from "@/lib/workout-stats";
 
 type PlanExercise = {
@@ -184,32 +184,42 @@ export function SessionLogger({
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardContent className="space-y-3 py-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-foreground">{sessionName}</p>
-              <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                <span>{elapsedMinutes} min</span>
-                <Badge variant="secondary" className="text-[10px]">
+      <Card className="overflow-hidden border-primary/30 bg-[linear-gradient(180deg,rgba(68,227,157,0.12),transparent_55%),linear-gradient(180deg,rgba(20,29,44,0.9),rgba(13,20,32,0.9))]">
+        <CardContent className="space-y-5">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/16 text-primary">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="eyebrow">Active Session</p>
+                  <h2 className="text-2xl">{sessionName}</h2>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                <Badge variant="secondary" className="normal-case tracking-normal text-sm">
+                  <Clock3 className="h-3.5 w-3.5" />
+                  {elapsedMinutes} min elapsed
+                </Badge>
+                <Badge variant="secondary" className="normal-case tracking-normal text-sm">
                   {savedSetKeys.size} sets saved
                 </Badge>
                 <span>{Math.round(totalVolume).toLocaleString()} lbs volume</span>
               </div>
             </div>
-            <Button type="button" size="sm" onClick={handleComplete} disabled={isPending} className="gap-1">
+            <Button type="button" size="lg" onClick={handleComplete} disabled={isPending} className="gap-2">
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-              Finish
+              Complete Session
             </Button>
           </div>
 
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{completedCount}/{totalExercises} exercises complete</span>
-              <span className="font-medium text-foreground">{progressPercent}%</span>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>{completedCount}/{totalExercises} exercises complete</span>
+              <span className="data-number text-foreground">{progressPercent}%</span>
             </div>
-            <Progress value={progressPercent} className="h-2" />
+            <Progress value={progressPercent} className="h-3" />
           </div>
         </CardContent>
       </Card>
@@ -219,10 +229,10 @@ export function SessionLogger({
         const restSeconds = group[0].restSeconds ?? 90;
 
         return (
-          <div key={groupIndex} className="space-y-2">
+          <div key={groupIndex} className="space-y-3">
             {isSuperset ? (
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs font-bold">Superset {group[0].supersetGroup}</Badge>
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/35 px-4 py-3">
+                <Badge variant="outline">Superset {group[0].supersetGroup}</Badge>
                 <RestTimer defaultSeconds={restSeconds} />
               </div>
             ) : null}
@@ -251,13 +261,6 @@ export function SessionLogger({
           </div>
         );
       })}
-
-      <div className="pb-4">
-        <Button className="w-full gap-2" size="lg" type="button" onClick={handleComplete} disabled={isPending}>
-          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-          Complete Session
-        </Button>
-      </div>
     </div>
   );
 }

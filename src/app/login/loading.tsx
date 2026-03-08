@@ -1,9 +1,18 @@
-import { Skeleton } from "@/components/ui/skeleton";
+﻿import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LoginLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <Skeleton className="h-[420px] w-full max-w-sm rounded-2xl" />
+    <div className="flex min-h-screen items-center justify-center px-4 py-8">
+      <div className="surface-elevated w-full max-w-md rounded-[1.75rem] p-6">
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="mt-4 h-10 w-56 max-w-full" />
+        <Skeleton className="mt-3 h-4 w-full" />
+        <div className="mt-8 space-y-3">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      </div>
     </div>
   );
 }

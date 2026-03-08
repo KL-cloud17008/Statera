@@ -1,10 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
-import { ClipboardList, History } from "lucide-react";
+import { ClipboardList, History, PlayCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SectionHeader } from "@/components/ui/section-header";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
 import { CustomWorkoutBuilder } from "./CustomWorkoutBuilder";
@@ -61,33 +62,34 @@ export function WorkoutPageClient({
   activeSession: ActiveSession;
 }) {
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Workout</h1>
-          <p className="text-muted-foreground">
-            {activeSession
-              ? "Active session in progress"
-              : todayPlan
-                ? todayPlan.sessionName
-                : "Build a custom session or review your plan"}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/workout/history">
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <History className="h-4 w-4" />
-              History
-            </Button>
-          </Link>
-          <Link href="/workout/plan">
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <ClipboardList className="h-4 w-4" />
-              Full Plan
-            </Button>
-          </Link>
-        </div>
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow="Workout Logger"
+        title={activeSession ? activeSession.sessionName : "Train with focus"}
+        description={
+          activeSession
+            ? "Your session is live. Log sets, track rest, and finish with a complete record of the workout."
+            : todayPlan
+              ? todayPlan.sessionName
+              : "Start today’s plan, build a custom session, or load a saved template."
+        }
+        action={
+          <div className="flex flex-wrap gap-2">
+            <Link href="/workout/history">
+              <Button variant="outline" className="gap-2">
+                <History className="h-4 w-4" />
+                History
+              </Button>
+            </Link>
+            <Link href="/workout/plan">
+              <Button variant="secondary" className="gap-2">
+                <ClipboardList className="h-4 w-4" />
+                Full Plan
+              </Button>
+            </Link>
+          </div>
+        }
+      />
 
       {activeSession ? (
         <SessionLogger
@@ -100,19 +102,19 @@ export function WorkoutPageClient({
         />
       ) : (
         <Tabs defaultValue={todayPlan ? "today" : "custom"}>
-          <TabsList className="w-full">
-            <TabsTrigger value="today" className="flex-1">Today</TabsTrigger>
-            <TabsTrigger value="custom" className="flex-1">Custom Session</TabsTrigger>
+          <TabsList className="w-full justify-start sm:w-fit">
+            <TabsTrigger value="today">Today</TabsTrigger>
+            <TabsTrigger value="custom">Custom Session</TabsTrigger>
           </TabsList>
           <TabsContent value="today" className="mt-4">
             {todayPlan ? (
               <WorkoutDayPreview plan={todayPlan} />
             ) : (
-              <Card>
-                <CardContent className="py-10 text-center text-sm text-muted-foreground">
-                  No scheduled workout for today. Start a custom session or review your saved templates.
-                </CardContent>
-              </Card>
+              <EmptyState
+                icon={PlayCircle}
+                title="No scheduled session today"
+                description="Use the custom builder below, or open the full plan to review your programmed days."
+              />
             )}
           </TabsContent>
           <TabsContent value="custom" className="mt-4">

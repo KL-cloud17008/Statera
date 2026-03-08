@@ -1,7 +1,13 @@
+﻿import type { Metadata } from "next";
 import { getRecentSessions } from "@/actions/workout";
 import { WorkoutHistoryClient } from "@/components/workout/WorkoutHistoryClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { calculateSessionVolume, calculateSetVolume, getSessionLabel } from "@/lib/workout-stats";
+
+export const metadata: Metadata = {
+  title: "Workout History | ATHANOR",
+  description: "Review your completed sessions with a workout calendar, volume totals, and PR counts.",
+};
 
 export default async function WorkoutHistoryPage() {
   const user = await getOrCreateCurrentUser();

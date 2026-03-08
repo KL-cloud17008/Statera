@@ -1,13 +1,17 @@
+﻿import type { Metadata } from "next";
+import { NutritionPlaceholder } from "@/components/nutrition/NutritionPlaceholder";
+
+export const metadata: Metadata = {
+  title: "Nutrition Summary | ATHANOR",
+  description: "Review weekly and monthly calorie and macro averages.",
+};
+
 export default function NutritionSummaryPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Nutrition Summary</h1>
-        <p className="text-muted-foreground">Review weekly and monthly averages for calories, protein, carbs, and fat.</p>
-      </div>
-      <div className="rounded-lg border border-border bg-card p-8 text-center text-muted-foreground">
-        Coming soon
-      </div>
-    </div>
+    <NutritionPlaceholder
+      eyebrow="Nutrition"
+      title="Nutrition summary"
+      description="Review weekly and monthly averages across calories, protein, carbs, and fat."
+    />
   );
 }

@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Download, Loader2, Upload } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { exportWeightCSV } from "@/actions/weight";
+import { Button } from "@/components/ui/button";
 
 export function WeightPageActions() {
   const [exporting, setExporting] = useState(false);
@@ -37,15 +37,15 @@ export function WeightPageActions() {
   }
 
   return (
-    <div className="flex gap-2">
-      <Button variant="outline" size="sm" type="button" onClick={handleExport} disabled={exporting}>
-        {exporting ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Download className="mr-1.5 h-3.5 w-3.5" />}
-        Export
+    <div className="flex flex-wrap gap-2">
+      <Button variant="outline" type="button" onClick={handleExport} disabled={exporting}>
+        {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+        Export CSV
       </Button>
-      <Button variant="outline" size="sm" asChild>
+      <Button variant="secondary" asChild>
         <Link href="/weight/import">
-          <Upload className="mr-1.5 h-3.5 w-3.5" />
-          Import
+          <Upload className="h-4 w-4" />
+          Import CSV
         </Link>
       </Button>
     </div>

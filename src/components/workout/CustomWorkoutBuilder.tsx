@@ -1,16 +1,21 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Save, Loader2, Play, Trash2 } from "lucide-react";
+import { Loader2, Plus, Play, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { startCustomWorkoutSession } from "@/actions/workout";
+import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { makeCustomExerciseId, type MuscleGroup, type WorkoutTemplateExercise } from "@/lib/exercise-library";
-import { startCustomWorkoutSession } from "@/actions/workout";
+import {
+  makeCustomExerciseId,
+  type MuscleGroup,
+  type WorkoutTemplateExercise,
+} from "@/lib/exercise-library";
 
 const MUSCLE_GROUPS: MuscleGroup[] = [
   "Chest",
@@ -136,25 +141,25 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Custom Session Builder</CardTitle>
+          <CardTitle>Session Builder</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="custom-session-label">Session Name</Label>
-              <Input id="custom-session-label" value={label} onChange={(event) => setLabel(event.target.value)} />
+              <Label htmlFor="custom-session-label">Session name</Label>
+              <Input id="custom-session-label" value={label} onChange={(event) => setLabel(event.target.value)} className="h-12" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="library-select">Exercise Library</Label>
+              <Label htmlFor="library-select">Exercise library</Label>
               <div className="flex gap-2">
                 <select
                   id="library-select"
                   value={selectedExerciseId}
                   onChange={(event) => setSelectedExerciseId(event.target.value)}
-                  className="border-input h-9 flex-1 rounded-md border bg-background px-3 text-sm"
+                  className="h-12 flex-1 rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
                 >
                   {Array.from(groupedLibrary.entries()).map(([group, exercises]) => (
                     <optgroup key={group} label={group}>
@@ -167,41 +172,43 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
                   ))}
                 </select>
                 <Button type="button" variant="outline" onClick={() => addExercise(selectedExerciseId)}>
-                  <Plus className="mr-2 h-4 w-4" />
+                  <Plus className="h-4 w-4" />
                   Add
                 </Button>
               </div>
             </div>
           </div>
 
-          <div className="rounded-lg border border-border p-4">
-            <p className="mb-3 text-sm font-medium text-foreground">Create Custom Exercise</p>
-            <div className="grid gap-3 sm:grid-cols-[1.2fr_1fr_auto]">
-              <Input value={customName} onChange={(event) => setCustomName(event.target.value)} placeholder="Exercise name" />
-              <select value={customGroup} onChange={(event) => setCustomGroup(event.target.value as MuscleGroup)} className="border-input h-9 rounded-md border bg-background px-3 text-sm">
+          <div className="rounded-[1.25rem] border border-border bg-muted/25 p-4">
+            <p className="eyebrow">Custom Exercise</p>
+            <div className="mt-3 grid gap-3 md:grid-cols-[1.2fr_1fr_auto]">
+              <Input value={customName} onChange={(event) => setCustomName(event.target.value)} placeholder="Exercise name" className="h-12" />
+              <select value={customGroup} onChange={(event) => setCustomGroup(event.target.value as MuscleGroup)} className="h-12 rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]">
                 {MUSCLE_GROUPS.map((group) => (
                   <option key={group} value={group}>{group}</option>
                 ))}
               </select>
-              <Button type="button" variant="outline" onClick={saveCustomExercise}>Save</Button>
+              <Button type="button" variant="secondary" onClick={saveCustomExercise}>Save</Button>
             </div>
           </div>
 
           <div className="space-y-3">
             {selectedExercises.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                Add exercises from the library to build a custom session.
-              </div>
+              <EmptyState
+                icon={Plus}
+                title="Build a session"
+                description="Add exercises from the library, adjust sets and reps, then save the workout as a reusable template."
+              />
             ) : (
               selectedExercises.map((exercise, index) => (
-                <div key={`${exercise.exerciseId}-${index}`} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1.5fr_repeat(3,minmax(0,0.8fr))_auto]">
+                <div key={`${exercise.exerciseId}-${index}`} className="grid gap-3 rounded-[1.25rem] border border-border bg-muted/25 p-4 md:grid-cols-[1.4fr_repeat(3,minmax(0,0.72fr))_auto]">
                   <div>
-                    <p className="font-medium text-foreground">{exercise.name}</p>
-                    <p className="text-xs text-muted-foreground">{exercise.muscleGroup}</p>
+                    <p className="font-semibold text-foreground">{exercise.name}</p>
+                    <p className="text-sm text-muted-foreground">{exercise.muscleGroup}</p>
                   </div>
-                  <Input type="number" min="1" max="10" value={exercise.sets} onChange={(event) => setSelectedExercises((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, sets: Number.parseInt(event.target.value || "1", 10) || 1 } : item))} />
-                  <Input value={exercise.reps} onChange={(event) => setSelectedExercises((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, reps: event.target.value } : item))} />
-                  <Input type="number" min="0" max="600" value={exercise.restSeconds} onChange={(event) => setSelectedExercises((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, restSeconds: Number.parseInt(event.target.value || "0", 10) || 0 } : item))} />
+                  <Input type="number" min="1" max="10" value={exercise.sets} onChange={(event) => setSelectedExercises((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, sets: Number.parseInt(event.target.value || "1", 10) || 1 } : item))} className="h-11" />
+                  <Input value={exercise.reps} onChange={(event) => setSelectedExercises((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, reps: event.target.value } : item))} className="h-11" />
+                  <Input type="number" min="0" max="600" value={exercise.restSeconds} onChange={(event) => setSelectedExercises((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, restSeconds: Number.parseInt(event.target.value || "0", 10) || 0 } : item))} className="h-11" />
                   <Button type="button" variant="ghost" onClick={() => setSelectedExercises((current) => current.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remove ${exercise.name}`}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -212,11 +219,11 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
 
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" onClick={saveTemplate} disabled={selectedExercises.length === 0}>
-              <Save className="mr-2 h-4 w-4" />
+              <Save className="h-4 w-4" />
               Save Template
             </Button>
             <Button type="button" onClick={() => startSession("free")} disabled={hasActiveSession || isPending}>
-              {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
               Start Custom Session
             </Button>
           </div>
@@ -229,13 +236,17 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
         </CardHeader>
         <CardContent className="space-y-3">
           {settings.workoutTemplates.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Saved templates will appear here.</p>
+            <EmptyState
+              icon={Save}
+              title="No saved templates"
+              description="Save a custom workout once and it will appear here for quick reuse."
+            />
           ) : (
             settings.workoutTemplates.map((template) => (
-              <div key={template.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3">
+              <div key={template.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/25 p-4">
                 <div>
-                  <p className="font-medium text-foreground">{template.name}</p>
-                  <p className="text-xs text-muted-foreground">{template.exercises.length} exercises</p>
+                  <p className="font-semibold text-foreground">{template.name}</p>
+                  <p className="text-sm text-muted-foreground">{template.exercises.length} exercises</p>
                 </div>
                 <div className="flex gap-2">
                   <Button type="button" variant="outline" onClick={() => { setLabel(template.name); setSelectedExercises(template.exercises); }}>

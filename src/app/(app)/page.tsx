@@ -1,3 +1,4 @@
+﻿import type { Metadata } from "next";
 import { getStepsEntries, getTodaySteps } from "@/actions/steps";
 import { getWeightEntries } from "@/actions/weight";
 import { getRecentSessions } from "@/actions/workout";
@@ -5,6 +6,11 @@ import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient"
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
 import { computeWeightStats } from "@/lib/weight";
+
+export const metadata: Metadata = {
+  title: "Dashboard | ATHANOR",
+  description: "See your daily steps, current weight trend, recent training volume, and active streaks in one place.",
+};
 
 export default async function DashboardPage() {
   const user = await getOrCreateCurrentUser();

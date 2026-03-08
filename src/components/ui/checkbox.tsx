@@ -1,9 +1,8 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { Check } from "lucide-react";
-
 import { cn } from "@/lib/utils";
 
 const Checkbox = React.forwardRef<
@@ -13,15 +12,13 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "peer h-5 w-5 shrink-0 rounded border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+      "peer flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-border bg-input text-primary transition-[border-color,background-color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)] data-[state=checked]:border-primary/40 data-[state=checked]:bg-primary/16 disabled:cursor-not-allowed disabled:opacity-50",
       className
     )}
     {...props}
   >
-    <CheckboxPrimitive.Indicator
-      className={cn("flex items-center justify-center text-current")}
-    >
-      <Check className="h-4 w-4" />
+    <CheckboxPrimitive.Indicator className="text-primary">
+      <Check className="h-3.5 w-3.5" />
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 ));

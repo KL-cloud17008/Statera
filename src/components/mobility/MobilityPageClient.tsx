@@ -1,16 +1,17 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { MobilityChecklist } from "./MobilityChecklist";
 import { logMobility } from "@/actions/mobility";
+import { MobilityChecklist } from "./MobilityChecklist";
 import { getPostWorkoutChecklist, getPreWorkoutChecklist, UNDO_SITTING } from "@/lib/mobility";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { SectionHeader } from "@/components/ui/section-header";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const DAY_NAMES: Record<number, string> = {
   1: "Day 1 - Upper A",
@@ -64,46 +65,38 @@ export function MobilityPageClient({
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Mobility</h1>
-        <p className="text-muted-foreground">
-          {isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training Day" : "Rest Day - Undo-sitting routine only"}
-        </p>
-      </div>
+    <div className="page-shell">
+      <SectionHeader
+        eyebrow="Mobility"
+        title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training Day" : "Recovery and movement prep"}
+        description={isTrainingDay ? "Move through your warm-up and cooldown flows, then log each routine once it’s complete." : "Rest day mode keeps the undo-sitting flow close by so you can break up long periods at the desk."}
+      >
+        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+          {preCompleted ? <Badge variant="default">Pre done</Badge> : null}
+          {postCompleted ? <Badge variant="secondary">Post done</Badge> : null}
+          {undoCount > 0 ? <Badge variant="outline">Undo sitting {undoCount}x</Badge> : null}
+        </div>
+      </SectionHeader>
 
       <Tabs defaultValue={isTrainingDay ? "pre" : "undo"}>
-        <TabsList className="w-full">
-          {isTrainingDay ? (
-            <TabsTrigger value="pre" className="flex-1 gap-1">
-              Pre-Workout
-              {preCompleted ? <CheckCircle2 className="h-3 w-3 text-green-500" /> : null}
-            </TabsTrigger>
-          ) : null}
-          {isTrainingDay ? (
-            <TabsTrigger value="post" className="flex-1 gap-1">
-              Post-Workout
-              {postCompleted ? <CheckCircle2 className="h-3 w-3 text-green-500" /> : null}
-            </TabsTrigger>
-          ) : null}
-          <TabsTrigger value="undo" className="flex-1 gap-1">
-            Undo Sitting
-            {undoCount > 0 ? <Badge variant="secondary" className="ml-1 h-4 px-1 text-[10px]">{undoCount}x</Badge> : null}
-          </TabsTrigger>
+        <TabsList className="w-full justify-start sm:w-fit">
+          {isTrainingDay ? <TabsTrigger value="pre">Pre-Workout</TabsTrigger> : null}
+          {isTrainingDay ? <TabsTrigger value="post">Post-Workout</TabsTrigger> : null}
+          <TabsTrigger value="undo">Undo Sitting</TabsTrigger>
         </TabsList>
 
         {isTrainingDay ? (
-          <TabsContent value="pre" className="mt-4 space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Version:</span>
-              <Button type="button" variant={version === "A" ? "default" : "outline"} size="sm" className="h-7 text-xs" onClick={() => setVersion("A")}>A - Normal</Button>
-              <Button type="button" variant={version === "B" ? "default" : "outline"} size="sm" className="h-7 text-xs" onClick={() => setVersion("B")}>B - Sore/Stiff</Button>
+          <TabsContent value="pre" className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-border bg-muted/30 p-4">
+              <span className="text-sm text-muted-foreground">Version</span>
+              <Button type="button" variant={version === "A" ? "default" : "outline"} size="sm" onClick={() => setVersion("A")}>A - Normal</Button>
+              <Button type="button" variant={version === "B" ? "default" : "outline"} size="sm" onClick={() => setVersion("B")}>B - Sore/Stiff</Button>
             </div>
             {preCompleted ? (
               <Card>
-                <CardContent className="space-y-2 py-8 text-center">
-                  <CheckCircle2 className="mx-auto h-8 w-8 text-green-500" />
-                  <p className="font-semibold text-foreground">Pre-workout completed today</p>
+                <CardContent className="space-y-3 py-10 text-center">
+                  <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
+                  <p className="text-lg font-semibold text-foreground">Pre-workout completed today</p>
                 </CardContent>
               </Card>
             ) : (
@@ -119,12 +112,12 @@ export function MobilityPageClient({
         ) : null}
 
         {isTrainingDay ? (
-          <TabsContent value="post" className="mt-4 space-y-4">
+          <TabsContent value="post" className="space-y-4">
             {postCompleted ? (
               <Card>
-                <CardContent className="space-y-2 py-8 text-center">
-                  <CheckCircle2 className="mx-auto h-8 w-8 text-green-500" />
-                  <p className="font-semibold text-foreground">Post-workout completed today</p>
+                <CardContent className="space-y-3 py-10 text-center">
+                  <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
+                  <p className="text-lg font-semibold text-foreground">Post-workout completed today</p>
                 </CardContent>
               </Card>
             ) : (
@@ -139,10 +132,10 @@ export function MobilityPageClient({
           </TabsContent>
         ) : null}
 
-        <TabsContent value="undo" className="mt-4 space-y-4">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Aim for 2-3 sessions per day after long blocks of sitting.</p>
-            {undoCount > 0 ? <Badge variant="secondary" className="text-xs">{undoCount} done today</Badge> : null}
+        <TabsContent value="undo" className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/30 p-4">
+            <p className="text-sm text-muted-foreground">Aim for 2-3 short sessions each day after long blocks of sitting.</p>
+            {undoCount > 0 ? <Badge variant="outline">{undoCount} completed</Badge> : null}
           </div>
           <MobilityChecklist blocks={undoBlocks} title="Undo Sitting (3 min)" />
           <Button className="w-full gap-2" type="button" onClick={() => handleLogCompletion("UNDO_SITTING")} disabled={isPending}>

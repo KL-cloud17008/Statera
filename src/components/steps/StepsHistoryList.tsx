@@ -1,13 +1,15 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { deleteStepsEntry } from "@/actions/steps";
 import { StepsEntryForm } from "@/components/steps/StepsEntryForm";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CalendarRange } from "lucide-react";
 
 type StepsEntry = {
   id: string;
@@ -41,67 +43,70 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
   }
 
   if (entries.length === 0) {
-    return null;
+    return (
+      <EmptyState
+        icon={CalendarRange}
+        title="No logged step entries"
+        description="Start with today’s total or backfill past days to build a movement history."
+      />
+    );
   }
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-foreground">Recent Entries</CardTitle>
+          <CardTitle>Recent entries</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {entries.map((entry) => {
-              const label = new Date(`${entry.date}T12:00:00`).toLocaleDateString("en-US", {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              });
+        <CardContent className="space-y-3">
+          {entries.map((entry) => {
+            const label = new Date(`${entry.date}T12:00:00`).toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            });
 
-              return editingId === entry.id ? (
-                <StepsEntryForm
-                  key={entry.id}
-                  editEntry={entry}
-                  onDone={() => setEditingId(null)}
-                />
-              ) : (
-                <div
-                  key={entry.id}
-                  className="flex items-center justify-between rounded-lg border border-border px-4 py-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {(entry.steps ?? 0).toLocaleString()} steps
-                    </p>
-                    <p className="text-xs text-muted-foreground">{label}</p>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setEditingId(entry.id)}
-                      aria-label={`Edit ${label} step entry`}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => setDeleteId(entry.id)}
-                      aria-label={`Delete ${label} step entry`}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+            return editingId === entry.id ? (
+              <StepsEntryForm
+                key={entry.id}
+                editEntry={entry}
+                onDone={() => setEditingId(null)}
+              />
+            ) : (
+              <div
+                key={entry.id}
+                className="group flex items-center justify-between rounded-[1.25rem] border border-border bg-muted/35 px-4 py-4 transition-colors hover:bg-accent/70"
+              >
+                <div>
+                  <p className="text-lg font-semibold text-foreground data-number">
+                    {(entry.steps ?? 0).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{label}</p>
                 </div>
-              );
-            })}
-          </div>
+                <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon-sm"
+                    onClick={() => setEditingId(entry.id)}
+                    aria-label={`Edit ${label} step entry`}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => setDeleteId(entry.id)}
+                    aria-label={`Delete ${label} step entry`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
 
@@ -118,8 +123,8 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
               Cancel
             </Button>
             <Button type="button" variant="destructive" onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Delete
+              {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              Delete entry
             </Button>
           </DialogFooter>
         </DialogContent>
