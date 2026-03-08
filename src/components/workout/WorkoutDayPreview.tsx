@@ -1,13 +1,11 @@
-﻿"use client";
+"use client";
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Dumbbell, Loader2, Play } from "lucide-react";
+import { Loader2, Play } from "lucide-react";
 import { toast } from "sonner";
 import { startWorkoutSession } from "@/actions/workout";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
 type Exercise = {
   id: string;
@@ -60,78 +58,92 @@ export function WorkoutDayPreview({
   }
 
   return (
-    <div className="space-y-4">
+    <section className="editorial-surface space-y-8">
       {!hideHeader ? (
-        <Card className="overflow-hidden">
-          <CardContent className="space-y-6">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-                    <Dumbbell className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="eyebrow">Today&apos;s Plan</p>
-                    <h2>{plan.sessionName}</h2>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-                  <span className="rounded-full bg-muted/70 px-3 py-1.5">
-                    {workingExercises.length} exercises
-                  </span>
-                  <span className="rounded-full bg-muted/70 px-3 py-1.5">
-                    {totalWorkingSets} working sets
-                  </span>
-                </div>
-              </div>
-              <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="gap-2">
-                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                Start Session
-              </Button>
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div>
+            <p className="eyebrow">Today&apos;s plan</p>
+            <h2 className="mt-3">{plan.sessionName}</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              The programmed day sits as one sequence instead of breaking into separate cards. You
+              can read the session at a glance, then start without another decision layer.
+            </p>
+          </div>
+
+          <div className="space-y-4 lg:text-right">
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>{workingExercises.length} working exercises</p>
+              <p>{totalWorkingSets} working sets</p>
             </div>
-          </CardContent>
-        </Card>
+            <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="gap-2">
+              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              Start Session
+            </Button>
+          </div>
+        </div>
       ) : null}
 
-      <div className="space-y-3">
+      <div className="space-y-0 border-t border-border/70">
         {plan.exercises.map((exercise, index) => (
-          <Card
+          <div
             key={exercise.id}
-            className={
-              exercise.exerciseType === "WARMUP"
-                ? "bg-muted/30"
-                : exercise.exerciseType === "FINISHER"
-                  ? "bg-warning/8"
-                  : ""
-            }
+            className="grid gap-4 border-b border-border/60 py-5 last:border-b-0 md:grid-cols-[3rem_minmax(0,1fr)_auto] md:items-start"
           >
-            <CardContent className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-muted text-sm font-semibold text-muted-foreground data-number">
-                {exercise.supersetGroup ?? index + 1}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-foreground">
-                  {exercise.exerciseName}
+            <div className="pt-1 text-sm text-muted-foreground data-number">
+              {exercise.supersetGroup ?? index + 1}
+            </div>
+
+            <div className="min-w-0">
+              <p className="eyebrow">{getExerciseLabel(exercise, index)}</p>
+              <h3 className="mt-2">{exercise.exerciseName}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {getExerciseMeta(exercise)}
+              </p>
+              {exercise.cues ? (
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  {exercise.cues}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {exercise.reps}
-                  {exercise.tempo ? ` • Tempo ${exercise.tempo}` : ""}
-                  {exercise.targetRPE ? ` • RPE ${exercise.targetRPE}` : ""}
-                  {exercise.restSeconds ? ` • Rest ${exercise.restSeconds}s` : ""}
-                </p>
-              </div>
-              {exercise.exerciseType === "WARMUP" ? (
-                <Badge variant="secondary">Warm-up</Badge>
               ) : null}
-              {exercise.exerciseType === "FINISHER" ? (
-                <Badge variant="outline" className="border-warning/40 text-warning">
-                  Finisher
-                </Badge>
+            </div>
+
+            <div className="pt-1 text-sm text-muted-foreground md:text-right">
+              <p>{exercise.exerciseType === "FINISHER" ? "Single effort" : `${exercise.sets} sets`}</p>
+              {exercise.restSeconds != null && exercise.restSeconds > 0 ? (
+                <p className="mt-1">Rest {exercise.restSeconds}s</p>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
-    </div>
+    </section>
   );
+}
+
+function getExerciseLabel(exercise: Exercise, index: number) {
+  if (exercise.exerciseType === "WARMUP") {
+    return "Warm-up";
+  }
+  if (exercise.exerciseType === "FINISHER") {
+    return "Finisher";
+  }
+  if (exercise.supersetGroup) {
+    return `Superset ${exercise.supersetGroup}`;
+  }
+  return `Exercise ${index + 1}`;
+}
+
+function getExerciseMeta(exercise: Exercise) {
+  const parts = [exercise.reps];
+
+  if (exercise.tempo) {
+    parts.push(`Tempo ${exercise.tempo}`);
+  }
+  if (exercise.targetRPE) {
+    parts.push(`RPE ${exercise.targetRPE}`);
+  }
+  if (exercise.restSeconds != null && exercise.restSeconds > 0) {
+    parts.push(`Rest ${exercise.restSeconds}s`);
+  }
+
+  return parts.join(" • ");
 }

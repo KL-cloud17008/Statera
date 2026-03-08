@@ -1,13 +1,12 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SetInput } from "./SetInput";
 import { formatWeight } from "@/lib/units";
+import { cn } from "@/lib/utils";
 
 type PlanExercise = {
   id: string;
@@ -61,112 +60,128 @@ export function ExerciseCard({
   const [showCues, setShowCues] = useState(false);
   const { settings } = useAppSettings();
   const isFinisher = exercise.exerciseType === "FINISHER";
-  const isWarmup = exercise.exerciseType === "WARMUP";
   const setCount = isFinisher ? 1 : exercise.sets;
   const exercisePrevSets = previousSets.filter(
     (set) => set.exerciseName === exercise.exerciseName
   );
 
   return (
-    <Card
-      className={
-        exerciseComplete
-          ? "border-primary/35 bg-primary/8"
-          : isWarmup
-            ? "bg-muted/28"
-            : isFinisher
-              ? "border-warning/30 bg-warning/8"
-              : ""
-      }
-    >
-      <CardContent className="space-y-4">
-        <div className="flex items-start gap-3">
-          <Checkbox
-            checked={exerciseComplete}
-            onCheckedChange={(checked) => onExerciseCompleteChange(!!checked)}
-            className="mt-1"
-          />
-          <div className="min-w-0 flex-1 space-y-3">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  {exercise.supersetGroup ? (
-                    <Badge variant="outline">Superset {exercise.supersetGroup}</Badge>
-                  ) : null}
-                  {isWarmup ? <Badge variant="secondary">Warm-up</Badge> : null}
-                  {isFinisher ? (
-                    <Badge variant="outline" className="border-warning/40 text-warning">
-                      Finisher
-                    </Badge>
-                  ) : null}
-                </div>
-                <h3 className={`mt-2 text-lg font-semibold ${exerciseComplete ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                  {exercise.exerciseName}
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {exercise.reps}
-                  {exercise.tempo ? ` • Tempo ${exercise.tempo}` : ""}
-                  {exercise.restSeconds != null && exercise.restSeconds > 0 ? ` • Rest ${exercise.restSeconds}s` : ""}
-                  {exercise.targetRPE ? ` • RPE ${exercise.targetRPE}` : ""}
-                </p>
-              </div>
+    <section className={cn("space-y-6", exerciseComplete && "opacity-65")}>
+      <div className="flex items-start gap-4">
+        <Checkbox
+          checked={exerciseComplete}
+          onCheckedChange={(checked) => onExerciseCompleteChange(!!checked)}
+          className="mt-1"
+        />
+
+        <div className="min-w-0 flex-1 space-y-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-2">
+              <p className="eyebrow">{getExerciseLabel(exercise)}</p>
+              <h3
+                className={cn(
+                  "tracking-[-0.05em]",
+                  exerciseComplete ? "text-muted-foreground line-through" : "text-foreground"
+                )}
+              >
+                {exercise.exerciseName}
+              </h3>
+              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                {getExerciseMeta(exercise)}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <span className="data-number text-foreground/80">
+                {setCount} {setCount === 1 ? "set" : "sets"}
+              </span>
               {exercise.cues ? (
                 <button
                   type="button"
                   onClick={() => setShowCues((current) => !current)}
-                  className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-link inline-flex items-center gap-1"
                 >
                   {showCues ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   {showCues ? "Hide cues" : "Show cues"}
                 </button>
               ) : null}
             </div>
+          </div>
 
-            {showCues && exercise.cues ? (
-              <p className="rounded-[1rem] border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-                {exercise.cues}
-              </p>
-            ) : null}
+          {showCues && exercise.cues ? (
+            <p className="max-w-2xl border-l border-border/70 pl-4 text-sm leading-relaxed text-muted-foreground">
+              {exercise.cues}
+            </p>
+          ) : null}
 
-            {exercisePrevSets.length > 0 ? (
-              <div className="rounded-[1rem] border border-border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Last session</span>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {exercisePrevSets.map((set) => (
-                    <span key={set.setNumber} className="rounded-full bg-background/70 px-3 py-1">
-                      S{set.setNumber}: {set.weightUsed != null ? formatWeight(set.weightUsed, settings.weightUnit) : "--"} × {set.repsCompleted ?? "--"}
-                    </span>
-                  ))}
-                </div>
+          {exercisePrevSets.length > 0 ? (
+            <div className="space-y-3 border-t border-border/70 pt-4">
+              <p className="eyebrow">Last session</p>
+              <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+                {exercisePrevSets.map((set) => (
+                  <span key={set.setNumber}>
+                    S{set.setNumber}: {set.weightUsed != null ? formatWeight(set.weightUsed, settings.weightUnit) : "--"} × {set.repsCompleted ?? "--"}
+                  </span>
+                ))}
               </div>
-            ) : null}
-
-            <div className="space-y-3">
-              {Array.from({ length: setCount }, (_, index) => {
-                const setNum = index + 1;
-                const logged = loggedSets.find((set) => set.setNumber === setNum);
-                const previous = exercisePrevSets.find((set) => set.setNumber === setNum);
-
-                return (
-                  <SetInput
-                    key={setNum}
-                    sessionId={sessionId}
-                    planExerciseId={exercise.id}
-                    exerciseName={exercise.exerciseName}
-                    setNumber={setNum}
-                    isFinisher={isFinisher}
-                    logged={logged ?? null}
-                    previous={previous ?? null}
-                    onSaved={onSetLogged}
-                    completed={completedSetNumbers.has(setNum)}
-                    onCompletedChange={(checked) => onSetCompleteChange(exercise.exerciseName, setNum, checked)}
-                  />
-                );
-              })}
             </div>
+          ) : null}
+
+          <div className="space-y-0 border-t border-border/70">
+            {Array.from({ length: setCount }, (_, index) => {
+              const setNum = index + 1;
+              const logged = loggedSets.find((set) => set.setNumber === setNum);
+              const previous = exercisePrevSets.find((set) => set.setNumber === setNum);
+
+              return (
+                <SetInput
+                  key={setNum}
+                  sessionId={sessionId}
+                  planExerciseId={exercise.id}
+                  exerciseName={exercise.exerciseName}
+                  setNumber={setNum}
+                  isFinisher={isFinisher}
+                  logged={logged ?? null}
+                  previous={previous ?? null}
+                  onSaved={onSetLogged}
+                  completed={completedSetNumbers.has(setNum)}
+                  onCompletedChange={(checked) => onSetCompleteChange(exercise.exerciseName, setNum, checked)}
+                  className={index === 0 ? "border-t-0 pt-0" : undefined}
+                />
+              );
+            })}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
+}
+
+function getExerciseLabel(exercise: PlanExercise) {
+  if (exercise.exerciseType === "WARMUP") {
+    return "Warm-up";
+  }
+  if (exercise.exerciseType === "FINISHER") {
+    return "Finisher";
+  }
+  if (exercise.supersetGroup) {
+    return `Superset ${exercise.supersetGroup}`;
+  }
+  return "Working sets";
+}
+
+function getExerciseMeta(exercise: PlanExercise) {
+  const parts = [exercise.reps];
+
+  if (exercise.tempo) {
+    parts.push(`Tempo ${exercise.tempo}`);
+  }
+  if (exercise.restSeconds != null && exercise.restSeconds > 0) {
+    parts.push(`Rest ${exercise.restSeconds}s`);
+  }
+  if (exercise.targetRPE) {
+    parts.push(`RPE ${exercise.targetRPE}`);
+  }
+
+  return parts.join(" • ");
 }

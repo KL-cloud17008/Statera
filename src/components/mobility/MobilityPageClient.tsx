@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 
+import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
@@ -7,11 +8,9 @@ import { toast } from "sonner";
 import { logMobility } from "@/actions/mobility";
 import { MobilityChecklist } from "./MobilityChecklist";
 import { getPostWorkoutChecklist, getPreWorkoutChecklist, UNDO_SITTING } from "@/lib/mobility";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 const DAY_NAMES: Record<number, string> = {
   1: "Day 1 - Upper A",
@@ -32,6 +31,7 @@ export function MobilityPageClient({
 }) {
   const router = useRouter();
   const [version, setVersion] = useState<"A" | "B">("A");
+  const [pendingType, setPendingType] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const preBlocks = isTrainingDay ? getPreWorkoutChecklist(dayOfWeek, version) : [];
@@ -43,6 +43,7 @@ export function MobilityPageClient({
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
 
   function handleLogCompletion(type: string) {
+    setPendingType(type);
     startTransition(async () => {
       const formData = new FormData();
       formData.set("type", type);
@@ -50,6 +51,7 @@ export function MobilityPageClient({
       const result = await logMobility(formData);
       if (result.error) {
         toast.error(result.error);
+        setPendingType(null);
         return;
       }
 
@@ -60,6 +62,7 @@ export function MobilityPageClient({
             ? "Post-workout logged"
             : "Undo-sitting logged"
       );
+      setPendingType(null);
       router.refresh();
     });
   }
@@ -69,81 +72,176 @@ export function MobilityPageClient({
       <SectionHeader
         eyebrow="Mobility"
         title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training Day" : "Recovery and movement prep"}
-        description={isTrainingDay ? "Move through your warm-up and cooldown flows, then log each routine once it’s complete." : "Rest day mode keeps the undo-sitting flow close by so you can break up long periods at the desk."}
+        description={
+          isTrainingDay
+            ? "Warm-up, cooldown, and desk-reset flows now sit together as one composed page instead of three separate tab states."
+            : "Rest day mode keeps the undo-sitting flow close and removes everything else."
+        }
       >
-        <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-          {preCompleted ? <Badge variant="default">Pre done</Badge> : null}
-          {postCompleted ? <Badge variant="secondary">Post done</Badge> : null}
-          {undoCount > 0 ? <Badge variant="outline">Undo sitting {undoCount}x</Badge> : null}
+        <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+          <span>Pre {preCompleted ? "logged" : "open"}</span>
+          <span>Post {postCompleted ? "logged" : "open"}</span>
+          <span>Undo sitting {undoCount}x</span>
         </div>
       </SectionHeader>
 
-      <Tabs defaultValue={isTrainingDay ? "pre" : "undo"}>
-        <TabsList className="w-full justify-start sm:w-fit">
-          {isTrainingDay ? <TabsTrigger value="pre">Pre-Workout</TabsTrigger> : null}
-          {isTrainingDay ? <TabsTrigger value="post">Post-Workout</TabsTrigger> : null}
-          <TabsTrigger value="undo">Undo Sitting</TabsTrigger>
-        </TabsList>
+      {isTrainingDay ? (
+        <div className="grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
+          <RoutineSection
+            title="Pre-workout reset"
+            summary="Choose the version that matches how you feel, run the sequence, and log it once you're done."
+            completed={preCompleted}
+            isPending={isPending}
+            isCurrentAction={pendingType === "PRE_WORKOUT"}
+            actionLabel="Mark pre-workout complete"
+            onLog={() => handleLogCompletion("PRE_WORKOUT")}
+            headerAside={
+              <div className="flex items-center gap-4 text-sm">
+                <span className="text-muted-foreground">Version</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setVersion("A")}
+                    className={cn(
+                      "border-b pb-1 transition-colors",
+                      version === "A" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground"
+                    )}
+                  >
+                    A
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setVersion("B")}
+                    className={cn(
+                      "border-b pb-1 transition-colors",
+                      version === "B" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground"
+                    )}
+                  >
+                    B
+                  </button>
+                </div>
+              </div>
+            }
+          >
+            <MobilityChecklist blocks={preBlocks} title="Pre-workout sequence" />
+          </RoutineSection>
 
-        {isTrainingDay ? (
-          <TabsContent value="pre" className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-border bg-muted/30 p-4">
-              <span className="text-sm text-muted-foreground">Version</span>
-              <Button type="button" variant={version === "A" ? "default" : "outline"} size="sm" onClick={() => setVersion("A")}>A - Normal</Button>
-              <Button type="button" variant={version === "B" ? "default" : "outline"} size="sm" onClick={() => setVersion("B")}>B - Sore/Stiff</Button>
-            </div>
-            {preCompleted ? (
-              <Card>
-                <CardContent className="space-y-3 py-10 text-center">
-                  <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
-                  <p className="text-lg font-semibold text-foreground">Pre-workout completed today</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                <MobilityChecklist blocks={preBlocks} title="Pre-Workout Mobility" />
-                <Button className="w-full gap-2" type="button" onClick={() => handleLogCompletion("PRE_WORKOUT")} disabled={isPending}>
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                  Mark Pre-Workout Complete
-                </Button>
-              </>
-            )}
-          </TabsContent>
-        ) : null}
+          <div className="space-y-10">
+            <RoutineSection
+              title="Post-workout downshift"
+              summary="Run the cooldown sequence after lifting so the end of the session gets as much structure as the start."
+              completed={postCompleted}
+              isPending={isPending}
+              isCurrentAction={pendingType === "POST_WORKOUT"}
+              actionLabel="Mark post-workout complete"
+              onLog={() => handleLogCompletion("POST_WORKOUT")}
+              quiet
+            >
+              <MobilityChecklist blocks={postBlocks} title="Post-workout cooldown" />
+            </RoutineSection>
 
-        {isTrainingDay ? (
-          <TabsContent value="post" className="space-y-4">
-            {postCompleted ? (
-              <Card>
-                <CardContent className="space-y-3 py-10 text-center">
-                  <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
-                  <p className="text-lg font-semibold text-foreground">Post-workout completed today</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <>
-                <MobilityChecklist blocks={postBlocks} title="Post-Workout Cooldown" />
-                <Button className="w-full gap-2" type="button" onClick={() => handleLogCompletion("POST_WORKOUT")} disabled={isPending}>
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                  Mark Post-Workout Complete
-                </Button>
-              </>
-            )}
-          </TabsContent>
-        ) : null}
-
-        <TabsContent value="undo" className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/30 p-4">
-            <p className="text-sm text-muted-foreground">Aim for 2-3 short sessions each day after long blocks of sitting.</p>
-            {undoCount > 0 ? <Badge variant="outline">{undoCount} completed</Badge> : null}
+            <RoutineSection
+              title="Undo sitting"
+              summary="Use this as the short reset that breaks up desk-heavy blocks during the day."
+              completed={false}
+              isPending={isPending}
+              isCurrentAction={pendingType === "UNDO_SITTING"}
+              actionLabel="Log undo-sitting session"
+              onLog={() => handleLogCompletion("UNDO_SITTING")}
+              meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
+              quiet
+            >
+              <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
+            </RoutineSection>
           </div>
-          <MobilityChecklist blocks={undoBlocks} title="Undo Sitting (3 min)" />
-          <Button className="w-full gap-2" type="button" onClick={() => handleLogCompletion("UNDO_SITTING")} disabled={isPending}>
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-            Log Undo-Sitting Session
-          </Button>
-        </TabsContent>
-      </Tabs>
+        </div>
+      ) : (
+        <div className="grid gap-10 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)]">
+          <section className="editorial-surface-quiet space-y-5">
+            <p className="eyebrow">Rest day</p>
+            <p className="text-3xl font-semibold tracking-[-0.06em]">
+              Keep only the reset that matters.
+            </p>
+            <p className="subtle-copy">
+              On non-training days the page drops the extra structure and surfaces a single desk
+              reset flow instead.
+            </p>
+          </section>
+
+          <RoutineSection
+            title="Undo sitting"
+            summary="Run the short reset any time you have been parked at a desk for too long."
+            completed={false}
+            isPending={isPending}
+            isCurrentAction={pendingType === "UNDO_SITTING"}
+            actionLabel="Log undo-sitting session"
+            onLog={() => handleLogCompletion("UNDO_SITTING")}
+            meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
+          >
+            <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
+          </RoutineSection>
+        </div>
+      )}
     </div>
+  );
+}
+
+function RoutineSection({
+  title,
+  summary,
+  completed,
+  isPending,
+  isCurrentAction,
+  actionLabel,
+  onLog,
+  children,
+  headerAside,
+  meta,
+  quiet = false,
+}: {
+  title: string;
+  summary: string;
+  completed: boolean;
+  isPending: boolean;
+  isCurrentAction: boolean;
+  actionLabel: string;
+  onLog: () => void;
+  children: ReactNode;
+  headerAside?: ReactNode;
+  meta?: string;
+  quiet?: boolean;
+}) {
+  return (
+    <section className={cn(quiet ? "editorial-surface-quiet" : "editorial-surface", "space-y-8")}>
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-3">
+          <p className="eyebrow">{completed ? "Completed today" : "Ready"}</p>
+          <h2>{title}</h2>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
+          {meta ? <p className="text-sm text-muted-foreground">{meta}</p> : null}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4">
+          {headerAside}
+          {completed ? (
+            <span className="inline-flex items-center gap-2 text-sm text-foreground/82">
+              <CheckCircle2 className="h-4 w-4" />
+              Logged
+            </span>
+          ) : (
+            <Button type="button" onClick={onLog} disabled={isPending} className="gap-2">
+              {isPending && isCurrentAction ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4" />
+              )}
+              {actionLabel}
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {children}
+    </section>
   );
 }

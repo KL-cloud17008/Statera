@@ -1,34 +1,29 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl border text-sm font-medium transition-[transform,background-color,border-color,color,box-shadow] duration-150 ease-out active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[1rem] border text-sm font-medium tracking-[-0.01em] transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground shadow-[0_14px_32px_rgba(68,227,157,0.22)] hover:brightness-105",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground shadow-[0_14px_32px_rgba(255,111,134,0.22)] hover:brightness-105",
-        outline:
-          "surface-card text-foreground hover:border-primary/35 hover:bg-accent/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:brightness-105",
-        ghost:
-          "border-transparent bg-transparent text-muted-foreground hover:bg-accent/80 hover:text-foreground",
-        link: "border-transparent bg-transparent px-0 text-primary hover:text-primary/80",
+        default: "border-white/10 bg-foreground text-background shadow-none hover:bg-foreground/92",
+        destructive: "border-transparent bg-destructive text-destructive-foreground hover:brightness-105",
+        outline: "border-white/10 bg-white/[0.03] text-foreground hover:bg-white/[0.05]",
+        secondary: "border-white/8 bg-white/[0.045] text-foreground hover:bg-white/[0.07]",
+        ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-white/[0.04] hover:text-foreground",
+        link: "border-transparent bg-transparent px-0 text-foreground/76 hover:text-foreground",
       },
       size: {
         default: "h-11 px-4",
-        xs: "h-8 rounded-xl px-3 text-xs",
-        sm: "h-9 rounded-xl px-3.5 text-sm",
-        lg: "h-12 rounded-2xl px-5 text-sm",
-        icon: "size-11 rounded-2xl",
-        "icon-xs": "size-8 rounded-xl",
-        "icon-sm": "size-9 rounded-xl",
-        "icon-lg": "size-12 rounded-2xl",
+        xs: "h-8 rounded-[0.85rem] px-3 text-xs",
+        sm: "h-9 rounded-[0.9rem] px-3.5 text-sm",
+        lg: "h-12 rounded-[1.1rem] px-5 text-sm",
+        icon: "size-11 rounded-[1rem]",
+        "icon-xs": "size-8 rounded-[0.85rem]",
+        "icon-sm": "size-9 rounded-[0.9rem]",
+        "icon-lg": "size-12 rounded-[1.1rem]",
       },
     },
     defaultVariants: {

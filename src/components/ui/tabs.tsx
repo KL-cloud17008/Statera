@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 import { Tabs as TabsPrimitive } from "radix-ui";
@@ -27,10 +27,7 @@ function TabsList({
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn(
-        "inline-flex w-fit items-center gap-1 rounded-full border border-border bg-muted/70 p-1",
-        className
-      )}
+      className={cn("inline-flex w-fit items-center gap-6 border-b border-border/70 pb-2", className)}
       {...props}
     />
   );
@@ -44,7 +41,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex min-h-10 flex-1 items-center justify-center rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-[background-color,color,box-shadow] duration-150 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-[0_8px_20px_rgba(2,8,23,0.18)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
+        "inline-flex min-h-0 flex-1 items-center justify-center border-b border-transparent px-0 pb-2 text-sm font-medium tracking-[-0.01em] text-muted-foreground transition-[border-color,color] duration-150 data-[state=active]:border-foreground/72 data-[state=active]:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
         className
       )}
       {...props}

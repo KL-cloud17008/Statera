@@ -1,13 +1,14 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
-import { Check, Copy, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logSet } from "@/actions/workout";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { convertWeight, toPounds } from "@/lib/units";
+import { cn } from "@/lib/utils";
 
 type SetData = {
   setNumber: number;
@@ -33,6 +34,7 @@ export function SetInput({
   onSaved,
   completed,
   onCompletedChange,
+  className,
 }: {
   sessionId: string;
   planExerciseId: string | null;
@@ -44,6 +46,7 @@ export function SetInput({
   onSaved: (setKey: string) => void;
   completed: boolean;
   onCompletedChange: (checked: boolean) => void;
+  className?: string;
 }) {
   const { settings } = useAppSettings();
   const [weight, setWeight] = useState(
@@ -107,35 +110,38 @@ export function SetInput({
   }
 
   return (
-    <div className={`rounded-[1rem] border border-border bg-background/50 p-3 ${completed ? "opacity-70" : ""}`}>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} />
+    <div className={cn("grid gap-4 border-t border-border/70 py-4", completed && "opacity-60", className)}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />
           <div>
-            <p className="text-sm font-semibold text-foreground">Set {setNumber}</p>
+            <p className="text-sm font-semibold tracking-[-0.02em] text-foreground">Set {setNumber}</p>
             {previous ? (
-              <p className="text-xs text-muted-foreground">
-                Last: {previous.weightUsed != null ? convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1) : "--"} × {previous.repsCompleted ?? "--"}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Last {previous.weightUsed != null ? convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1) : "--"} × {previous.repsCompleted ?? "--"}
               </p>
             ) : null}
           </div>
         </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
+
+        <div className="flex items-center gap-3 text-xs uppercase tracking-[0.12em] text-muted-foreground">
           {previous ? (
-            <button
-              type="button"
-              onClick={copyPrevious}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted/40 transition-colors hover:bg-accent"
-              aria-label={`Copy previous ${exerciseName} set ${setNumber}`}
-            >
-              <Copy className="h-4 w-4" />
+            <button type="button" onClick={copyPrevious} className="text-link">
+              Copy last
             </button>
           ) : null}
-          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <Check className="h-4 w-4 text-primary" /> : null}
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : saved ? (
+            <span className="inline-flex items-center gap-1 text-foreground/82">
+              <Check className="h-3.5 w-3.5" />
+              Saved
+            </span>
+          ) : null}
         </div>
       </div>
 
-      <div className={`grid gap-3 ${isFinisher ? "md:grid-cols-[1fr_0.35fr]" : "md:grid-cols-[1fr_1fr_0.5fr]"}`}>
+      <div className={`grid gap-3 ${isFinisher ? "md:grid-cols-[1fr_1.2fr_0.55fr]" : "md:grid-cols-[1fr_1fr_0.5fr]"}`}>
         <Input
           aria-label={`${exerciseName} set ${setNumber} weight`}
           type="number"
@@ -194,6 +200,7 @@ export function SetInput({
           className="h-11"
         />
       </div>
+
       {!isFinisher ? (
         <Input
           aria-label={`${exerciseName} set ${setNumber} notes`}
@@ -204,7 +211,7 @@ export function SetInput({
             setSaved(false);
           }}
           onBlur={handleSave}
-          className="mt-3 h-11"
+          className="h-11"
           placeholder="Optional notes"
         />
       ) : null}

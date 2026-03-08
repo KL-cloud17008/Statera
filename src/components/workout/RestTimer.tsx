@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Minus, Plus, Timer, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Timer } from "lucide-react";
 
 export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) {
   const [isRunning, setIsRunning] = useState(false);
@@ -70,27 +69,41 @@ export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) 
 
   if (!isRunning) {
     return (
-      <div className="flex items-center gap-1">
-        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => adjustDuration(-15)} disabled={duration <= 15} aria-label="Reduce rest timer by 15 seconds">
-          <Minus className="h-3 w-3" />
-        </Button>
-        <Button type="button" variant="ghost" size="sm" onClick={start} className="h-8 gap-1 text-xs text-muted-foreground">
-          <Timer className="h-3 w-3" />
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <span className="eyebrow">Rest</span>
+        <button
+          type="button"
+          onClick={() => adjustDuration(-15)}
+          disabled={duration <= 15}
+          className="text-link disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Reduce rest timer by 15 seconds"
+        >
+          -15
+        </button>
+        <button type="button" onClick={start} className="inline-flex items-center gap-2 text-link">
+          <Timer className="h-3.5 w-3.5" />
           {duration}s
-        </Button>
-        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => adjustDuration(15)} aria-label="Increase rest timer by 15 seconds">
-          <Plus className="h-3 w-3" />
-        </Button>
+        </button>
+        <button
+          type="button"
+          onClick={() => adjustDuration(15)}
+          className="text-link"
+          aria-label="Increase rest timer by 15 seconds"
+        >
+          +15
+        </button>
       </div>
     );
   }
 
   return (
-    <div className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-mono ${timeLeft === 0 ? "animate-pulse bg-green-500/20 text-green-400" : "bg-primary/20 text-primary"}`}>
-      <Timer className="h-3.5 w-3.5" />
-      <span>{timeLeft === 0 ? "GO!" : display}</span>
-      <button type="button" onClick={stop} className="ml-1 rounded-full p-0.5 hover:bg-background/50" aria-label="Stop rest timer">
-        <X className="h-3 w-3" />
+    <div className="flex items-center gap-3 text-sm">
+      <span className="eyebrow">Rest</span>
+      <span className="text-lg font-semibold tracking-[-0.04em] text-foreground data-number">
+        {timeLeft === 0 ? "GO" : display}
+      </span>
+      <button type="button" onClick={stop} className="text-link" aria-label="Stop rest timer">
+        {timeLeft === 0 ? "Reset" : "Stop"}
       </button>
     </div>
   );

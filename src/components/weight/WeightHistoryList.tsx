@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { CalendarClock, Pencil, Trash2 } from "lucide-react";
@@ -9,14 +9,7 @@ import { WeightEntryForm } from "@/components/weight/WeightEntryForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { SerializedWeightEntry } from "@/lib/weight";
 import { formatWeight } from "@/lib/units";
@@ -73,13 +66,7 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
     <>
       <Card>
         <CardHeader>
-          <div>
-            <p className="eyebrow">Archive</p>
-            <CardTitle className="mt-2">Entry history</CardTitle>
-            <p className="mt-3 supporting-copy">
-              Review the timeline, make corrections, or remove noisy data points that do not belong.
-            </p>
-          </div>
+          <CardTitle>Entry history</CardTitle>
         </CardHeader>
         <CardContent>
           {entries.length === 0 ? (
@@ -90,10 +77,10 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
               className="border-none bg-transparent px-0 py-6 shadow-none"
             />
           ) : (
-            <div className="max-h-[42rem] space-y-6 overflow-y-auto pr-1">
+            <div className="max-h-[38rem] space-y-5 overflow-y-auto pr-1">
               {Array.from(grouped.entries()).map(([date, dateEntries]) => (
                 <div key={date} className="space-y-2">
-                  <div className="sticky top-0 z-10 -mx-2 rounded-full bg-background/88 px-2 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-md">
+                  <div className="sticky top-0 z-10 -mx-2 rounded-full bg-background/85 px-2 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-md">
                     {formatGroupDate(date)}
                   </div>
                   <div className="space-y-3">
@@ -107,11 +94,11 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
                       ) : (
                         <div
                           key={entry.id}
-                          className="focus-surface group flex items-start justify-between gap-3 rounded-[1.45rem] border border-border/80 bg-background/35 p-4 sm:p-5"
+                          className="group flex items-start justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/30 p-4 transition-colors hover:bg-accent/70"
                         >
                           <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2.5">
-                              <span className="text-[1.35rem] font-semibold text-foreground data-number">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="text-lg font-semibold text-foreground data-number">
                                 {formatWeight(entry.weight, settings.weightUnit)}
                               </span>
                               <Badge variant={statusVariant[entry.status]}>
@@ -123,12 +110,10 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
                                 </span>
                               ) : null}
                             </div>
-                            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs uppercase tracking-[0.12em] text-muted-foreground">
-                              <span>Entry saved</span>
-                              <span>{date}</span>
-                            </div>
                             {entry.notes ? (
-                              <p className="mt-3 text-sm text-muted-foreground">{entry.notes}</p>
+                              <p className="mt-2 text-sm text-muted-foreground">
+                                {entry.notes}
+                              </p>
                             ) : null}
                           </div>
                           <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
@@ -167,7 +152,9 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete this entry?</DialogTitle>
-            <DialogDescription>This action cannot be undone.</DialogDescription>
+            <DialogDescription>
+              This action cannot be undone.
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>

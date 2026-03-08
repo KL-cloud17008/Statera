@@ -11,27 +11,15 @@ export function PageSkeleton() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-40 rounded-[1.5rem]" />
-          ))}
-        </div>
-        <Skeleton className="h-[23rem] rounded-[1.75rem]" />
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
-        <Skeleton className="h-[20rem] rounded-[1.5rem]" />
-        <div className="grid gap-4">
-          <Skeleton className="h-44 rounded-[1.5rem]" />
-          <Skeleton className="h-56 rounded-[1.5rem]" />
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton key={index} className="h-32 rounded-[1.35rem]" />
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Skeleton key={index} className="h-36 rounded-[1.35rem]" />
         ))}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <Skeleton className="h-[22rem] rounded-[1.5rem]" />
+        <Skeleton className="h-[22rem] rounded-[1.5rem]" />
       </div>
     </div>
   );

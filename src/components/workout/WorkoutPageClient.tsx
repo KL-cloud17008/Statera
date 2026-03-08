@@ -1,10 +1,7 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
-import { ClipboardList, History, PlayCircle } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/empty-state";
+import { ArrowRight } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
@@ -64,28 +61,30 @@ export function WorkoutPageClient({
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow="Workout Logger"
-        title={activeSession ? activeSession.sessionName : "Train with focus"}
+        eyebrow={activeSession ? "Session in progress" : "Workout"}
+        title={
+          activeSession
+            ? activeSession.sessionName
+            : todayPlan
+              ? "Train with more focus, less interface."
+              : "Build the session you actually need."
+        }
         description={
           activeSession
-            ? "Your session is live. Log sets, track rest, and finish with a complete record of the workout."
+            ? "Your session is already live. The page shifts into a logging ledger so previous numbers and rest timing stay close without turning into a wall of cards."
             : todayPlan
-              ? todayPlan.sessionName
-              : "Start today’s plan, build a custom session, or load a saved template."
+              ? "Today’s programmed work holds the main column while custom work stays present beside it instead of hiding behind segmented controls."
+              : "No scheduled day is in the way, so the builder and saved templates take over the page."
         }
         action={
-          <div className="flex flex-wrap gap-2">
-            <Link href="/workout/history">
-              <Button variant="outline" className="gap-2">
-                <History className="h-4 w-4" />
-                History
-              </Button>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <Link href="/workout/history" className="text-link inline-flex items-center gap-2">
+              History
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/workout/plan">
-              <Button variant="secondary" className="gap-2">
-                <ClipboardList className="h-4 w-4" />
-                Full Plan
-              </Button>
+            <Link href="/workout/plan" className="text-link inline-flex items-center gap-2">
+              Full plan
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         }
@@ -100,27 +99,31 @@ export function WorkoutPageClient({
           previousSets={activeSession.previousSets}
           startTime={activeSession.startTime}
         />
+      ) : todayPlan ? (
+        <div className="grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
+          <WorkoutDayPreview plan={todayPlan} />
+          <CustomWorkoutBuilder hasActiveSession={false} compact />
+        </div>
       ) : (
-        <Tabs defaultValue={todayPlan ? "today" : "custom"}>
-          <TabsList className="w-full justify-start sm:w-fit">
-            <TabsTrigger value="today">Today</TabsTrigger>
-            <TabsTrigger value="custom">Custom Session</TabsTrigger>
-          </TabsList>
-          <TabsContent value="today" className="mt-4">
-            {todayPlan ? (
-              <WorkoutDayPreview plan={todayPlan} />
-            ) : (
-              <EmptyState
-                icon={PlayCircle}
-                title="No scheduled session today"
-                description="Use the custom builder below, or open the full plan to review your programmed days."
-              />
-            )}
-          </TabsContent>
-          <TabsContent value="custom" className="mt-4">
-            <CustomWorkoutBuilder hasActiveSession={false} />
-          </TabsContent>
-        </Tabs>
+        <div className="grid gap-10 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)]">
+          <section className="editorial-surface-quiet space-y-5">
+            <p className="eyebrow">Today</p>
+            <p className="text-3xl font-semibold tracking-[-0.06em]">
+              No programmed session is queued.
+            </p>
+            <p className="subtle-copy">
+              Start from a template or build a session from scratch without switching views or
+              hunting through another tabbed state.
+            </p>
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>Pull exercises from the library.</p>
+              <p>Save what works as a reusable template.</p>
+              <p>Start immediately when the session looks right.</p>
+            </div>
+          </section>
+
+          <CustomWorkoutBuilder hasActiveSession={false} />
+        </div>
       )}
     </div>
   );

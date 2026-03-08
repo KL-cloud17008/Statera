@@ -1,17 +1,14 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock3, Loader2, Sparkles } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { completeSession } from "@/actions/workout";
 import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { calculateSessionVolume } from "@/lib/workout-stats";
 
 type PlanExercise = {
   id: string;
@@ -121,7 +118,6 @@ export function SessionLogger({
   const totalExercises = exercises.length;
   const completedCount = completedExercises.size;
   const progressPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
-  const totalVolume = calculateSessionVolume(existingSets);
 
   function handleSetCompleteChange(exerciseName: string, setNumber: number, complete: boolean) {
     setCompletedSets((current) => {
@@ -183,84 +179,104 @@ export function SessionLogger({
   }
 
   return (
-    <div className="space-y-4">
-      <Card className="overflow-hidden border-primary/30 bg-[linear-gradient(180deg,rgba(68,227,157,0.12),transparent_55%),linear-gradient(180deg,rgba(20,29,44,0.9),rgba(13,20,32,0.9))]">
-        <CardContent className="space-y-5">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/16 text-primary">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="eyebrow">Active Session</p>
-                  <h2 className="text-2xl">{sessionName}</h2>
-                </div>
+    <div className="space-y-8">
+      <section className="editorial-surface space-y-8">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] xl:items-end">
+          <div>
+            <p className="eyebrow">Live session</p>
+            <h2 className="mt-3">{sessionName}</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Log sets as you go. Previous numbers stay nearby, rest timing stays quiet, and the
+              session reads like one continuous ledger instead of a stack of components.
+            </p>
+          </div>
+
+          <div className="space-y-5 xl:text-right">
+            <div className="grid gap-4 text-sm text-muted-foreground sm:grid-cols-3 xl:grid-cols-3">
+              <div>
+                <p className="eyebrow">Elapsed</p>
+                <p className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground data-number">
+                  {elapsedMinutes}m
+                </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="secondary" className="normal-case tracking-normal text-sm">
-                  <Clock3 className="h-3.5 w-3.5" />
-                  {elapsedMinutes} min elapsed
-                </Badge>
-                <Badge variant="secondary" className="normal-case tracking-normal text-sm">
-                  {savedSetKeys.size} sets saved
-                </Badge>
-                <span>{Math.round(totalVolume).toLocaleString()} lbs volume</span>
+              <div>
+                <p className="eyebrow">Saved</p>
+                <p className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground data-number">
+                  {savedSetKeys.size}
+                </p>
+              </div>
+              <div>
+                <p className="eyebrow">Complete</p>
+                <p className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground data-number">
+                  {completedCount}/{totalExercises}
+                </p>
               </div>
             </div>
+
             <Button type="button" size="lg" onClick={handleComplete} disabled={isPending} className="gap-2">
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
               Complete Session
             </Button>
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{completedCount}/{totalExercises} exercises complete</span>
-              <span className="data-number text-foreground">{progressPercent}%</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>{completedCount}/{totalExercises} exercises logged</span>
+            <span className="data-number text-foreground">{progressPercent}%</span>
+          </div>
+          <Progress value={progressPercent} />
+        </div>
+      </section>
+
+      <section className="editorial-surface px-0 py-0">
+        {exerciseGroups.map((group, groupIndex) => {
+          const isSuperset = group.length > 1 && group[0].supersetGroup;
+          const restSeconds = group[0].restSeconds ?? 90;
+
+          return (
+            <div key={groupIndex} className="border-t border-border/70 px-6 py-8 first:border-t-0 sm:px-8">
+              {isSuperset ? (
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="eyebrow">Superset</p>
+                    <p className="mt-2 text-lg font-semibold tracking-[-0.04em]">
+                      Group {group[0].supersetGroup}
+                    </p>
+                  </div>
+                  <RestTimer defaultSeconds={restSeconds} />
+                </div>
+              ) : null}
+
+              <div className="space-y-8">
+                {group.map((exercise) => (
+                  <ExerciseCard
+                    key={exercise.id}
+                    exercise={exercise}
+                    sessionId={sessionId}
+                    loggedSets={existingSets.filter((set) => set.exerciseName === exercise.exerciseName)}
+                    previousSets={previousSets}
+                    onSetLogged={(setKey) => {
+                      setSavedSetKeys((current) => new Set([...current, setKey]));
+                      setCompletedSets((current) => new Set([...current, setKey]));
+                    }}
+                    exerciseComplete={completedExercises.has(exercise.exerciseName)}
+                    onExerciseCompleteChange={(complete) => handleExerciseCompleteChange(exercise.exerciseName, complete)}
+                    completedSetNumbers={getCompletedSetNumbers(exercise.exerciseName)}
+                    onSetCompleteChange={handleSetCompleteChange}
+                  />
+                ))}
+              </div>
+
+              {!isSuperset && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
+                <div className="mt-6 flex justify-end">
+                  <RestTimer defaultSeconds={group[0].restSeconds} />
+                </div>
+              ) : null}
             </div>
-            <Progress value={progressPercent} className="h-3" />
-          </div>
-        </CardContent>
-      </Card>
-
-      {exerciseGroups.map((group, groupIndex) => {
-        const isSuperset = group.length > 1 && group[0].supersetGroup;
-        const restSeconds = group[0].restSeconds ?? 90;
-
-        return (
-          <div key={groupIndex} className="space-y-3">
-            {isSuperset ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/35 px-4 py-3">
-                <Badge variant="outline">Superset {group[0].supersetGroup}</Badge>
-                <RestTimer defaultSeconds={restSeconds} />
-              </div>
-            ) : null}
-            {group.map((exercise) => (
-              <ExerciseCard
-                key={exercise.id}
-                exercise={exercise}
-                sessionId={sessionId}
-                loggedSets={existingSets.filter((set) => set.exerciseName === exercise.exerciseName)}
-                previousSets={previousSets}
-                onSetLogged={(setKey) => {
-                  setSavedSetKeys((current) => new Set([...current, setKey]));
-                  setCompletedSets((current) => new Set([...current, setKey]));
-                }}
-                exerciseComplete={completedExercises.has(exercise.exerciseName)}
-                onExerciseCompleteChange={(complete) => handleExerciseCompleteChange(exercise.exerciseName, complete)}
-                completedSetNumbers={getCompletedSetNumbers(exercise.exerciseName)}
-                onSetCompleteChange={handleSetCompleteChange}
-              />
-            ))}
-            {!isSuperset && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
-              <div className="flex justify-end">
-                <RestTimer defaultSeconds={group[0].restSeconds} />
-              </div>
-            ) : null}
-          </div>
-        );
-      })}
+          );
+        })}
+      </section>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import {
@@ -13,7 +13,8 @@ import {
   YAxis,
 } from "recharts";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { PeriodToggle } from "@/components/ui/period-toggle";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildChartData, type SerializedWeightEntry } from "@/lib/weight";
 import { convertWeight } from "@/lib/units";
 
@@ -63,13 +64,19 @@ export function WeightChart({
     const transformed: WeightChartPoint[] = filteredData.map((point) => ({
       ...point,
       displayWeight:
-        point.weight != null ? convertWeight(point.weight, settings.weightUnit) : null,
+        point.weight != null
+          ? convertWeight(point.weight, settings.weightUnit)
+          : null,
       displayAvg7:
         point.avg7 != null ? convertWeight(point.avg7, settings.weightUnit) : null,
       projection: null,
     }));
 
-    if (!settings.weightGoalTargetDate || goalWeight == null || transformed.length === 0) {
+    if (
+      !settings.weightGoalTargetDate ||
+      goalWeight == null ||
+      transformed.length === 0
+    ) {
       return transformed;
     }
 
@@ -115,35 +122,18 @@ export function WeightChart({
 
   if (entries.length === 0) {
     return (
-      <section className="editorial-panel px-6 py-6 sm:px-7 sm:py-7">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="eyebrow">Weight Trend</p>
-            <h2 className="mt-2">Trend, average, and projection</h2>
-            <p className="mt-3 supporting-copy">
-              Add a few entries and the chart will plot raw weigh-ins, the smoothed average,
-              and your goal line.
-            </p>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-foreground">Weight Trend</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-48 items-center justify-center rounded-lg bg-muted/50">
+            <span className="text-muted-foreground">
+              Add weight entries to see your trend
+            </span>
           </div>
-          <PeriodToggle
-            value={zoom}
-            onChange={setZoom}
-            options={[
-              { label: "1W", value: "1W" },
-              { label: "1M", value: "1M" },
-              { label: "3M", value: "3M" },
-              { label: "All", value: "ALL" },
-            ]}
-          />
-        </div>
-
-        <div className="mt-6 rounded-[1.5rem] border border-dashed border-border/80 bg-background/35 px-6 py-12 text-center">
-          <p className="text-lg font-semibold text-foreground">No trend to display yet</p>
-          <p className="mt-3 supporting-copy">
-            Log your first weigh-in below and the visual history will populate automatically.
-          </p>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -158,57 +148,60 @@ export function WeightChart({
     goalWeight != null ? convertWeight(goalWeight, settings.weightUnit) : null;
 
   return (
-    <section className="editorial-panel px-6 py-6 sm:px-7 sm:py-7">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-2xl">
-          <p className="eyebrow">Weight Trend</p>
-          <h2 className="mt-2">Trend, average, and projection</h2>
-          <p className="mt-3 supporting-copy">
-            Read the raw weigh-ins against the 7-day average to judge direction without overreacting
-            to day-to-day noise.
-          </p>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle className="text-foreground">Weight Trend</CardTitle>
+          <div className="flex gap-1">
+            {(["1W", "1M", "3M", "ALL"] as const).map((range) => (
+              <Button
+                key={range}
+                variant={zoom === range ? "default" : "ghost"}
+                size="sm"
+                type="button"
+                onClick={() => setZoom(range)}
+                className="h-7 px-2.5 text-xs"
+              >
+                {range}
+              </Button>
+            ))}
+          </div>
         </div>
-        <PeriodToggle
-          value={zoom}
-          onChange={setZoom}
-          options={[
-            { label: "1W", value: "1W" },
-            { label: "1M", value: "1M" },
-            { label: "3M", value: "3M" },
-            { label: "All", value: "ALL" },
-          ]}
-        />
-      </div>
-
-      <div className="mt-6 h-[320px] sm:h-[360px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={chartData} margin={{ top: 8, right: 10, bottom: 8, left: -10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.42} />
+      </CardHeader>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={280}>
+          <ComposedChart
+            data={chartData}
+            margin={{ top: 5, right: 5, bottom: 5, left: -10 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--color-border)"
+              opacity={0.5}
+            />
             <XAxis
               dataKey="date"
               tickFormatter={(value) => formatChartDate(value, zoom)}
               tick={{ fill: "var(--color-muted-foreground)", fontSize: 11 }}
-              axisLine={false}
-              tickLine={false}
+              axisLine={{ stroke: "var(--color-border)" }}
+              tickLine={{ stroke: "var(--color-border)" }}
               interval="preserveStartEnd"
               minTickGap={40}
             />
             <YAxis
               domain={[minY, maxY]}
               tick={{ fill: "var(--color-muted-foreground)", fontSize: 11 }}
-              axisLine={false}
-              tickLine={false}
+              axisLine={{ stroke: "var(--color-border)" }}
+              tickLine={{ stroke: "var(--color-border)" }}
               width={52}
             />
             <Tooltip
               contentStyle={{
-                background: "color-mix(in srgb, var(--color-popover) 94%, transparent)",
+                background: "var(--color-card)",
                 border: "1px solid var(--color-border)",
-                borderRadius: "1rem",
+                borderRadius: "0.5rem",
                 fontSize: "0.8125rem",
-                boxShadow: "var(--shadow-soft)",
               }}
-              cursor={{ stroke: "rgba(122, 201, 255, 0.22)", strokeWidth: 1 }}
               labelFormatter={(label) => {
                 const [y, m, d] = String(label).split("-").map(Number);
                 return new Date(y, m - 1, d).toLocaleDateString("en-US", {
@@ -228,13 +221,22 @@ export function WeightChart({
               ]}
             />
             {goalLine != null ? (
-              <ReferenceLine y={goalLine} stroke="var(--color-chart-3)" strokeDasharray="5 5" />
+              <ReferenceLine
+                y={goalLine}
+                stroke="var(--color-chart-3)"
+                strokeDasharray="4 4"
+              />
             ) : null}
-            <Scatter dataKey="displayWeight" fill="var(--color-chart-1)" opacity={0.84} r={3.5} />
+            <Scatter
+              dataKey="displayWeight"
+              fill="var(--color-chart-1)"
+              opacity={0.8}
+              r={3}
+            />
             <Line
               dataKey="displayAvg7"
               stroke="var(--color-chart-2)"
-              strokeWidth={2.35}
+              strokeWidth={2}
               dot={false}
               connectNulls={false}
               type="monotone"
@@ -250,28 +252,8 @@ export function WeightChart({
             />
           </ComposedChart>
         </ResponsiveContainer>
-      </div>
-
-      <div className="section-rule mt-6" />
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        <LegendItem
-          label="Weigh-ins"
-          description="Every logged entry"
-          swatchClassName="bg-primary"
-        />
-        <LegendItem
-          label="7-day average"
-          description="Smoothed trend line"
-          swatchClassName="bg-secondary"
-        />
-        <LegendItem
-          label="Projection"
-          description="Target path to goal"
-          swatchClassName="bg-warning"
-        />
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -283,24 +265,4 @@ function formatChartDate(dateStr: string, zoom: ZoomRange): string {
   }
 
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function LegendItem({
-  label,
-  description,
-  swatchClassName,
-}: {
-  label: string;
-  description: string;
-  swatchClassName: string;
-}) {
-  return (
-    <div className="rounded-[1.2rem] border border-border/80 bg-background/35 px-4 py-3">
-      <div className="flex items-center gap-3">
-        <span className={`h-2.5 w-2.5 rounded-full ${swatchClassName}`} />
-        <p className="text-sm font-medium text-foreground">{label}</p>
-      </div>
-      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-    </div>
-  );
 }

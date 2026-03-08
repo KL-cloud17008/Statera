@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,11 +12,12 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { importWeightCSV } from "@/actions/weight";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { SectionHeader } from "@/components/ui/section-header";
-import { getDataRows, getHeaders, parseCSV } from "@/lib/csv";
+import { parseCSV, getDataRows, getHeaders } from "@/lib/csv";
 import { parseCSVDate } from "@/lib/weight";
 
 type ParsedRow = {
@@ -151,85 +152,62 @@ export function WeightImportClient() {
       <SectionHeader
         eyebrow="Weight Import"
         title="Bring in past weigh-ins"
-        description="Preview parsed rows before they touch the timeline so the import feels deliberate instead of risky."
+        description="Preview the parsed rows before importing so you can confirm dates, status, and body-fat data."
         action={
           <Link href="/weight">
-            <Button variant="outline" size="lg" className="gap-2 rounded-full">
+            <Button variant="outline" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to weight
             </Button>
           </Link>
         }
-      >
-        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-          <span className="rounded-full bg-white/8 px-3 py-1.5">CSV import</span>
-          <span className="rounded-full bg-white/8 px-3 py-1.5">
-            Status, Date, Weight, optional Body Fat %
-          </span>
-        </div>
-      </SectionHeader>
+      />
 
-      {state.step === "idle" ? (
-        <section className="editorial-panel px-6 py-6 sm:px-7 sm:py-7">
-          <div className="grid gap-6 lg:grid-cols-[1.08fr_0.92fr]">
-            <div className="rounded-[1.6rem] border border-dashed border-border/80 bg-background/35 p-8 text-center sm:p-10">
-              <FileText className="mx-auto h-12 w-12 text-primary" />
-              <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
-                Choose a CSV file
-              </h2>
-              <p className="mt-3 supporting-copy">
-                Drag a file here or browse from your device. Nothing is imported until you confirm the preview.
-              </p>
+      {state.step === "idle" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Choose CSV file</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Expected columns: Status, Date (M/D/YYYY), Weight, and optional Body Fat %.
+            </p>
+            <div className="rounded-[1.5rem] border border-dashed border-border bg-muted/30 p-10 text-center">
+              <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
+              <p className="mt-4 text-sm text-muted-foreground">Drag a file here or browse from your device.</p>
               <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
-              <Button className="mt-6" size="lg" onClick={() => fileInputRef.current?.click()}>
+              <Button className="mt-5" onClick={() => fileInputRef.current?.click()}>
                 <Upload className="h-4 w-4" />
-                Choose file
+                Choose File
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      )}
 
-            <div className="rounded-[1.6rem] border border-border/80 bg-background/35 p-6">
-              <p className="eyebrow">Expected Format</p>
-              <h2 className="mt-2 text-xl font-semibold text-foreground">Prepare the file once, import with confidence</h2>
-              <div className="section-rule mt-5" />
-              <div className="mt-5 grid gap-3">
-                <FormatRow label="Date" value="M/D/YYYY" />
-                <FormatRow label="Weight" value="Required numeric value" />
-                <FormatRow label="Status" value="NORMAL, FASTING, or BASELINE" />
-                <FormatRow label="Body Fat %" value="Optional numeric value" />
+      {state.step === "preview" && (
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <CardTitle>Preview: {state.fileName}</CardTitle>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">{validCount} valid</Badge>
+                {errorCount > 0 ? <Badge variant="destructive">{errorCount} invalid</Badge> : null}
               </div>
             </div>
-          </div>
-        </section>
-      ) : null}
-
-      {state.step === "preview" ? (
-        <section className="editorial-panel px-6 py-6 sm:px-7 sm:py-7">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="eyebrow">Preview</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{state.fileName}</h2>
-              <p className="mt-3 supporting-copy">
-                Review the table below, then import only after the valid row count looks correct.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">{validCount} valid</Badge>
-              {errorCount > 0 ? <Badge variant="destructive">{errorCount} invalid</Badge> : null}
-            </div>
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-[1.4rem] border border-border/80 bg-background/35">
-            <div className="grid grid-cols-4 gap-2 border-b border-border/80 px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-              <span>Date</span>
-              <span>Weight</span>
-              <span>Status</span>
-              <span>Body Fat</span>
-            </div>
-            <div className="max-h-96 overflow-y-auto">
-              {state.rows.map((row, index) => (
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="max-h-80 overflow-y-auto rounded-[1.25rem] border border-border">
+              <div className="sticky top-0 grid grid-cols-4 gap-2 bg-muted px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                <span>Date</span>
+                <span>Weight</span>
+                <span>Status</span>
+                <span>Body Fat</span>
+              </div>
+              {state.rows.map((row, i) => (
                 <div
-                  key={`${row.date}-${index}`}
-                  className={`grid grid-cols-4 gap-2 border-t border-border/70 px-4 py-3 text-sm ${!row.valid ? "bg-destructive/8 text-destructive" : "text-foreground"}`}
+                  key={i}
+                  className={`grid grid-cols-4 gap-2 border-t border-border px-4 py-3 text-sm ${!row.valid ? "bg-destructive/10 text-destructive" : "text-foreground"}`}
                 >
                   <span className="truncate">{row.date}</span>
                   <span>{row.valid ? `${row.weight} lbs` : "Invalid"}</span>
@@ -238,68 +216,58 @@ export function WeightImportClient() {
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setState({ step: "idle" });
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
-            >
-              Choose different file
-            </Button>
-            <Button onClick={handleImport} disabled={validCount === 0}>
-              Import {validCount} entries
-            </Button>
-          </div>
-        </section>
-      ) : null}
-
-      {state.step === "importing" ? (
-        <section className="editorial-panel px-6 py-12 text-center sm:px-7">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-          <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">Importing entries</h2>
-          <p className="mt-3 supporting-copy">
-            Writing valid rows into the weight timeline.
-          </p>
-          <Progress className="mx-auto mt-6 max-w-xs" value={66} />
-        </section>
-      ) : null}
-
-      {state.step === "done" ? (
-        <section className="editorial-panel px-6 py-12 text-center sm:px-7">
-          <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
-          <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">Import complete</h2>
-          <p className="mt-3 supporting-copy">
-            Successfully imported {state.imported} entries into the weight timeline.
-          </p>
-          {state.errors.length > 0 ? (
-            <div className="mx-auto mt-6 max-w-lg rounded-[1.4rem] border border-border/80 bg-background/35 p-4 text-left">
-              <p className="eyebrow">Skipped Rows</p>
-              <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
-                {state.errors.slice(0, 10).map((err, index) => (
-                  <li key={index}>{err}</li>
-                ))}
-                {state.errors.length > 10 ? <li>...and {state.errors.length - 10} more</li> : null}
-              </ul>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setState({ step: "idle" });
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+              >
+                Choose Different File
+              </Button>
+              <Button onClick={handleImport} disabled={validCount === 0}>
+                Import {validCount} Entries
+              </Button>
             </div>
-          ) : null}
-          <Button className="mt-6" onClick={() => router.push("/weight")}>
-            View weight data
-          </Button>
-        </section>
-      ) : null}
-    </div>
-  );
-}
+          </CardContent>
+        </Card>
+      )}
 
-function FormatRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3 rounded-[1.2rem] border border-border/80 bg-background/35 px-4 py-3">
-      <p className="text-sm font-medium text-foreground">{label}</p>
-      <p className="text-sm text-muted-foreground">{value}</p>
+      {state.step === "importing" && (
+        <Card>
+          <CardContent className="space-y-4 py-12 text-center">
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Importing entries...</p>
+            <Progress className="mx-auto max-w-xs" value={66} />
+          </CardContent>
+        </Card>
+      )}
+
+      {state.step === "done" && (
+        <Card>
+          <CardContent className="space-y-4 py-12 text-center">
+            <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
+            <div>
+              <p className="text-xl font-semibold text-foreground">Import complete</p>
+              <p className="text-sm text-muted-foreground">Successfully imported {state.imported} entries.</p>
+            </div>
+            {state.errors.length > 0 ? (
+              <div className="mx-auto max-w-lg rounded-[1.25rem] border border-border bg-muted/30 p-4 text-left">
+                <p className="eyebrow">Skipped Rows</p>
+                <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
+                  {state.errors.slice(0, 10).map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                  {state.errors.length > 10 ? <li>...and {state.errors.length - 10} more</li> : null}
+                </ul>
+              </div>
+            ) : null}
+            <Button onClick={() => router.push("/weight")}>View Weight Data</Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

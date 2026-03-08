@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,17 +18,16 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "editorial-panel focus-surface flex flex-col items-center rounded-[1.75rem] border border-dashed px-6 py-10 text-center sm:px-8 sm:py-12",
+        "flex flex-col items-start gap-3 border-t border-border/70 py-8 text-left",
         className
       )}
     >
-      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/12 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-        <Icon className="h-6 w-6" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-white/8 bg-white/[0.03] text-foreground/82">
+        <Icon className="h-[1.125rem] w-[1.125rem]" />
       </div>
-      <p className="eyebrow">Nothing here yet</p>
-      <h3 className="mt-2 text-xl font-semibold text-foreground">{title}</h3>
-      <p className="mt-3 max-w-md supporting-copy">{description}</p>
-      {action ? <div className="mt-5">{action}</div> : null}
+      <h3 className="text-lg font-semibold tracking-[-0.04em] text-foreground">{title}</h3>
+      <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>
+      {action ? <div className="pt-2">{action}</div> : null}
     </div>
   );
 }

@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import type { MobilityBlock } from "@/lib/mobility";
 
 export function MobilityChecklist({
@@ -34,55 +32,68 @@ export function MobilityChecklist({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-        <Badge variant={allDone ? "default" : "secondary"} className={`text-xs ${allDone ? "bg-green-500/20 text-green-400" : ""}`}>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">{title}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {allDone ? "Everything here is complete." : `${checkedCount} of ${totalCount} completed.`}
+          </p>
+        </div>
+        <div className="text-sm text-muted-foreground">
           {allDone ? (
-            <span className="flex items-center gap-1">
-              <Check className="h-3 w-3" /> Done
+            <span className="inline-flex items-center gap-2 text-foreground/82">
+              <Check className="h-4 w-4" />
+              Complete
             </span>
           ) : (
             `${checkedCount}/${totalCount}`
           )}
-        </Badge>
+        </div>
       </div>
 
-      {blocks.map((block, blockIndex) => (
-        <Card key={block.title}>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {block.title}
-              </CardTitle>
-              <span className="text-[10px] text-muted-foreground">{block.duration}</span>
+      <div className="space-y-0 border-t border-border/70">
+        {blocks.map((block, blockIndex) => (
+          <section key={block.title} className="border-b border-border/60 py-6 last:border-b-0">
+            <div className="flex items-baseline justify-between gap-4">
+              <div>
+                <h3 className="tracking-[-0.04em]">{block.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{block.duration}</p>
+              </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-2 pt-0">
-            {block.exercises.map((exercise, exerciseIndex) => {
-              const key = `${blockIndex}-${exerciseIndex}`;
-              const isDone = checked.has(key);
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => toggle(key)}
-                  className={`flex w-full items-start gap-3 rounded-md p-2 text-left transition-colors ${isDone ? "bg-green-500/10 opacity-60" : "hover:bg-muted/50 active:bg-muted"}`}
-                >
-                  <Checkbox checked={isDone} className="mt-0.5 shrink-0" tabIndex={-1} />
-                  <div className="min-w-0 flex-1">
-                    <p className={`text-sm font-medium ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                      {exercise.name}
-                    </p>
-                    <p className="font-medium text-primary/80 text-xs">{exercise.dose}</p>
-                    <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{exercise.cues}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </CardContent>
-        </Card>
-      ))}
+
+            <div className="mt-5 space-y-0 border-t border-border/60">
+              {block.exercises.map((exercise, exerciseIndex) => {
+                const key = `${blockIndex}-${exerciseIndex}`;
+                const isDone = checked.has(key);
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => toggle(key)}
+                    className={`grid w-full gap-2 border-b border-border/50 py-4 text-left last:border-b-0 ${isDone ? "opacity-55" : ""}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <Checkbox checked={isDone} className="mt-1 shrink-0" tabIndex={-1} />
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-sm font-semibold tracking-[-0.02em] ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                          {exercise.name}
+                        </p>
+                        <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                          {exercise.dose}
+                        </p>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {exercise.cues}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
     </div>
   );
 }
