@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, History } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
+import { CustomWorkoutBuilder } from "./CustomWorkoutBuilder";
 
 type Exercise = {
   id: string;
@@ -22,12 +22,11 @@ type Exercise = {
   exerciseType: string;
 };
 
-type Plan = {
+type TodayPlan = {
   id: string;
   sessionName: string;
-  dayOfWeek: number;
   exercises: Exercise[];
-};
+} | null;
 
 type SessionSet = {
   exerciseName: string;
@@ -45,220 +44,82 @@ type PrevSet = {
   repsCompleted: number | null;
 };
 
-type TodaySession = {
+type ActiveSession = {
   id: string;
-  completed: boolean;
-  startTime: string | null;
+  sessionName: string;
+  startTime: string;
+  exercises: Exercise[];
   sets: SessionSet[];
+  previousSets: PrevSet[];
 } | null;
 
-const DAY_LABELS: Record<number, string> = {
-  1: "Day 1",
-  2: "Day 2",
-  3: "Day 3",
-  4: "Day 4",
-  5: "Day 5",
-};
-
 export function WorkoutPageClient({
-  plans,
-  todayDayOfWeek,
-  todaySession,
-  todayPlanId,
-  previousSets,
+  todayPlan,
+  activeSession,
 }: {
-  plans: Plan[];
-  todayDayOfWeek: number | null;
-  todaySession: TodaySession;
-  todayPlanId: string | null;
-  previousSets: PrevSet[];
+  todayPlan: TodayPlan;
+  activeSession: ActiveSession;
 }) {
-  const defaultTab = todayDayOfWeek?.toString() ?? plans[0]?.dayOfWeek.toString() ?? "1";
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Workout</h1>
           <p className="text-muted-foreground">
-            {todayDayOfWeek
-              ? DAY_LABELS[todayDayOfWeek] ?? "Training Day"
-              : "Rest Day"}
+            {activeSession
+              ? "Active session in progress"
+              : todayPlan
+                ? todayPlan.sessionName
+                : "Build a custom session or review your plan"}
           </p>
         </div>
-        <Link href="/workout/plan">
-          <Button variant="outline" size="sm" className="gap-1.5">
-            <ClipboardList className="h-4 w-4" />
-            Full Plan
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/workout/history">
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <History className="h-4 w-4" />
+              History
+            </Button>
+          </Link>
+          <Link href="/workout/plan">
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <ClipboardList className="h-4 w-4" />
+              Full Plan
+            </Button>
+          </Link>
+        </div>
       </div>
 
-      <Tabs defaultValue={defaultTab}>
-        <TabsList className="w-full overflow-x-auto flex">
-          {plans.map((plan) => (
-            <TabsTrigger
-              key={plan.dayOfWeek}
-              value={plan.dayOfWeek.toString()}
-              className="flex-1 text-xs min-w-0 px-1.5"
-            >
-              <span className="truncate">
-                {plan.dayOfWeek === todayDayOfWeek ? "Today" : `Day ${plan.dayOfWeek}`}
-              </span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {plans.map((plan) => {
-          const isToday = plan.dayOfWeek === todayDayOfWeek;
-
-          return (
-            <TabsContent key={plan.dayOfWeek} value={plan.dayOfWeek.toString()} className="mt-4">
-              {isToday ? (
-                <TodayContent
-                  plan={plan}
-                  session={todaySession}
-                  previousSets={previousSets}
-                />
-              ) : (
-                <ReadOnlyDayView plan={plan} />
-              )}
-            </TabsContent>
-          );
-        })}
-      </Tabs>
-    </div>
-  );
-}
-
-function TodayContent({
-  plan,
-  session,
-  previousSets,
-}: {
-  plan: Plan;
-  session: TodaySession;
-  previousSets: PrevSet[];
-}) {
-  // Active session in progress
-  if (session && !session.completed) {
-    return (
-      <SessionLogger
-        sessionId={session.id}
-        sessionName={plan.sessionName}
-        exercises={plan.exercises}
-        existingSets={session.sets}
-        previousSets={previousSets}
-        startTime={session.startTime ?? new Date().toISOString()}
-      />
-    );
-  }
-
-  // Completed session
-  if (session && session.completed) {
-    const totalSets = session.sets.length;
-    const totalVolume = session.sets.reduce((sum, s) => {
-      if (s.weightUsed && s.repsCompleted) {
-        return sum + s.weightUsed * s.repsCompleted;
-      }
-      return sum;
-    }, 0);
-
-    return (
-      <Card>
-        <CardContent className="py-8 text-center space-y-3">
-          <div className="text-4xl">&#10003;</div>
-          <p className="text-lg font-semibold text-foreground">Done!</p>
-          <div className="flex justify-center gap-6 text-sm text-muted-foreground">
-            <span>{totalSets} sets</span>
-            <span>{Math.round(totalVolume).toLocaleString()} lbs volume</span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // No session yet — show preview with start button
-  return (
-    <WorkoutDayPreview
-      plan={plan}
-      hideHeader
-    />
-  );
-}
-
-function ReadOnlyDayView({ plan }: { plan: Plan }) {
-  const workingExercises = plan.exercises.filter(
-    (e) => e.exerciseType === "WORKING"
-  );
-  const totalWorkingSets = workingExercises.reduce(
-    (sum, e) => sum + e.sets,
-    0
-  );
-
-  return (
-    <div className="space-y-4">
-      <Card>
-        <CardContent className="py-4">
-          <p className="font-semibold text-foreground">{plan.sessionName}</p>
-          <p className="text-xs text-muted-foreground">
-            {workingExercises.length} exercises &middot; {totalWorkingSets} working sets
-          </p>
-        </CardContent>
-      </Card>
-
-      <div className="space-y-2">
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-          Exercises
-        </h2>
-        {plan.exercises.map((ex, i) => (
-          <Card
-            key={ex.id}
-            className={
-              ex.exerciseType === "WARMUP"
-                ? "bg-muted/30"
-                : ex.exerciseType === "FINISHER"
-                  ? "bg-orange-500/5"
-                  : ""
-            }
-          >
-            <CardContent className="flex items-center gap-3 py-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
-                {ex.supersetGroup ?? (i + 1)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground truncate">
-                  {ex.exerciseName}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {ex.sets}&times; {ex.reps}
-                  {ex.tempo ? ` · ${ex.tempo}` : ""}
-                  {ex.targetRPE ? ` · RPE ${ex.targetRPE}` : ""}
-                  {ex.restSeconds ? ` · Rest ${ex.restSeconds}s` : ""}
-                </p>
-                {ex.cues && (
-                  <p className="mt-0.5 text-xs text-muted-foreground/70 line-clamp-1">
-                    {ex.cues}
-                  </p>
-                )}
-              </div>
-              {ex.exerciseType === "WARMUP" && (
-                <Badge variant="secondary" className="text-[10px] shrink-0">
-                  Warm-up
-                </Badge>
-              )}
-              {ex.exerciseType === "FINISHER" && (
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] shrink-0 bg-orange-500/20 text-orange-400"
-                >
-                  Finisher
-                </Badge>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {activeSession ? (
+        <SessionLogger
+          sessionId={activeSession.id}
+          sessionName={activeSession.sessionName}
+          exercises={activeSession.exercises}
+          existingSets={activeSession.sets}
+          previousSets={activeSession.previousSets}
+          startTime={activeSession.startTime}
+        />
+      ) : (
+        <Tabs defaultValue={todayPlan ? "today" : "custom"}>
+          <TabsList className="w-full">
+            <TabsTrigger value="today" className="flex-1">Today</TabsTrigger>
+            <TabsTrigger value="custom" className="flex-1">Custom Session</TabsTrigger>
+          </TabsList>
+          <TabsContent value="today" className="mt-4">
+            {todayPlan ? (
+              <WorkoutDayPreview plan={todayPlan} />
+            ) : (
+              <Card>
+                <CardContent className="py-10 text-center text-sm text-muted-foreground">
+                  No scheduled workout for today. Start a custom session or review your saved templates.
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+          <TabsContent value="custom" className="mt-4">
+            <CustomWorkoutBuilder hasActiveSession={false} />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 }

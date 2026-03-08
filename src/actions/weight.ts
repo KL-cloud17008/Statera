@@ -1,24 +1,27 @@
-"use server";
+﻿"use server";
 
-import { createClient } from "@/lib/supabase-server";
+import type { WeighInStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { parseCSV, getHeaders, getDataRows } from "@/lib/csv";
 import { parseCSVDate } from "@/lib/weight";
-import type { WeighInStatus } from "@prisma/client";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { parseDate } from "@/lib/dates";
 
-async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+type WeightMutationResult = {
+  error?: string;
+};
 
-  const dbUser = await prisma.user.findUnique({
-    where: { supabaseUserId: user.id },
-  });
-  return dbUser;
-}
+type WeightImportResult = {
+  error?: string;
+  imported: number;
+  errors: string[];
+};
+
+type WeightExportResult = {
+  error?: string;
+  csv: string;
+};
 
 export async function getWeightEntries(userId: string) {
   return prisma.weightEntry.findMany({
@@ -27,9 +30,13 @@ export async function getWeightEntries(userId: string) {
   });
 }
 
-export async function addWeightEntry(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function addWeightEntry(
+  formData: FormData
+): Promise<WeightMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   const dateStr = formData.get("date") as string;
   const weightStr = formData.get("weight") as string;
@@ -37,9 +44,8 @@ export async function addWeightEntry(formData: FormData) {
   const bodyFatStr = formData.get("bodyFatPercent") as string;
   const notes = (formData.get("notes") as string) || null;
 
-  // Validate
   const weight = parseFloat(weightStr);
-  if (isNaN(weight) || weight < 50 || weight > 999) {
+  if (Number.isNaN(weight) || weight < 50 || weight > 999) {
     return { error: "Weight must be between 50 and 999 lbs" };
   }
 
@@ -52,18 +58,17 @@ export async function addWeightEntry(formData: FormData) {
   }
 
   const bodyFatPercent = bodyFatStr ? parseFloat(bodyFatStr) : null;
-  if (bodyFatPercent != null && (isNaN(bodyFatPercent) || bodyFatPercent < 1 || bodyFatPercent > 70)) {
+  if (
+    bodyFatPercent != null &&
+    (Number.isNaN(bodyFatPercent) || bodyFatPercent < 1 || bodyFatPercent > 70)
+  ) {
     return { error: "Body fat must be between 1% and 70%" };
   }
-
-  // Parse date safely — avoid timezone offset issues with @db.Date
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
 
   await prisma.weightEntry.create({
     data: {
       userId: user.id,
-      date,
+      date: parseDate(dateStr),
       weight: Math.round(weight * 10) / 10,
       status: status as WeighInStatus,
       bodyFatPercent,
@@ -76,9 +81,13 @@ export async function addWeightEntry(formData: FormData) {
   return {};
 }
 
-export async function updateWeightEntry(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function updateWeightEntry(
+  formData: FormData
+): Promise<WeightMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   const id = formData.get("id") as string;
   const dateStr = formData.get("date") as string;
@@ -87,10 +96,12 @@ export async function updateWeightEntry(formData: FormData) {
   const bodyFatStr = formData.get("bodyFatPercent") as string;
   const notes = (formData.get("notes") as string) || null;
 
-  if (!id) return { error: "Entry ID is required" };
+  if (!id) {
+    return { error: "Entry ID is required" };
+  }
 
   const weight = parseFloat(weightStr);
-  if (isNaN(weight) || weight < 50 || weight > 999) {
+  if (Number.isNaN(weight) || weight < 50 || weight > 999) {
     return { error: "Weight must be between 50 and 999 lbs" };
   }
 
@@ -103,23 +114,24 @@ export async function updateWeightEntry(formData: FormData) {
   }
 
   const bodyFatPercent = bodyFatStr ? parseFloat(bodyFatStr) : null;
-  if (bodyFatPercent != null && (isNaN(bodyFatPercent) || bodyFatPercent < 1 || bodyFatPercent > 70)) {
+  if (
+    bodyFatPercent != null &&
+    (Number.isNaN(bodyFatPercent) || bodyFatPercent < 1 || bodyFatPercent > 70)
+  ) {
     return { error: "Body fat must be between 1% and 70%" };
   }
 
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-
-  // Verify ownership
   const existing = await prisma.weightEntry.findFirst({
     where: { id, userId: user.id },
   });
-  if (!existing) return { error: "Entry not found" };
+  if (!existing) {
+    return { error: "Entry not found" };
+  }
 
   await prisma.weightEntry.update({
     where: { id },
     data: {
-      date,
+      date: parseDate(dateStr),
       weight: Math.round(weight * 10) / 10,
       status: status as WeighInStatus,
       bodyFatPercent,
@@ -132,18 +144,25 @@ export async function updateWeightEntry(formData: FormData) {
   return {};
 }
 
-export async function deleteWeightEntry(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function deleteWeightEntry(
+  formData: FormData
+): Promise<WeightMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   const id = formData.get("id") as string;
-  if (!id) return { error: "Entry ID is required" };
+  if (!id) {
+    return { error: "Entry ID is required" };
+  }
 
-  // Verify ownership
   const existing = await prisma.weightEntry.findFirst({
     where: { id, userId: user.id },
   });
-  if (!existing) return { error: "Entry not found" };
+  if (!existing) {
+    return { error: "Entry not found" };
+  }
 
   await prisma.weightEntry.delete({ where: { id } });
 
@@ -152,31 +171,45 @@ export async function deleteWeightEntry(formData: FormData) {
   return {};
 }
 
-export async function importWeightCSV(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated", imported: 0, errors: [] as string[] };
+export async function importWeightCSV(
+  formData: FormData
+): Promise<WeightImportResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated", imported: 0, errors: [] };
+  }
 
   const csvText = formData.get("csv") as string;
-  if (!csvText) return { error: "No CSV data", imported: 0, errors: [] as string[] };
+  if (!csvText) {
+    return { error: "No CSV data", imported: 0, errors: [] };
+  }
 
   const rows = parseCSV(csvText);
   const headers = getHeaders(rows);
   const dataRows = getDataRows(rows);
 
-  // Find column indices (case-insensitive, partial match)
-  const headerLower = headers.map((h) => h.toLowerCase());
-  const statusCol = headerLower.findIndex((h) => h.includes("status"));
-  const dateCol = headerLower.findIndex((h) => h.includes("date"));
-  const weightCol = headerLower.findIndex((h) => h.includes("weight"));
-  const bfCol = headerLower.findIndex((h) => h.includes("body fat"));
+  const headerLower = headers.map((header) => header.toLowerCase());
+  const statusCol = headerLower.findIndex((header) => header.includes("status"));
+  const dateCol = headerLower.findIndex((header) => header.includes("date"));
+  const weightCol = headerLower.findIndex((header) => header.includes("weight"));
+  const bfCol = headerLower.findIndex((header) => header.includes("body fat"));
 
   if (dateCol === -1 || weightCol === -1) {
     return {
       error: "CSV must have Date and Weight columns",
       imported: 0,
-      errors: [] as string[],
+      errors: [],
     };
   }
+
+  const existingDates = new Set(
+    (
+      await prisma.weightEntry.findMany({
+        where: { userId: user.id },
+        select: { date: true },
+      })
+    ).map((entry) => entry.date.toISOString().split("T")[0])
+  );
 
   const entries: {
     userId: string;
@@ -187,48 +220,52 @@ export async function importWeightCSV(formData: FormData) {
   }[] = [];
   const errors: string[] = [];
 
-  for (let i = 0; i < dataRows.length; i++) {
-    const row = dataRows[i];
-    const rowNum = i + 2; // 1-indexed, +1 for header
+  for (let index = 0; index < dataRows.length; index += 1) {
+    const row = dataRows[index];
+    const rowNum = index + 2;
 
-    // Parse date
     const rawDate = row[dateCol]?.trim();
     if (!rawDate) {
       errors.push(`Row ${rowNum}: Missing date`);
       continue;
     }
+
     const isoDate = parseCSVDate(rawDate);
     if (!isoDate) {
       errors.push(`Row ${rowNum}: Invalid date "${rawDate}"`);
       continue;
     }
-    const [year, month, day] = isoDate.split("-").map(Number);
-    const date = new Date(year, month - 1, day);
 
-    // Parse weight
+    if (existingDates.has(isoDate)) {
+      errors.push(`Row ${rowNum}: Duplicate date ${isoDate} skipped`);
+      continue;
+    }
+
     const rawWeight = row[weightCol]?.trim();
     const weight = parseFloat(rawWeight);
-    if (isNaN(weight) || weight <= 0) {
+    if (Number.isNaN(weight) || weight <= 0) {
       errors.push(`Row ${rowNum}: Invalid weight "${rawWeight}"`);
       continue;
     }
 
-    // Parse status
     let status: WeighInStatus = "NORMAL";
     if (statusCol !== -1) {
       const rawStatus = row[statusCol]?.trim().toUpperCase();
-      if (rawStatus === "BASELINE" || rawStatus === "FASTING" || rawStatus === "NORMAL") {
+      if (
+        rawStatus === "BASELINE" ||
+        rawStatus === "FASTING" ||
+        rawStatus === "NORMAL"
+      ) {
         status = rawStatus;
       }
     }
 
-    // Parse body fat
     let bodyFatPercent: number | null = null;
     if (bfCol !== -1) {
       const rawBf = row[bfCol]?.trim();
       if (rawBf) {
         const bf = parseFloat(rawBf);
-        if (!isNaN(bf) && bf > 0 && bf < 100) {
+        if (!Number.isNaN(bf) && bf > 0 && bf < 100) {
           bodyFatPercent = bf;
         }
       }
@@ -236,11 +273,12 @@ export async function importWeightCSV(formData: FormData) {
 
     entries.push({
       userId: user.id,
-      date,
+      date: parseDate(isoDate),
       weight: Math.round(weight * 10) / 10,
       status,
       bodyFatPercent,
     });
+    existingDates.add(isoDate);
   }
 
   if (entries.length === 0) {
@@ -254,9 +292,11 @@ export async function importWeightCSV(formData: FormData) {
   return { imported: entries.length, errors };
 }
 
-export async function exportWeightCSV() {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated", csv: "" };
+export async function exportWeightCSV(): Promise<WeightExportResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated", csv: "" };
+  }
 
   const entries = await prisma.weightEntry.findMany({
     where: { userId: user.id },
@@ -264,17 +304,17 @@ export async function exportWeightCSV() {
   });
 
   const header = "Status,Date,Weight (Scale),Body Fat % (Scale)";
-  const rows = entries.map((e) => {
-    const d = e.date;
-    const dateStr = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+  const rows = entries.map((entry) => {
+    const date = entry.date;
+    const dateStr = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     const statusLabel =
-      e.status === "BASELINE"
+      entry.status === "BASELINE"
         ? "Baseline"
-        : e.status === "FASTING"
+        : entry.status === "FASTING"
           ? "Fasting"
           : "Normal";
-    const bf = e.bodyFatPercent != null ? String(e.bodyFatPercent) : "";
-    return `${statusLabel},${dateStr},${e.weight},${bf}`;
+    const bf = entry.bodyFatPercent != null ? String(entry.bodyFatPercent) : "";
+    return `${statusLabel},${dateStr},${entry.weight},${bf}`;
   });
 
   return { csv: [header, ...rows].join("\n") };

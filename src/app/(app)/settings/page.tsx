@@ -1,13 +1,20 @@
-export default function SettingsPage() {
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { SettingsPageClient } from "@/components/settings/SettingsPageClient";
+
+export default async function SettingsPage() {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return null;
+  }
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your profile, units, goals, and app preferences.</p>
-      </div>
-      <div className="rounded-lg border border-border bg-card p-8 text-center text-muted-foreground">
-        Coming soon
-      </div>
-    </div>
+    <SettingsPageClient
+      profile={{
+        heightInches: user.heightInches,
+        startWeight: user.startWeight,
+        goalWeight: user.goalWeight,
+        timezone: user.timezone,
+      }}
+    />
   );
 }

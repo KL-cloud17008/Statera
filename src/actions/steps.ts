@@ -1,24 +1,34 @@
-"use server";
+﻿"use server";
 
-import { createClient } from "@/lib/supabase-server";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import {
+  addDays,
+  getTodayDateString,
+  parseDate,
+  startOfDay,
+} from "@/lib/dates";
 
-async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+type StepsActionError = {
+  error: string;
+};
 
-  return prisma.user.findUnique({
-    where: { supabaseUserId: user.id },
-  });
-}
+type StepsActionResult =
+  | {
+      error?: undefined;
+    }
+  | StepsActionError;
 
-export async function getStepsEntries(userId: string, days = 30) {
-  const since = new Date();
-  since.setDate(since.getDate() - days);
+type ParsedStepsPayload =
+  | {
+      date: Date;
+      steps: number;
+    }
+  | StepsActionError;
+
+export async function getStepsEntries(userId: string, days = 180) {
+  const since = startOfDay(addDays(new Date(), -(days - 1)));
 
   return prisma.dailyLog.findMany({
     where: {
@@ -31,13 +41,15 @@ export async function getStepsEntries(userId: string, days = 30) {
       id: true,
       date: true,
       steps: true,
+      sleepHours: true,
+      moodRating: true,
+      notes: true,
     },
   });
 }
 
-export async function getTodaySteps(userId: string) {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+export async function getTodaySteps(userId: string, timezone?: string) {
+  const today = parseDate(getTodayDateString(timezone));
 
   const log = await prisma.dailyLog.findUnique({
     where: { userId_date: { userId, date: today } },
@@ -47,27 +59,40 @@ export async function getTodaySteps(userId: string) {
   return log?.steps ?? null;
 }
 
-export async function logSteps(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
-
+function parseStepsPayload(formData: FormData): ParsedStepsPayload {
   const dateStr = formData.get("date") as string;
   const stepsStr = formData.get("steps") as string;
 
-  if (!dateStr) return { error: "Date is required" };
+  if (!dateStr) {
+    return { error: "Date is required" };
+  }
 
-  const steps = parseInt(stepsStr, 10);
-  if (isNaN(steps) || steps < 0 || steps > 200000) {
+  const steps = Number.parseInt(stepsStr, 10);
+  if (Number.isNaN(steps) || steps < 0 || steps > 200000) {
     return { error: "Steps must be between 0 and 200,000" };
   }
 
-  const [year, month, day] = dateStr.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
+  return {
+    date: parseDate(dateStr),
+    steps,
+  };
+}
+
+export async function logSteps(formData: FormData): Promise<StepsActionResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const parsed = parseStepsPayload(formData);
+  if ("error" in parsed) {
+    return parsed;
+  }
 
   await prisma.dailyLog.upsert({
-    where: { userId_date: { userId: user.id, date } },
-    update: { steps },
-    create: { userId: user.id, date, steps },
+    where: { userId_date: { userId: user.id, date: parsed.date } },
+    update: { steps: parsed.steps },
+    create: { userId: user.id, date: parsed.date, steps: parsed.steps },
   });
 
   revalidatePath("/steps");
@@ -75,19 +100,81 @@ export async function logSteps(formData: FormData) {
   return {};
 }
 
-export async function deleteStepsEntry(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function updateStepsEntry(
+  formData: FormData
+): Promise<StepsActionResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   const id = formData.get("id") as string;
-  if (!id) return { error: "Entry ID is required" };
+  if (!id) {
+    return { error: "Entry ID is required" };
+  }
+
+  const parsed = parseStepsPayload(formData);
+  if ("error" in parsed) {
+    return parsed;
+  }
 
   const existing = await prisma.dailyLog.findFirst({
     where: { id, userId: user.id },
   });
-  if (!existing) return { error: "Entry not found" };
+  if (!existing) {
+    return { error: "Entry not found" };
+  }
 
-  // Set steps to null rather than deleting the log (it may have other data)
+  const target = await prisma.dailyLog.findUnique({
+    where: { userId_date: { userId: user.id, date: parsed.date } },
+  });
+
+  if (target && target.id !== existing.id) {
+    await prisma.$transaction([
+      prisma.dailyLog.update({
+        where: { id: target.id },
+        data: { steps: parsed.steps },
+      }),
+      prisma.dailyLog.update({
+        where: { id: existing.id },
+        data: { steps: null },
+      }),
+    ]);
+  } else {
+    await prisma.dailyLog.update({
+      where: { id: existing.id },
+      data: {
+        date: parsed.date,
+        steps: parsed.steps,
+      },
+    });
+  }
+
+  revalidatePath("/steps");
+  revalidatePath("/");
+  return {};
+}
+
+export async function deleteStepsEntry(
+  formData: FormData
+): Promise<StepsActionResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const id = formData.get("id") as string;
+  if (!id) {
+    return { error: "Entry ID is required" };
+  }
+
+  const existing = await prisma.dailyLog.findFirst({
+    where: { id, userId: user.id },
+  });
+  if (!existing) {
+    return { error: "Entry not found" };
+  }
+
   await prisma.dailyLog.update({
     where: { id },
     data: { steps: null },

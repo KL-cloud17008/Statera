@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -25,22 +25,24 @@ type Exercise = {
 type Plan = {
   id: string;
   sessionName: string;
-  dayOfWeek: number;
   exercises: Exercise[];
 };
 
-export function WorkoutDayPreview({ plan, hideHeader }: { plan: Plan; hideHeader?: boolean }) {
+export function WorkoutDayPreview({
+  plan,
+  hideHeader,
+}: {
+  plan: Plan;
+  hideHeader?: boolean;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const workingExercises = plan.exercises.filter(
-    (e) => e.exerciseType === "WORKING"
-  );
-  const finisher = plan.exercises.find(
-    (e) => e.exerciseType === "FINISHER"
+    (exercise) => exercise.exerciseType === "WORKING"
   );
   const totalWorkingSets = workingExercises.reduce(
-    (sum, e) => sum + e.sets,
+    (sum, exercise) => sum + exercise.sets,
     0
   );
 
@@ -49,38 +51,37 @@ export function WorkoutDayPreview({ plan, hideHeader }: { plan: Plan; hideHeader
       const result = await startWorkoutSession(plan.id);
       if (result.error) {
         toast.error(result.error);
-      } else {
-        router.refresh();
+        return;
       }
+
+      toast.success(result.warning ?? "Workout started");
+      router.refresh();
     });
   }
 
   return (
     <div className="space-y-6">
-      {!hideHeader && (
+      {!hideHeader ? (
         <div>
           <h1 className="text-2xl font-bold text-foreground">
             Today&apos;s Workout
           </h1>
           <p className="text-muted-foreground">{plan.sessionName}</p>
         </div>
-      )}
+      ) : null}
 
-      {/* Summary card */}
       <Card>
-        <CardContent className="py-6 space-y-4">
-          <div className="flex items-center justify-between">
+        <CardContent className="space-y-4 py-6">
+          <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
                 <Dumbbell className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="font-semibold text-foreground">
-                  {plan.sessionName}
-                </p>
+                <p className="font-semibold text-foreground">{plan.sessionName}</p>
                 <p className="text-xs text-muted-foreground">
-                  {workingExercises.length} exercises &middot; {totalWorkingSets}{" "}
-                  working sets &middot; ~45 min
+                  {workingExercises.length} exercises · {totalWorkingSets} working
+                  sets
                 </p>
               </div>
             </div>
@@ -89,6 +90,7 @@ export function WorkoutDayPreview({ plan, hideHeader }: { plan: Plan; hideHeader
           <Button
             className="w-full gap-2"
             size="lg"
+            type="button"
             onClick={handleStart}
             disabled={isPending}
           >
@@ -102,49 +104,48 @@ export function WorkoutDayPreview({ plan, hideHeader }: { plan: Plan; hideHeader
         </CardContent>
       </Card>
 
-      {/* Exercise list preview */}
       <div className="space-y-2">
-        <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+        <h2 className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
           Exercise List
         </h2>
-        {plan.exercises.map((ex, i) => (
+        {plan.exercises.map((exercise, index) => (
           <Card
-            key={ex.id}
+            key={exercise.id}
             className={
-              ex.exerciseType === "WARMUP"
+              exercise.exerciseType === "WARMUP"
                 ? "bg-muted/30"
-                : ex.exerciseType === "FINISHER"
+                : exercise.exerciseType === "FINISHER"
                   ? "bg-orange-500/5"
                   : ""
             }
           >
             <CardContent className="flex items-center gap-3 py-3">
               <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
-                {ex.supersetGroup ?? (i + 1)}
+                {exercise.supersetGroup ?? index + 1}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground truncate">
-                  {ex.exerciseName}
+                <p className="truncate text-sm font-medium text-foreground">
+                  {exercise.exerciseName}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {ex.reps}
-                  {ex.tempo ? ` · ${ex.tempo}` : ""}
-                  {ex.targetRPE ? ` · RPE ${ex.targetRPE}` : ""}
+                  {exercise.reps}
+                  {exercise.tempo ? ` · ${exercise.tempo}` : ""}
+                  {exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}
                 </p>
               </div>
-              {ex.exerciseType === "WARMUP" && (
+              {exercise.exerciseType === "WARMUP" ? (
                 <Badge variant="secondary" className="text-[10px]">
                   Warm-up
                 </Badge>
-              )}
-              {ex.exerciseType === "FINISHER" && (
+              ) : null}
+              {exercise.exerciseType === "FINISHER" ? (
                 <Badge
                   variant="secondary"
-                  className="text-[10px] bg-orange-500/20 text-orange-400"
+                  className="bg-orange-500/20 text-[10px] text-orange-400"
                 >
                   Finisher
                 </Badge>
-              )}
+              ) : null}
             </CardContent>
           </Card>
         ))}

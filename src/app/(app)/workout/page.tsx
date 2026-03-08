@@ -1,84 +1,81 @@
-import { createClient } from "@/lib/supabase-server";
 import { prisma } from "@/lib/db";
-import {
-  getWorkoutPlans,
-  getPreviousSessionSets,
-} from "@/actions/workout";
-import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
+import { getTrainingDayNumber } from "@/lib/dates";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
 
 export default async function WorkoutPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return null;
+  }
 
-  const dbUser = await prisma.user.findUnique({
-    where: { supabaseUserId: user.id },
+  const plans = await getWorkoutPlans(user.id);
+  const trainingDayNum = getTrainingDayNumber(new Date(), user.timezone);
+  const todayPlan = trainingDayNum ? plans.find((plan) => plan.dayOfWeek === trainingDayNum) ?? null : null;
+
+  const openSession = await prisma.workoutSession.findFirst({
+    where: {
+      userId: user.id,
+      completed: false,
+    },
+    include: {
+      sets: { orderBy: [{ exerciseName: "asc" }, { setNumber: "asc" }] },
+      workoutPlan: {
+        include: {
+          exercises: { orderBy: { sortOrder: "asc" } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
   });
-  if (!dbUser) return null;
 
-  const plans = await getWorkoutPlans(dbUser.id);
+  let activeSession = null;
+  if (openSession) {
+    const meta = parseWorkoutSessionMeta(openSession.notes);
+    const exercises = openSession.workoutPlan?.exercises ?? meta?.exercises?.map((exercise, index) => ({
+      id: `${exercise.exerciseId}-${index}`,
+      exerciseName: exercise.name,
+      sets: exercise.sets,
+      reps: exercise.reps,
+      tempo: null,
+      restSeconds: exercise.restSeconds,
+      targetRPE: null,
+      cues: exercise.notes ?? null,
+      supersetGroup: null,
+      exerciseType: "WORKING",
+    })) ?? [];
 
-  // Determine today's training day (always America/New_York, noon boundary)
-  const now = new Date();
-  const trainingDate = getTrainingDate(now);
-  const trainingDayNum = getTrainingDayNumber(now); // 1-5 or null (rest)
-  const todayPlan = trainingDayNum
-    ? (plans.find((p) => p.dayOfWeek === trainingDayNum) ?? null)
-    : null;
-  const todayDayOfWeek = todayPlan ? trainingDayNum : null;
+    const previousSets = openSession.workoutPlanId
+      ? await getPreviousSessionSets(user.id, openSession.workoutPlanId)
+      : [];
 
-  // Fetch today's session if there's a plan
-  let todaySession = null;
-  let previousSets: { exerciseName: string; setNumber: number; weightUsed: number | null; repsCompleted: number | null }[] = [];
-
-  if (todayPlan) {
-    const session = await prisma.workoutSession.findFirst({
-      where: {
-        userId: dbUser.id,
-        workoutPlanId: todayPlan.id,
-        trainingDate,
-      },
-      include: {
-        sets: { orderBy: [{ exerciseName: "asc" }, { setNumber: "asc" }] },
-      },
-    });
-
-    if (session) {
-      todaySession = {
-        id: session.id,
-        completed: session.completed,
-        startTime: session.startTime?.toISOString() ?? null,
-        sets: session.sets.map((s) => ({
-          exerciseName: s.exerciseName,
-          setNumber: s.setNumber,
-          weightUsed: s.weightUsed,
-          repsCompleted: s.repsCompleted,
-          actualRPE: s.actualRPE,
-          notes: s.notes,
-        })),
-      };
-    }
-
-    if (session && !session.completed) {
-      previousSets = await getPreviousSessionSets(dbUser.id, todayPlan.id);
-    }
+    activeSession = {
+      id: openSession.id,
+      sessionName: meta?.label || openSession.workoutPlan?.sessionName || "Custom Session",
+      startTime: openSession.startTime?.toISOString() ?? new Date().toISOString(),
+      exercises,
+      sets: openSession.sets.map((set) => ({
+        exerciseName: set.exerciseName,
+        setNumber: set.setNumber,
+        weightUsed: set.weightUsed,
+        repsCompleted: set.repsCompleted,
+        actualRPE: set.actualRPE,
+        notes: set.notes,
+      })),
+      previousSets,
+    };
   }
 
   return (
     <WorkoutPageClient
-      plans={plans.map((p) => ({
-        id: p.id,
-        sessionName: p.sessionName,
-        dayOfWeek: p.dayOfWeek,
-        exercises: p.exercises,
-      }))}
-      todayDayOfWeek={todayDayOfWeek}
-      todaySession={todaySession}
-      todayPlanId={todayPlan?.id ?? null}
-      previousSets={previousSets}
+      todayPlan={todayPlan ? {
+        id: todayPlan.id,
+        sessionName: todayPlan.sessionName,
+        exercises: todayPlan.exercises,
+      } : null}
+      activeSession={activeSession}
     />
   );
 }

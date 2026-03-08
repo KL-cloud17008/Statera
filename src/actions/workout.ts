@@ -1,18 +1,21 @@
-"use server";
+﻿"use server";
 
-import { createClient } from "@/lib/supabase-server";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { getTrainingDate } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { serializeWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
 
-async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  return prisma.user.findUnique({ where: { supabaseUserId: user.id } });
-}
+type WorkoutSessionActionResult = {
+  error?: string;
+  warning?: string;
+  sessionId?: string;
+};
+
+type WorkoutMutationResult = {
+  error?: string;
+};
 
 export async function getWorkoutPlans(userId: string) {
   return prisma.workoutPlan.findMany({
@@ -24,12 +27,11 @@ export async function getWorkoutPlans(userId: string) {
   });
 }
 
-export async function getTodaysPlan(userId: string, _timezone?: string) {
-  const now = new Date();
-  const { getTrainingDayNumber } = await import("@/lib/dates");
-  const dayNum = getTrainingDayNumber(now); // 1-5 or null (rest)
-
-  if (!dayNum) return null;
+export async function getTodaysPlan(userId: string, timezone?: string) {
+  const dayNum = getTrainingDayNumber(new Date(), timezone);
+  if (!dayNum) {
+    return null;
+  }
 
   return prisma.workoutPlan.findFirst({
     where: { userId, dayOfWeek: dayNum, isActive: true },
@@ -39,19 +41,45 @@ export async function getTodaysPlan(userId: string, _timezone?: string) {
   });
 }
 
-export async function startWorkoutSession(planId: string) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+async function getOpenSession(userId: string) {
+  return prisma.workoutSession.findFirst({
+    where: {
+      userId,
+      completed: false,
+    },
+    include: {
+      sets: { orderBy: [{ exerciseName: "asc" }, { setNumber: "asc" }] },
+      workoutPlan: {
+        include: { exercises: { orderBy: { sortOrder: "asc" } } },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function startWorkoutSession(
+  planId: string
+): Promise<WorkoutSessionActionResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const existingOpen = await getOpenSession(user.id);
+  if (existingOpen) {
+    return { sessionId: existingOpen.id, warning: "Resumed existing session" };
+  }
 
   const plan = await prisma.workoutPlan.findFirst({
     where: { id: planId, userId: user.id },
   });
-  if (!plan) return { error: "Plan not found" };
+  if (!plan) {
+    return { error: "Plan not found" };
+  }
 
   const now = new Date();
   const trainingDate = getTrainingDate(now, user.timezone);
 
-  // Check for existing session today
   const existing = await prisma.workoutSession.findFirst({
     where: {
       userId: user.id,
@@ -72,6 +100,10 @@ export async function startWorkoutSession(planId: string) {
       trainingDate,
       startTime: now,
       weekNumber: 1,
+      notes: serializeWorkoutSessionMeta({
+        label: plan.sessionName,
+        source: "plan",
+      }),
     },
   });
 
@@ -80,36 +112,138 @@ export async function startWorkoutSession(planId: string) {
   return { sessionId: session.id };
 }
 
-export async function logSet(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function startCustomWorkoutSession(
+  formData: FormData
+): Promise<WorkoutSessionActionResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const label = ((formData.get("label") as string) || "Custom Session").trim();
+  const exercisesJson = formData.get("exercises") as string;
+  const source = ((formData.get("source") as string) || "free") as
+    | "template"
+    | "free";
+
+  let exercises: WorkoutTemplateExercise[] = [];
+  try {
+    exercises = JSON.parse(exercisesJson) as WorkoutTemplateExercise[];
+  } catch {
+    return { error: "Invalid workout definition" };
+  }
+
+  if (!Array.isArray(exercises) || exercises.length === 0) {
+    return { error: "Add at least one exercise before starting a session" };
+  }
+
+  const existingOpen = await getOpenSession(user.id);
+  if (existingOpen) {
+    return { sessionId: existingOpen.id, warning: "Resumed existing session" };
+  }
+
+  const now = new Date();
+  const trainingDate = getTrainingDate(now, user.timezone);
+
+  const session = await prisma.workoutSession.create({
+    data: {
+      userId: user.id,
+      date: now,
+      trainingDate,
+      startTime: now,
+      weekNumber: 1,
+      notes: serializeWorkoutSessionMeta({
+        label,
+        source,
+        exercises: exercises.map((exercise) => ({
+          exerciseId:
+            exercise.exerciseId ||
+            exercise.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          name: exercise.name,
+          muscleGroup: exercise.muscleGroup,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          restSeconds: exercise.restSeconds,
+          notes: exercise.notes,
+        })),
+      }),
+    },
+  });
+
+  revalidatePath("/workout");
+  revalidatePath("/");
+  return { sessionId: session.id };
+}
+
+export async function logSet(
+  formData: FormData
+): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   const sessionId = formData.get("sessionId") as string;
   const planExerciseId = (formData.get("planExerciseId") as string) || null;
-  const exerciseName = formData.get("exerciseName") as string;
-  const setNumber = parseInt(formData.get("setNumber") as string, 10);
-  const weightUsed = formData.get("weightUsed")
-    ? parseFloat(formData.get("weightUsed") as string)
-    : null;
-  const repsCompleted = formData.get("repsCompleted")
-    ? parseInt(formData.get("repsCompleted") as string, 10)
-    : null;
-  const actualRPE = formData.get("actualRPE")
-    ? parseInt(formData.get("actualRPE") as string, 10)
-    : null;
-  const duration = formData.get("duration")
-    ? parseInt(formData.get("duration") as string, 10)
-    : null;
+  const exerciseName = (formData.get("exerciseName") as string)?.trim();
+  const setNumber = Number.parseInt(formData.get("setNumber") as string, 10);
+  const weightUsedValue = formData.get("weightUsed") as string;
+  const repsValue = formData.get("repsCompleted") as string;
+  const rpeValue = formData.get("actualRPE") as string;
+  const durationValue = formData.get("duration") as string;
+  const notes = ((formData.get("notes") as string) || null)?.trim() ?? null;
   const isAMRAP = formData.get("isAMRAP") === "true";
-  const notes = (formData.get("notes") as string) || null;
 
-  // Verify session ownership
+  if (!exerciseName) {
+    return { error: "Exercise name is required" };
+  }
+  if (Number.isNaN(setNumber) || setNumber < 1 || setNumber > 50) {
+    return { error: "Set number must be between 1 and 50" };
+  }
+
+  const weightUsed = weightUsedValue ? Number.parseFloat(weightUsedValue) : null;
+  const repsCompleted = repsValue ? Number.parseInt(repsValue, 10) : null;
+  const actualRPE = rpeValue ? Number.parseInt(rpeValue, 10) : null;
+  const duration = durationValue ? Number.parseInt(durationValue, 10) : null;
+
+  if (
+    weightUsed != null &&
+    (Number.isNaN(weightUsed) || weightUsed < 0 || weightUsed > 3000)
+  ) {
+    return { error: "Weight must be between 0 and 3000 lbs" };
+  }
+  if (
+    repsCompleted != null &&
+    (Number.isNaN(repsCompleted) || repsCompleted < 0 || repsCompleted > 1000)
+  ) {
+    return { error: "Reps must be between 0 and 1000" };
+  }
+  if (
+    actualRPE != null &&
+    (Number.isNaN(actualRPE) || actualRPE < 1 || actualRPE > 10)
+  ) {
+    return { error: "RPE must be between 1 and 10" };
+  }
+  if (
+    duration != null &&
+    (Number.isNaN(duration) || duration < 0 || duration > 7200)
+  ) {
+    return { error: "Duration must be between 0 and 7200 seconds" };
+  }
+  if (notes && notes.length > 240) {
+    return { error: "Notes must be 240 characters or fewer" };
+  }
+  if (weightUsed == null && repsCompleted == null && duration == null && !notes) {
+    return { error: "Enter at least one training value before saving" };
+  }
+
   const session = await prisma.workoutSession.findFirst({
     where: { id: sessionId, userId: user.id },
   });
-  if (!session) return { error: "Session not found" };
+  if (!session) {
+    return { error: "Session not found" };
+  }
 
-  // Check for existing set (update) or create new
   const existingSet = await prisma.sessionSet.findFirst({
     where: {
       workoutSessionId: sessionId,
@@ -141,17 +275,29 @@ export async function logSet(formData: FormData) {
   }
 
   revalidatePath("/workout");
+  revalidatePath("/workout/history");
+  revalidatePath("/");
   return {};
 }
 
-export async function completeSession(sessionId: string) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function completeSession(
+  sessionId: string
+): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
   const session = await prisma.workoutSession.findFirst({
     where: { id: sessionId, userId: user.id },
+    include: { sets: true },
   });
-  if (!session) return { error: "Session not found" };
+  if (!session) {
+    return { error: "Session not found" };
+  }
+  if (session.sets.length === 0) {
+    return { error: "Log at least one set before completing the session" };
+  }
 
   await prisma.workoutSession.update({
     where: { id: sessionId },
@@ -159,6 +305,7 @@ export async function completeSession(sessionId: string) {
   });
 
   revalidatePath("/workout");
+  revalidatePath("/workout/history");
   revalidatePath("/");
   return {};
 }
@@ -175,7 +322,7 @@ export async function getSessionWithSets(sessionId: string) {
   });
 }
 
-export async function getRecentSessions(userId: string, limit = 10) {
+export async function getRecentSessions(userId: string, limit = 30) {
   return prisma.workoutSession.findMany({
     where: { userId, completed: true },
     include: {
@@ -191,7 +338,12 @@ export async function getPreviousSessionSets(
   userId: string,
   planId: string
 ): Promise<
-  { exerciseName: string; setNumber: number; weightUsed: number | null; repsCompleted: number | null }[]
+  Array<{
+    exerciseName: string;
+    setNumber: number;
+    weightUsed: number | null;
+    repsCompleted: number | null;
+  }>
 > {
   const prevSession = await prisma.workoutSession.findFirst({
     where: {
@@ -205,12 +357,15 @@ export async function getPreviousSessionSets(
     },
   });
 
-  if (!prevSession) return [];
-  return prevSession.sets.map((s) => ({
-    exerciseName: s.exerciseName,
-    setNumber: s.setNumber,
-    weightUsed: s.weightUsed,
-    repsCompleted: s.repsCompleted,
+  if (!prevSession) {
+    return [];
+  }
+
+  return prevSession.sets.map((set) => ({
+    exerciseName: set.exerciseName,
+    setNumber: set.setNumber,
+    weightUsed: set.weightUsed,
+    repsCompleted: set.repsCompleted,
   }));
 }
 
@@ -221,7 +376,9 @@ export async function getExerciseHistory(userId: string, exerciseName: string) {
       workoutSession: { userId },
     },
     include: {
-      workoutSession: { select: { trainingDate: true, date: true } },
+      workoutSession: {
+        select: { trainingDate: true, date: true, notes: true },
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 100,

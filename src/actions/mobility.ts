@@ -1,24 +1,23 @@
-"use server";
+﻿"use server";
 
-import { createClient } from "@/lib/supabase-server";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { getTrainingDate } from "@/lib/dates";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
 
-async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  return prisma.user.findUnique({ where: { supabaseUserId: user.id } });
-}
+type MobilityActionResult = {
+  error?: string;
+};
 
-export async function logMobility(formData: FormData) {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Not authenticated" };
+export async function logMobility(
+  formData: FormData
+): Promise<MobilityActionResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
 
-  const type = formData.get("type") as string; // PRE_WORKOUT, POST_WORKOUT, UNDO_SITTING
+  const type = formData.get("type") as string;
   const version = (formData.get("version") as string) || "A";
   const notes = (formData.get("notes") as string) || null;
 
@@ -26,8 +25,21 @@ export async function logMobility(formData: FormData) {
     return { error: "Invalid type" };
   }
 
-  const now = new Date();
-  const trainingDate = getTrainingDate(now, user.timezone);
+  const trainingDate = getTrainingDate(new Date(), user.timezone);
+
+  if (type !== "UNDO_SITTING") {
+    const existing = await prisma.mobilityLog.findFirst({
+      where: {
+        userId: user.id,
+        date: trainingDate,
+        type,
+      },
+    });
+
+    if (existing) {
+      return { error: "This routine is already logged for today" };
+    }
+  }
 
   await prisma.mobilityLog.create({
     data: {
