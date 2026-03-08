@@ -8,11 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { addWeightEntry, updateWeightEntry } from "@/actions/weight";
 import type { SerializedWeightEntry } from "@/lib/weight";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { convertWeight, toPounds } from "@/lib/units";
+import { cn } from "@/lib/utils";
 
 type Props = {
   editEntry?: SerializedWeightEntry;
@@ -27,7 +34,10 @@ export function WeightEntryForm({ editEntry, onDone }: Props) {
   const { settings } = useAppSettings();
 
   const today = new Date().toISOString().split("T")[0];
-  const displayedWeight = editEntry?.weight != null ? convertWeight(editEntry.weight, settings.weightUnit).toFixed(1) : "";
+  const displayedWeight =
+    editEntry?.weight != null
+      ? convertWeight(editEntry.weight, settings.weightUnit).toFixed(1)
+      : "";
 
   async function handleSubmit(formData: FormData) {
     formData.set("status", status);
@@ -65,21 +75,48 @@ export function WeightEntryForm({ editEntry, onDone }: Props) {
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-foreground">
-          {editEntry ? "Edit Entry" : "Log Weight"}
-        </CardTitle>
+    <Card className={cn(editEntry ? "border-primary/25" : "rounded-[1.75rem]")}>
+      <CardHeader className="pb-2">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="eyebrow">{editEntry ? "Edit Entry" : "Weight Capture"}</p>
+            <CardTitle className="mt-2 text-foreground">
+              {editEntry ? "Adjust a saved weigh-in" : "Log weight without breaking flow"}
+            </CardTitle>
+            <p className="mt-3 supporting-copy">
+              Save the date, status, and optional notes in one pass. The timeline and chart refresh
+              immediately after submission.
+            </p>
+          </div>
+          <div className="rounded-full bg-white/8 px-3 py-1.5 text-sm text-muted-foreground">
+            Unit {settings.weightUnit}
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
-        <form ref={formRef} action={handleSubmit} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="weight-date" className="text-xs">Date</Label>
-              <Input id="weight-date" name="date" type="date" defaultValue={editEntry?.date ?? today} required className="h-10" />
+        <form ref={formRef} action={handleSubmit} className="space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[1.05fr_1.05fr_0.9fr_auto] xl:items-end">
+            <div className="space-y-2">
+              <Label
+                htmlFor="weight-date"
+                className="text-xs uppercase tracking-[0.12em] text-muted-foreground"
+              >
+                Date
+              </Label>
+              <Input
+                id="weight-date"
+                name="date"
+                type="date"
+                defaultValue={editEntry?.date ?? today}
+                required
+                className="h-11"
+              />
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="weight-value" className="text-xs">
+            <div className="space-y-2">
+              <Label
+                htmlFor="weight-value"
+                className="text-xs uppercase tracking-[0.12em] text-muted-foreground"
+              >
                 Weight ({settings.weightUnit})
               </Label>
               <Input
@@ -93,13 +130,15 @@ export function WeightEntryForm({ editEntry, onDone }: Props) {
                 defaultValue={displayedWeight}
                 placeholder={settings.weightUnit === "kg" ? "147.4" : "325.0"}
                 required
-                className="h-10"
+                className="h-11"
               />
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Status</Label>
+            <div className="space-y-2">
+              <Label className="text-xs uppercase tracking-[0.12em] text-muted-foreground">
+                Status
+              </Label>
               <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger className="h-11 w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -110,7 +149,7 @@ export function WeightEntryForm({ editEntry, onDone }: Props) {
               </Select>
             </div>
             <div className="flex items-end">
-              <Button type="submit" className="h-10 w-full" disabled={isPending}>
+              <Button type="submit" className="h-11 w-full min-w-28" disabled={isPending}>
                 {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {editEntry ? "Update" : "Log"}
               </Button>
@@ -118,31 +157,67 @@ export function WeightEntryForm({ editEntry, onDone }: Props) {
           </div>
 
           {!editEntry ? (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setShowMore(!showMore)}
-              className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              className="justify-start px-0 text-xs text-muted-foreground"
             >
               {showMore ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               {showMore ? "Less options" : "More options"}
-            </button>
+            </Button>
           ) : null}
 
-          {(showMore || editEntry) ? (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="weight-bf" className="text-xs">Body Fat %</Label>
-                <Input id="weight-bf" name="bodyFatPercent" type="number" inputMode="decimal" step="0.1" min="1" max="70" defaultValue={editEntry?.bodyFatPercent ?? ""} placeholder="Optional" className="h-10" />
+          {showMore || editEntry ? (
+            <div className="grid gap-4 rounded-[1.35rem] border border-border/80 bg-background/35 p-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="weight-bf"
+                  className="text-xs uppercase tracking-[0.12em] text-muted-foreground"
+                >
+                  Body Fat %
+                </Label>
+                <Input
+                  id="weight-bf"
+                  name="bodyFatPercent"
+                  type="number"
+                  inputMode="decimal"
+                  step="0.1"
+                  min="1"
+                  max="70"
+                  defaultValue={editEntry?.bodyFatPercent ?? ""}
+                  placeholder="Optional"
+                  className="h-11"
+                />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="weight-notes" className="text-xs">Notes</Label>
-                <Textarea id="weight-notes" name="notes" rows={1} defaultValue={editEntry?.notes ?? ""} placeholder="Optional" className="min-h-10 resize-none" />
+              <div className="space-y-2">
+                <Label
+                  htmlFor="weight-notes"
+                  className="text-xs uppercase tracking-[0.12em] text-muted-foreground"
+                >
+                  Notes
+                </Label>
+                <Textarea
+                  id="weight-notes"
+                  name="notes"
+                  rows={2}
+                  defaultValue={editEntry?.notes ?? ""}
+                  placeholder="Optional"
+                  className="min-h-11 resize-none"
+                />
               </div>
             </div>
           ) : null}
 
           {editEntry ? (
-            <Button type="button" variant="ghost" size="sm" onClick={onDone} className="text-xs text-muted-foreground">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onDone}
+              className="text-xs text-muted-foreground"
+            >
               Cancel
             </Button>
           ) : null}

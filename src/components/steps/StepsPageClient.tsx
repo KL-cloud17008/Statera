@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
-import { Flame, Footprints, Target, TrendingUp } from "lucide-react";
+import type { ReactNode } from "react";
+import { Flame, Footprints, Route, Target, TrendingUp } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { StepsChart } from "@/components/steps/StepsChart";
@@ -31,33 +32,63 @@ export function StepsPageClient({
     <div className="page-shell">
       <SectionHeader
         eyebrow="Step Counter"
-        title="Build daily movement momentum"
-        description="Track today’s total, review your weekly and monthly trends, and keep your streak alive with a clear goal target."
+        title="Daily movement, presented clearly"
+        description="Keep the movement story legible: today’s progress up front, supporting trend views below, and editing tools that stay out of the way."
       >
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <span className="rounded-full bg-white/8 px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
-          <span className="rounded-full bg-white/8 px-3 py-1.5">{formatDistance(stats.todaySteps, settings.distanceUnit)}</span>
+          <span className="rounded-full bg-white/8 px-3 py-1.5">
+            Goal {settings.stepGoal.toLocaleString()} steps
+          </span>
+          <span className="rounded-full bg-white/8 px-3 py-1.5">
+            {stats.completionRate}% completion rate
+          </span>
+          <span className="rounded-full bg-white/8 px-3 py-1.5">
+            {formatDistance(stats.todaySteps, settings.distanceUnit)}
+          </span>
         </div>
       </SectionHeader>
 
-      <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="surface-elevated flex flex-col items-center justify-center rounded-[1.75rem] px-6 py-8">
-          <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-            <span className="rounded-full bg-primary/12 px-3 py-1.5 text-primary">
-              {stats.goalMetCount} goal hits total
-            </span>
-            <span>{stats.completionRate}% completion rate</span>
+      <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="editorial-panel px-6 py-6 sm:px-7 sm:py-7">
+          <div className="grid gap-6 lg:grid-cols-[auto_1fr] lg:items-center">
+            <div className="mx-auto lg:mx-0">
+              <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} size={212} />
+            </div>
+            <div className="space-y-5">
+              <div>
+                <p className="eyebrow">Today</p>
+                <h2 className="mt-2">Keep the week moving forward</h2>
+                <p className="mt-3 supporting-copy">
+                  Use the ring for instant progress, then read the supporting metrics for distance,
+                  goal hits, and how much margin you still have left today.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <MetricStat
+                  label="Distance"
+                  value={formatDistance(stats.todaySteps, settings.distanceUnit)}
+                  hint="Estimated from steps"
+                  icon={<Route className="h-4 w-4" />}
+                />
+                <MetricStat
+                  label="Goal Hits"
+                  value={stats.goalMetCount.toLocaleString()}
+                  hint="Lifetime clears"
+                  icon={<Target className="h-4 w-4" />}
+                />
+                <MetricStat
+                  label="Remaining"
+                  value={Math.max(settings.stepGoal - stats.todaySteps, 0).toLocaleString()}
+                  hint="Steps to target"
+                  icon={<Footprints className="h-4 w-4" />}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <StatCard
-            label="Today"
-            value={stats.todaySteps.toLocaleString()}
-            hint={formatDistance(stats.todaySteps, settings.distanceUnit)}
-            icon={<Footprints className="h-5 w-5" />}
-          />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
           <StatCard
             label="7-Day Average"
             value={stats.average.toLocaleString()}
@@ -81,8 +112,8 @@ export function StepsPageClient({
 
       <StepsChart entries={entries} goal={settings.stepGoal} timezone={timezone} />
 
-      <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-4">
+      <div className="grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
+        <div className="page-stack">
           <StepsEntryForm />
           <StepsHeatmap entries={entries} goal={settings.stepGoal} />
         </div>
@@ -92,3 +123,27 @@ export function StepsPageClient({
   );
 }
 
+function MetricStat({
+  label,
+  value,
+  hint,
+  icon,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  icon: ReactNode;
+}) {
+  return (
+    <div className="rounded-[1.35rem] border border-border/80 bg-background/35 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+      <div className="flex items-center justify-between gap-3">
+        <p className="eyebrow">{label}</p>
+        <span className="text-primary">{icon}</span>
+      </div>
+      <p className="mt-3 text-xl font-semibold tracking-tight text-foreground data-number">
+        {value}
+      </p>
+      <p className="mt-2 text-sm text-muted-foreground">{hint}</p>
+    </div>
+  );
+}

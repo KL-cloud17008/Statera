@@ -24,8 +24,8 @@ export function MobileHeader() {
   });
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/75 px-4 py-3 backdrop-blur-xl md:hidden">
-      <div className="surface-card flex items-center justify-between rounded-[1.35rem] px-4 py-3">
+    <header className="sticky top-0 z-40 px-4 py-3 backdrop-blur-xl md:hidden">
+      <div className="editorial-panel flex items-center justify-between rounded-[1.45rem] px-4 py-3">
         <div>
           <p className="eyebrow">{activeLabel}</p>
           <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">

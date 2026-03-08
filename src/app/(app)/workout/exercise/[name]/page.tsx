@@ -1,14 +1,12 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Dumbbell } from "lucide-react";
 import { getExerciseHistory } from "@/actions/workout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { calculateSetVolume } from "@/lib/workout-stats";
-import { Dumbbell } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -66,7 +64,7 @@ export default async function ExerciseHistoryPage({
         description={`${sets.length} total sets across ${dates.length} logged sessions.`}
         action={
           <Link href="/workout/history">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" size="lg" className="gap-2 rounded-full">
               <ArrowLeft className="h-4 w-4" />
               Back to history
             </Button>
@@ -75,22 +73,13 @@ export default async function ExerciseHistoryPage({
       />
 
       {bestSet ? (
-        <Card className="border-primary/30">
-          <CardContent className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <p className="eyebrow">Best Set</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{bestSet.weightUsed ?? "--"} lbs</p>
-            </div>
-            <div>
-              <p className="eyebrow">Reps</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{bestSet.repsCompleted ?? "--"}</p>
-            </div>
-            <div>
-              <p className="eyebrow">Volume</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{Math.round(bestVolume).toLocaleString()}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <section className="editorial-panel px-6 py-6 sm:px-7 sm:py-7">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <MetricBlock label="Best Set" value={`${bestSet.weightUsed ?? "--"} lbs`} />
+            <MetricBlock label="Reps" value={`${bestSet.repsCompleted ?? "--"}`} />
+            <MetricBlock label="Volume" value={Math.round(bestVolume).toLocaleString()} accent />
+          </div>
+        </section>
       ) : null}
 
       {dates.length === 0 ? (
@@ -104,30 +93,55 @@ export default async function ExerciseHistoryPage({
       {dates.map((date) => {
         const dateSets = byDate.get(date) ?? [];
         return (
-          <Card key={date}>
-            <CardHeader>
-              <CardTitle>
+          <section key={date} className="editorial-panel-quiet px-6 py-6 sm:px-7 sm:py-7">
+            <div>
+              <p className="eyebrow">Session</p>
+              <h2 className="mt-2 text-xl font-semibold text-foreground">
                 {new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
                   weekday: "short",
                   month: "short",
                   day: "numeric",
                 })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
+              </h2>
+            </div>
+            <div className="mt-6 grid gap-3">
               {dateSets.sort((a, b) => a.setNumber - b.setNumber).map((set) => (
-                <div key={set.id} className="flex flex-wrap items-center gap-3 rounded-[1rem] border border-border bg-muted/20 px-4 py-3 text-sm">
-                  <span className="text-muted-foreground">Set {set.setNumber}</span>
-                  <span className="font-semibold text-foreground data-number">{set.weightUsed ?? "--"} lbs</span>
-                  <span className="text-muted-foreground">× {set.repsCompleted ?? "--"}</span>
-                  {set.actualRPE ? <span className="text-muted-foreground">RPE {set.actualRPE}</span> : null}
-                  {set.notes ? <span className="text-muted-foreground">{set.notes}</span> : null}
+                <div
+                  key={set.id}
+                  className="rounded-[1.2rem] border border-border/80 bg-background/35 px-4 py-4 text-sm"
+                >
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <span className="eyebrow">Set {set.setNumber}</span>
+                    <span className="font-semibold text-foreground data-number">{set.weightUsed ?? "--"} lbs</span>
+                    <span className="text-muted-foreground">× {set.repsCompleted ?? "--"}</span>
+                    {set.actualRPE ? <span className="text-muted-foreground">RPE {set.actualRPE}</span> : null}
+                  </div>
+                  {set.notes ? <p className="mt-3 text-sm text-muted-foreground">{set.notes}</p> : null}
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         );
       })}
+    </div>
+  );
+}
+
+function MetricBlock({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="rounded-[1.25rem] border border-border/80 bg-background/35 px-4 py-4">
+      <p className="eyebrow">{label}</p>
+      <p className={`mt-3 text-2xl font-semibold tracking-tight data-number ${accent ? "text-primary" : "text-foreground"}`}>
+        {value}
+      </p>
     </div>
   );
 }

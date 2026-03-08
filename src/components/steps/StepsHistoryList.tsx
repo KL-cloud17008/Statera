@@ -1,15 +1,23 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { CalendarRange, Loader2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteStepsEntry } from "@/actions/steps";
+import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { StepsEntryForm } from "@/components/steps/StepsEntryForm";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { CalendarRange } from "lucide-react";
 
 type StepsEntry = {
   id: string;
@@ -21,6 +29,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { settings } = useAppSettings();
 
   async function handleDelete() {
     if (!deleteId) {
@@ -56,7 +65,13 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Recent entries</CardTitle>
+          <div>
+            <p className="eyebrow">History</p>
+            <CardTitle className="mt-2">Recent entries</CardTitle>
+            <p className="mt-3 supporting-copy">
+              Audit the most recent totals, clean up outliers, and keep your streak data honest.
+            </p>
+          </div>
         </CardHeader>
         <CardContent className="space-y-3">
           {entries.map((entry) => {
@@ -65,6 +80,8 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
               month: "short",
               day: "numeric",
             });
+            const steps = entry.steps ?? 0;
+            const goalRatio = settings.stepGoal > 0 ? steps / settings.stepGoal : 0;
 
             return editingId === entry.id ? (
               <StepsEntryForm
@@ -75,13 +92,21 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
             ) : (
               <div
                 key={entry.id}
-                className="group flex items-center justify-between rounded-[1.25rem] border border-border bg-muted/35 px-4 py-4 transition-colors hover:bg-accent/70"
+                className="focus-surface group flex items-center justify-between gap-3 rounded-[1.45rem] border border-border/80 bg-background/35 px-4 py-4 sm:px-5"
               >
-                <div>
-                  <p className="text-lg font-semibold text-foreground data-number">
-                    {(entry.steps ?? 0).toLocaleString()}
-                  </p>
-                  <p className="text-sm text-muted-foreground">{label}</p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <p className="text-[1.35rem] font-semibold text-foreground data-number">
+                      {steps.toLocaleString()}
+                    </p>
+                    <Badge variant={goalRatio >= 1 ? "default" : goalRatio >= 0.75 ? "secondary" : "outline"}>
+                      {goalRatio >= 1 ? "Goal met" : `${Math.round(goalRatio * 100)}% of goal`}
+                    </Badge>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs uppercase tracking-[0.12em] text-muted-foreground">
+                    <span>{label}</span>
+                    <span>Goal {settings.stepGoal.toLocaleString()}</span>
+                  </div>
                 </div>
                 <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
                   <Button
