@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import { usePathname } from "next/navigation";
@@ -24,19 +24,19 @@ export function MobileHeader() {
   });
 
   return (
-    <header className="sticky top-0 z-40 px-4 py-3 backdrop-blur-xl md:hidden">
-      <div className="editorial-panel flex items-center justify-between rounded-[1.45rem] px-4 py-3">
+    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 px-4 py-2.5 backdrop-blur-xl md:hidden">
+      <div className="flex items-center justify-between">
         <div>
           <p className="eyebrow">{activeLabel}</p>
-          <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
             <CalendarDays className="h-3.5 w-3.5" />
             <span>{todayLabel}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <ThemeToggle />
           <form action={signOut}>
-            <Button variant="outline" size="icon-sm" className="rounded-full">
+            <Button variant="ghost" size="icon-sm" className="rounded-full">
               <LogOut className="h-4 w-4" />
               <span className="sr-only">Sign out</span>
             </Button>

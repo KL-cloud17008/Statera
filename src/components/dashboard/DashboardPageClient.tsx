@@ -84,16 +84,16 @@ export function DashboardPageClient({
         }
       >
         <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-          <span className="rounded-full bg-white/8 px-3 py-1.5">
+          <span className="rounded-full bg-muted/60 px-3 py-1.5">
             {stepStats.streak} day streak
           </span>
-          <span className="rounded-full bg-white/8 px-3 py-1.5">
+          <span className="rounded-full bg-muted/60 px-3 py-1.5">
             {workoutSummary.weeklySessions} sessions this week
           </span>
         </div>
       </SectionHeader>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.1fr_0.9fr_0.9fr]">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Link href="/steps" className="block">
           <Card className="h-full">
             <CardHeader>
@@ -150,7 +150,7 @@ export function DashboardPageClient({
         </Link>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Link href="/steps" className="block">
           <StatCard
             label="Consistency"
@@ -177,7 +177,7 @@ export function DashboardPageClient({
             </CardHeader>
             <CardContent>
               {workoutSummary.lastWorkout ? (
-                <div className="grid gap-4 sm:grid-cols-[1.2fr_repeat(3,minmax(0,1fr))]">
+                <div className="grid gap-4 sm:grid-cols-[1.4fr_repeat(2,minmax(0,1fr))]">
                   <div>
                     <p className="text-xl font-semibold text-foreground">
                       {workoutSummary.lastWorkout.label}
@@ -195,18 +195,12 @@ export function DashboardPageClient({
                   <div>
                     <p className="eyebrow">Volume</p>
                     <p className="mt-2 text-2xl font-semibold text-foreground data-number">
-                      {lastWorkoutVolume}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="eyebrow">Unit</p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground data-number">
-                      {settings.weightUnit}
+                      {lastWorkoutVolume} <span className="text-base text-muted-foreground">{settings.weightUnit}</span>
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="rounded-[1.25rem] border border-dashed border-border px-4 py-8 text-sm text-muted-foreground">
+                <div className="rounded-[--radius-card] border border-dashed border-border px-4 py-8 text-sm text-muted-foreground">
                   No completed workouts yet. Start a session and your recap will appear here.
                 </div>
               )}

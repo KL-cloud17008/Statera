@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   makeCustomExerciseId,
   type MuscleGroup,
@@ -150,7 +151,7 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="custom-session-label">Session name</Label>
-              <Input id="custom-session-label" value={label} onChange={(event) => setLabel(event.target.value)} className="h-12" />
+              <Input id="custom-session-label" value={label} onChange={(event) => setLabel(event.target.value)} className="h-11" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="library-select">Exercise library</Label>
@@ -159,7 +160,7 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
                   id="library-select"
                   value={selectedExerciseId}
                   onChange={(event) => setSelectedExerciseId(event.target.value)}
-                  className="h-12 flex-1 rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
+                  className="h-11 flex-1 rounded-2xl border border-border bg-input px-4 text-sm text-foreground transition-[border-color,box-shadow] duration-150 focus:outline-none focus:ring-focus"
                 >
                   {Array.from(groupedLibrary.entries()).map(([group, exercises]) => (
                     <optgroup key={group} label={group}>
@@ -179,15 +180,20 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
             </div>
           </div>
 
-          <div className="rounded-[1.25rem] border border-border bg-muted/25 p-4">
+          <div className="rounded-[--radius-card] border border-border bg-muted/25 p-4">
             <p className="eyebrow">Custom Exercise</p>
             <div className="mt-3 grid gap-3 md:grid-cols-[1.2fr_1fr_auto]">
-              <Input value={customName} onChange={(event) => setCustomName(event.target.value)} placeholder="Exercise name" className="h-12" />
-              <select value={customGroup} onChange={(event) => setCustomGroup(event.target.value as MuscleGroup)} className="h-12 rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]">
-                {MUSCLE_GROUPS.map((group) => (
-                  <option key={group} value={group}>{group}</option>
-                ))}
-              </select>
+              <Input value={customName} onChange={(event) => setCustomName(event.target.value)} placeholder="Exercise name" className="h-11" />
+              <Select value={customGroup} onValueChange={(value) => setCustomGroup(value as MuscleGroup)}>
+                <SelectTrigger className="h-11 w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {MUSCLE_GROUPS.map((group) => (
+                    <SelectItem key={group} value={group}>{group}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Button type="button" variant="secondary" onClick={saveCustomExercise}>Save</Button>
             </div>
           </div>
@@ -201,7 +207,7 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
               />
             ) : (
               selectedExercises.map((exercise, index) => (
-                <div key={`${exercise.exerciseId}-${index}`} className="grid gap-3 rounded-[1.25rem] border border-border bg-muted/25 p-4 md:grid-cols-[1.4fr_repeat(3,minmax(0,0.72fr))_auto]">
+                <div key={`${exercise.exerciseId}-${index}`} className="grid gap-3 rounded-[--radius-card] border border-border bg-muted/25 p-4 md:grid-cols-[1.4fr_repeat(3,minmax(0,0.72fr))_auto]">
                   <div>
                     <p className="font-semibold text-foreground">{exercise.name}</p>
                     <p className="text-sm text-muted-foreground">{exercise.muscleGroup}</p>
@@ -243,7 +249,7 @@ export function CustomWorkoutBuilder({ hasActiveSession }: { hasActiveSession: b
             />
           ) : (
             settings.workoutTemplates.map((template) => (
-              <div key={template.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/25 p-4">
+              <div key={template.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[--radius-card] border border-border bg-muted/25 p-4">
                 <div>
                   <p className="font-semibold text-foreground">{template.name}</p>
                   <p className="text-sm text-muted-foreground">{template.exercises.length} exercises</p>

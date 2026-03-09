@@ -14,7 +14,7 @@ export function DesktopSidebar() {
 
   return (
     <aside className="app-shell-grid fixed inset-y-0 left-0 z-30 hidden w-[18rem] border-r border-sidebar-border bg-sidebar/80 px-5 py-6 backdrop-blur-xl md:flex md:flex-col">
-      <div className="surface-elevated rounded-[1.75rem] p-5">
+      <div className="surface-elevated rounded-[--radius-panel] p-5">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_16px_32px_rgba(68,227,157,0.22)]">
             <Activity className="h-5 w-5" />
@@ -57,7 +57,7 @@ export function DesktopSidebar() {
         })}
       </nav>
 
-      <div className="surface-card mt-6 space-y-4 rounded-[1.5rem] p-4">
+      <div className="surface-card mt-6 space-y-4 rounded-[--radius-surface] p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-foreground">Appearance</p>

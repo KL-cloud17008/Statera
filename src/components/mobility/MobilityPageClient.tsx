@@ -87,7 +87,7 @@ export function MobilityPageClient({
 
         {isTrainingDay ? (
           <TabsContent value="pre" className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2 rounded-[1.25rem] border border-border bg-muted/30 p-4">
+            <div className="flex flex-wrap items-center gap-2 rounded-[--radius-card] border border-border bg-muted/30 p-4">
               <span className="text-sm text-muted-foreground">Version</span>
               <Button type="button" variant={version === "A" ? "default" : "outline"} size="sm" onClick={() => setVersion("A")}>A - Normal</Button>
               <Button type="button" variant={version === "B" ? "default" : "outline"} size="sm" onClick={() => setVersion("B")}>B - Sore/Stiff</Button>
@@ -133,7 +133,7 @@ export function MobilityPageClient({
         ) : null}
 
         <TabsContent value="undo" className="space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/30 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[--radius-card] border border-border bg-muted/30 p-4">
             <p className="text-sm text-muted-foreground">Aim for 2-3 short sessions each day after long blocks of sitting.</p>
             {undoCount > 0 ? <Badge variant="outline">{undoCount} completed</Badge> : null}
           </div>

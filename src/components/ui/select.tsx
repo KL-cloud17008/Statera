@@ -55,7 +55,7 @@ function SelectContent({
         data-slot="select-content"
         position={position}
         className={cn(
-          "surface-elevated z-50 max-h-80 min-w-[12rem] overflow-hidden rounded-[1.2rem] p-1 text-popover-foreground",
+          "surface-elevated z-50 max-h-80 min-w-[12rem] overflow-hidden rounded-[--radius-card] p-1 text-popover-foreground",
           className
         )}
         {...props}

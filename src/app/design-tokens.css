@@ -31,6 +31,9 @@
   --radius: 1rem;
   --radius-tight: 0.875rem;
   --radius-pill: 999px;
+  --radius-card: 1.25rem;
+  --radius-surface: 1.5rem;
+  --radius-panel: 1.75rem;
 
   --gray-50: #f7fafc;
   --gray-100: #edf2f8;

@@ -44,27 +44,14 @@ export default async function WeightPage() {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Weight Tracker"
-        title="Read the signal, not the noise"
-        description="Track raw weigh-ins against the moving average, goal marker, and current pace so the page reads more like a brief than a dashboard."
+        title="See trend, pace, and goal alignment"
+        description="Track raw weigh-ins alongside the 7-day moving average, BMI, goal marker, and projected trajectory."
         action={<WeightPageActions />}
-      >
-        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-          <span className="rounded-full bg-white/8 px-3 py-1.5">
-            {serializedEntries.length} logged weigh-ins
-          </span>
-          {user.goalWeight ? (
-            <span className="rounded-full bg-white/8 px-3 py-1.5">Goal weight saved</span>
-          ) : (
-            <span className="rounded-full bg-white/8 px-3 py-1.5">
-              Add a goal in settings for projections
-            </span>
-          )}
-        </div>
-      </SectionHeader>
+      />
 
       <WeightStatsCards stats={stats} />
       <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
-      <div className="grid gap-4 xl:grid-cols-[0.88fr_1.12fr]">
+      <div className="grid gap-4 xl:grid-cols-2">
         <WeightEntryForm />
         <WeightHistoryList entries={serializedEntries} />
       </div>

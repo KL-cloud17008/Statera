@@ -231,7 +231,7 @@ export function SessionLogger({
         return (
           <div key={groupIndex} className="space-y-3">
             {isSuperset ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/35 px-4 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-[--radius-card] border border-border bg-muted/35 px-4 py-3">
                 <Badge variant="outline">Superset {group[0].supersetGroup}</Badge>
                 <RestTimer defaultSeconds={restSeconds} />
               </div>
