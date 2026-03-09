@@ -1,6 +1,6 @@
 ﻿{
-  "name": "Athnaor",
-  "short_name": "Athnaor",
+  "name": "Athanor",
+  "short_name": "Athanor",
   "description": "Personal fitness tracking PWA",
   "start_url": "/",
   "display": "standalone",

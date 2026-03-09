@@ -385,7 +385,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <CardTitle>About</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>Athnaor is a fitness tracker for movement, bodyweight, training volume, and recovery — all in one place.</p>
+            <p>Athanor is a fitness tracker for movement, bodyweight, training volume, and recovery — all in one place.</p>
             <p>Backups include server-side tracker data and local presentation preferences so the app can be restored without rebuilding your setup.</p>
           </CardContent>
         </Card>

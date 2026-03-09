@@ -2,7 +2,7 @@
 import { WeightImportClient } from "@/components/weight/WeightImportClient";
 
 export const metadata: Metadata = {
-  title: "Import Weight Data | Athnaor",
+  title: "Import Weight Data | Athanor",
   description: "Preview and import historical weight CSV data.",
 };
 

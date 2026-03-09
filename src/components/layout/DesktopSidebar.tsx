@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { signOut } from "@/actions/auth";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
@@ -16,10 +16,11 @@ export function DesktopSidebar() {
     <aside className="app-shell-grid fixed inset-y-0 left-0 z-30 hidden w-[16.25rem] border-r border-sidebar-border/60 bg-sidebar/58 px-6 py-8 backdrop-blur-xl md:flex md:flex-col">
       <div>
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-white/10 bg-white/[0.03] text-foreground/86">
-            <Activity className="h-[1.125rem] w-[1.125rem]" />
-          </div>
-          <p className="text-[1.05rem] font-semibold tracking-[-0.05em] text-foreground">Athnaor</p>
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 text-foreground/86">
+            <polygon points="32,8 48,34 16,34" fill="currentColor" />
+            <polygon points="32,30 48,56 16,56" fill="currentColor" opacity="0.35" />
+          </svg>
+          <p className="text-[1.05rem] font-semibold tracking-[-0.05em] text-foreground">Athanor</p>
         </div>
       </div>
 

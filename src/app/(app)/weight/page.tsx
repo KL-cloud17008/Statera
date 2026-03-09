@@ -10,7 +10,7 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { computeWeightStats } from "@/lib/weight";
 
 export const metadata: Metadata = {
-  title: "Weight | Athnaor",
+  title: "Weight | Athanor",
   description: "Track weigh-ins, see your 7-day trend, compare to goal weight, and monitor projected progress.",
 };
 

@@ -7,7 +7,7 @@ import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
 
 export const metadata: Metadata = {
-  title: "Workout | Athnaor",
+  title: "Workout | Athanor",
   description: "Run today’s programmed session, build custom workouts, save templates, and log every set.",
 };
 

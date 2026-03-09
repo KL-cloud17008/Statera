@@ -36,7 +36,7 @@ export function LoginPageClient() {
         <div className="grid gap-3 lg:grid-cols-[1fr_0.9fr]">
           <div className="page-hero flex min-h-[26rem] flex-col justify-between p-8">
             <div>
-              <p className="eyebrow">Athnaor</p>
+              <p className="eyebrow">Athanor</p>
               <h1 className="mt-4 max-w-lg">Movement, training, and bodyweight in one calm view.</h1>
               <p className="mt-4 max-w-xl text-base text-muted-foreground">
                 Track steps, weight, mobility, and training volume with an interface built for daily use.

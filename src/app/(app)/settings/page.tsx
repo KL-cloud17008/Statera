@@ -3,7 +3,7 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { SettingsPageClient } from "@/components/settings/SettingsPageClient";
 
 export const metadata: Metadata = {
-  title: "Settings | Athnaor",
+  title: "Settings | Athanor",
   description: "Manage profile values, units, theme, backups, imports, and data safety controls.",
 };
 

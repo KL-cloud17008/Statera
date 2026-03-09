@@ -21,7 +21,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Athnaor",
+  title: "Athanor",
   description: "Movement, training, and bodyweight in one calm view.",
   manifest: "/manifest.json",
   icons: {
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Athnaor",
+    title: "Athanor",
   },
 };
 

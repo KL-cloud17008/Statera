@@ -2,7 +2,7 @@
 import { NutritionPlaceholder } from "@/components/nutrition/NutritionPlaceholder";
 
 export const metadata: Metadata = {
-  title: "Nutrition Summary | Athnaor",
+  title: "Nutrition Summary | Athanor",
   description: "Review weekly and monthly calorie and macro averages.",
 };
 

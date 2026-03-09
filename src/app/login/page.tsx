@@ -2,8 +2,8 @@
 import { LoginPageClient } from "@/components/auth/LoginPageClient";
 
 export const metadata: Metadata = {
-  title: "Sign In | Athnaor",
-  description: "Sign in to Athnaor to access your fitness dashboard, workouts, steps, and weight trends.",
+  title: "Sign In | Athanor",
+  description: "Sign in to Athanor to access your fitness dashboard, workouts, steps, and weight trends.",
 };
 
 export default function LoginPage() {
