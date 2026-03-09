@@ -25,7 +25,7 @@ export function WeightPageActions() {
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `fittrack-weight-${new Date().toISOString().split("T")[0]}.csv`;
+      anchor.download = `athnaor-weight-${new Date().toISOString().split("T")[0]}.csv`;
       anchor.click();
       URL.revokeObjectURL(url);
       toast.success("CSV exported");

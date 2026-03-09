@@ -16,8 +16,8 @@ export function NutritionPlaceholder({
       <SectionHeader eyebrow={eyebrow} title={title} description={description} />
       <EmptyState
         icon={Apple}
-        title="Nutrition tools are queued next"
-        description="The redesign pass keeps these routes aligned with the new system while the nutrition workflows remain in the backlog."
+        title="Coming soon"
+        description="Nutrition tracking is on the roadmap. Meal logging, macro targets, and saved foods will appear here."
       />
     </div>
   );

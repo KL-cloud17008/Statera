@@ -33,8 +33,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeader } from "@/components/ui/section-header";
 import type { AppSettings } from "@/lib/app-settings";
+import { inchesToCm } from "@/lib/units";
 
 type SettingsPageClientProps = {
   profile: {
@@ -101,7 +103,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         2
       );
       downloadTextFile(
-        `fittrack-backup-${new Date().toISOString().split("T")[0]}.json`,
+        `athnaor-backup-${new Date().toISOString().split("T")[0]}.json`,
         payload,
         "application/json"
       );
@@ -135,9 +137,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         return;
       }
 
-      downloadTextFile("fittrack-weight.csv", weightCsv.csv, "text/csv;charset=utf-8;");
-      downloadTextFile("fittrack-steps.csv", csv.steps, "text/csv;charset=utf-8;");
-      downloadTextFile("fittrack-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
+      downloadTextFile("athnaor-weight.csv", weightCsv.csv, "text/csv;charset=utf-8;");
+      downloadTextFile("athnaor-steps.csv", csv.steps, "text/csv;charset=utf-8;");
+      downloadTextFile("athnaor-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
       toast.success("CSV exports downloaded");
     } finally {
       setIsExporting(false);
@@ -210,8 +212,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardHeader>
         <CardContent>
           <form action={handleProfileSave} className="grid gap-4 md:grid-cols-2">
-            <Field label="Height (inches)" htmlFor="heightInches">
-              <Input id="heightInches" name="heightInches" type="number" min="36" max="96" defaultValue={profile.heightInches ?? ""} className="h-12" />
+            <Field label="Height (cm)" htmlFor="heightCm">
+              <Input id="heightCm" name="heightCm" type="number" min="91" max="244" step="0.1" placeholder="175" defaultValue={profile.heightInches != null ? inchesToCm(profile.heightInches) : ""} className="h-12" />
             </Field>
             <Field label="Timezone" htmlFor="timezone">
               <Input id="timezone" name="timezone" type="text" defaultValue={profile.timezone} className="h-12" />
@@ -278,36 +280,42 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </Field>
             <div className="grid gap-4 md:grid-cols-2">
               <Field label="Weight Unit" htmlFor="weightUnit">
-                <select
-                  id="weightUnit"
+                <Select
                   value={settings.weightUnit}
-                  onChange={(event) => {
+                  onValueChange={(value) => {
                     updateSettings((current) => ({
                       ...current,
-                      weightUnit: event.target.value === "kg" ? "kg" : "lb",
+                      weightUnit: value === "kg" ? "kg" : "lb",
                     }));
                   }}
-                  className="h-12 w-full rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
                 >
-                  <option value="lb">Pounds</option>
-                  <option value="kg">Kilograms</option>
-                </select>
+                  <SelectTrigger id="weightUnit" className="h-12 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="lb">Pounds</SelectItem>
+                    <SelectItem value="kg">Kilograms</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
               <Field label="Distance Unit" htmlFor="distanceUnit">
-                <select
-                  id="distanceUnit"
+                <Select
                   value={settings.distanceUnit}
-                  onChange={(event) => {
+                  onValueChange={(value) => {
                     updateSettings((current) => ({
                       ...current,
-                      distanceUnit: event.target.value === "km" ? "km" : "mi",
+                      distanceUnit: value === "km" ? "km" : "mi",
                     }));
                   }}
-                  className="h-12 w-full rounded-2xl border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
                 >
-                  <option value="mi">Miles</option>
-                  <option value="km">Kilometers</option>
-                </select>
+                  <SelectTrigger id="distanceUnit" className="h-12 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="mi">Miles</SelectItem>
+                    <SelectItem value="km">Kilometers</SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
             </div>
           </CardContent>
@@ -377,7 +385,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <CardTitle>About</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>ATHANOR is a local-first fitness operating system for tracking movement, bodyweight, training volume, and recovery in one place.</p>
+            <p>Athnaor is a fitness tracker for movement, bodyweight, training volume, and recovery — all in one place.</p>
             <p>Backups include server-side tracker data and local presentation preferences so the app can be restored without rebuilding your setup.</p>
           </CardContent>
         </Card>

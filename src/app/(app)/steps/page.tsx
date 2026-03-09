@@ -4,7 +4,7 @@ import { StepsPageClient } from "@/components/steps/StepsPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 
 export const metadata: Metadata = {
-  title: "Steps | ATHANOR",
+  title: "Steps | Athnaor",
   description: "Track daily steps, goal progress, weekly bars, and a monthly movement heatmap.",
 };
 

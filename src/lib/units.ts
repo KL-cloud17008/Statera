@@ -3,6 +3,15 @@ import type { DistanceUnit, WeightUnit } from "@/lib/app-settings";
 const LB_TO_KG = 0.45359237;
 const STEPS_TO_MILES = 0.0004734848;
 const MILES_TO_KM = 1.609344;
+const INCHES_TO_CM = 2.54;
+
+export function inchesToCm(inches: number): number {
+  return Math.round(inches * INCHES_TO_CM * 10) / 10;
+}
+
+export function cmToInches(cm: number): number {
+  return cm / INCHES_TO_CM;
+}
 
 export function convertWeight(value: number, unit: WeightUnit) {
   if (unit === "kg") {

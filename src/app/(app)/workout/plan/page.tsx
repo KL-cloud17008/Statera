@@ -16,7 +16,7 @@ const DAY_NAMES: Record<number, string> = {
 };
 
 export const metadata: Metadata = {
-  title: "Workout Plan | ATHANOR",
+  title: "Workout Plan | Athnaor",
   description: "Review the scheduled training split, exercise order, warm-ups, finishers, and rest guidance.",
 };
 

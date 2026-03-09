@@ -8,7 +8,7 @@ import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
 import { computeWeightStats } from "@/lib/weight";
 
 export const metadata: Metadata = {
-  title: "Dashboard | ATHANOR",
+  title: "Dashboard | Athnaor",
   description: "See your daily steps, current weight trend, recent training volume, and active streaks in one place.",
 };
 

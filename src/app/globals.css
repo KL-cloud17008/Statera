@@ -57,8 +57,13 @@
   }
 
   html {
+    color-scheme: dark;
     scroll-behavior: smooth;
     background: var(--background);
+  }
+
+  .light {
+    color-scheme: light;
   }
 
   body {

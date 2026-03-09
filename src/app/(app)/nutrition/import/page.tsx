@@ -2,7 +2,7 @@
 import { NutritionPlaceholder } from "@/components/nutrition/NutritionPlaceholder";
 
 export const metadata: Metadata = {
-  title: "Import Nutrition Data | ATHANOR",
+  title: "Import Nutrition Data | Athnaor",
   description: "Import historical nutrition data from supported CSV exports.",
 };
 

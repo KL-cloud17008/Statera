@@ -21,13 +21,19 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ATHANOR",
-  description: "Personal fitness tracking PWA",
+  title: "Athnaor",
+  description: "Movement, training, and bodyweight in one calm view.",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "ATHANOR",
+    title: "Athnaor",
   },
 };
 
@@ -45,6 +51,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="color-scheme" content="dark" />
+        <meta name="darkreader-lock" />
+      </head>
       <body className={`${manrope.variable} ${ibmPlexMono.variable} antialiased`}>
         <ThemeProvider>
           <AppSettingsProvider>

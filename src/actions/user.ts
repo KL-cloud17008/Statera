@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseDate } from "@/lib/dates";
 import { revalidatePath } from "next/cache";
+import { cmToInches } from "@/lib/units";
 
 type WeighInStatus = "BASELINE" | "FASTING" | "NORMAL";
 
@@ -190,20 +191,21 @@ export async function updateUserProfile(formData: FormData) {
     return { error: "Not authenticated" };
   }
 
-  const heightStr = formData.get("heightInches") as string;
+  const heightCmStr = formData.get("heightCm") as string;
   const startWeightStr = formData.get("startWeight") as string;
   const goalWeightStr = formData.get("goalWeight") as string;
   const timezone = (formData.get("timezone") as string) || user.timezone;
 
-  const heightInches = heightStr ? Number.parseInt(heightStr, 10) : null;
+  const heightCm = heightCmStr ? Number.parseFloat(heightCmStr) : null;
+  const heightInches = heightCm != null ? Math.round(cmToInches(heightCm)) : null;
   const startWeight = startWeightStr ? Number.parseFloat(startWeightStr) : null;
   const goalWeight = goalWeightStr ? Number.parseFloat(goalWeightStr) : null;
 
   if (
-    heightInches != null &&
-    (Number.isNaN(heightInches) || heightInches < 36 || heightInches > 96)
+    heightCm != null &&
+    (Number.isNaN(heightCm) || heightCm < 91 || heightCm > 244)
   ) {
-    return { error: "Height must be between 36 and 96 inches" };
+    return { error: "Height must be between 91 and 244 cm" };
   }
 
   if (

@@ -36,10 +36,10 @@ export function LoginPageClient() {
         <div className="grid gap-3 lg:grid-cols-[1fr_0.9fr]">
           <div className="page-hero flex min-h-[26rem] flex-col justify-between p-8">
             <div>
-              <p className="eyebrow">ATHANOR</p>
-              <h1 className="mt-4 max-w-lg">Fitness tracking that feels like a product, not a spreadsheet.</h1>
+              <p className="eyebrow">Athnaor</p>
+              <h1 className="mt-4 max-w-lg">Movement, training, and bodyweight in one calm view.</h1>
               <p className="mt-4 max-w-xl text-base text-muted-foreground">
-                Track training, steps, mobility, and weight with a dark-first interface built for daily use.
+                Track steps, weight, mobility, and training volume with an interface built for daily use.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
@@ -48,7 +48,7 @@ export function LoginPageClient() {
                 ["Weight", "Trend + projection"],
                 ["Workout", "Sessions + PRs"],
               ].map(([title, copy]) => (
-                <div key={title} className="rounded-[1.25rem] border border-white/10 bg-black/10 p-4">
+                <div key={title} className="rounded-[1.25rem] border border-border/40 bg-muted/20 p-4">
                   <p className="eyebrow">{title}</p>
                   <p className="mt-2 text-sm text-foreground">{copy}</p>
                 </div>

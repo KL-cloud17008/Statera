@@ -2,8 +2,8 @@
 import { WeightImportClient } from "@/components/weight/WeightImportClient";
 
 export const metadata: Metadata = {
-  title: "Import Weight Data | ATHANOR",
-  description: "Preview and import historical weight CSV data into your Fittrack timeline.",
+  title: "Import Weight Data | Athnaor",
+  description: "Preview and import historical weight CSV data.",
 };
 
 export default function WeightImportPage() {

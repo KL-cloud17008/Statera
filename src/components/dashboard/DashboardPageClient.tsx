@@ -68,7 +68,7 @@ export function DashboardPageClient({
             <p className="eyebrow">{greeting}</p>
             <h1 className="mt-5 max-w-4xl">Movement, training, and bodyweight in one calm view.</h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-              The app now foregrounds only the signals that matter today: whether you moved, how
+              The app foregrounds only the signals that matter today: whether you moved, how
               bodyweight is trending, and what training has already accumulated this week.
             </p>
           </div>
@@ -105,9 +105,7 @@ export function DashboardPageClient({
                   {todaySteps.toLocaleString()}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-                  Stay above {settings.stepGoal.toLocaleString()} steps and the dashboard takes
-                  care of the rest. The goal is visible without turning the page into a collection
-                  of widgets.
+                  Stay above {settings.stepGoal.toLocaleString()} steps to keep your streak alive.
                 </p>
               </div>
 
@@ -181,11 +179,7 @@ export function DashboardPageClient({
             <div className="space-y-3">
               <p className="eyebrow">Rhythm</p>
               <p className="text-2xl font-semibold tracking-[-0.05em]">
-                The week is shaping up cleanly.
-              </p>
-              <p className="subtle-copy">
-                Movement consistency and training volume stay readable without falling back to the
-                usual dashboard clutter.
+                Weekly overview
               </p>
             </div>
 

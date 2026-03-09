@@ -1,4 +1,4 @@
-export const APP_NAME = "ATHANOR";
+export const APP_NAME = "Athnaor";
 
 export const DEFAULT_TIMEZONE = "America/New_York";
 

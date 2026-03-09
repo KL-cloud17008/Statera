@@ -5,7 +5,7 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { calculateSessionVolume, calculateSetVolume, getSessionLabel } from "@/lib/workout-stats";
 
 export const metadata: Metadata = {
-  title: "Workout History | ATHANOR",
+  title: "Workout History | Athnaor",
   description: "Review your completed sessions with a workout calendar, volume totals, and PR counts.",
 };
 

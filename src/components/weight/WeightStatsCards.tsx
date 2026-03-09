@@ -58,7 +58,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       <StatCard
         label="BMI"
         value={stats.bmi?.toFixed(1) ?? "--"}
-        hint="Uses saved height in settings"
+        hint="Based on height set in profile"
         icon={<HeartPulse className="h-5 w-5" />}
       />
       <StatCard

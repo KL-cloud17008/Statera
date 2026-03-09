@@ -2,7 +2,7 @@
 import { NutritionPlaceholder } from "@/components/nutrition/NutritionPlaceholder";
 
 export const metadata: Metadata = {
-  title: "Saved Meals | ATHANOR",
+  title: "Saved Meals | Athnaor",
   description: "Build reusable meal templates from your saved foods.",
 };
 

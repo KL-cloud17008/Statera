@@ -19,14 +19,8 @@ export function DesktopSidebar() {
           <div className="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-white/10 bg-white/[0.03] text-foreground/86">
             <Activity className="h-[1.125rem] w-[1.125rem]" />
           </div>
-          <div>
-            <p className="eyebrow">Fittrack</p>
-            <p className="mt-1 text-[1.05rem] font-semibold tracking-[-0.05em] text-foreground">ATHANOR</p>
-          </div>
+          <p className="text-[1.05rem] font-semibold tracking-[-0.05em] text-foreground">Athnaor</p>
         </div>
-        <p className="mt-6 max-w-[11rem] text-sm leading-relaxed text-muted-foreground">
-          Training, recovery, bodyweight, and movement in one quiet workspace.
-        </p>
       </div>
 
       <nav className="mt-14 flex flex-1 flex-col gap-1">

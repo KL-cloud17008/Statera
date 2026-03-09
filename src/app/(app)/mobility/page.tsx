@@ -5,7 +5,7 @@ import { getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 
 export const metadata: Metadata = {
-  title: "Mobility | ATHANOR",
+  title: "Mobility | Athnaor",
   description: "Run pre-workout, post-workout, and undo-sitting mobility flows and log completion.",
 };
 

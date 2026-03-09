@@ -18,7 +18,7 @@ export async function generateMetadata({
   const { name } = await params;
   const exerciseName = decodeURIComponent(name);
   return {
-    title: `${exerciseName} | ATHANOR`,
+    title: `${exerciseName} | Athnaor`,
     description: `Review workout history, set performance, and best efforts for ${exerciseName}.`,
   };
 }
