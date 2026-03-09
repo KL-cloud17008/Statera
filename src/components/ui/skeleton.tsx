@@ -5,7 +5,7 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="skeleton"
       className={cn(
-        "animate-pulse rounded-2xl bg-gradient-to-r from-muted/80 via-accent/70 to-muted/80 bg-[length:200%_100%]",
+        "rounded-2xl bg-gradient-to-r from-muted/80 via-accent/70 to-muted/80 bg-[length:200%_100%] skeleton-shimmer",
         className
       )}
       {...props}
