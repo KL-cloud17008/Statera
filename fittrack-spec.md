@@ -9,7 +9,7 @@ A single-user Progressive Web App (PWA) that consolidates fitness tracking into 
 
 1. **Weight tracking** (migrating from Google Sheets)
 2. **Nutrition logging** (replacing Cronometer)
-3. **Workout logging** (new — based on a structured 5-day training plan)
+3. **Workout logging** (new — based on a structured 4-day beginner circuit/superset training plan)
 4. **Pre/post-workout mobility checklists**
 5. **Unified dashboard with charts and insights**
 
@@ -36,7 +36,7 @@ The app must be installable on Android (Samsung Galaxy S21 Ultra) via "Add to Ho
 
 ## Critical Schedule Context (affects all date logic)
 
-- Training days: Sunday night → Thursday night (5 days/week)
+- Training days: Monday, Tuesday, Thursday, and Friday (4 days/week); Wednesday/Saturday are mobility/recovery and Sunday is complete rest
 - Sessions occur between ~2:00 AM and 4:00 AM
 - Rest days: Friday and Saturday
 - **Training day boundary: 12:00 PM (noon)**
@@ -310,8 +310,8 @@ model SavedMealItem {
 model WorkoutPlan {
   id          String @id @default(cuid())
   userId      String
-  dayOfWeek   Int    // 1=Monday, 2=Tuesday, ... 5=Friday
-  sessionName String // "Upper A — Horizontal Push/Pull"
+  dayOfWeek   Int    // 1=Monday, 2=Tuesday, 4=Thursday, 5=Friday
+  sessionName String // "Upper A — Push/Pull Foundation"
   weekNumber  Int    @default(1)
   isActive    Boolean @default(true)
 
@@ -725,12 +725,14 @@ SUPABASE_SERVICE_ROLE_KEY=    # For server-side operations
 
 **Build:**
 1. Workout plan data structure:
-   - Pre-populate with the 5-day plan from the training plan document
-   - Day 1 (Mon): Upper A — Horizontal Push/Pull
-   - Day 2 (Tue): Lower A — Quad and Calf
-   - Day 3 (Wed): Upper B — Vertical Push/Pull
-   - Day 4 (Thu): Lower B — Posterior Chain/Hip
-   - Day 5 (Fri): Full-Body Pump
+   - Pre-populate with the 4-day beginner circuit/superset plan from the training plan document
+   - Monday: Upper A — Push/Pull Foundation
+   - Tuesday: Lower A — Stable Lower Body
+   - Wednesday: Mobility / Recovery
+   - Thursday: Upper B — Back/Shoulder Emphasis
+   - Friday: Lower B — Hips/Posterior Chain
+   - Saturday: Mobility / Recovery
+   - Sunday: Complete Rest
 2. Plan display page:
    - Shows today's workout based on training-day boundary
    - Exercise list with sets, reps, tempo, rest, RPE, cues

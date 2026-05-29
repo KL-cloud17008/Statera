@@ -3,6 +3,7 @@ import { getWorkoutPlans } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { ClipboardList } from "lucide-react";
@@ -33,6 +34,7 @@ export default async function WorkoutPlanPage() {
         eyebrow="Training Split"
         title="4-day circuit workout plan"
         description="Structured beginner supersets with controlled rest, RPE 6–7 guidance, and progressive rounds."
+        action={<WorkoutPlanResetButton />}
       />
 
       {plans.length === 0 ? (
