@@ -21,7 +21,7 @@ model User {
   carbTarget      Int?     @default(207)
   fatTarget       Int?     @default(83)
   timezone        String   @default("America/New_York")
-  trainingDays    Int[]    @default([1, 2, 3, 4, 5]) // 0=Sun, 1=Mon...
+  trainingDays    Int[]    @default([1, 2, 4, 5]) // 0=Sun, 1=Mon; Wed/Sat recovery, Sun rest
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -135,8 +135,8 @@ model SavedMealItem {
 model WorkoutPlan {
   id          String @id @default(cuid())
   userId      String
-  dayOfWeek   Int    // 1=Monday, 2=Tuesday, ... 5=Friday
-  sessionName String // "Upper A — Horizontal Push/Pull"
+  dayOfWeek   Int    // 1=Monday, 2=Tuesday, 4=Thursday, 5=Friday
+  sessionName String // "Upper A — Push/Pull Foundation"
   weekNumber  Int    @default(1)
   isActive    Boolean @default(true)
 

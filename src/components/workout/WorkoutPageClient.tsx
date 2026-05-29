@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
 import { CustomWorkoutBuilder } from "./CustomWorkoutBuilder";
+import { WorkoutPlanResetButton } from "./WorkoutPlanResetButton";
 
 type Exercise = {
   id: string;
@@ -77,7 +78,8 @@ export function WorkoutPageClient({
               : "No scheduled day is in the way, so the builder and saved templates take over the page."
         }
         action={
-          <div className="flex flex-wrap gap-4 text-sm">
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <WorkoutPlanResetButton />
             <Link href="/workout/history" className="text-link inline-flex items-center gap-2">
               History
               <ArrowRight className="h-4 w-4" />

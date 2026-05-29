@@ -13,8 +13,8 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils";
 
 const DAY_NAMES: Record<number, string> = {
-  1: "Day 1 - Upper A",
-  2: "Day 2 - Lower A",
+  1: "Monday - Upper A",
+  2: "Tuesday - Lower A",
   4: "Thursday - Upper B",
   5: "Friday - Lower B",
 };
