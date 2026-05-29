@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { serializeWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { createDefaultWorkoutPlans, ensureDefaultWorkoutPlans } from "@/lib/workout-plan-seed";
 import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
 
 type WorkoutSessionActionResult = {
@@ -18,6 +19,8 @@ type WorkoutMutationResult = {
 };
 
 export async function getWorkoutPlans(userId: string) {
+  await ensureDefaultWorkoutPlans(prisma, userId);
+
   return prisma.workoutPlan.findMany({
     where: { userId, isActive: true },
     include: {
@@ -55,6 +58,36 @@ async function getOpenSession(userId: string) {
     },
     orderBy: { createdAt: "desc" },
   });
+}
+
+export async function resetCurrentWorkoutPlan(): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.workoutSession.updateMany({
+      where: { userId: user.id, completed: false },
+      data: {
+        completed: true,
+        endTime: new Date(),
+      },
+    });
+
+    await tx.workoutPlan.updateMany({
+      where: { userId: user.id, isActive: true },
+      data: { isActive: false },
+    });
+
+    await createDefaultWorkoutPlans(tx, user.id);
+  });
+
+  revalidatePath("/workout");
+  revalidatePath("/workout/plan");
+  revalidatePath("/workout/history");
+  revalidatePath("/");
+  return {};
 }
 
 export async function startWorkoutSession(
