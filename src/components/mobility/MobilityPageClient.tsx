@@ -15,9 +15,8 @@ import { cn } from "@/lib/utils";
 const DAY_NAMES: Record<number, string> = {
   1: "Day 1 - Upper A",
   2: "Day 2 - Lower A",
-  3: "Day 3 - Upper B",
-  4: "Day 4 - Lower B",
-  5: "Day 5 - Full-Body",
+  4: "Thursday - Upper B",
+  5: "Friday - Lower B",
 };
 
 export function MobilityPageClient({
@@ -35,7 +34,7 @@ export function MobilityPageClient({
   const [isPending, startTransition] = useTransition();
 
   const preBlocks = isTrainingDay ? getPreWorkoutChecklist(dayOfWeek, version) : [];
-  const postBlocks = isTrainingDay ? getPostWorkoutChecklist(dayOfWeek) : [];
+  const postBlocks = getPostWorkoutChecklist(dayOfWeek);
   const undoBlocks = [UNDO_SITTING];
 
   const preCompleted = completedTypes.includes("PRE_WORKOUT");
@@ -71,11 +70,11 @@ export function MobilityPageClient({
     <div className="page-shell">
       <SectionHeader
         eyebrow="Mobility"
-        title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training Day" : "Recovery and movement prep"}
+        title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training Day" : "Mobility-only recovery day"}
         description={
           isTrainingDay
-            ? "Warm-up, cooldown, and desk-reset flows now sit together as one composed page instead of three separate tab states."
-            : "Rest day mode keeps the undo-sitting flow close and removes everything else."
+            ? "Primer supports gym days; recovery flow supports mobility-only days. Focus: feet, shins, hips, and back."
+            : "Use a longer 20–30 minute recovery session to restore movement tolerance before the next lift day."
         }
       >
         <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
@@ -128,8 +127,8 @@ export function MobilityPageClient({
 
           <div className="space-y-10">
             <RoutineSection
-              title="Post-workout downshift"
-              summary="Run the cooldown sequence after lifting so the end of the session gets as much structure as the start."
+              title="Recovery mobility session"
+              summary="This can be done after training or later in the day. Keep intensity easy and breathing controlled."
               completed={postCompleted}
               isPending={isPending}
               isCurrentAction={pendingType === "POST_WORKOUT"}
@@ -141,7 +140,7 @@ export function MobilityPageClient({
             </RoutineSection>
 
             <RoutineSection
-              title="Undo sitting"
+              title="Optional desk reset"
               summary="Use this as the short reset that breaks up desk-heavy blocks during the day."
               completed={false}
               isPending={isPending}
@@ -169,7 +168,7 @@ export function MobilityPageClient({
           </section>
 
           <RoutineSection
-            title="Undo sitting"
+            title="Optional desk reset"
             summary="Run the short reset any time you have been parked at a desk for too long."
             completed={false}
             isPending={isPending}

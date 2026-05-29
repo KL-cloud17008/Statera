@@ -8,11 +8,10 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { ClipboardList } from "lucide-react";
 
 const DAY_NAMES: Record<number, string> = {
-  1: "Day 1",
-  2: "Day 2",
-  3: "Day 3",
-  4: "Day 4",
-  5: "Day 5",
+  1: "Monday",
+  2: "Tuesday",
+  4: "Thursday",
+  5: "Friday",
 };
 
 export const metadata: Metadata = {
@@ -32,8 +31,8 @@ export default async function WorkoutPlanPage() {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Training Split"
-        title="Full workout plan"
-        description="Review each programmed day, exercise order, working sets, warm-ups, and finishers."
+        title="4-day circuit workout plan"
+        description="Structured beginner supersets with controlled rest, RPE 6–7 guidance, and progressive rounds."
       />
 
       {plans.length === 0 ? (

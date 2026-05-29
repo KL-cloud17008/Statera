@@ -75,7 +75,7 @@ const DAY_4: ExerciseSeed[] = [
   { exerciseName: "Glute Burner Circuit (4 min)", sets: 1, reps: "AMRAP 4 min", tempo: "1-0-1", restSeconds: 0, targetRPE: "8-9", cues: "Cable pull-through × 10 (60%), Hip abduction × 15 (working weight). Rest 30 sec → Repeat. Record total rounds.", supersetGroup: null, exerciseType: "FINISHER" },
 ];
 
-const DAY_5: ExerciseSeed[] = [
+const DAY_5_UNUSED: ExerciseSeed[] = [
   { exerciseName: "Machine Chest Press (warm-up)", sets: 1, reps: "12", tempo: "2-0-1", restSeconds: 60, targetRPE: "3-4", cues: "1×12 at light weight.", supersetGroup: null, exerciseType: "WARMUP" },
   { exerciseName: "Machine Chest Press", sets: 3, reps: "15", tempo: "2-0-1", restSeconds: 45, targetRPE: "6-7", cues: "Lighter than Day 1. Constant tension — no lockout, no pause.", supersetGroup: "A", exerciseType: "WORKING" },
   { exerciseName: "Lat Pulldown (medium grip)", sets: 3, reps: "15", tempo: "2-0-1", restSeconds: 45, targetRPE: "6-7", cues: "Smooth continuous reps. Squeeze bottom, stretch top.", supersetGroup: "A", exerciseType: "WORKING" },
@@ -87,11 +87,10 @@ const DAY_5: ExerciseSeed[] = [
 ];
 
 const DAYS = [
-  { dayOfWeek: 1, sessionName: "Upper A — Horizontal Push/Pull", exercises: DAY_1 },
-  { dayOfWeek: 2, sessionName: "Lower A — Quad and Calf Focus", exercises: DAY_2 },
-  { dayOfWeek: 3, sessionName: "Upper B — Vertical Push/Pull", exercises: DAY_3 },
-  { dayOfWeek: 4, sessionName: "Lower B — Posterior Chain/Hip", exercises: DAY_4 },
-  { dayOfWeek: 5, sessionName: "Full-Body Pump — High-Rep Metabolic", exercises: DAY_5 },
+  { dayOfWeek: 1, sessionName: "Upper A — Push/Pull Foundation", exercises: DAY_1 },
+  { dayOfWeek: 2, sessionName: "Lower A — Stable Lower Body", exercises: DAY_2 },
+  { dayOfWeek: 4, sessionName: "Upper B — Back/Shoulder Emphasis", exercises: DAY_3 },
+  { dayOfWeek: 5, sessionName: "Lower B — Hips/Posterior Chain", exercises: DAY_4 },
 ];
 
 function cuid(): string {
@@ -187,7 +186,7 @@ async function main() {
     );
   }
 
-  console.log("\nDone! Workout plans seeded successfully.");
+  console.log("\nDone! 4-day beginner circuit workout plans seeded successfully.");
   console.log("Mobility checklists are built into the app code (src/lib/mobility.ts) — no DB seeding needed.");
 }
 

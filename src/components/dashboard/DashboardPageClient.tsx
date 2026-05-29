@@ -66,7 +66,7 @@ export function DashboardPageClient({
         <div className="grid gap-10 xl:grid-cols-[minmax(0,1.35fr)_minmax(17rem,0.65fr)] xl:items-end">
           <div className="max-w-4xl">
             <p className="eyebrow">{greeting}</p>
-            <h1 className="mt-5 max-w-4xl">Movement, training, and bodyweight in one calm view.</h1>
+            <h1 className="mt-5 max-w-4xl">4-day rhythm, mobility cadence, and trend tracking.</h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
               The app foregrounds only the signals that matter today: whether you moved, how
               bodyweight is trending, and what training has already accumulated this week.
@@ -105,7 +105,7 @@ export function DashboardPageClient({
                   {todaySteps.toLocaleString()}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-                  Stay above {settings.stepGoal.toLocaleString()} steps to keep your streak alive.
+                  Progress toward ~8,000 training-day steps over time while consistency comes first.
                 </p>
               </div>
 
@@ -179,7 +179,7 @@ export function DashboardPageClient({
             <div className="space-y-3">
               <p className="eyebrow">Rhythm</p>
               <p className="text-2xl font-semibold tracking-[-0.05em]">
-                Weekly overview
+                This week&apos;s rhythm
               </p>
             </div>
 
@@ -212,8 +212,7 @@ export function DashboardPageClient({
               <div className="space-y-3">
                 <p className="eyebrow">Last session</p>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  No completed workouts yet. Once a session lands, the recap lives here instead of
-                  in another box.
+                  No completed workouts yet. Start with 3-4 sessions/week and mobility 5-6 days/week.
                 </p>
               </div>
             )}
@@ -231,8 +230,8 @@ export function DashboardPageClient({
                   Weight chart
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link href="/workout/history" className="text-link inline-flex items-center gap-2">
-                  Workout history
+                <Link href="/mobility" className="text-link inline-flex items-center gap-2">
+                  Mobility plan
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

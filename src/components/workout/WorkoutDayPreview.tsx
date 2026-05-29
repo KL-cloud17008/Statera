@@ -39,10 +39,8 @@ export function WorkoutDayPreview({
   const workingExercises = plan.exercises.filter(
     (exercise) => exercise.exerciseType === "WORKING"
   );
-  const totalWorkingSets = workingExercises.reduce(
-    (sum, exercise) => sum + exercise.sets,
-    0
-  );
+  const totalWorkingSets = workingExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+  const blockOrder = ["A", "B", "C"] as const;
 
   function handleStart() {
     startTransition(async () => {
@@ -74,6 +72,8 @@ export function WorkoutDayPreview({
             <div className="space-y-1 text-sm text-muted-foreground">
               <p>{workingExercises.length} working exercises</p>
               <p>{totalWorkingSets} working sets</p>
+              <p>RPE 6-7 • leave 2-4 reps in reserve</p>
+              <p>Week 1-2: optional 2-round mode</p>
             </div>
             <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="gap-2">
               {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
@@ -83,67 +83,34 @@ export function WorkoutDayPreview({
         </div>
       ) : null}
 
-      <div className="space-y-0 border-t border-border/70">
-        {plan.exercises.map((exercise, index) => (
-          <div
-            key={exercise.id}
-            className="grid gap-4 border-b border-border/60 py-5 last:border-b-0 md:grid-cols-[3rem_minmax(0,1fr)_auto] md:items-start"
-          >
-            <div className="pt-1 text-sm text-muted-foreground data-number">
-              {exercise.supersetGroup ?? index + 1}
-            </div>
+      <div className="space-y-6 border-t border-border/70 pt-6">
+        {blockOrder.map((block) => {
+          const blockExercises = workingExercises.filter((exercise) => exercise.supersetGroup === block);
+          if (blockExercises.length === 0) return null;
+          const roundTarget = block === "C" ? "2 rounds" : "3 rounds";
+          const restNote = blockExercises[blockExercises.length - 1]?.restSeconds ?? 90;
 
-            <div className="min-w-0">
-              <p className="eyebrow">{getExerciseLabel(exercise, index)}</p>
-              <h3 className="mt-2">{exercise.exerciseName}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {getExerciseMeta(exercise)}
-              </p>
-              {exercise.cues ? (
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                  {exercise.cues}
-                </p>
-              ) : null}
+          return (
+            <div key={block} className="rounded-2xl border border-border/70 bg-muted/10 p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <p className="eyebrow">Block {block}</p>
+                <p className="text-sm text-muted-foreground">{roundTarget} • rest {restNote}s after circuit</p>
+              </div>
+              <div className="space-y-4">
+                {blockExercises.map((exercise, i) => (
+                  <div key={exercise.id} className="border-t border-border/60 pt-4 first:border-t-0 first:pt-0">
+                    <p className="eyebrow">{block}{i + 1}</p>
+                    <h3 className="mt-2">{exercise.exerciseName}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{exercise.sets} sets • {exercise.reps}{exercise.targetRPE ? ` • RPE ${exercise.targetRPE}` : ""}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <div className="pt-1 text-sm text-muted-foreground md:text-right">
-              <p>{exercise.exerciseType === "FINISHER" ? "Single effort" : `${exercise.sets} sets`}</p>
-              {exercise.restSeconds != null && exercise.restSeconds > 0 ? (
-                <p className="mt-1">Rest {exercise.restSeconds}s</p>
-              ) : null}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
     </section>
   );
 }
 
-function getExerciseLabel(exercise: Exercise, index: number) {
-  if (exercise.exerciseType === "WARMUP") {
-    return "Warm-up";
-  }
-  if (exercise.exerciseType === "FINISHER") {
-    return "Finisher";
-  }
-  if (exercise.supersetGroup) {
-    return `Superset ${exercise.supersetGroup}`;
-  }
-  return `Exercise ${index + 1}`;
-}
-
-function getExerciseMeta(exercise: Exercise) {
-  const parts = [exercise.reps];
-
-  if (exercise.tempo) {
-    parts.push(`Tempo ${exercise.tempo}`);
-  }
-  if (exercise.targetRPE) {
-    parts.push(`RPE ${exercise.targetRPE}`);
-  }
-  if (exercise.restSeconds != null && exercise.restSeconds > 0) {
-    parts.push(`Rest ${exercise.restSeconds}s`);
-  }
-
-  return parts.join(" • ");
-}
