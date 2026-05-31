@@ -24,8 +24,8 @@ export function MobileHeader() {
   });
 
   return (
-    <header className="sticky top-0 z-40 bg-background/82 px-5 pb-3 pt-[max(env(safe-area-inset-top),1rem)] backdrop-blur-xl md:hidden">
-      <div className="flex items-end justify-between gap-4 border-b border-white/8 pb-3">
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/88 px-5 pb-3 pt-[max(env(safe-area-inset-top),1rem)] backdrop-blur-xl md:hidden">
+      <div className="flex items-end justify-between gap-4 pb-3">
         <div>
           <p className="eyebrow">{activeLabel}</p>
           <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">

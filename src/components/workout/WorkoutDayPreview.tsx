@@ -91,14 +91,14 @@ export function WorkoutDayPreview({
           const restNote = blockExercises[blockExercises.length - 1]?.restSeconds ?? 90;
 
           return (
-            <div key={block} className="rounded-2xl border border-border/70 bg-muted/10 p-5">
+            <div key={block} className="rounded-[var(--radius-surface)] border border-border/70 bg-secondary/45 p-5">
               <div className="mb-4 flex items-center justify-between">
                 <p className="eyebrow">Block {block}</p>
                 <p className="text-sm text-muted-foreground">{roundTarget} • rest {restNote}s after circuit</p>
               </div>
               <div className="space-y-4">
                 {blockExercises.map((exercise, i) => (
-                  <div key={exercise.id} className="border-t border-border/60 pt-4 first:border-t-0 first:pt-0">
+                  <div key={exercise.id} className="border-t border-border/70 pt-4 first:border-t-0 first:pt-0">
                     <p className="eyebrow">{block}{i + 1}</p>
                     <h3 className="mt-2">{exercise.exerciseName}</h3>
                     <p className="mt-2 text-sm text-muted-foreground">{exercise.sets} sets • {exercise.reps}{exercise.targetRPE ? ` • RPE ${exercise.targetRPE}` : ""}</p>

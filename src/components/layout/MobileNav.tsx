@@ -9,8 +9,8 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 bg-background/88 px-4 pb-[calc(env(safe-area-inset-bottom)+0.8rem)] pt-3 backdrop-blur-xl md:hidden">
-      <div className="hide-scrollbar flex items-center gap-1 overflow-x-auto border-t border-white/8 px-1 pt-3">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background/90 px-4 pb-[calc(env(safe-area-inset-bottom)+0.8rem)] pt-3 backdrop-blur-xl md:hidden">
+      <div className="hide-scrollbar flex items-center gap-1 overflow-x-auto px-1 pt-1">
         {NAV_ITEMS.map((item) => {
           const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (

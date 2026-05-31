@@ -1,24 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { AppSettingsProvider } from "@/components/settings/AppSettingsProvider";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { Toaster } from "@/components/ui/sonner";
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-sans-base",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono-base",
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Athanor",
@@ -32,13 +17,13 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "Athanor",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#080d16",
+  themeColor: "#f7f7f5",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -52,10 +37,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="color-scheme" content="dark" />
+        <meta name="color-scheme" content="light dark" />
         <meta name="darkreader-lock" />
       </head>
-      <body className={`${manrope.variable} ${ibmPlexMono.variable} antialiased`}>
+      <body className="antialiased">
         <ThemeProvider>
           <AppSettingsProvider>
             <ServiceWorkerRegistration />

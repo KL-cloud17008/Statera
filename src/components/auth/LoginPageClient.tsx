@@ -1,8 +1,9 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { AlertCircle, Dumbbell, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { signIn, signUp } from "@/actions/auth";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,7 @@ export function LoginPageClient() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-8">
-      <div className="w-full max-w-5xl rounded-[2rem] border border-border bg-background/60 p-3 shadow-[0_24px_60px_rgba(3,10,27,0.28)] backdrop-blur-xl">
+      <div className="w-full max-w-5xl rounded-[var(--radius-panel)] border border-border bg-card/72 p-3 shadow-[var(--shadow-elevated)] backdrop-blur-xl">
         <div className="grid gap-3 lg:grid-cols-[1fr_0.9fr]">
           <div className="page-hero flex min-h-[26rem] flex-col justify-between p-8">
             <div>
@@ -48,7 +49,7 @@ export function LoginPageClient() {
                 ["Weight", "Trend + projection"],
                 ["Workout", "Sessions + PRs"],
               ].map(([title, copy]) => (
-                <div key={title} className="rounded-[1.25rem] border border-border/40 bg-muted/20 p-4">
+                <div key={title} className="rounded-[var(--radius-card)] border border-border/70 bg-secondary/60 p-4">
                   <p className="eyebrow">{title}</p>
                   <p className="mt-2 text-sm text-foreground">{copy}</p>
                 </div>
@@ -58,8 +59,8 @@ export function LoginPageClient() {
 
           <Card className="h-full rounded-[1.75rem] border-0">
             <CardHeader className="space-y-4 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_16px_32px_rgba(68,227,157,0.22)]">
-                <Dumbbell className="h-7 w-7" />
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-[1.1rem] border border-border bg-secondary text-foreground">
+                <BrandMark className="h-7 w-7" />
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-2xl font-semibold tracking-tight">

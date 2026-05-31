@@ -28,7 +28,7 @@ export function PeriodToggle<T extends string>({
             className={cn(
               "min-h-10 rounded-full px-3 py-2 text-xs font-medium uppercase tracking-[0.12em] transition-all duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
               active
-                ? "bg-card text-foreground shadow-[0_10px_24px_rgba(2,8,23,0.18)]"
+                ? "bg-card text-foreground shadow-[rgba(0,0,0,0.05)_0_0_0_1px_inset]"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >

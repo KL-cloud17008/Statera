@@ -22,7 +22,7 @@ export function EmptyState({
         className
       )}
     >
-      <div className="flex h-10 w-10 items-center justify-center rounded-[1rem] border border-white/8 bg-white/[0.03] text-foreground/82">
+      <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-tight)] border border-border bg-secondary/70 text-foreground/82">
         <Icon className="h-[1.125rem] w-[1.125rem]" />
       </div>
       <h3 className="text-lg font-semibold tracking-[-0.04em] text-foreground">{title}</h3>

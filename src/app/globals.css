@@ -57,30 +57,35 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
     scroll-behavior: smooth;
     background: var(--background);
   }
 
-  .light {
-    color-scheme: light;
+  .dark {
+    color-scheme: dark;
   }
 
   body {
     min-height: 100vh;
     position: relative;
     background:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 26%),
-      radial-gradient(circle at 82% 0%, rgba(143, 166, 194, 0.12), transparent 22%),
-      linear-gradient(180deg, #0c0c0d 0%, #080808 56%, #050505 100%);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(247, 247, 245, 0.96) 42%, rgba(244, 241, 235, 0.96) 100%),
+      radial-gradient(circle at 16% 0%, rgba(237, 236, 231, 0.8), transparent 30%);
     color: var(--foreground);
     font-family: var(--font-sans-base);
     font-size: var(--type-16);
     line-height: var(--leading-normal);
-    letter-spacing: -0.015em;
+    letter-spacing: -0.012em;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    background:
+      linear-gradient(180deg, #141311 0%, #100f0e 54%, #0d0c0b 100%),
+      radial-gradient(circle at 18% 0%, rgba(118, 106, 124, 0.12), transparent 28%);
   }
 
   body::before {
@@ -89,27 +94,21 @@
     inset: 0;
     pointer-events: none;
     background:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent 24%),
-      radial-gradient(circle at 75% 20%, rgba(213, 221, 230, 0.08), transparent 18%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 30%);
+      linear-gradient(90deg, rgba(22, 15, 12, 0.028) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(22, 15, 12, 0.022) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 58%);
   }
 
-  .light body {
+  .dark body::before {
     background:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 0.72), transparent 30%),
-      radial-gradient(circle at 82% 0%, rgba(32, 36, 42, 0.08), transparent 22%),
-      linear-gradient(180deg, #f5f0e8 0%, #ede8df 52%, #e9e3d8 100%);
-  }
-
-  .light body::before {
-    background:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 0.72), transparent 24%),
-      radial-gradient(circle at 76% 14%, rgba(32, 36, 42, 0.08), transparent 18%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, transparent 28%);
+      linear-gradient(90deg, rgba(244, 241, 235, 0.025) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(244, 241, 235, 0.02) 1px, transparent 1px);
+    background-size: 56px 56px;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--primary) 22%, transparent);
+    background: color-mix(in srgb, var(--primary) 16%, transparent);
     color: var(--foreground);
   }
 
@@ -120,22 +119,25 @@
   h5,
   h6 {
     color: var(--foreground);
-    font-weight: 640;
+    font-weight: 520;
     letter-spacing: var(--tracking-tight);
-    line-height: 1.08;
+    line-height: 1.06;
     text-wrap: balance;
   }
 
   h1 {
-    font-size: clamp(3rem, 2.1rem + 3vw, 4.9rem);
+    font-size: clamp(2.75rem, 2rem + 3vw, 4.75rem);
+    letter-spacing: -0.06em;
   }
 
   h2 {
-    font-size: clamp(1.8rem, 1.4rem + 1.6vw, 3rem);
+    font-size: clamp(1.75rem, 1.35rem + 1.5vw, 2.75rem);
+    letter-spacing: -0.05em;
   }
 
   h3 {
-    font-size: clamp(1.2rem, 1rem + 0.7vw, 1.55rem);
+    font-size: clamp(1.12rem, 1rem + 0.55vw, 1.45rem);
+    letter-spacing: -0.035em;
   }
 
   p {
@@ -171,59 +173,47 @@
   }
 
   .surface-card {
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, transparent) 0%, color-mix(in srgb, var(--card) 84%, transparent) 100%);
-    border: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
+    background: color-mix(in srgb, var(--card) 92%, var(--background) 8%);
+    border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
     box-shadow: var(--shadow-soft);
-    backdrop-filter: blur(20px);
   }
 
   .surface-elevated {
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--popover) 96%, transparent) 0%, color-mix(in srgb, var(--card) 88%, transparent) 100%);
-    border: 1px solid color-mix(in srgb, var(--border) 82%, white 18%);
+    background: var(--card);
+    border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
     box-shadow: var(--shadow-elevated);
-    backdrop-filter: blur(24px);
   }
 
   .page-shell {
     display: grid;
-    gap: clamp(2.5rem, 2rem + 1.5vw, 4.25rem);
+    gap: clamp(2.25rem, 1.9rem + 1.3vw, 3.75rem);
   }
 
   .page-hero {
     position: relative;
-    padding: clamp(0.75rem, 0.5rem + 0.9vw, 1.15rem) 0 clamp(1.9rem, 1.25rem + 2vw, 3.4rem);
-    border-bottom: 1px solid color-mix(in srgb, var(--border) 92%, transparent);
-  }
-
-  .light .page-hero {
-    border-bottom-color: color-mix(in srgb, var(--border) 88%, transparent);
+    padding: clamp(0.75rem, 0.5rem + 0.9vw, 1.15rem) 0 clamp(1.7rem, 1.2rem + 1.8vw, 3rem);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
   }
 
   .page-hero::after {
     content: "";
     position: absolute;
     left: 0;
-    top: -2rem;
-    width: min(28rem, 45vw);
-    height: 14rem;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 72%);
-    filter: blur(18px);
+    bottom: -1px;
+    width: min(18rem, 42vw);
+    height: 1px;
+    background: color-mix(in srgb, var(--foreground) 34%, transparent);
     pointer-events: none;
   }
 
   .editorial-surface {
     position: relative;
     overflow: hidden;
-    border-radius: 2rem;
-    border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, transparent) 0%, color-mix(in srgb, var(--card) 82%, transparent) 100%);
-    box-shadow: var(--shadow-soft);
+    border-radius: var(--radius-panel);
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    background: color-mix(in srgb, var(--card) 88%, var(--card-wash, #edece7) 12%);
+    box-shadow: var(--shadow-elevated);
     padding: clamp(1.25rem, 1rem + 1vw, 2rem);
-    backdrop-filter: blur(22px);
   }
 
   .editorial-surface::before {
@@ -231,19 +221,18 @@
     position: absolute;
     inset: 0 0 auto 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.26), transparent);
-    opacity: 0.72;
+    background: color-mix(in srgb, var(--foreground) 10%, transparent);
     pointer-events: none;
   }
 
   .editorial-surface-quiet {
     position: relative;
     overflow: hidden;
-    border-radius: 2rem;
-    background: color-mix(in srgb, var(--card) 68%, transparent);
-    border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    border-radius: var(--radius-panel);
+    background: color-mix(in srgb, var(--secondary) 72%, var(--card) 28%);
+    border: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
     padding: clamp(1.15rem, 0.95rem + 0.9vw, 1.8rem);
-    backdrop-filter: blur(18px);
+    box-shadow: var(--shadow-soft);
   }
 
   .quiet-rule {
@@ -252,7 +241,7 @@
     background: linear-gradient(
       90deg,
       transparent 0%,
-      color-mix(in srgb, var(--border) 90%, white 10%) 16%,
+      color-mix(in srgb, var(--border) 90%, var(--foreground) 10%) 16%,
       color-mix(in srgb, var(--border) 72%, transparent) 84%,
       transparent 100%
     );
@@ -261,15 +250,15 @@
   .data-number {
     font-family: var(--font-mono-base);
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
-    letter-spacing: -0.05em;
+    font-weight: 500;
+    letter-spacing: -0.055em;
   }
 
   .eyebrow {
-    color: color-mix(in srgb, var(--foreground) 42%, var(--muted-foreground) 58%);
+    color: color-mix(in srgb, var(--foreground) 46%, var(--muted-foreground) 54%);
     font-size: var(--type-12);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
@@ -280,24 +269,14 @@
   }
 
   .text-link {
-    color: color-mix(in srgb, var(--foreground) 76%, var(--muted-foreground) 24%);
-    transition: color 150ms ease-out;
+    color: color-mix(in srgb, var(--foreground) 84%, var(--muted-foreground) 16%);
+    text-underline-offset: 0.22em;
+    transition: color 150ms ease;
   }
 
   .text-link:hover {
     color: var(--foreground);
-  }
-
-  .labelled-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .ring-focus {
-    outline: none;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 40%, transparent), 0 0 0 5px var(--ring);
+    text-decoration: underline;
   }
 
   .hide-scrollbar {
