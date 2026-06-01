@@ -4,15 +4,15 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-medium tracking-[-0.01em] transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_36%,transparent),0_0_0_5px_var(--ring)]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-medium tracking-[-0.015em] transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_36%,transparent),0_0_0_5px_var(--ring)]",
   {
     variants: {
       variant: {
-        default: "border-primary bg-primary text-primary-foreground shadow-none hover:bg-primary/90",
+        default: "border-primary bg-primary text-primary-foreground shadow-[rgba(255,255,255,0.12)_0_1px_0_inset,0_10px_24px_rgba(22,15,12,0.10)] hover:bg-primary/90",
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:brightness-105",
-        outline: "border-border bg-transparent text-foreground hover:border-foreground/24 hover:bg-accent/70",
-        secondary: "border-border bg-secondary text-secondary-foreground hover:bg-accent",
-        ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-accent/70 hover:text-foreground",
+        outline: "border-border bg-card/30 text-foreground shadow-[rgba(22,15,12,0.03)_0_0_0_1px_inset] hover:border-foreground/22 hover:bg-accent/60",
+        secondary: "border-border bg-secondary/80 text-secondary-foreground shadow-[rgba(22,15,12,0.025)_0_0_0_1px_inset] hover:bg-accent",
+        ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-accent/58 hover:text-foreground",
         link: "border-transparent bg-transparent px-0 text-foreground/76 hover:text-foreground hover:underline hover:underline-offset-4",
       },
       size: {

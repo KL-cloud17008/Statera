@@ -9,11 +9,11 @@ export function BrandMark({ className }: { className?: string }) {
       aria-hidden="true"
       className={cn("h-6 w-6 shrink-0", className)}
     >
-      <rect x="9" y="9" width="46" height="46" rx="16" fill="currentColor" opacity="0.08" />
-      <path d="M32 13L50 32L32 51L14 32L32 13Z" stroke="currentColor" strokeWidth="3.25" strokeLinejoin="round" />
-      <path d="M32 20V44" stroke="currentColor" strokeWidth="3.25" strokeLinecap="round" />
-      <path d="M22 32H42" stroke="currentColor" strokeWidth="3.25" strokeLinecap="round" />
-      <circle cx="32" cy="32" r="4.25" fill="currentColor" />
+      <rect x="10" y="10" width="44" height="44" rx="18" fill="currentColor" opacity="0.07" />
+      <path d="M32 14.5L48.5 32L32 49.5L15.5 32L32 14.5Z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="M32 22V42" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M23.5 32H40.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="32" cy="32" r="3.2" fill="currentColor" />
     </svg>
   );
 }

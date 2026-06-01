@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getWorkoutPlans } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { SectionHeader } from "@/components/ui/section-header";
@@ -33,7 +32,7 @@ export default async function WorkoutPlanPage() {
       <SectionHeader
         eyebrow="Training split"
         title="4-day circuit workout plan"
-        description="Structured beginner supersets with controlled rest, RPE 6–7 guidance, and progressive rounds. The plan is presented as a calm training ledger instead of a stack of dark cards."
+        description="Structured beginner supersets with controlled rest, RPE 6–7 guidance, and progressive rounds. The plan reads as a calm ledger with hierarchy in the day, block, and exercise details."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -45,45 +44,51 @@ export default async function WorkoutPlanPage() {
         />
       ) : null}
 
-      <div className="grid gap-5">
-        {plans.map((plan) => (
-          <Card key={plan.id} className="gap-5 overflow-hidden p-0">
-            <CardHeader className="border-b border-border/70 px-6 py-5">
-              <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="space-y-4">
+        {plans.map((plan, index) => {
+          const workingCount = plan.exercises.filter((exercise) => exercise.exerciseType === "WORKING").length;
+          const totalSets = plan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+
+          return (
+            <section key={plan.id} className="editorial-surface p-0">
+              <div className="grid gap-6 border-b border-border/60 px-5 py-5 sm:px-6 lg:grid-cols-[7rem_minmax(0,1fr)_auto] lg:items-end">
                 <div>
-                  <p className="eyebrow">{DAY_NAMES[plan.dayOfWeek]}</p>
-                  <CardTitle className="mt-2 text-2xl">{plan.sessionName}</CardTitle>
+                  <p className="data-number text-4xl text-muted-foreground/70">0{index + 1}</p>
+                  <p className="eyebrow mt-3">{DAY_NAMES[plan.dayOfWeek]}</p>
                 </div>
-                <Badge variant="secondary">
-                  {plan.exercises.filter((exercise) => exercise.exerciseType === "WORKING").length} exercises
-                </Badge>
+                <div>
+                  <h2 className="max-w-[12ch] text-[clamp(2rem,1.5rem+2vw,3.4rem)]">{plan.sessionName}</h2>
+                </div>
+                <div className="flex flex-wrap gap-2 lg:justify-end">
+                  <Badge variant="secondary">{workingCount} exercises</Badge>
+                  <Badge variant="outline">{totalSets} total sets</Badge>
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="px-6 pb-6">
-              <div className="divide-y divide-border/70">
+
+              <div className="divide-y divide-border/56 px-5 py-2 sm:px-6">
                 {plan.exercises.map((exercise) => (
-                  <article key={exercise.id} className="grid gap-3 py-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+                  <article key={exercise.id} className="grid gap-4 py-5 md:grid-cols-[minmax(0,1fr)_minmax(13rem,auto)] md:items-start">
                     <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-sm font-medium text-foreground">{exercise.exerciseName}</p>
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <p className="text-[1.05rem] font-medium tracking-[-0.04em] text-foreground">{exercise.exerciseName}</p>
                         {exercise.supersetGroup ? <Badge variant="outline">Superset {exercise.supersetGroup}</Badge> : null}
                         {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">Warm-up</Badge> : null}
-                        {exercise.exerciseType === "FINISHER" ? <Badge variant="outline" className="border-warning/40 text-warning">Finisher</Badge> : null}
+                        {exercise.exerciseType === "FINISHER" ? <Badge variant="outline" className="border-warning/35 text-warning">Finisher</Badge> : null}
                       </div>
-                      {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p> : null}
+                      {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-[1.75] text-muted-foreground">{exercise.cues}</p> : null}
                     </div>
-                    <p className="text-sm text-muted-foreground md:text-right">
+                    <p className="text-sm leading-relaxed text-muted-foreground md:text-right">
                       {exercise.sets} × {exercise.reps}
-                      {exercise.tempo ? ` • Tempo ${exercise.tempo}` : ""}
-                      {exercise.targetRPE ? ` • RPE ${exercise.targetRPE}` : ""}
-                      {exercise.restSeconds != null && exercise.restSeconds > 0 ? ` • Rest ${exercise.restSeconds}s` : ""}
+                      {exercise.tempo ? ` · Tempo ${exercise.tempo}` : ""}
+                      {exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}
+                      {exercise.restSeconds != null && exercise.restSeconds > 0 ? ` · Rest ${exercise.restSeconds}s` : ""}
                     </p>
                   </article>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </section>
+          );
+        })}
       </div>
     </div>
   );

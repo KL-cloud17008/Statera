@@ -102,13 +102,13 @@ export function WorkoutPageClient({
           startTime={activeSession.startTime}
         />
       ) : todayPlan ? (
-        <div className="grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_minmax(20rem,0.88fr)] xl:items-start">
           <WorkoutDayPreview plan={todayPlan} />
           <CustomWorkoutBuilder hasActiveSession={false} compact />
         </div>
       ) : (
-        <div className="grid gap-10 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)]">
-          <section className="editorial-surface-quiet space-y-5">
+        <div className="grid gap-8 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] xl:items-start">
+          <section className="editorial-surface-quiet space-y-6">
             <p className="eyebrow">Today</p>
             <p className="text-3xl font-semibold tracking-[-0.06em]">
               No programmed session is queued.

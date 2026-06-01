@@ -10,11 +10,14 @@
   --type-24: 1.5rem;
   --type-32: 2rem;
   --type-40: 2.5rem;
+  --type-56: 3.5rem;
+  --type-72: 4.5rem;
 
   --leading-tight: 1.1;
   --leading-snug: 1.25;
   --leading-normal: 1.5;
   --tracking-tight: -0.035em;
+  --tracking-tighter: -0.062em;
   --tracking-wide: 0.08em;
 
   --space-1: 0.25rem;
@@ -76,24 +79,24 @@
   --success-foreground: #fbfff9;
   --warning: var(--warning-500);
   --warning-foreground: #fffaf2;
-  --border: rgba(22, 15, 12, 0.12);
+  --border: rgba(22, 15, 12, 0.095);
   --input: var(--input-fill);
-  --ring: rgba(22, 15, 12, 0.12);
+  --ring: rgba(22, 15, 12, 0.105);
   --chart-1: var(--onyx);
   --chart-2: #766a7c;
   --chart-3: #9b7447;
   --chart-4: #79806f;
   --chart-5: #a85b61;
-  --sidebar: rgba(247, 247, 245, 0.84);
+  --sidebar: rgba(247, 247, 245, 0.76);
   --sidebar-foreground: var(--slate-text);
   --sidebar-primary: var(--onyx);
   --sidebar-primary-foreground: var(--canvas-white);
   --sidebar-accent: rgba(237, 236, 231, 0.78);
   --sidebar-accent-foreground: var(--slate-text);
-  --sidebar-border: rgba(22, 15, 12, 0.1);
+  --sidebar-border: rgba(22, 15, 12, 0.075);
   --sidebar-ring: rgba(22, 15, 12, 0.12);
-  --shadow-soft: rgba(0, 0, 0, 0.05) 0 0 0 1px inset;
-  --shadow-elevated: rgba(0, 0, 0, 0.055) 0 0 0 1px inset, 0 18px 46px rgba(41, 36, 33, 0.06);
+  --shadow-soft: rgba(22, 15, 12, 0.042) 0 0 0 1px inset, 0 1px 2px rgba(41, 36, 33, 0.018);
+  --shadow-elevated: rgba(22, 15, 12, 0.048) 0 0 0 1px inset, 0 20px 54px rgba(41, 36, 33, 0.052);
 }
 
 .dark {
@@ -118,22 +121,22 @@
   --success-foreground: #09110d;
   --warning: #c6a16f;
   --warning-foreground: #1a1209;
-  --border: rgba(244, 241, 235, 0.1);
+  --border: rgba(244, 241, 235, 0.092);
   --input: #24211f;
-  --ring: rgba(244, 241, 235, 0.14);
+  --ring: rgba(244, 241, 235, 0.13);
   --chart-1: #f4f1eb;
   --chart-2: #b6a9bd;
   --chart-3: #c6a16f;
   --chart-4: #a7b39a;
   --chart-5: #d78389;
-  --sidebar: rgba(17, 16, 15, 0.82);
+  --sidebar: rgba(17, 16, 15, 0.76);
   --sidebar-foreground: #f4f1eb;
   --sidebar-primary: #f4f1eb;
   --sidebar-primary-foreground: #11100f;
   --sidebar-accent: rgba(41, 37, 34, 0.78);
   --sidebar-accent-foreground: #f4f1eb;
-  --sidebar-border: rgba(244, 241, 235, 0.1);
+  --sidebar-border: rgba(244, 241, 235, 0.08);
   --sidebar-ring: rgba(244, 241, 235, 0.14);
-  --shadow-soft: rgba(255, 255, 255, 0.075) 0 0 0 1px inset;
-  --shadow-elevated: rgba(255, 255, 255, 0.08) 0 0 0 1px inset, 0 18px 48px rgba(0, 0, 0, 0.22);
+  --shadow-soft: rgba(255, 255, 255, 0.065) 0 0 0 1px inset, 0 1px 2px rgba(0, 0, 0, 0.16);
+  --shadow-elevated: rgba(255, 255, 255, 0.072) 0 0 0 1px inset, 0 20px 54px rgba(0, 0, 0, 0.25);
 }

@@ -198,7 +198,7 @@ export function CustomWorkoutBuilder({
               id="library-select"
               value={selectedExerciseId}
               onChange={(event) => setSelectedExerciseId(event.target.value)}
-              className="h-12 flex-1 rounded-[1rem] border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
+              className="refined-select h-12 flex-1"
             >
               {Array.from(groupedLibrary.entries()).map(([group, exercises]) => (
                 <optgroup key={group} label={group}>
@@ -240,7 +240,7 @@ export function CustomWorkoutBuilder({
             id="custom-exercise-group"
             value={customGroup}
             onChange={(event) => setCustomGroup(event.target.value as MuscleGroup)}
-            className="h-12 w-full rounded-[1rem] border border-border bg-input px-4 text-sm text-foreground focus:outline-none focus:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
+            className="refined-select h-12"
           >
             {MUSCLE_GROUPS.map((group) => (
               <option key={group} value={group}>
@@ -278,7 +278,7 @@ export function CustomWorkoutBuilder({
             {selectedExercises.map((exercise, index) => (
               <div
                 key={`${exercise.exerciseId}-${index}`}
-                className="grid gap-3 border-b border-border/60 py-4 last:border-b-0 md:grid-cols-[minmax(0,1.4fr)_5rem_5.4rem_5.8rem_auto] md:items-center"
+                className="grid gap-3 border-b border-border/52 py-4 last:border-b-0 md:grid-cols-[minmax(0,1.4fr)_5rem_5.4rem_5.8rem_auto] md:items-center"
               >
                 <div>
                   <p className="font-semibold tracking-[-0.03em] text-foreground">{exercise.name}</p>
@@ -299,7 +299,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11"
+                  className="h-11 rounded-xl"
                   aria-label={`${exercise.name} sets`}
                 />
                 <Input
@@ -311,7 +311,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11"
+                  className="h-11 rounded-xl"
                   aria-label={`${exercise.name} reps`}
                 />
                 <Input
@@ -328,7 +328,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11"
+                  className="h-11 rounded-xl"
                   aria-label={`${exercise.name} rest seconds`}
                 />
 
@@ -374,7 +374,7 @@ export function CustomWorkoutBuilder({
             {settings.workoutTemplates.map((template) => (
               <div
                 key={template.id}
-                className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 py-4 last:border-b-0"
+                className="flex flex-wrap items-center justify-between gap-4 border-b border-border/52 py-4 last:border-b-0"
               >
                 <div>
                   <p className="font-semibold tracking-[-0.03em] text-foreground">{template.name}</p>
