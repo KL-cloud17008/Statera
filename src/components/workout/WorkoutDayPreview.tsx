@@ -38,6 +38,7 @@ export function WorkoutDayPreview({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
+  const warmups = plan.exercises.filter((exercise) => exercise.exerciseType === "WARMUP");
   const workingExercises = plan.exercises.filter(
     (exercise) => exercise.exerciseType === "WORKING"
   );
@@ -58,41 +59,71 @@ export function WorkoutDayPreview({
   }
 
   return (
-    <section className="editorial-surface space-y-9">
+    <section className="document-panel">
       {!hideHeader ? (
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+        <div className="grid gap-8 border-b border-border pb-8 xl:grid-cols-[minmax(0,1fr)_18rem] xl:items-end">
           <div>
-            <p className="eyebrow">Today&apos;s plan</p>
-            <h2 className="mt-3 max-w-[10ch]">{plan.sessionName}</h2>
-            <p className="mt-4 max-w-2xl text-[0.95rem] leading-[1.75] text-muted-foreground">
-              A single training sequence with measured density, restrained controls, and the work
-              blocks kept close enough to scan before you start.
+            <p className="eyebrow">Today&apos;s programmed work</p>
+            <h2 className="mt-3 max-w-3xl">{plan.sessionName}</h2>
+            <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              Run the session as a sequence: primer first, paired circuit blocks next, rest only
+              at the programmed transition points.
             </p>
           </div>
 
-          <div className="rounded-[1.35rem] border border-border/70 bg-background/38 p-4 shadow-[rgba(22,15,12,0.03)_0_0_0_1px_inset]">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="eyebrow text-[10px]">Exercises</p>
-                <p className="data-number mt-2 text-2xl">{workingExercises.length}</p>
-              </div>
-              <div>
-                <p className="eyebrow text-[10px]">Sets</p>
-                <p className="data-number mt-2 text-2xl">{totalWorkingSets}</p>
-              </div>
+          <div className="grid grid-cols-3 gap-3 text-sm xl:text-right">
+            <div>
+              <p className="eyebrow text-[10px]">Blocks</p>
+              <p className="data-number mt-2 text-2xl text-foreground">3</p>
             </div>
-            <div className="quiet-rule my-4" />
-            <p className="text-sm leading-relaxed text-muted-foreground">RPE 6-7 · leave 2-4 reps in reserve</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Week 1-2: optional 2-round mode</p>
-            <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="mt-5 w-full gap-2">
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-              Start Session
-            </Button>
+            <div>
+              <p className="eyebrow text-[10px]">Exercises</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{workingExercises.length}</p>
+            </div>
+            <div>
+              <p className="eyebrow text-[10px]">Sets</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{totalWorkingSets}</p>
+            </div>
           </div>
         </div>
       ) : null}
 
-      <div className="space-y-3 border-t border-border/60 pt-6">
+      <div className="grid gap-4 border-b border-border pb-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+        <div className="grid gap-4 md:grid-cols-3">
+          <ProtocolMeta label="Primer" value={warmups[0]?.exerciseName ?? "Ramp-up"} note={warmups[0]?.reps ?? "5 min easy"} />
+          <ProtocolMeta label="Walk target" value="Easy nasal pace" note="Keep breathing conversational." />
+          <ProtocolMeta label="Session rule" value="RPE 6-7" note="Leave 2-4 reps in reserve." />
+        </div>
+
+        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2">
+          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+          Start Session
+        </Button>
+      </div>
+
+      {warmups.length > 0 ? (
+        <div>
+          <p className="eyebrow">Primer block</p>
+          <div className="mt-4 divide-y divide-border border-y border-border">
+            {warmups.map((exercise) => (
+              <div key={exercise.id} className="grid gap-4 py-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,auto)] md:items-start">
+                <div>
+                  <p className="font-medium text-foreground">{exercise.exerciseName}</p>
+                  {exercise.cues ? (
+                    <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p>
+                  ) : null}
+                </div>
+                <p className="text-sm text-muted-foreground md:text-right">
+                  {exercise.reps}
+                  {exercise.restSeconds ? `, rest ${exercise.restSeconds}s` : ""}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="protocol-grid">
         {blockOrder.map((block) => {
           const blockExercises = workingExercises.filter((exercise) => exercise.supersetGroup === block);
           if (blockExercises.length === 0) return null;
@@ -100,28 +131,31 @@ export function WorkoutDayPreview({
           const restNote = blockExercises[blockExercises.length - 1]?.restSeconds ?? 90;
 
           return (
-            <article
-              key={block}
-              className="group grid gap-5 rounded-[1.35rem] border border-border/62 bg-secondary/35 p-4 transition-[background-color,border-color] duration-150 hover:border-border hover:bg-secondary/48 md:grid-cols-[5.5rem_minmax(0,1fr)] md:p-5"
-            >
-              <div className="flex items-start justify-between gap-3 md:block">
-                <p className="eyebrow">Block {block}</p>
-                <p className="mt-0 text-sm text-muted-foreground md:mt-3">{roundTarget}</p>
-                <Badge variant="outline" className="md:mt-4">{restNote}s rest</Badge>
+            <article key={block} className="border-t border-border pt-7 first:border-t-0 first:pt-0">
+              <div className="grid gap-4 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:items-end">
+                <div>
+                  <p className="eyebrow">Circuit {block}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{roundTarget}</p>
+                </div>
+                <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  Move through the pair or sequence cleanly, then take the programmed rest.
+                </p>
+                <Badge variant="outline">{restNote}s rest</Badge>
               </div>
-              <div className="divide-y divide-border/58">
+
+              <div className="mt-5 divide-y divide-border border-y border-border">
                 {blockExercises.map((exercise, i) => (
-                  <div key={exercise.id} className="grid gap-3 py-4 first:pt-0 last:pb-0 sm:grid-cols-[3.5rem_minmax(0,1fr)_auto] sm:items-start">
-                    <p className="data-number text-xl text-muted-foreground/78">{block}{i + 1}</p>
+                  <div key={exercise.id} className="protocol-row">
+                    <p className="data-number text-xl text-muted-foreground">{block}{i + 1}</p>
                     <div>
-                      <h3 className="text-[1.35rem] leading-tight">{exercise.exerciseName}</h3>
+                      <h3 className="text-[1.2rem] leading-snug">{exercise.exerciseName}</h3>
                       {exercise.cues ? (
-                        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p>
+                        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p>
                       ) : null}
                     </div>
-                    <p className="text-sm text-muted-foreground sm:text-right">
-                      {exercise.sets} sets · {exercise.reps}
-                      {exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}
+                    <p className="text-sm text-muted-foreground md:text-right">
+                      {exercise.sets} sets, {exercise.reps}
+                      {exercise.targetRPE ? `, RPE ${exercise.targetRPE}` : ""}
                     </p>
                   </div>
                 ))}
@@ -131,5 +165,23 @@ export function WorkoutDayPreview({
         })}
       </div>
     </section>
+  );
+}
+
+function ProtocolMeta({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: string;
+  note: string;
+}) {
+  return (
+    <div className="border-t border-border pt-4">
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="mt-2 text-sm font-medium text-foreground">{value}</p>
+      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{note}</p>
+    </div>
   );
 }

@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
+import { ClipboardList } from "lucide-react";
 import { getWorkoutPlans } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { ClipboardList } from "lucide-react";
 
-const DAY_NAMES: Record<number, string> = {
-  1: "Monday",
-  2: "Tuesday",
-  4: "Thursday",
-  5: "Friday",
-};
+const WEEK_STRUCTURE = [
+  { day: "Monday", role: "Lift", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
+  { day: "Tuesday", role: "Lift", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
+  { day: "Wednesday", role: "Mobility", note: "Recovery mobility and optional desk reset." },
+  { day: "Thursday", role: "Lift", dayOfWeek: 4, note: "Back and shoulder emphasis." },
+  { day: "Friday", role: "Lift", dayOfWeek: 5, note: "Hips, hinge pattern, and posterior chain." },
+  { day: "Saturday", role: "Mobility", note: "Recovery mobility and easy walking." },
+  { day: "Sunday", role: "Complete rest", note: "No programmed lifting or mobility requirement." },
+] as const;
 
 export const metadata: Metadata = {
   title: "Workout Plan | Athanor",
@@ -26,13 +29,14 @@ export default async function WorkoutPlanPage() {
   }
 
   const plans = await getWorkoutPlans(user.id);
+  const plansByDay = new Map(plans.map((plan) => [plan.dayOfWeek, plan]));
 
   return (
     <div className="page-shell">
       <SectionHeader
         eyebrow="Training split"
-        title="4-day circuit workout plan"
-        description="Structured beginner supersets with controlled rest, RPE 6–7 guidance, and progressive rounds. The plan reads as a calm ledger with hierarchy in the day, block, and exercise details."
+        title="A weekly protocol for four lift days, two recovery days, and one full rest day."
+        description="The plan is organized as a structured document: day, intent, sequence, exercise details, and programmed rest all stay in one readable rhythm."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -44,52 +48,93 @@ export default async function WorkoutPlanPage() {
         />
       ) : null}
 
-      <div className="space-y-4">
-        {plans.map((plan, index) => {
-          const workingCount = plan.exercises.filter((exercise) => exercise.exerciseType === "WORKING").length;
-          const totalSets = plan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+      <section className="document-panel">
+        <div className="grid gap-4 border-b border-border pb-7 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end">
+          <div>
+            <p className="eyebrow">Week structure</p>
+            <p className="data-number mt-3 text-4xl text-foreground">4/2/1</p>
+          </div>
+          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday and Saturday are
+            mobility days. Sunday is complete rest.
+          </p>
+          <div className="flex flex-wrap gap-2 md:justify-end">
+            <Badge variant="secondary">4 lift days</Badge>
+            <Badge variant="outline">2 mobility</Badge>
+            <Badge variant="outline">1 rest</Badge>
+          </div>
+        </div>
 
-          return (
-            <section key={plan.id} className="editorial-surface p-0">
-              <div className="grid gap-6 border-b border-border/60 px-5 py-5 sm:px-6 lg:grid-cols-[7rem_minmax(0,1fr)_auto] lg:items-end">
-                <div>
-                  <p className="data-number text-4xl text-muted-foreground/70">0{index + 1}</p>
-                  <p className="eyebrow mt-3">{DAY_NAMES[plan.dayOfWeek]}</p>
-                </div>
-                <div>
-                  <h2 className="max-w-[12ch] text-[clamp(2rem,1.5rem+2vw,3.4rem)]">{plan.sessionName}</h2>
-                </div>
-                <div className="flex flex-wrap gap-2 lg:justify-end">
-                  <Badge variant="secondary">{workingCount} exercises</Badge>
-                  <Badge variant="outline">{totalSets} total sets</Badge>
-                </div>
-              </div>
+        <div className="divide-y divide-border">
+          {WEEK_STRUCTURE.map((day, index) => {
+            const plan = "dayOfWeek" in day ? plansByDay.get(day.dayOfWeek) : null;
+            const workingCount = plan?.exercises.filter((exercise) => exercise.exerciseType === "WORKING").length ?? 0;
+            const totalSets = plan?.exercises.reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
 
-              <div className="divide-y divide-border/56 px-5 py-2 sm:px-6">
-                {plan.exercises.map((exercise) => (
-                  <article key={exercise.id} className="grid gap-4 py-5 md:grid-cols-[minmax(0,1fr)_minmax(13rem,auto)] md:items-start">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <p className="text-[1.05rem] font-medium tracking-[-0.04em] text-foreground">{exercise.exerciseName}</p>
-                        {exercise.supersetGroup ? <Badge variant="outline">Superset {exercise.supersetGroup}</Badge> : null}
-                        {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">Warm-up</Badge> : null}
-                        {exercise.exerciseType === "FINISHER" ? <Badge variant="outline" className="border-warning/35 text-warning">Finisher</Badge> : null}
-                      </div>
-                      {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-[1.75] text-muted-foreground">{exercise.cues}</p> : null}
+            return (
+              <section key={day.day} className="py-8 first:pt-0 last:pb-0">
+                <div className="grid gap-5 lg:grid-cols-[8rem_minmax(0,1fr)_minmax(12rem,auto)] lg:items-start">
+                  <div>
+                    <p className="data-number text-3xl text-muted-foreground">{String(index + 1).padStart(2, "0")}</p>
+                    <p className="eyebrow mt-3">{day.day}</p>
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="text-3xl">{plan?.sessionName ?? day.role}</h2>
+                      <Badge variant={day.role === "Lift" ? "default" : "outline"}>{day.role}</Badge>
                     </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground md:text-right">
-                      {exercise.sets} × {exercise.reps}
-                      {exercise.tempo ? ` · Tempo ${exercise.tempo}` : ""}
-                      {exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}
-                      {exercise.restSeconds != null && exercise.restSeconds > 0 ? ` · Rest ${exercise.restSeconds}s` : ""}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
+                    <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{day.note}</p>
+                  </div>
+
+                  {plan ? (
+                    <div className="grid grid-cols-2 gap-4 text-sm lg:text-right">
+                      <div>
+                        <p className="eyebrow text-[10px]">Exercises</p>
+                        <p className="data-number mt-2 text-2xl text-foreground">{workingCount}</p>
+                      </div>
+                      <div>
+                        <p className="eyebrow text-[10px]">Sets</p>
+                        <p className="data-number mt-2 text-2xl text-foreground">{totalSets}</p>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+
+                {plan ? (
+                  <div className="mt-6 divide-y divide-border border-y border-border">
+                    {plan.exercises.map((exercise) => (
+                      <article key={exercise.id} className="grid gap-4 py-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,auto)] md:items-start">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2.5">
+                            <p className="font-medium text-foreground">{exercise.exerciseName}</p>
+                            {exercise.supersetGroup ? <Badge variant="outline">Circuit {exercise.supersetGroup}</Badge> : null}
+                            {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">Warm-up</Badge> : null}
+                            {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
+                          </div>
+                          {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p> : null}
+                        </div>
+                        <p className="text-sm leading-relaxed text-muted-foreground md:text-right">
+                          {exercise.sets} x {exercise.reps}
+                          {exercise.tempo ? `, tempo ${exercise.tempo}` : ""}
+                          {exercise.targetRPE ? `, RPE ${exercise.targetRPE}` : ""}
+                          {exercise.restSeconds != null && exercise.restSeconds > 0 ? `, rest ${exercise.restSeconds}s` : ""}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
+                    {day.role === "Mobility"
+                      ? "Use the mobility page for preparation and recovery flows. Keep intensity easy and finish with calm breathing."
+                      : "Keep this day deliberately empty so the lifting week has room to absorb."}
+                  </div>
+                )}
+              </section>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

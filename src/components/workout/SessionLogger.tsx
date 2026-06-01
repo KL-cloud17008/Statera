@@ -195,19 +195,19 @@ export function SessionLogger({
             <div className="grid gap-4 text-sm text-muted-foreground sm:grid-cols-3 xl:grid-cols-3">
               <div>
                 <p className="eyebrow">Elapsed</p>
-                <p className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground data-number">
+                <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground data-number">
                   {elapsedMinutes}m
                 </p>
               </div>
               <div>
                 <p className="eyebrow">Saved</p>
-                <p className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground data-number">
+                <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground data-number">
                   {savedSetKeys.size}
                 </p>
               </div>
               <div>
                 <p className="eyebrow">Complete</p>
-                <p className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground data-number">
+                <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground data-number">
                   {completedCount}/{totalExercises}
                 </p>
               </div>
@@ -240,7 +240,7 @@ export function SessionLogger({
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <p className="eyebrow">Superset</p>
-                    <p className="mt-2 text-lg font-semibold tracking-[-0.04em]">
+                    <p className="mt-2 text-lg font-semibold tracking-normal">
                       Group {group[0].supersetGroup}
                     </p>
                   </div>

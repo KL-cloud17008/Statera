@@ -74,7 +74,7 @@ export function WorkoutPageClient({
           activeSession
             ? "Your session is already live. The page shifts into a logging ledger so previous numbers and rest timing stay close without turning into a wall of cards."
             : todayPlan
-              ? "Today’s programmed work holds the main column while custom work stays present beside it instead of hiding behind segmented controls."
+              ? "Today's programmed work is the primary sequence. Custom work stays available as a quieter secondary module below the protocol."
               : "No scheduled day is in the way, so the builder and saved templates take over the page."
         }
         action={
@@ -102,15 +102,24 @@ export function WorkoutPageClient({
           startTime={activeSession.startTime}
         />
       ) : todayPlan ? (
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.12fr)_minmax(20rem,0.88fr)] xl:items-start">
+        <div className="grid gap-8">
           <WorkoutDayPreview plan={todayPlan} />
-          <CustomWorkoutBuilder hasActiveSession={false} compact />
+          <details className="group border-t border-border pt-6">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-full border border-border bg-secondary/46 px-5 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary/70">
+              <span>Custom session builder</span>
+              <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:hidden">Open</span>
+              <span className="hidden text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:inline">Close</span>
+            </summary>
+            <div className="mt-5">
+              <CustomWorkoutBuilder hasActiveSession={false} compact />
+            </div>
+          </details>
         </div>
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] xl:items-start">
           <section className="editorial-surface-quiet space-y-6">
             <p className="eyebrow">Today</p>
-            <p className="text-3xl font-semibold tracking-[-0.06em]">
+            <p className="text-3xl font-semibold tracking-normal">
               No programmed session is queued.
             </p>
             <p className="subtle-copy">

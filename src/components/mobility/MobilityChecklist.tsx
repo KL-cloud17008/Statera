@@ -32,7 +32,7 @@ export function MobilityChecklist({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">{title}</p>
@@ -52,17 +52,17 @@ export function MobilityChecklist({
         </div>
       </div>
 
-      <div className="space-y-0 border-t border-border/70">
+      <div className="divide-y divide-border border-y border-border">
         {blocks.map((block, blockIndex) => (
-          <section key={block.title} className="border-b border-border/60 py-6 last:border-b-0">
-            <div className="flex items-baseline justify-between gap-4">
+          <section key={block.title} className="grid gap-5 py-6 lg:grid-cols-[15rem_minmax(0,1fr)]">
+            <div className="flex items-baseline justify-between gap-4 lg:block">
               <div>
-                <h3 className="tracking-[-0.04em]">{block.title}</h3>
+                <h3 className="tracking-normal">{block.title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{block.duration}</p>
               </div>
             </div>
 
-            <div className="mt-5 space-y-0 border-t border-border/60">
+            <div className="divide-y divide-border border-t border-border lg:border-t-0">
               {block.exercises.map((exercise, exerciseIndex) => {
                 const key = `${blockIndex}-${exerciseIndex}`;
                 const isDone = checked.has(key);
@@ -71,12 +71,12 @@ export function MobilityChecklist({
                     key={key}
                     type="button"
                     onClick={() => toggle(key)}
-                    className={`grid w-full gap-2 border-b border-border/50 py-4 text-left last:border-b-0 ${isDone ? "opacity-55" : ""}`}
+                    className={`grid w-full gap-2 py-4 text-left transition-opacity ${isDone ? "opacity-55" : ""}`}
                   >
                     <div className="flex items-start gap-3">
                       <Checkbox checked={isDone} className="mt-1 shrink-0" tabIndex={-1} />
                       <div className="min-w-0 flex-1">
-                        <p className={`text-sm font-semibold tracking-[-0.02em] ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                        <p className={`text-sm font-semibold tracking-normal ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
                           {exercise.name}
                         </p>
                         <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">

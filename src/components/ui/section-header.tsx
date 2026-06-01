@@ -18,13 +18,13 @@ export function SectionHeader({
 }) {
   return (
     <section className={cn("page-hero", className)}>
-      <div className="relative z-10 flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
-        <div className="max-w-4xl space-y-4">
+      <div className="relative z-10 grid gap-8 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
+        <div className="max-w-5xl space-y-4">
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           <div className="space-y-3">
-            <h1>{title}</h1>
+            <h1 className="max-w-4xl">{title}</h1>
             {description ? (
-              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                 {description}
               </p>
             ) : null}

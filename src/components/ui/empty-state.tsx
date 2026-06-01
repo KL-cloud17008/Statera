@@ -25,7 +25,7 @@ export function EmptyState({
       <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-tight)] border border-border bg-secondary/70 text-foreground/82">
         <Icon className="h-[1.125rem] w-[1.125rem]" />
       </div>
-      <h3 className="text-lg font-semibold tracking-[-0.04em] text-foreground">{title}</h3>
+      <h3 className="text-lg font-semibold tracking-normal text-foreground">{title}</h3>
       <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>
       {action ? <div className="pt-2">{action}</div> : null}
     </div>

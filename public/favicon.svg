@@ -1,8 +1,9 @@
 <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="20" fill="#F7F7F5"/>
-  <rect x="7" y="7" width="50" height="50" rx="18" fill="#EDECE7" opacity="0.74"/>
-  <path d="M32 14.5L48.5 32L32 49.5L15.5 32L32 14.5Z" stroke="#160F0C" stroke-width="2.8" stroke-linejoin="round"/>
-  <path d="M32 22V42" stroke="#160F0C" stroke-width="2.8" stroke-linecap="round"/>
-  <path d="M23.5 32H40.5" stroke="#160F0C" stroke-width="2.8" stroke-linecap="round"/>
-  <circle cx="32" cy="32" r="3.4" fill="#160F0C"/>
+  <rect width="64" height="64" rx="18" fill="#FFFFFF"/>
+  <rect x="7" y="7" width="50" height="50" rx="15" fill="#F3F2EF"/>
+  <path d="M32 7.5L51.5 20.75V43.25L32 56.5L12.5 43.25V20.75L32 7.5Z" stroke="#160F0C" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M32 15.5L44 32L32 48.5L20 32L32 15.5Z" stroke="#160F0C" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M20 32H44" stroke="#160F0C" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M32 15.5V48.5" stroke="#160F0C" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="2.9" fill="#160F0C"/>
 </svg>

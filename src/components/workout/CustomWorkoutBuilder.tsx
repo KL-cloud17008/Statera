@@ -151,12 +151,12 @@ export function CustomWorkoutBuilder({
   }
 
   return (
-    <section className={cn(compact ? "editorial-surface-quiet" : "editorial-surface", "space-y-8")}>
+    <section className={cn(compact ? "editorial-surface-quiet" : "document-panel", "space-y-8")}>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div>
           <p className="eyebrow">{compact ? "Custom session" : "Builder"}</p>
-          <h2 className="mt-3">
-            {compact ? "Shape a session beside the programmed day." : "Compose a session from scratch."}
+          <h2 className={cn("mt-3", compact ? "text-2xl" : "")}>
+            {compact ? "Secondary custom work" : "Compose a session from scratch."}
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
             Pull from the exercise library, save your own movements, then either store the session
@@ -281,7 +281,7 @@ export function CustomWorkoutBuilder({
                 className="grid gap-3 border-b border-border/52 py-4 last:border-b-0 md:grid-cols-[minmax(0,1.4fr)_5rem_5.4rem_5.8rem_auto] md:items-center"
               >
                 <div>
-                  <p className="font-semibold tracking-[-0.03em] text-foreground">{exercise.name}</p>
+                  <p className="font-semibold tracking-normal text-foreground">{exercise.name}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{exercise.muscleGroup}</p>
                 </div>
 
@@ -377,7 +377,7 @@ export function CustomWorkoutBuilder({
                 className="flex flex-wrap items-center justify-between gap-4 border-b border-border/52 py-4 last:border-b-0"
               >
                 <div>
-                  <p className="font-semibold tracking-[-0.03em] text-foreground">{template.name}</p>
+                  <p className="font-semibold tracking-normal text-foreground">{template.name}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {template.exercises.length} exercises
                   </p>

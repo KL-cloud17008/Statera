@@ -115,7 +115,7 @@ export function SetInput({
         <div className="flex items-start gap-3">
           <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />
           <div>
-            <p className="text-sm font-semibold tracking-[-0.02em] text-foreground">Set {setNumber}</p>
+            <p className="text-sm font-semibold tracking-normal text-foreground">Set {setNumber}</p>
             {previous ? (
               <p className="mt-1 text-xs text-muted-foreground">
                 Last {previous.weightUsed != null ? convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1) : "--"} × {previous.repsCompleted ?? "--"}

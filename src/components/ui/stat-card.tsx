@@ -25,7 +25,7 @@ export function StatCard({
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-3">
             <p className="eyebrow">{label}</p>
-            <div className="text-[clamp(2.2rem,1.8rem+1.2vw,3.2rem)] font-semibold tracking-[-0.06em] text-foreground data-number">
+            <div className="text-5xl font-semibold tracking-normal text-foreground data-number">
               {value}
             </div>
           </div>

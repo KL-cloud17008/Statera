@@ -16,8 +16,8 @@
   --leading-tight: 1.1;
   --leading-snug: 1.25;
   --leading-normal: 1.5;
-  --tracking-tight: -0.035em;
-  --tracking-tighter: -0.062em;
+  --tracking-tight: 0;
+  --tracking-tighter: 0;
   --tracking-wide: 0.08em;
 
   --space-1: 0.25rem;
@@ -31,12 +31,12 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  --radius: 0.875rem;
+  --radius: 0.75rem;
   --radius-tight: 0.625rem;
   --radius-pill: 999px;
-  --radius-card: 1rem;
-  --radius-surface: 1.25rem;
-  --radius-panel: 1.5rem;
+  --radius-card: 0.75rem;
+  --radius-surface: 0.875rem;
+  --radius-panel: 1rem;
 
   --canvas-white: #ffffff;
   --near-white: #f7f7f5;
@@ -59,7 +59,7 @@
   --error-500: #a85b61;
   --info-500: #6f7884;
 
-  --background: var(--near-white);
+  --background: var(--canvas-white);
   --foreground: var(--slate-text);
   --card: var(--canvas-white);
   --card-foreground: var(--slate-text);
@@ -69,7 +69,7 @@
   --primary-foreground: var(--canvas-white);
   --secondary: var(--card-wash);
   --secondary-foreground: var(--deep-charcoal);
-  --muted: #f0efeb;
+  --muted: #f3f2ef;
   --muted-foreground: #706b66;
   --accent: #e8e5df;
   --accent-foreground: var(--slate-text);
@@ -95,8 +95,8 @@
   --sidebar-accent-foreground: var(--slate-text);
   --sidebar-border: rgba(22, 15, 12, 0.075);
   --sidebar-ring: rgba(22, 15, 12, 0.12);
-  --shadow-soft: rgba(22, 15, 12, 0.042) 0 0 0 1px inset, 0 1px 2px rgba(41, 36, 33, 0.018);
-  --shadow-elevated: rgba(22, 15, 12, 0.048) 0 0 0 1px inset, 0 20px 54px rgba(41, 36, 33, 0.052);
+  --shadow-soft: rgba(22, 15, 12, 0.035) 0 0 0 1px inset;
+  --shadow-elevated: rgba(22, 15, 12, 0.045) 0 0 0 1px inset, 0 14px 32px rgba(41, 36, 33, 0.035);
 }
 
 .dark {

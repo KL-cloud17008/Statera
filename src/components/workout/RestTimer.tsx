@@ -99,7 +99,7 @@ export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) 
   return (
     <div className="flex items-center gap-3 text-sm">
       <span className="eyebrow">Rest</span>
-      <span className="text-lg font-semibold tracking-[-0.04em] text-foreground data-number">
+      <span className="text-lg font-semibold tracking-normal text-foreground data-number">
         {timeLeft === 0 ? "GO" : display}
       </span>
       <button type="button" onClick={stop} className="text-link" aria-label="Stop rest timer">

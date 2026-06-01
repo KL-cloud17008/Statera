@@ -80,7 +80,7 @@ export function ExerciseCard({
               <p className="eyebrow">{getExerciseLabel(exercise)}</p>
               <h3
                 className={cn(
-                  "tracking-[-0.05em]",
+                  "tracking-normal",
                   exerciseComplete ? "text-muted-foreground line-through" : "text-foreground"
                 )}
               >

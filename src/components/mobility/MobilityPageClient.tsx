@@ -69,63 +69,59 @@ export function MobilityPageClient({
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow="Mobility"
-        title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training Day" : "Mobility-only recovery day"}
+        eyebrow="Mobility protocol"
+        title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training day preparation" : "Mobility-only recovery day"}
         description={
           isTrainingDay
-            ? "Primer supports gym days; recovery flow supports mobility-only days. Focus: feet, shins, hips, and back."
-            : "Use a longer 20–30 minute recovery session to restore movement tolerance before the next lift day."
+            ? "Use the primer before lifting, the recovery sequence after training or later, and the desk reset when long sitting blocks stack up."
+            : "Keep the day recovery-led: one longer movement sequence, optional desk resets, and no competing training dashboard."
         }
       >
         <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-          <span>Pre {preCompleted ? "logged" : "open"}</span>
-          <span>Post {postCompleted ? "logged" : "open"}</span>
-          <span>Undo sitting {undoCount}x</span>
+          <span>Pre: {preCompleted ? "logged" : "open"}</span>
+          <span>Post: {postCompleted ? "logged" : "open"}</span>
+          <span>Desk resets: {undoCount}</span>
         </div>
       </SectionHeader>
 
-      {isTrainingDay ? (
-        <div className="grid gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
-          <RoutineSection
-            title="Pre-workout reset"
-            summary="Choose the version that matches how you feel, run the sequence, and log it once you're done."
-            completed={preCompleted}
-            isPending={isPending}
-            isCurrentAction={pendingType === "PRE_WORKOUT"}
-            actionLabel="Mark pre-workout complete"
-            onLog={() => handleLogCompletion("PRE_WORKOUT")}
-            headerAside={
-              <div className="flex items-center gap-4 text-sm">
-                <span className="text-muted-foreground">Version</span>
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setVersion("A")}
-                    className={cn(
-                      "border-b pb-1 transition-colors",
-                      version === "A" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground"
-                    )}
-                  >
-                    A
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setVersion("B")}
-                    className={cn(
-                      "border-b pb-1 transition-colors",
-                      version === "B" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground"
-                    )}
-                  >
-                    B
-                  </button>
-                </div>
-              </div>
-            }
-          >
-            <MobilityChecklist blocks={preBlocks} title="Pre-workout sequence" />
-          </RoutineSection>
+      <section className="document-panel">
+        <div className="grid gap-5 border-b border-border pb-7 md:grid-cols-3">
+          <FocusCell label="Feet and shins" value="Activation" note="Short-foot work, tib raises, calf range." />
+          <FocusCell label="Hips" value="Access" note="Hip flexors, 90/90 transitions, adductors." />
+          <FocusCell label="Back and trunk" value="Control" note="Thoracic rotation, cat-cow, dead bug or bird dog." />
+        </div>
 
-          <div className="space-y-10">
+        {isTrainingDay ? (
+          <>
+            <RoutineSection
+              title="Pre-workout primer"
+              summary="Choose the version that matches how you feel, run the sequence, and log it once you are done."
+              completed={preCompleted}
+              isPending={isPending}
+              isCurrentAction={pendingType === "PRE_WORKOUT"}
+              actionLabel="Mark pre-workout complete"
+              onLog={() => handleLogCompletion("PRE_WORKOUT")}
+              headerAside={
+                <div className="inline-flex rounded-full border border-border bg-secondary/54 p-1">
+                  {(["A", "B"] as const).map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setVersion(item)}
+                      className={cn(
+                        "rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
+                        version === item ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              }
+            >
+              <MobilityChecklist blocks={preBlocks} title="Pre-workout sequence" />
+            </RoutineSection>
+
             <RoutineSection
               title="Recovery mobility session"
               summary="This can be done after training or later in the day. Keep intensity easy and breathing controlled."
@@ -134,7 +130,6 @@ export function MobilityPageClient({
               isCurrentAction={pendingType === "POST_WORKOUT"}
               actionLabel="Mark post-workout complete"
               onLog={() => handleLogCompletion("POST_WORKOUT")}
-              quiet
             >
               <MobilityChecklist blocks={postBlocks} title="Post-workout cooldown" />
             </RoutineSection>
@@ -145,42 +140,60 @@ export function MobilityPageClient({
               completed={false}
               isPending={isPending}
               isCurrentAction={pendingType === "UNDO_SITTING"}
-              actionLabel="Log undo-sitting session"
+              actionLabel="Log desk reset"
               onLog={() => handleLogCompletion("UNDO_SITTING")}
               meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
-              quiet
             >
               <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
             </RoutineSection>
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-10 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)]">
-          <section className="editorial-surface-quiet space-y-5">
-            <p className="eyebrow">Rest day</p>
-            <p className="text-3xl font-semibold tracking-[-0.06em]">
-              Keep only the reset that matters.
-            </p>
-            <p className="subtle-copy">
-              On non-training days the page drops the extra structure and surfaces a single desk
-              reset flow instead.
-            </p>
-          </section>
+          </>
+        ) : (
+          <>
+            <RoutineSection
+              title="Recovery mobility session"
+              summary="Run the longer sequence at an easy pace and keep the day free from lifting intensity."
+              completed={postCompleted}
+              isPending={isPending}
+              isCurrentAction={pendingType === "POST_WORKOUT"}
+              actionLabel="Mark recovery complete"
+              onLog={() => handleLogCompletion("POST_WORKOUT")}
+            >
+              <MobilityChecklist blocks={postBlocks} title="Recovery sequence" />
+            </RoutineSection>
 
-          <RoutineSection
-            title="Optional desk reset"
-            summary="Run the short reset any time you have been parked at a desk for too long."
-            completed={false}
-            isPending={isPending}
-            isCurrentAction={pendingType === "UNDO_SITTING"}
-            actionLabel="Log undo-sitting session"
-            onLog={() => handleLogCompletion("UNDO_SITTING")}
-            meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
-          >
-            <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
-          </RoutineSection>
-        </div>
-      )}
+            <RoutineSection
+              title="Optional desk reset"
+              summary="Run the short reset any time you have been parked at a desk for too long."
+              completed={false}
+              isPending={isPending}
+              isCurrentAction={pendingType === "UNDO_SITTING"}
+              actionLabel="Log desk reset"
+              onLog={() => handleLogCompletion("UNDO_SITTING")}
+              meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
+            >
+              <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
+            </RoutineSection>
+          </>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function FocusCell({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: string;
+  note: string;
+}) {
+  return (
+    <div className="border-t border-border pt-4">
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="mt-2 text-2xl font-medium text-foreground">{value}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{note}</p>
     </div>
   );
 }
@@ -196,7 +209,6 @@ function RoutineSection({
   children,
   headerAside,
   meta,
-  quiet = false,
 }: {
   title: string;
   summary: string;
@@ -208,22 +220,21 @@ function RoutineSection({
   children: ReactNode;
   headerAside?: ReactNode;
   meta?: string;
-  quiet?: boolean;
 }) {
   return (
-    <section className={cn(quiet ? "editorial-surface-quiet" : "editorial-surface", "space-y-8")}>
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+    <section className="border-t border-border pt-8 first:border-t-0 first:pt-0">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div className="space-y-3">
           <p className="eyebrow">{completed ? "Completed today" : "Ready"}</p>
-          <h2>{title}</h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
+          <h2 className="text-3xl">{title}</h2>
+          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
           {meta ? <p className="text-sm text-muted-foreground">{meta}</p> : null}
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
           {headerAside}
           {completed ? (
-            <span className="inline-flex items-center gap-2 text-sm text-foreground/82">
+            <span className="inline-flex items-center gap-2 text-sm text-foreground">
               <CheckCircle2 className="h-4 w-4" />
               Logged
             </span>
@@ -240,7 +251,7 @@ function RoutineSection({
         </div>
       </div>
 
-      {children}
+      <div className="mt-7">{children}</div>
     </section>
   );
 }

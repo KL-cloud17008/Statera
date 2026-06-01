@@ -331,7 +331,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">Dark mode is the default visual system. Light mode is still fully supported.</p>
+            <p className="text-sm text-muted-foreground">Light mode is the primary visual system. Dark mode remains available for low-light use.</p>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant={theme === "dark" ? "default" : "outline"} onClick={() => setTheme("dark")}>Dark</Button>
               <Button type="button" variant={theme === "light" ? "default" : "outline"} onClick={() => setTheme("light")}>Light</Button>

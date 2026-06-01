@@ -69,44 +69,19 @@
   body {
     min-height: 100vh;
     position: relative;
-    background:
-      radial-gradient(circle at 12% -8%, rgba(237, 236, 231, 0.72), transparent 32%),
-      radial-gradient(circle at 82% 12%, rgba(232, 229, 223, 0.42), transparent 30%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(247, 247, 245, 0.96) 44%, rgba(244, 241, 235, 0.95) 100%);
+    background: linear-gradient(180deg, var(--canvas-white) 0%, var(--near-white) 100%);
     color: var(--foreground);
     font-family: var(--font-sans-base);
     font-size: var(--type-16);
     line-height: var(--leading-normal);
-    letter-spacing: -0.014em;
+    letter-spacing: 0;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   .dark body {
-    background:
-      radial-gradient(circle at 14% -8%, rgba(118, 106, 124, 0.12), transparent 30%),
-      radial-gradient(circle at 88% 10%, rgba(198, 161, 111, 0.055), transparent 28%),
-      linear-gradient(180deg, #141311 0%, #100f0e 54%, #0d0c0b 100%);
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(22, 15, 12, 0.028) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(22, 15, 12, 0.022) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 58%);
-  }
-
-  .dark body::before {
-    background:
-      linear-gradient(90deg, rgba(244, 241, 235, 0.025) 1px, transparent 1px),
-      linear-gradient(180deg, rgba(244, 241, 235, 0.02) 1px, transparent 1px);
-    background-size: 56px 56px;
+    background: #11100f;
   }
 
   ::selection {
@@ -128,19 +103,29 @@
   }
 
   h1 {
-    font-size: clamp(3.25rem, 2.2rem + 4.15vw, 6.35rem);
+    font-size: var(--type-56);
     letter-spacing: var(--tracking-tighter);
-    max-width: 11.5ch;
+    max-width: 14ch;
   }
 
   h2 {
-    font-size: clamp(1.9rem, 1.35rem + 1.8vw, 3.35rem);
-    letter-spacing: -0.058em;
+    font-size: var(--type-40);
+    letter-spacing: 0;
   }
 
   h3 {
-    font-size: clamp(1.05rem, 0.98rem + 0.45vw, 1.38rem);
-    letter-spacing: -0.04em;
+    font-size: var(--type-20);
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 767px) {
+    h1 {
+      font-size: var(--type-40);
+    }
+
+    h2 {
+      font-size: var(--type-32);
+    }
   }
 
   p {
@@ -176,25 +161,25 @@
   }
 
   .surface-card {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, var(--background) 6%), color-mix(in srgb, var(--card) 86%, var(--secondary) 14%));
+    background: color-mix(in srgb, var(--card) 92%, var(--secondary) 8%);
     border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
     box-shadow: var(--shadow-soft);
   }
 
   .surface-elevated {
-    background: linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, var(--secondary) 4%), var(--card));
+    background: var(--card);
     border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
     box-shadow: var(--shadow-elevated);
   }
 
   .page-shell {
     display: grid;
-    gap: clamp(2.75rem, 2rem + 1.8vw, 4.75rem);
+    gap: var(--space-12);
   }
 
   .page-hero {
     position: relative;
-    padding: clamp(1rem, 0.65rem + 1vw, 1.5rem) 0 clamp(2rem, 1.2rem + 2.4vw, 4.2rem);
+    padding: var(--space-10) 0 var(--space-10);
     border-bottom: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
   }
 
@@ -203,24 +188,25 @@
     position: absolute;
     left: 0;
     bottom: -1px;
-    width: min(18rem, 42vw);
+    width: 12rem;
     height: 1px;
     background: color-mix(in srgb, var(--foreground) 34%, transparent);
     pointer-events: none;
   }
 
-  .editorial-surface {
+  .editorial-surface,
+  .document-panel {
     position: relative;
     overflow: hidden;
     border-radius: var(--radius-panel);
     border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, var(--card-wash, #edece7) 6%), color-mix(in srgb, var(--card) 84%, var(--card-wash, #edece7) 16%));
+    background: color-mix(in srgb, var(--card) 92%, var(--secondary) 8%);
     box-shadow: var(--shadow-elevated);
-    padding: clamp(1.35rem, 1rem + 1.15vw, 2.25rem);
+    padding: var(--space-8);
   }
 
-  .editorial-surface::before {
+  .editorial-surface::before,
+  .document-panel::before {
     content: "";
     position: absolute;
     inset: 0 0 auto 0;
@@ -233,11 +219,46 @@
     position: relative;
     overflow: hidden;
     border-radius: var(--radius-panel);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--secondary) 64%, var(--card) 36%), color-mix(in srgb, var(--secondary) 82%, var(--card) 18%));
+    background: color-mix(in srgb, var(--secondary) 68%, var(--card) 32%);
     border: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
-    padding: clamp(1.15rem, 0.95rem + 0.9vw, 1.8rem);
+    padding: var(--space-6);
     box-shadow: var(--shadow-soft);
+  }
+
+  .document-panel {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  .ledger-row {
+    display: grid;
+    gap: var(--space-5);
+    border-top: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+    padding: var(--space-5) 0;
+  }
+
+  .protocol-grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .protocol-row {
+    display: grid;
+    gap: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    padding: var(--space-4) 0;
+  }
+
+  @media (min-width: 768px) {
+    .ledger-row {
+      grid-template-columns: 12rem minmax(0, 1fr) minmax(12rem, 0.38fr);
+      align-items: start;
+    }
+
+    .protocol-row {
+      grid-template-columns: 4.5rem minmax(0, 1fr) minmax(12rem, auto);
+      align-items: start;
+    }
   }
 
   .quiet-rule {
@@ -256,14 +277,14 @@
     font-family: var(--font-mono-base);
     font-variant-numeric: tabular-nums;
     font-weight: 500;
-    letter-spacing: -0.055em;
+    letter-spacing: 0;
   }
 
   .eyebrow {
     color: color-mix(in srgb, var(--foreground) 46%, var(--muted-foreground) 54%);
     font-size: var(--type-12);
     font-weight: 600;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
