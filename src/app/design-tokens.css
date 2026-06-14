@@ -38,14 +38,14 @@
   --radius-surface: 1rem;
   --radius-panel: 1.25rem;
 
-  --aubergine-ink: #1b0624;
-  --espresso: #160f0c;
-  --linen: #f7f7f5;
-  --bone: #edece7;
-  --mist: #eeeeee;
+  --aubergine-ink: #24112a;
+  --espresso: #25130f;
+  --linen: #f6efe5;
+  --bone: #eadfd3;
+  --mist: #eee5dc;
   --warm-ash: #766a7c;
   --graphite: #444444;
-  --paper-white: #fffdf8;
+  --paper-white: #fbf4ea;
   --stone: #898683;
   --smoke: #1a1816;
   --charcoal: #292421;
@@ -60,7 +60,7 @@
 
   --canvas-white: var(--paper-white);
   --near-white: var(--linen);
-  --warm-canvas: #f5eee6;
+  --warm-canvas: #f4e8dc;
   --card-wash: var(--bone);
   --input-fill: var(--mist);
   --midnight-ink: var(--aubergine-ink);
@@ -89,9 +89,9 @@
   --primary-foreground: var(--paper-white);
   --secondary: var(--bone);
   --secondary-foreground: var(--deep-charcoal);
-  --muted: #f0eee9;
-  --muted-foreground: #6c606f;
-  --accent: #eadfd5;
+  --muted: #ece2d7;
+  --muted-foreground: #665868;
+  --accent: #e9d7c7;
   --accent-foreground: var(--slate-text);
   --destructive: var(--error-500);
   --destructive-foreground: #fffafa;
@@ -107,25 +107,26 @@
   --chart-3: #a17847;
   --chart-4: #78886c;
   --chart-5: #6e8795;
-  --sidebar: rgba(247, 247, 245, 0.78);
+  --sidebar: rgba(246, 239, 229, 0.78);
   --sidebar-foreground: var(--slate-text);
   --sidebar-primary: var(--espresso);
   --sidebar-primary-foreground: var(--paper-white);
-  --sidebar-accent: rgba(237, 236, 231, 0.72);
+  --sidebar-accent: rgba(234, 223, 211, 0.72);
   --sidebar-accent-foreground: var(--slate-text);
   --sidebar-border: rgba(27, 6, 36, 0.085);
   --sidebar-ring: rgba(27, 6, 36, 0.13);
   --shadow-soft: rgba(27, 6, 36, 0.052) 0 0 0 1px inset;
   --shadow-elevated: rgba(27, 6, 36, 0.06) 0 0 0 1px inset, 0 10px 28px rgba(136, 94, 68, 0.045);
   --atmosphere-background:
-    linear-gradient(180deg, rgba(247, 247, 245, 0.96) 0%, rgba(247, 247, 245, 0.78) 21%, rgba(237, 236, 231, 0.78) 100%),
-    radial-gradient(85% 42% at 18% 9%, color-mix(in srgb, var(--atmosphere-peach) 62%, transparent) 0%, transparent 60%),
-    radial-gradient(70% 38% at 74% 10%, color-mix(in srgb, var(--atmosphere-lavender) 52%, transparent) 0%, transparent 64%),
-    radial-gradient(86% 32% at 51% 34%, color-mix(in srgb, var(--atmosphere-golden-haze) 36%, transparent) 0%, transparent 72%),
-    linear-gradient(172deg, transparent 0 36%, color-mix(in srgb, var(--atmosphere-apricot) 28%, transparent) 41%, transparent 58%),
-    radial-gradient(96% 34% at 18% 62%, color-mix(in srgb, var(--atmosphere-pale-blue) 36%, transparent) 0%, transparent 68%),
-    radial-gradient(104% 38% at 78% 66%, color-mix(in srgb, var(--atmosphere-sage) 34%, transparent) 0%, transparent 66%),
-    linear-gradient(180deg, var(--linen) 0%, var(--bone) 100%);
+    linear-gradient(180deg, rgba(246, 239, 229, 0.56) 0%, rgba(246, 239, 229, 0.44) 24%, rgba(242, 232, 220, 0.72) 100%),
+    radial-gradient(88% 48% at 16% 5%, color-mix(in srgb, var(--atmosphere-peach) 78%, transparent) 0%, transparent 62%),
+    radial-gradient(74% 42% at 77% 8%, color-mix(in srgb, var(--atmosphere-apricot) 56%, transparent) 0%, transparent 64%),
+    radial-gradient(86% 36% at 50% 24%, color-mix(in srgb, var(--atmosphere-golden-haze) 44%, transparent) 0%, transparent 72%),
+    linear-gradient(173deg, transparent 0 28%, color-mix(in srgb, var(--atmosphere-lavender) 34%, transparent) 34%, color-mix(in srgb, var(--atmosphere-pale-blue) 36%, transparent) 43%, color-mix(in srgb, var(--atmosphere-sage) 34%, transparent) 53%, transparent 67%),
+    radial-gradient(102% 38% at 12% 58%, color-mix(in srgb, var(--atmosphere-pale-blue) 48%, transparent) 0%, transparent 70%),
+    radial-gradient(108% 42% at 84% 63%, color-mix(in srgb, var(--atmosphere-sage) 48%, transparent) 0%, transparent 68%),
+    radial-gradient(88% 34% at 50% 78%, color-mix(in srgb, var(--atmosphere-lavender) 28%, transparent) 0%, transparent 72%),
+    linear-gradient(180deg, #f7ede0 0%, var(--linen) 47%, var(--bone) 100%);
 }
 
 .dark {

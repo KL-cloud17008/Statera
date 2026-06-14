@@ -171,8 +171,9 @@
   .chrome-surface {
     border-color: color-mix(in srgb, var(--sidebar-border) 82%, transparent);
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--paper-white) 72%, transparent), color-mix(in srgb, var(--linen) 86%, transparent));
-    box-shadow: rgba(27, 6, 36, 0.04) 0 1px 0 inset;
+      linear-gradient(180deg, color-mix(in srgb, var(--paper-white) 76%, transparent), color-mix(in srgb, var(--linen) 72%, transparent)),
+      linear-gradient(100deg, color-mix(in srgb, var(--atmosphere-peach) 18%, transparent), color-mix(in srgb, var(--atmosphere-lavender) 12%, transparent) 48%, color-mix(in srgb, var(--atmosphere-sage) 14%, transparent));
+    box-shadow: rgba(36, 17, 42, 0.045) 0 1px 0 inset;
   }
 
   .dark .chrome-surface {
@@ -183,14 +184,16 @@
 
   .surface-card {
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, var(--linen) 6%), color-mix(in srgb, var(--card) 84%, var(--bone) 16%));
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 84%, var(--linen) 16%), color-mix(in srgb, var(--bone) 72%, var(--paper-white) 28%)),
+      linear-gradient(112deg, color-mix(in srgb, var(--atmosphere-peach) 10%, transparent), transparent 46%, color-mix(in srgb, var(--atmosphere-pale-blue) 8%, transparent));
     border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
     box-shadow: var(--shadow-soft);
   }
 
   .surface-elevated {
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, var(--linen) 4%), color-mix(in srgb, var(--card) 88%, var(--bone) 12%));
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 86%, var(--linen) 14%), color-mix(in srgb, var(--bone) 70%, var(--paper-white) 30%)),
+      linear-gradient(112deg, color-mix(in srgb, var(--atmosphere-apricot) 9%, transparent), transparent 50%, color-mix(in srgb, var(--atmosphere-lavender) 9%, transparent));
     border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
     box-shadow: var(--shadow-elevated);
   }
@@ -202,19 +205,40 @@
 
   .page-hero {
     position: relative;
+    isolation: isolate;
+    overflow: hidden;
     padding: var(--space-10) 0 var(--space-10);
     border-bottom: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  }
+
+  .page-hero::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: calc(var(--space-10) * -1) -7vw -1px;
+    background:
+      radial-gradient(62% 82% at 13% 0%, color-mix(in srgb, var(--atmosphere-peach) 52%, transparent) 0%, transparent 68%),
+      radial-gradient(48% 64% at 84% 8%, color-mix(in srgb, var(--atmosphere-apricot) 34%, transparent) 0%, transparent 66%),
+      linear-gradient(96deg, transparent 0 18%, color-mix(in srgb, var(--atmosphere-lavender) 22%, transparent) 31%, color-mix(in srgb, var(--atmosphere-pale-blue) 24%, transparent) 48%, color-mix(in srgb, var(--atmosphere-sage) 24%, transparent) 64%, transparent 82%),
+      linear-gradient(180deg, color-mix(in srgb, var(--linen) 30%, transparent) 0%, color-mix(in srgb, var(--linen) 58%, transparent) 100%);
+    pointer-events: none;
   }
 
   .page-hero::after {
     content: "";
     position: absolute;
+    z-index: 0;
     left: 0;
     bottom: -1px;
     width: 12rem;
     height: 1px;
     background: color-mix(in srgb, var(--foreground) 34%, transparent);
     pointer-events: none;
+  }
+
+  .page-hero > * {
+    position: relative;
+    z-index: 1;
   }
 
   .editorial-surface,
@@ -224,7 +248,8 @@
     border-radius: var(--radius-panel);
     border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--linen) 8%), color-mix(in srgb, var(--paper-white) 78%, var(--bone) 22%));
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 82%, var(--linen) 18%), color-mix(in srgb, var(--bone) 70%, var(--paper-white) 30%)),
+      linear-gradient(116deg, color-mix(in srgb, var(--atmosphere-peach) 12%, transparent), transparent 42%, color-mix(in srgb, var(--atmosphere-pale-blue) 10%, transparent) 70%, color-mix(in srgb, var(--atmosphere-sage) 10%, transparent));
     box-shadow: var(--shadow-elevated);
     padding: var(--space-8);
   }
@@ -244,7 +269,8 @@
     overflow: hidden;
     border-radius: var(--radius-panel);
     background:
-      linear-gradient(180deg, color-mix(in srgb, var(--bone) 70%, var(--card) 30%), color-mix(in srgb, var(--mist) 92%, var(--atmosphere-peach) 8%));
+      linear-gradient(180deg, color-mix(in srgb, var(--bone) 76%, var(--card) 24%), color-mix(in srgb, var(--mist) 82%, var(--atmosphere-peach) 18%)),
+      linear-gradient(112deg, transparent 0%, color-mix(in srgb, var(--atmosphere-lavender) 12%, transparent) 44%, color-mix(in srgb, var(--atmosphere-sage) 12%, transparent) 100%);
     border: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
     padding: var(--space-6);
     box-shadow: var(--shadow-soft);
