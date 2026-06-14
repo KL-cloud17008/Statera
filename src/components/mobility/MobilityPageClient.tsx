@@ -86,9 +86,9 @@ export function MobilityPageClient({
 
       <section className="document-panel">
         <div className="grid gap-5 border-b border-border pb-7 md:grid-cols-3">
-          <FocusCell label="Feet and shins" value="Activation" note="Short-foot work, tib raises, calf range." />
+          <FocusCell label="Feet and ankles" value="Activation" note="Short-foot work, ankle pumps, calf range." />
           <FocusCell label="Hips" value="Access" note="Hip flexors, 90/90 transitions, adductors." />
-          <FocusCell label="Back and trunk" value="Control" note="Thoracic rotation, cat-cow, dead bug or bird dog." />
+          <FocusCell label="Back and trunk" value="Control" note="Thoracic rotation, cat-cow, seated bracing breaths." />
         </div>
 
         {isTrainingDay ? (
