@@ -59,7 +59,7 @@
   html {
     color-scheme: light;
     scroll-behavior: smooth;
-    background: var(--background);
+    background: var(--linen);
   }
 
   .dark {
@@ -69,7 +69,9 @@
   body {
     min-height: 100vh;
     position: relative;
-    background: linear-gradient(180deg, var(--canvas-white) 0%, var(--near-white) 100%);
+    background: var(--atmosphere-background);
+    background-attachment: fixed;
+    background-size: cover;
     color: var(--foreground);
     font-family: var(--font-sans-base);
     font-size: var(--type-16);
@@ -81,7 +83,7 @@
   }
 
   .dark body {
-    background: #11100f;
+    background: var(--atmosphere-background);
   }
 
   ::selection {
@@ -156,19 +158,40 @@
 }
 
 @layer utilities {
+  .app-atmosphere {
+    background: var(--atmosphere-background);
+    background-attachment: fixed;
+    background-size: cover;
+  }
+
   .app-shell-grid {
     background: transparent;
   }
 
+  .chrome-surface {
+    border-color: color-mix(in srgb, var(--sidebar-border) 82%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--paper-white) 72%, transparent), color-mix(in srgb, var(--linen) 86%, transparent));
+    box-shadow: rgba(27, 6, 36, 0.04) 0 1px 0 inset;
+  }
+
+  .dark .chrome-surface {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 82%, transparent), color-mix(in srgb, var(--background) 90%, transparent));
+    box-shadow: rgba(255, 255, 255, 0.05) 0 1px 0 inset;
+  }
+
   .surface-card {
-    background: color-mix(in srgb, var(--card) 92%, var(--secondary) 8%);
-    border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 94%, var(--linen) 6%), color-mix(in srgb, var(--card) 84%, var(--bone) 16%));
+    border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
     box-shadow: var(--shadow-soft);
   }
 
   .surface-elevated {
-    background: var(--card);
-    border: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, var(--linen) 4%), color-mix(in srgb, var(--card) 88%, var(--bone) 12%));
+    border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
     box-shadow: var(--shadow-elevated);
   }
 
@@ -180,7 +203,7 @@
   .page-hero {
     position: relative;
     padding: var(--space-10) 0 var(--space-10);
-    border-bottom: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
   }
 
   .page-hero::after {
@@ -199,8 +222,9 @@
     position: relative;
     overflow: hidden;
     border-radius: var(--radius-panel);
-    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
-    background: color-mix(in srgb, var(--card) 92%, var(--secondary) 8%);
+    border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--card) 92%, var(--linen) 8%), color-mix(in srgb, var(--paper-white) 78%, var(--bone) 22%));
     box-shadow: var(--shadow-elevated);
     padding: var(--space-8);
   }
@@ -219,8 +243,9 @@
     position: relative;
     overflow: hidden;
     border-radius: var(--radius-panel);
-    background: color-mix(in srgb, var(--secondary) 68%, var(--card) 32%);
-    border: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--bone) 70%, var(--card) 30%), color-mix(in srgb, var(--mist) 92%, var(--atmosphere-peach) 8%));
+    border: 1px solid color-mix(in srgb, var(--border) 68%, transparent);
     padding: var(--space-6);
     box-shadow: var(--shadow-soft);
   }

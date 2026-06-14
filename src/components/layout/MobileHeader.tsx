@@ -25,7 +25,7 @@ export function MobileHeader() {
   });
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/94 px-5 pb-3 pt-[max(env(safe-area-inset-top),0.9rem)] backdrop-blur-xl md:hidden">
+    <header className="chrome-surface sticky top-0 z-40 border-b px-5 pb-3 pt-[max(env(safe-area-inset-top),0.9rem)] backdrop-blur-xl md:hidden">
       <div className="flex items-end justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="flex size-9 items-center justify-center rounded-full border border-border bg-secondary/60">

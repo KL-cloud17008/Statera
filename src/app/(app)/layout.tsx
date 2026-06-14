@@ -4,7 +4,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="app-atmosphere min-h-screen text-foreground">
       <DesktopSidebar />
       <MobileHeader />
 
