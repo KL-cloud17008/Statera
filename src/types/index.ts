@@ -4,8 +4,6 @@ export type NavItem = {
   icon: string;
 };
 
-export type Theme = "dark" | "light" | "system";
-
 export type WeighInStatusType = "BASELINE" | "FASTING" | "NORMAL";
 
 export type MobilityType = "PRE_WORKOUT" | "POST_WORKOUT";

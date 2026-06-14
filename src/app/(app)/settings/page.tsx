@@ -4,7 +4,7 @@ import { SettingsPageClient } from "@/components/settings/SettingsPageClient";
 
 export const metadata: Metadata = {
   title: "Settings | Athanor",
-  description: "Manage profile values, units, theme, backups, imports, and data safety controls.",
+  description: "Manage profile values, units, backups, imports, and data safety controls.",
 };
 
 export default async function SettingsPage() {

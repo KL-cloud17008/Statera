@@ -6,7 +6,6 @@ import { CalendarDays, LogOut } from "lucide-react";
 import { signOut } from "@/actions/auth";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 export function MobileHeader() {
@@ -43,7 +42,6 @@ export function MobileHeader() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
           <form action={signOut}>
             <Button variant="ghost" size="icon-sm">
               <LogOut className="h-4 w-4" />

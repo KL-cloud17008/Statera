@@ -1,11 +1,10 @@
 ﻿"use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import { useTheme } from "next-themes";
 import {
   Download,
   Loader2,
-  MoonStar,
+  Palette,
   Paintbrush,
   ShieldAlert,
   Trash2,
@@ -70,7 +69,6 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const [isClearing, setIsClearing] = useState(false);
   const [isClearOpen, setIsClearOpen] = useState(false);
   const { settings, updateSettings, resetSettings } = useAppSettings();
-  const { theme, setTheme } = useTheme();
 
   async function handleProfileSave(formData: FormData) {
     setIsSaving(true);
@@ -198,7 +196,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       <SectionHeader
         eyebrow="Settings"
         title="Profile, preferences, and data safety"
-        description="Manage units, theme, goals, backups, and the profile values that power BMI and goal projections."
+        description="Manage units, goals, backups, and the profile values that power BMI and goal projections."
       />
 
       <Card>
@@ -325,17 +323,17 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
-                <MoonStar className="h-5 w-5" />
+                <Palette className="h-5 w-5" />
               </div>
-              <CardTitle>Theme</CardTitle>
+              <CardTitle>Appearance</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">Light mode is the primary visual system. Dark mode remains available for low-light use.</p>
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" variant={theme === "dark" ? "default" : "outline"} onClick={() => setTheme("dark")}>Dark</Button>
-              <Button type="button" variant={theme === "light" ? "default" : "outline"} onClick={() => setTheme("light")}>Light</Button>
-              <Button type="button" variant={theme === "system" ? "default" : "outline"} onClick={() => setTheme("system")}>System</Button>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Appearance is fixed to the Duna-inspired light system for visual consistency.
+            </p>
+            <div className="rounded-[1.25rem] border border-border bg-muted/35 p-4 text-sm leading-relaxed text-muted-foreground">
+              Linen canvas, Bone surfaces, Mist inputs, and Aubergine Ink remain consistent across the app.
             </div>
           </CardContent>
         </Card>

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { CalendarDays, LogOut } from "lucide-react";
 import { signOut } from "@/actions/auth";
 import { BrandMark } from "@/components/layout/BrandMark";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -63,7 +62,6 @@ export function DesktopSidebar() {
             <CalendarDays className="h-3.5 w-3.5" />
             <span>{todayLabel}</span>
           </div>
-          <ThemeToggle />
           <form action={signOut}>
             <Button variant="ghost" size="icon-sm" aria-label="Sign out">
               <LogOut className="h-4 w-4" />
