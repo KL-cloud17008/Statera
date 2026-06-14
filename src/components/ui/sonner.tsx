@@ -26,7 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "surface-elevated rounded-2xl border px-4 py-3 text-sm shadow-[0_18px_42px_rgba(2,8,23,0.24)]",
+            "surface-elevated rounded-2xl border px-4 py-3 text-sm shadow-[0_18px_42px_rgba(27,6,36,0.12)]",
           title: "text-sm font-semibold text-foreground",
           description: "text-sm text-muted-foreground",
         },

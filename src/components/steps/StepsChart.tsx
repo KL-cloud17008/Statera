@@ -97,7 +97,7 @@ export function StepsChart({
                 }
               />
               <Tooltip
-                cursor={{ fill: "rgba(122, 201, 255, 0.08)" }}
+                cursor={{ fill: "color-mix(in srgb, var(--atmosphere-peach) 24%, transparent)" }}
                 contentStyle={{
                   backgroundColor: "var(--color-popover)",
                   border: "1px solid var(--color-border)",

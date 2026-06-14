@@ -10,9 +10,9 @@ function getHeatLevel(steps: number, goal: number) {
   const ratio = goal > 0 ? steps / goal : 0;
   if (ratio >= 1) return "bg-primary/90 text-primary-foreground border-primary/60";
   if (ratio >= 0.75) return "bg-primary/40 text-foreground border-primary/40";
-  if (ratio >= 0.5) return "bg-secondary/60 text-foreground border-secondary/30";
-  if (ratio > 0) return "bg-muted text-muted-foreground border-border";
-  return "bg-transparent text-muted-foreground/60 border-border/60";
+  if (ratio >= 0.5) return "bg-[color-mix(in_srgb,var(--bone)_78%,var(--atmosphere-apricot)_22%)] text-foreground border-border";
+  if (ratio > 0) return "bg-[color-mix(in_srgb,var(--mist)_82%,var(--bone)_18%)] text-muted-foreground border-border";
+  return "bg-[color-mix(in_srgb,var(--linen)_72%,transparent)] text-muted-foreground/60 border-border/60";
 }
 
 export function StepsHeatmap({

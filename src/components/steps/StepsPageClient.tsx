@@ -35,8 +35,8 @@ export function StepsPageClient({
         description="Track today’s total, review your weekly and monthly trends, and keep your streak alive with a clear goal target."
       >
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <span className="rounded-full bg-white/8 px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
-          <span className="rounded-full bg-white/8 px-3 py-1.5">{formatDistance(stats.todaySteps, settings.distanceUnit)}</span>
+          <span className="warm-pill rounded-full px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
+          <span className="warm-pill rounded-full px-3 py-1.5">{formatDistance(stats.todaySteps, settings.distanceUnit)}</span>
         </div>
       </SectionHeader>
 
@@ -44,7 +44,7 @@ export function StepsPageClient({
         <div className="surface-elevated flex flex-col items-center justify-center rounded-[1.75rem] px-6 py-8">
           <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-            <span className="rounded-full bg-primary/12 px-3 py-1.5 text-primary">
+            <span className="warm-pill rounded-full px-3 py-1.5 text-primary">
               {stats.goalMetCount} goal hits total
             </span>
             <span>{stats.completionRate}% completion rate</span>
@@ -91,4 +91,3 @@ export function StepsPageClient({
     </div>
   );
 }
-

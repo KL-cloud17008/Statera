@@ -75,7 +75,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
             ) : (
               <div
                 key={entry.id}
-                className="group flex items-center justify-between rounded-[1.25rem] border border-border bg-muted/35 px-4 py-4 transition-colors hover:bg-accent/70"
+                className="warm-row group flex items-center justify-between rounded-[1.25rem] px-4 py-4 transition-colors hover:bg-accent/70"
               >
                 <div>
                   <p className="text-lg font-semibold text-foreground data-number">

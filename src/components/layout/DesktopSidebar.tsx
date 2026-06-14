@@ -21,7 +21,7 @@ export function DesktopSidebar() {
     <header className="chrome-surface sticky top-0 z-40 hidden border-b backdrop-blur-xl md:block">
       <div className="mx-auto flex h-20 max-w-[118rem] items-center gap-8 px-8 lg:px-12">
         <Link href="/" className="flex min-w-48 items-center gap-3 text-foreground">
-          <span className="flex size-9 items-center justify-center rounded-full border border-border bg-secondary/60 text-foreground">
+          <span className="duna-mark-surface flex size-9 items-center justify-center rounded-full text-foreground">
             <BrandMark className="h-5 w-5" />
           </span>
           <div className="leading-none">
@@ -40,14 +40,14 @@ export function DesktopSidebar() {
                 className={cn(
                   "group inline-flex h-10 items-center gap-2 rounded-full border px-3.5 text-[0.78rem] font-medium uppercase tracking-[0.12em] transition-colors duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_36%,transparent),0_0_0_5px_var(--ring)]",
                   isActive
-                    ? "border-foreground bg-foreground text-background"
+                    ? "border-primary bg-primary text-primary-foreground"
                     : "border-transparent text-muted-foreground hover:border-border hover:bg-card/72 hover:text-foreground"
                 )}
               >
                 <item.icon
                   className={cn(
                     "h-3.5 w-3.5 shrink-0",
-                    isActive ? "text-background" : "text-muted-foreground group-hover:text-foreground"
+                    isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
                   )}
                   strokeWidth={1.8}
                 />

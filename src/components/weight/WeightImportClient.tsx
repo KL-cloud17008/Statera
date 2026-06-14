@@ -172,7 +172,7 @@ export function WeightImportClient() {
             <p className="text-sm text-muted-foreground">
               Expected columns: Status, Date (M/D/YYYY), Weight, and optional Body Fat %.
             </p>
-            <div className="rounded-[1.5rem] border border-dashed border-border bg-muted/30 p-10 text-center">
+            <div className="warm-dashed-panel rounded-[1.5rem] p-10 text-center">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
               <p className="mt-4 text-sm text-muted-foreground">Drag a file here or browse from your device.</p>
               <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
@@ -198,7 +198,7 @@ export function WeightImportClient() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="max-h-80 overflow-y-auto rounded-[1.25rem] border border-border">
-              <div className="sticky top-0 grid grid-cols-4 gap-2 bg-muted px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+              <div className="sticky top-0 grid grid-cols-4 gap-2 bg-[color-mix(in_srgb,var(--mist)_82%,var(--bone)_18%)] px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
                 <span>Date</span>
                 <span>Weight</span>
                 <span>Status</span>
@@ -254,7 +254,7 @@ export function WeightImportClient() {
               <p className="text-sm text-muted-foreground">Successfully imported {state.imported} entries.</p>
             </div>
             {state.errors.length > 0 ? (
-              <div className="mx-auto max-w-lg rounded-[1.25rem] border border-border bg-muted/30 p-4 text-left">
+              <div className="warm-row mx-auto max-w-lg rounded-[1.25rem] p-4 text-left">
                 <p className="eyebrow">Skipped Rows</p>
                 <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
                   {state.errors.slice(0, 10).map((err, i) => (

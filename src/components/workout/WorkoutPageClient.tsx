@@ -105,7 +105,7 @@ export function WorkoutPageClient({
         <div className="grid gap-8">
           <WorkoutDayPreview plan={todayPlan} />
           <details className="group border-t border-border pt-6">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-full border border-border bg-secondary/46 px-5 py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary/70">
+            <summary className="warm-pill flex cursor-pointer list-none items-center justify-between gap-4 rounded-full px-5 py-3 text-sm font-medium text-foreground transition-colors hover:text-foreground">
               <span>Custom session builder</span>
               <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:hidden">Open</span>
               <span className="hidden text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:inline">Close</span>

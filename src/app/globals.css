@@ -182,6 +182,45 @@
     box-shadow: var(--shadow-elevated);
   }
 
+  .warm-pill {
+    border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--soft-paper) 58%, var(--bone) 42%), color-mix(in srgb, var(--bone) 80%, var(--mist) 20%));
+    color: var(--muted-foreground);
+    box-shadow: rgba(22, 15, 12, 0.024) 0 0 0 1px inset;
+  }
+
+  .warm-row {
+    border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--bone) 82%, var(--soft-paper) 18%), color-mix(in srgb, var(--mist) 72%, var(--bone) 28%)),
+      linear-gradient(108deg, color-mix(in srgb, var(--atmosphere-peach) 9%, transparent), transparent 58%, color-mix(in srgb, var(--atmosphere-sage) 8%, transparent));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .warm-empty-panel {
+    border: 1px solid color-mix(in srgb, var(--border) 66%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--mist) 84%, var(--bone) 16%), color-mix(in srgb, var(--bone) 88%, var(--soft-paper) 12%));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .warm-dashed-panel {
+    border: 1px dashed color-mix(in srgb, var(--border) 86%, transparent);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--mist) 82%, var(--soft-paper) 18%), color-mix(in srgb, var(--bone) 88%, var(--mist) 12%)),
+      linear-gradient(112deg, color-mix(in srgb, var(--atmosphere-peach) 12%, transparent), transparent 62%, color-mix(in srgb, var(--atmosphere-sage) 10%, transparent));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .duna-mark-surface {
+    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    background:
+      radial-gradient(circle at 30% 18%, color-mix(in srgb, var(--atmosphere-peach) 36%, transparent), transparent 48%),
+      linear-gradient(180deg, color-mix(in srgb, var(--soft-paper) 70%, var(--bone) 30%), color-mix(in srgb, var(--bone) 88%, var(--mist) 12%));
+    box-shadow: var(--shadow-soft);
+  }
+
   .page-shell {
     display: grid;
     gap: var(--space-12);

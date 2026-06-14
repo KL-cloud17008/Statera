@@ -19,7 +19,7 @@ export function MobileNav() {
               href={item.href}
               className={cn(
                 "flex min-h-[3.1rem] min-w-[4.45rem] flex-col items-center justify-center gap-1 rounded-full border px-3 text-[10px] font-semibold uppercase tracking-[0.08em] transition-colors duration-150",
-                isActive ? "border-foreground bg-foreground text-background" : "border-transparent text-muted-foreground"
+                isActive ? "border-primary bg-primary text-primary-foreground" : "border-transparent text-muted-foreground"
               )}
             >
               <item.icon className="h-[1rem] w-[1rem]" strokeWidth={isActive ? 2 : 1.75} />

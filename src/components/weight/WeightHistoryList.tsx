@@ -80,7 +80,7 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
             <div className="max-h-[38rem] space-y-5 overflow-y-auto pr-1">
               {Array.from(grouped.entries()).map(([date, dateEntries]) => (
                 <div key={date} className="space-y-2">
-                  <div className="sticky top-0 z-10 -mx-2 rounded-full bg-background/85 px-2 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-md">
+                  <div className="warm-pill sticky top-0 z-10 -mx-2 rounded-full px-2 py-1 text-[11px] font-medium uppercase tracking-[0.12em] backdrop-blur-md">
                     {formatGroupDate(date)}
                   </div>
                   <div className="space-y-3">
@@ -94,7 +94,7 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
                       ) : (
                         <div
                           key={entry.id}
-                          className="group flex items-start justify-between gap-3 rounded-[1.25rem] border border-border bg-muted/30 p-4 transition-colors hover:bg-accent/70"
+                          className="warm-row group flex items-start justify-between gap-3 rounded-[1.25rem] p-4 transition-colors hover:bg-accent/70"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">

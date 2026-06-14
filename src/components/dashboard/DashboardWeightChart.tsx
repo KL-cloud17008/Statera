@@ -29,7 +29,7 @@ export function DashboardWeightChart({
 
   if (chartData.length === 0) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-lg bg-muted/50">
+      <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[1.25rem]">
         <span className="text-sm text-muted-foreground">
           No weight data yet
         </span>
@@ -84,10 +84,11 @@ export function DashboardWeightChart({
         />
         <Tooltip
           contentStyle={{
-            background: "var(--color-card)",
+            background: "var(--color-popover)",
             border: "1px solid var(--color-border)",
-            borderRadius: "0.5rem",
+            borderRadius: "1rem",
             fontSize: "0.75rem",
+            boxShadow: "var(--shadow-soft)",
           }}
           labelFormatter={(label) => {
             const [y, m, d] = String(label).split("-").map(Number);

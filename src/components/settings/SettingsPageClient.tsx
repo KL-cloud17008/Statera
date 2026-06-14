@@ -202,7 +202,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+            <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-2xl text-primary">
               <UserRound className="h-5 w-5" />
             </div>
             <CardTitle>Profile</CardTitle>
@@ -236,7 +236,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-secondary/40 text-secondary-foreground">
+              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-2xl text-secondary-foreground">
                 <Paintbrush className="h-5 w-5" />
               </div>
               <CardTitle>Units & Goals</CardTitle>
@@ -322,7 +322,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-2xl text-primary">
                 <Palette className="h-5 w-5" />
               </div>
               <CardTitle>Appearance</CardTitle>
@@ -332,7 +332,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <p className="text-sm leading-relaxed text-muted-foreground">
               Appearance is fixed to the Duna-inspired light system for visual consistency.
             </p>
-            <div className="rounded-[1.25rem] border border-border bg-muted/35 p-4 text-sm leading-relaxed text-muted-foreground">
+            <div className="warm-row rounded-[1.25rem] p-4 text-sm leading-relaxed text-muted-foreground">
               Linen canvas, Bone surfaces, Mist inputs, and Aubergine Ink remain consistent across the app.
             </div>
           </CardContent>
@@ -371,7 +371,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             />
           </div>
 
-          <div className="rounded-[1.25rem] border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+          <div className="warm-row rounded-[1.25rem] p-4 text-sm text-muted-foreground">
             JSON backups include tracker data plus local app preferences. CSV exports produce separate weight, steps, and workout files for spreadsheet use.
           </div>
         </CardContent>

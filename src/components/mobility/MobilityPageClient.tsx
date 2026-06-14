@@ -102,7 +102,7 @@ export function MobilityPageClient({
               actionLabel="Mark pre-workout complete"
               onLog={() => handleLogCompletion("PRE_WORKOUT")}
               headerAside={
-                <div className="inline-flex rounded-full border border-border bg-secondary/54 p-1">
+                <div className="inline-flex rounded-full border border-border bg-[color-mix(in_srgb,var(--mist)_78%,var(--bone)_22%)] p-1 shadow-[var(--shadow-soft)]">
                   {(["A", "B"] as const).map((item) => (
                     <button
                       key={item}
@@ -110,7 +110,7 @@ export function MobilityPageClient({
                       onClick={() => setVersion(item)}
                       className={cn(
                         "rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
-                        version === item ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+                        version === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {item}

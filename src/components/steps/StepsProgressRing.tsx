@@ -34,7 +34,7 @@ export function StepsProgressRing({
           cy="100"
           r={radius}
           className="fill-none"
-          stroke="rgba(255,255,255,0.08)"
+          stroke="color-mix(in srgb, var(--stone) 20%, transparent)"
           strokeWidth="14"
         />
         <circle
@@ -49,7 +49,7 @@ export function StepsProgressRing({
           strokeDashoffset={strokeDashoffset}
         />
       </svg>
-      <div className="absolute inset-4 flex flex-col items-center justify-center rounded-full border border-white/8 bg-background/70 text-center backdrop-blur-md">
+      <div className="warm-empty-panel absolute inset-4 flex flex-col items-center justify-center rounded-full text-center backdrop-blur-md">
         <p className="eyebrow">Today</p>
         <p className="mt-2 text-4xl font-semibold text-foreground data-number">
           {current.toLocaleString()}
@@ -57,7 +57,7 @@ export function StepsProgressRing({
         <p className="mt-1 text-sm text-muted-foreground">
           Goal {goal.toLocaleString()}
         </p>
-        <p className="mt-3 rounded-full bg-primary/12 px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-primary">
+        <p className="warm-pill mt-3 rounded-full px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-primary">
           {percentage}% reached
         </p>
       </div>

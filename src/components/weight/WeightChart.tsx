@@ -127,7 +127,7 @@ export function WeightChart({
           <CardTitle className="text-foreground">Weight Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex h-48 items-center justify-center rounded-lg bg-muted/50">
+          <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[1.25rem]">
             <span className="text-muted-foreground">
               Add weight entries to see your trend
             </span>
@@ -197,10 +197,11 @@ export function WeightChart({
             />
             <Tooltip
               contentStyle={{
-                background: "var(--color-card)",
+                background: "var(--color-popover)",
                 border: "1px solid var(--color-border)",
-                borderRadius: "0.5rem",
+                borderRadius: "1rem",
                 fontSize: "0.8125rem",
+                boxShadow: "var(--shadow-soft)",
               }}
               labelFormatter={(label) => {
                 const [y, m, d] = String(label).split("-").map(Number);

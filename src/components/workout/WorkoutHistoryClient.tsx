@@ -103,7 +103,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                       key={day.date}
                       type="button"
                       onClick={() => setSelectedDate(isSelected ? null : day.date)}
-                      className={`flex h-18 flex-col rounded-[1rem] border px-3 py-3 text-left transition-colors ${isSelected ? "border-primary/40 bg-primary/10" : "border-border bg-muted/25 hover:bg-accent/70"}`}
+                      className={`flex h-18 flex-col rounded-[1rem] border px-3 py-3 text-left transition-colors ${isSelected ? "border-primary/45 bg-primary/10" : "border-border bg-[color-mix(in_srgb,var(--mist)_76%,var(--bone)_24%)] hover:bg-accent/70"}`}
                     >
                       <span className="text-sm font-semibold text-foreground data-number">{day.day}</span>
                       <div className="mt-auto flex flex-wrap gap-1">
@@ -129,7 +129,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                 <p className="text-sm text-muted-foreground">No completed sessions in this view yet.</p>
               ) : (
                 filteredSessions.map((session) => (
-                  <div key={session.id} className="rounded-[1.25rem] border border-border bg-muted/30 p-4">
+                  <div key={session.id} className="warm-row rounded-[1.25rem] p-4">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="text-lg font-semibold text-foreground">{session.label}</p>
@@ -161,7 +161,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                         <Link
                           key={`${session.id}-${exercise}`}
                           href={`/workout/exercise/${encodeURIComponent(exercise)}`}
-                          className="rounded-full border border-border bg-background/80 px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                          className="warm-pill rounded-full px-3 py-1.5 text-xs transition-colors hover:text-foreground"
                         >
                           {exercise}
                         </Link>
