@@ -1,6 +1,5 @@
 /// <reference lib="webworker" />
-import { defaultCache } from "@serwist/next/worker";
-import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
+import type { PrecacheEntry, RuntimeCaching, SerwistGlobalConfig } from "serwist";
 import { NetworkOnly, Serwist } from "serwist";
 
 declare global {
@@ -29,17 +28,38 @@ const pwaControlCaching = [
       sameOrigin && PWA_CONTROL_PATHS.has(url.pathname),
     handler: new NetworkOnly(),
   },
-];
+] satisfies RuntimeCaching[];
+
+const appRuntimeCaching = [
+  {
+    matcher: ({
+      request,
+      sameOrigin,
+      url,
+    }: {
+      request: Request;
+      sameOrigin: boolean;
+      url: URL;
+    }) =>
+      sameOrigin &&
+      (request.mode === "navigate" ||
+        url.pathname.startsWith("/_next/") ||
+        url.pathname.startsWith("/api/")),
+    handler: new NetworkOnly(),
+  },
+] satisfies RuntimeCaching[];
+
+const injectedPrecacheEntries = self.__SW_MANIFEST ?? [];
 
 const serwist = new Serwist({
-  precacheEntries: self.__SW_MANIFEST,
+  precacheEntries: injectedPrecacheEntries.filter(() => false),
   precacheOptions: {
     cleanupOutdatedCaches: true,
   },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: [...pwaControlCaching, ...defaultCache],
+  runtimeCaching: [...pwaControlCaching, ...appRuntimeCaching],
 });
 
 serwist.addEventListeners();
@@ -49,24 +69,7 @@ self.addEventListener("activate", (event) => {
     (async () => {
       const cacheNames = await caches.keys();
 
-      await Promise.all(
-        cacheNames.map(async (cacheName) => {
-          const cache = await caches.open(cacheName);
-          const requests = await cache.keys();
-
-          await Promise.all(
-            requests.map(async (request) => {
-              const url = new URL(request.url);
-
-              if (url.origin !== self.location.origin || !PWA_CONTROL_PATHS.has(url.pathname)) {
-                return;
-              }
-
-              await cache.delete(request);
-            }),
-          );
-        }),
-      );
+      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
     })(),
   );
 });

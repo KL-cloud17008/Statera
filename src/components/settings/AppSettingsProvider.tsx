@@ -29,14 +29,48 @@ type AppSettingsContextValue = {
 const APP_SETTINGS_EVENT = "fittrack:app-settings";
 const AppSettingsContext = createContext<AppSettingsContextValue | null>(null);
 
+let memorySettings = DEFAULT_APP_SETTINGS;
+let cachedStorageValue: string | null | undefined;
+let cachedStorageSettings = DEFAULT_APP_SETTINGS;
+let preferMemorySettings = false;
+
+function readStoredSettingsValue() {
+  try {
+    return {
+      available: true,
+      value: window.localStorage.getItem(APP_SETTINGS_STORAGE_KEY),
+    } as const;
+  } catch {
+    return {
+      available: false,
+      value: null,
+    } as const;
+  }
+}
+
 function readSettingsSnapshot() {
   if (typeof window === "undefined") {
     return DEFAULT_APP_SETTINGS;
   }
 
-  return parseAppSettings(
-    window.localStorage.getItem(APP_SETTINGS_STORAGE_KEY)
-  );
+  if (preferMemorySettings) {
+    return memorySettings;
+  }
+
+  const storedSettings = readStoredSettingsValue();
+  if (!storedSettings.available) {
+    return memorySettings;
+  }
+
+  if (storedSettings.value === cachedStorageValue) {
+    return cachedStorageSettings;
+  }
+
+  cachedStorageValue = storedSettings.value;
+  cachedStorageSettings = parseAppSettings(storedSettings.value);
+  memorySettings = cachedStorageSettings;
+
+  return cachedStorageSettings;
 }
 
 function subscribeToSettings(callback: () => void) {
@@ -55,10 +89,19 @@ function subscribeToSettings(callback: () => void) {
 }
 
 function writeSettings(nextSettings: AppSettings) {
-  window.localStorage.setItem(
-    APP_SETTINGS_STORAGE_KEY,
-    serializeAppSettings(nextSettings)
-  );
+  const serializedSettings = serializeAppSettings(nextSettings);
+
+  memorySettings = nextSettings;
+
+  try {
+    window.localStorage.setItem(APP_SETTINGS_STORAGE_KEY, serializedSettings);
+    cachedStorageValue = serializedSettings;
+    cachedStorageSettings = nextSettings;
+    preferMemorySettings = false;
+  } catch {
+    preferMemorySettings = true;
+  }
+
   window.dispatchEvent(new Event(APP_SETTINGS_EVENT));
 }
 

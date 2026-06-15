@@ -41,23 +41,23 @@
   --aubergine-ink: #1b0624;
   --espresso: #160f0c;
   --linen: #f1e3d0;
-  --bone: #efe2d1;
-  --mist: #e7dacc;
-  --paper-white: #ffffff;
+  --bone: #f0e5d6;
+  --mist: #e8d9ca;
+  --paper-white: #f7ead9;
   --warm-ash: #766a7c;
   --graphite: #444444;
   --cream-paper: #f5e8d7;
-  --soft-paper: #ecdccb;
+  --soft-paper: #ead8c4;
   --warm-cream: #efe0cb;
   --stone: #898683;
   --smoke: #1a1816;
   --charcoal: #292421;
-  --atmosphere-peach: #eda987;
-  --atmosphere-apricot: #f3bf88;
-  --atmosphere-sunset: #e99d91;
-  --atmosphere-gold: #e4bd70;
-  --atmosphere-mauve: #c4a0b8;
-  --atmosphere-blush: #edb5aa;
+  --atmosphere-peach: #efa783;
+  --atmosphere-apricot: #f6bf86;
+  --atmosphere-sunset: #ec9b8f;
+  --atmosphere-gold: #e7bf74;
+  --atmosphere-mauve: #c39ab6;
+  --atmosphere-blush: #efb3a7;
 
   --warm-canvas: var(--linen);
   --card-wash: var(--bone);
@@ -82,7 +82,7 @@
   --foreground: var(--aubergine-ink);
   --card: var(--bone);
   --card-foreground: var(--slate-text);
-  --popover: var(--soft-paper);
+  --popover: var(--cream-paper);
   --popover-foreground: var(--slate-text);
   --primary: var(--espresso);
   --primary-foreground: var(--cream-paper);
@@ -90,7 +90,7 @@
   --secondary-foreground: var(--deep-charcoal);
   --muted: var(--mist);
   --muted-foreground: var(--warm-ash);
-  --accent: color-mix(in srgb, var(--bone) 84%, var(--cream-paper) 16%);
+  --accent: color-mix(in srgb, var(--bone) 74%, var(--cream-paper) 26%);
   --accent-foreground: var(--slate-text);
   --destructive: var(--error-500);
   --destructive-foreground: var(--soft-paper);
@@ -106,7 +106,7 @@
   --chart-3: var(--stone);
   --chart-4: var(--graphite);
   --chart-5: #c9c5bf;
-  --sidebar: color-mix(in srgb, var(--cream-paper) 68%, var(--warm-canvas) 32%);
+  --sidebar: color-mix(in srgb, var(--cream-paper) 62%, var(--warm-canvas) 38%);
   --sidebar-foreground: var(--slate-text);
   --sidebar-primary: var(--espresso);
   --sidebar-primary-foreground: var(--cream-paper);
@@ -115,12 +115,12 @@
   --sidebar-border: rgba(27, 6, 36, 0.11);
   --sidebar-ring: rgba(27, 6, 36, 0.14);
   --shadow-soft: rgba(27, 6, 36, 0.07) 0 0 0 1px inset;
-  --shadow-elevated: rgba(27, 6, 36, 0.08) 0 0 0 1px inset, 0 6px 16px rgba(22, 15, 12, 0.018);
+  --shadow-elevated: rgba(27, 6, 36, 0.082) 0 0 0 1px inset;
   --atmosphere-background:
-    radial-gradient(76% 38% at 10% -3%, color-mix(in srgb, var(--atmosphere-peach) 42%, transparent) 0%, transparent 72%),
-    radial-gradient(64% 34% at 82% 1%, color-mix(in srgb, var(--atmosphere-apricot) 31%, transparent) 0%, transparent 74%),
-    radial-gradient(48% 28% at 46% 5%, color-mix(in srgb, var(--atmosphere-gold) 18%, transparent) 0%, transparent 78%),
-    radial-gradient(44% 30% at 74% 24%, color-mix(in srgb, var(--atmosphere-mauve) 11%, transparent) 0%, transparent 80%),
-    radial-gradient(50% 28% at 16% 42%, color-mix(in srgb, var(--atmosphere-blush) 12%, transparent) 0%, transparent 82%),
-    linear-gradient(180deg, color-mix(in srgb, var(--warm-canvas) 92%, var(--atmosphere-peach) 8%) 0%, var(--cream-paper) 44%, var(--warm-cream) 100%);
+    radial-gradient(78% 40% at 8% -4%, color-mix(in srgb, var(--atmosphere-peach) 48%, transparent) 0%, transparent 72%),
+    radial-gradient(66% 36% at 82% 0%, color-mix(in srgb, var(--atmosphere-apricot) 36%, transparent) 0%, transparent 74%),
+    radial-gradient(48% 30% at 48% 6%, color-mix(in srgb, var(--atmosphere-gold) 20%, transparent) 0%, transparent 78%),
+    radial-gradient(42% 28% at 74% 24%, color-mix(in srgb, var(--atmosphere-mauve) 13%, transparent) 0%, transparent 80%),
+    radial-gradient(54% 30% at 16% 42%, color-mix(in srgb, var(--atmosphere-blush) 15%, transparent) 0%, transparent 82%),
+    linear-gradient(180deg, color-mix(in srgb, var(--warm-canvas) 82%, var(--atmosphere-peach) 18%) 0%, var(--cream-paper) 42%, var(--warm-cream) 100%);
 }
