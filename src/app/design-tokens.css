@@ -40,27 +40,23 @@
 
   --aubergine-ink: #1b0624;
   --espresso: #160f0c;
-  --linen: #efe2d1;
-  --bone: #e9ddcc;
-  --mist: #e8e0d5;
+  --linen: #f7f7f5;
+  --bone: #edece7;
+  --mist: #eeeeee;
+  --paper-white: #ffffff;
   --warm-ash: #766a7c;
-  --graphite: #44372f;
-  --cream-paper: #f5ead8;
-  --soft-paper: #f1e6d8;
-  --warm-cream: #f5ead8;
+  --graphite: #444444;
+  --cream-paper: var(--paper-white);
+  --soft-paper: #f4f3ef;
+  --warm-cream: var(--linen);
   --stone: #898683;
   --smoke: #1a1816;
   --charcoal: #292421;
   --atmosphere-peach: #f2b98f;
   --atmosphere-apricot: #f6cfa3;
   --atmosphere-sunset: #ecc0b2;
-  --atmosphere-sage: #bfcba7;
-  --atmosphere-pale-blue: #bfd3d0;
-  --atmosphere-lavender: #c9b7d8;
-  --atmosphere-mauve: #c2a4bf;
-  --atmosphere-golden-haze: #e8c66f;
 
-  --warm-canvas: var(--warm-cream);
+  --warm-canvas: var(--linen);
   --card-wash: var(--bone);
   --input-fill: var(--mist);
   --midnight-ink: var(--aubergine-ink);
@@ -89,9 +85,9 @@
   --primary-foreground: var(--cream-paper);
   --secondary: var(--bone);
   --secondary-foreground: var(--deep-charcoal);
-  --muted: #e2d5c4;
-  --muted-foreground: #625866;
-  --accent: #e8d5c4;
+  --muted: var(--mist);
+  --muted-foreground: var(--warm-ash);
+  --accent: color-mix(in srgb, var(--bone) 76%, var(--paper-white) 24%);
   --accent-foreground: var(--slate-text);
   --destructive: var(--error-500);
   --destructive-foreground: var(--soft-paper);
@@ -103,26 +99,20 @@
   --input: var(--input-fill);
   --ring: rgba(27, 6, 36, 0.13);
   --chart-1: var(--espresso);
-  --chart-2: #8d7196;
-  --chart-3: #a17847;
-  --chart-4: #778b68;
-  --chart-5: #637f86;
-  --sidebar: rgba(241, 230, 216, 0.86);
+  --chart-2: var(--warm-ash);
+  --chart-3: var(--stone);
+  --chart-4: var(--graphite);
+  --chart-5: #c9c5bf;
+  --sidebar: color-mix(in srgb, var(--linen) 84%, var(--paper-white) 16%);
   --sidebar-foreground: var(--slate-text);
   --sidebar-primary: var(--espresso);
   --sidebar-primary-foreground: var(--cream-paper);
-  --sidebar-accent: rgba(232, 213, 196, 0.8);
+  --sidebar-accent: color-mix(in srgb, var(--bone) 76%, var(--paper-white) 24%);
   --sidebar-accent-foreground: var(--slate-text);
   --sidebar-border: rgba(27, 6, 36, 0.11);
   --sidebar-ring: rgba(27, 6, 36, 0.14);
-  --shadow-soft: rgba(27, 6, 36, 0.075) 0 0 0 1px inset;
-  --shadow-elevated: rgba(27, 6, 36, 0.085) 0 0 0 1px inset, 0 10px 28px rgba(99, 57, 41, 0.04);
+  --shadow-soft: rgba(27, 6, 36, 0.07) 0 0 0 1px inset;
+  --shadow-elevated: rgba(27, 6, 36, 0.08) 0 0 0 1px inset, 0 8px 22px rgba(22, 15, 12, 0.025);
   --atmosphere-background:
-    radial-gradient(90% 62% at 12% -14%, color-mix(in srgb, var(--atmosphere-peach) 76%, transparent) 0%, transparent 68%),
-    radial-gradient(70% 52% at 86% -8%, color-mix(in srgb, var(--atmosphere-apricot) 72%, transparent) 0%, transparent 64%),
-    radial-gradient(62% 34% at 56% 12%, color-mix(in srgb, var(--atmosphere-golden-haze) 45%, transparent) 0%, transparent 68%),
-    linear-gradient(178deg, transparent 0 27%, color-mix(in srgb, var(--atmosphere-lavender) 34%, transparent) 35%, color-mix(in srgb, var(--atmosphere-pale-blue) 38%, transparent) 46%, color-mix(in srgb, var(--atmosphere-sage) 36%, transparent) 58%, transparent 72%),
-    radial-gradient(112% 44% at 10% 64%, color-mix(in srgb, var(--atmosphere-pale-blue) 38%, transparent) 0%, transparent 72%),
-    radial-gradient(112% 46% at 96% 66%, color-mix(in srgb, var(--atmosphere-sage) 42%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, color-mix(in srgb, var(--atmosphere-peach) 16%, var(--linen) 84%) 0%, color-mix(in srgb, var(--warm-cream) 78%, var(--atmosphere-apricot) 22%) 38%, var(--linen) 66%, var(--bone) 100%);
+    linear-gradient(180deg, var(--linen) 0%, var(--linen) 100%);
 }
