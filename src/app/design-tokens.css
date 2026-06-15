@@ -41,23 +41,23 @@
   --aubergine-ink: #1b0624;
   --espresso: #160f0c;
   --linen: #f1e3d0;
-  --bone: #f0e5d6;
-  --mist: #e8ded2;
+  --bone: #efe2d1;
+  --mist: #e7dacc;
   --paper-white: #ffffff;
   --warm-ash: #766a7c;
   --graphite: #444444;
   --cream-paper: #f5e8d7;
-  --soft-paper: #efe2d1;
+  --soft-paper: #ecdccb;
   --warm-cream: #efe0cb;
   --stone: #898683;
   --smoke: #1a1816;
   --charcoal: #292421;
-  --atmosphere-peach: #efad88;
-  --atmosphere-apricot: #f3c48e;
-  --atmosphere-sunset: #e9a28e;
-  --atmosphere-gold: #e6c77c;
-  --atmosphere-mauve: #c9a6ba;
-  --atmosphere-sage: #b8bea3;
+  --atmosphere-peach: #eda987;
+  --atmosphere-apricot: #f3bf88;
+  --atmosphere-sunset: #e99d91;
+  --atmosphere-gold: #e4bd70;
+  --atmosphere-mauve: #c4a0b8;
+  --atmosphere-blush: #edb5aa;
 
   --warm-canvas: var(--linen);
   --card-wash: var(--bone);
@@ -90,7 +90,7 @@
   --secondary-foreground: var(--deep-charcoal);
   --muted: var(--mist);
   --muted-foreground: var(--warm-ash);
-  --accent: color-mix(in srgb, var(--bone) 82%, var(--cream-paper) 18%);
+  --accent: color-mix(in srgb, var(--bone) 84%, var(--cream-paper) 16%);
   --accent-foreground: var(--slate-text);
   --destructive: var(--error-500);
   --destructive-foreground: var(--soft-paper);
@@ -106,21 +106,21 @@
   --chart-3: var(--stone);
   --chart-4: var(--graphite);
   --chart-5: #c9c5bf;
-  --sidebar: color-mix(in srgb, var(--cream-paper) 72%, var(--warm-canvas) 28%);
+  --sidebar: color-mix(in srgb, var(--cream-paper) 68%, var(--warm-canvas) 32%);
   --sidebar-foreground: var(--slate-text);
   --sidebar-primary: var(--espresso);
   --sidebar-primary-foreground: var(--cream-paper);
-  --sidebar-accent: color-mix(in srgb, var(--bone) 82%, var(--cream-paper) 18%);
+  --sidebar-accent: color-mix(in srgb, var(--bone) 84%, var(--cream-paper) 16%);
   --sidebar-accent-foreground: var(--slate-text);
   --sidebar-border: rgba(27, 6, 36, 0.11);
   --sidebar-ring: rgba(27, 6, 36, 0.14);
   --shadow-soft: rgba(27, 6, 36, 0.07) 0 0 0 1px inset;
-  --shadow-elevated: rgba(27, 6, 36, 0.08) 0 0 0 1px inset, 0 8px 22px rgba(22, 15, 12, 0.025);
+  --shadow-elevated: rgba(27, 6, 36, 0.08) 0 0 0 1px inset, 0 6px 16px rgba(22, 15, 12, 0.018);
   --atmosphere-background:
-    radial-gradient(74% 36% at 14% 0%, color-mix(in srgb, var(--atmosphere-peach) 34%, transparent) 0%, transparent 72%),
-    radial-gradient(62% 32% at 82% 2%, color-mix(in srgb, var(--atmosphere-apricot) 26%, transparent) 0%, transparent 74%),
-    radial-gradient(46% 28% at 48% 8%, color-mix(in srgb, var(--atmosphere-gold) 14%, transparent) 0%, transparent 76%),
-    radial-gradient(38% 34% at 78% 26%, color-mix(in srgb, var(--atmosphere-mauve) 8%, transparent) 0%, transparent 78%),
-    radial-gradient(42% 26% at 8% 32%, color-mix(in srgb, var(--atmosphere-sage) 5%, transparent) 0%, transparent 82%),
-    linear-gradient(180deg, var(--warm-canvas) 0%, var(--cream-paper) 46%, var(--warm-cream) 100%);
+    radial-gradient(76% 38% at 10% -3%, color-mix(in srgb, var(--atmosphere-peach) 42%, transparent) 0%, transparent 72%),
+    radial-gradient(64% 34% at 82% 1%, color-mix(in srgb, var(--atmosphere-apricot) 31%, transparent) 0%, transparent 74%),
+    radial-gradient(48% 28% at 46% 5%, color-mix(in srgb, var(--atmosphere-gold) 18%, transparent) 0%, transparent 78%),
+    radial-gradient(44% 30% at 74% 24%, color-mix(in srgb, var(--atmosphere-mauve) 11%, transparent) 0%, transparent 80%),
+    radial-gradient(50% 28% at 16% 42%, color-mix(in srgb, var(--atmosphere-blush) 12%, transparent) 0%, transparent 82%),
+    linear-gradient(180deg, color-mix(in srgb, var(--warm-canvas) 92%, var(--atmosphere-peach) 8%) 0%, var(--cream-paper) 44%, var(--warm-cream) 100%);
 }
