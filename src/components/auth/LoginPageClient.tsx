@@ -32,9 +32,9 @@ export function LoginPageClient() {
 
   return (
     <div className="app-atmosphere flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
-      <div className="w-full max-w-6xl rounded-[2rem] border border-border bg-[color-mix(in_srgb,var(--bone)_66%,transparent)] p-2 shadow-[var(--shadow-elevated)] backdrop-blur-xl sm:p-3">
+      <div className="login-frame w-full max-w-6xl rounded-[2rem] p-2 backdrop-blur-xl sm:p-3">
         <div className="grid gap-3 lg:grid-cols-[1.08fr_0.92fr]">
-          <section className="relative flex min-h-[31rem] flex-col justify-between overflow-hidden rounded-[1.55rem] border border-border/70 bg-[linear-gradient(142deg,color-mix(in_srgb,var(--atmosphere-peach)_34%,var(--soft-paper)_66%)_0%,color-mix(in_srgb,var(--linen)_76%,var(--atmosphere-pale-blue)_24%)_48%,color-mix(in_srgb,var(--bone)_78%,var(--atmosphere-sage)_22%)_100%)] p-7 shadow-[var(--shadow-soft)] sm:p-9">
+          <section className="login-landscape flex min-h-[31rem] flex-col justify-between rounded-[1.55rem] p-7 sm:p-9">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="duna-mark-surface flex size-11 items-center justify-center rounded-full text-foreground">
@@ -74,7 +74,7 @@ export function LoginPageClient() {
             </div>
           </section>
 
-          <section className="surface-elevated flex min-h-[31rem] flex-col justify-center rounded-[1.55rem] p-6 sm:p-8 lg:p-10">
+          <section className="login-auth-panel flex min-h-[31rem] flex-col justify-center rounded-[1.55rem] p-6 sm:p-8 lg:p-10">
             <div className="mx-auto w-full max-w-md">
               <div className="mb-8 text-center">
                 <div className="duna-mark-surface mx-auto flex size-14 items-center justify-center rounded-full text-foreground">

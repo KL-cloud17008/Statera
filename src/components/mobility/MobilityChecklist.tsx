@@ -67,15 +67,21 @@ export function MobilityChecklist({
                 const key = `${blockIndex}-${exerciseIndex}`;
                 const isDone = checked.has(key);
                 return (
-                  <button
+                  <div
                     key={key}
-                    type="button"
-                    onClick={() => toggle(key)}
                     className={`grid w-full gap-2 py-4 text-left transition-opacity ${isDone ? "opacity-55" : ""}`}
                   >
                     <div className="flex items-start gap-3">
-                      <Checkbox checked={isDone} className="mt-1 shrink-0" tabIndex={-1} />
-                      <div className="min-w-0 flex-1">
+                      <Checkbox
+                        checked={isDone}
+                        onCheckedChange={() => toggle(key)}
+                        className="mt-1 shrink-0"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => toggle(key)}
+                        className="min-w-0 flex-1 text-left"
+                      >
                         <p className={`text-sm font-semibold tracking-normal ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
                           {exercise.name}
                         </p>
@@ -85,9 +91,9 @@ export function MobilityChecklist({
                         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                           {exercise.cues}
                         </p>
-                      </div>
+                      </button>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>

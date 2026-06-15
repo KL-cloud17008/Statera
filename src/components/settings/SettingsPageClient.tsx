@@ -333,7 +333,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               Appearance is fixed to the Duna-inspired light system for visual consistency.
             </p>
             <div className="warm-row rounded-[1.25rem] p-4 text-sm leading-relaxed text-muted-foreground">
-              Linen canvas, Bone surfaces, Mist inputs, and Aubergine Ink remain consistent across the app.
+              Cream canvas, Bone surfaces, Mist inputs, and Aubergine Ink remain consistent across the app.
             </div>
           </CardContent>
         </Card>

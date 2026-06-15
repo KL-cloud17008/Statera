@@ -69,6 +69,7 @@ export function MobilityPageClient({
   return (
     <div className="page-shell">
       <SectionHeader
+        className="page-hero-sage"
         eyebrow="Mobility protocol"
         title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training day preparation" : "Mobility-only recovery day"}
         description={
