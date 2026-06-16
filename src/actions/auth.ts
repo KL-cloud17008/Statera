@@ -62,6 +62,10 @@ export async function signUp(formData: FormData) {
     await upsertUserRecord(data.user);
   }
 
+  if (!data.session) {
+    return { success: "Check your email to confirm your account, then sign in." };
+  }
+
   redirect("/");
 }
 

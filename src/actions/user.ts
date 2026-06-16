@@ -147,6 +147,18 @@ type BackupPayload = {
   progressPhotos?: BackupProgressPhoto[];
 };
 
+const BACKUP_COLLECTION_KEYS = [
+  "weightEntries",
+  "dailyLogs",
+  "workoutPlans",
+  "workoutSessions",
+  "mobilityLogs",
+  "nutritionDays",
+  "savedFoods",
+  "savedMeals",
+  "progressPhotos",
+] as const;
+
 type ExportedDailyLog = {
   date: Date;
   sleepHours: number | null;
@@ -176,6 +188,23 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function isValidTimeZone(timezone: string) {
+  try {
+    Intl.DateTimeFormat("en-US", { timeZone: timezone }).format(new Date());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function hasRecognizedBackupPayload(payload: BackupPayload) {
+  return (
+    typeof payload.version === "number" ||
+    isPlainObject(payload.profile) ||
+    BACKUP_COLLECTION_KEYS.some((key) => Array.isArray(payload[key]))
+  );
+}
+
 function revalidateAllUserRoutes() {
   revalidatePath("/");
   revalidatePath("/steps");
@@ -194,7 +223,7 @@ export async function updateUserProfile(formData: FormData) {
   const heightCmStr = formData.get("heightCm") as string;
   const startWeightStr = formData.get("startWeight") as string;
   const goalWeightStr = formData.get("goalWeight") as string;
-  const timezone = (formData.get("timezone") as string) || user.timezone;
+  const timezone = ((formData.get("timezone") as string) || user.timezone).trim();
 
   const heightCm = heightCmStr ? Number.parseFloat(heightCmStr) : null;
   const heightInches = heightCm != null ? Math.round(cmToInches(heightCm)) : null;
@@ -220,6 +249,10 @@ export async function updateUserProfile(formData: FormData) {
     (Number.isNaN(goalWeight) || goalWeight < 50 || goalWeight > 999)
   ) {
     return { error: "Goal weight must be between 50 and 999 lbs" };
+  }
+
+  if (!timezone || !isValidTimeZone(timezone)) {
+    return { error: "Enter a valid IANA timezone, such as America/New_York" };
   }
 
   await prisma.user.update({
@@ -396,6 +429,10 @@ export async function importUserData(formData: FormData) {
     payload = parsed as BackupPayload;
   } catch {
     return { error: "Invalid backup format" };
+  }
+
+  if (!hasRecognizedBackupPayload(payload)) {
+    return { error: "Backup file is missing tracker data" };
   }
 
   await prisma.$transaction(async (tx) => {

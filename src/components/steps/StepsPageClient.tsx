@@ -83,7 +83,7 @@ export function StepsPageClient({
 
       <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-4">
-          <StepsEntryForm />
+          <StepsEntryForm timezone={timezone} />
           <StepsHeatmap entries={entries} goal={settings.stepGoal} />
         </div>
         <StepsHistoryList entries={entries} />

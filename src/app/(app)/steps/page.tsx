@@ -14,7 +14,7 @@ export default async function StepsPage() {
     return null;
   }
 
-  const entries = await getStepsEntries(user.id, 180);
+  const entries = await getStepsEntries(user.id, 180, user.timezone);
   const serialized = entries.map((entry) => ({
     id: entry.id,
     date: entry.date.toISOString().split("T")[0],

@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   }
 
   const [stepsEntries, todaySteps, weightEntries, recentSessions] = await Promise.all([
-    getStepsEntries(user.id, 180),
+    getStepsEntries(user.id, 180, user.timezone),
     getTodaySteps(user.id, user.timezone),
     getWeightEntries(user.id),
     getRecentSessions(user.id, 20),

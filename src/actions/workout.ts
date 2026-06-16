@@ -118,11 +118,12 @@ export async function startWorkoutSession(
       userId: user.id,
       workoutPlanId: planId,
       trainingDate,
+      completed: false,
     },
   });
 
   if (existing) {
-    return { sessionId: existing.id };
+    return { sessionId: existing.id, warning: "Resumed existing session" };
   }
 
   const session = await prisma.workoutSession.create({

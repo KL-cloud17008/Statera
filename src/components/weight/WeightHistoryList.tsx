@@ -26,7 +26,13 @@ const statusLabel = {
   NORMAL: "Normal",
 };
 
-export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[] }) {
+export function WeightHistoryList({
+  entries,
+  timezone,
+}: {
+  entries: SerializedWeightEntry[];
+  timezone?: string;
+}) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -90,6 +96,7 @@ export function WeightHistoryList({ entries }: { entries: SerializedWeightEntry[
                           key={entry.id}
                           editEntry={entry}
                           onDone={() => setEditingId(null)}
+                          timezone={timezone}
                         />
                       ) : (
                         <div

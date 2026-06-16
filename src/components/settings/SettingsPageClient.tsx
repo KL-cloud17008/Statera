@@ -34,7 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeader } from "@/components/ui/section-header";
-import type { AppSettings } from "@/lib/app-settings";
+import { parseAppSettings, type AppSettings } from "@/lib/app-settings";
 import { inchesToCm } from "@/lib/units";
 
 type SettingsPageClientProps = {
@@ -101,7 +101,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         2
       );
       downloadTextFile(
-        `athnaor-backup-${new Date().toISOString().split("T")[0]}.json`,
+        `athanor-backup-${new Date().toISOString().split("T")[0]}.json`,
         payload,
         "application/json"
       );
@@ -135,9 +135,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         return;
       }
 
-      downloadTextFile("athnaor-weight.csv", weightCsv.csv, "text/csv;charset=utf-8;");
-      downloadTextFile("athnaor-steps.csv", csv.steps, "text/csv;charset=utf-8;");
-      downloadTextFile("athnaor-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
+      downloadTextFile("athanor-weight.csv", weightCsv.csv, "text/csv;charset=utf-8;");
+      downloadTextFile("athanor-steps.csv", csv.steps, "text/csv;charset=utf-8;");
+      downloadTextFile("athanor-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
       toast.success("CSV exports downloaded");
     } finally {
       setIsExporting(false);
@@ -159,10 +159,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       }
 
       if (parsed.localSettings) {
-        updateSettings((current) => ({
-          ...current,
-          ...parsed.localSettings,
-        }));
+        updateSettings((current) =>
+          parseAppSettings(JSON.stringify({ ...current, ...parsed.localSettings }))
+        );
       }
 
       toast.success("Backup imported");

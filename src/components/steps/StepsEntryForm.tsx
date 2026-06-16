@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getTodayDateString } from "@/lib/dates";
 
 type StepsEntry = {
   id: string;
@@ -18,13 +19,15 @@ type StepsEntry = {
 export function StepsEntryForm({
   editEntry,
   onDone,
+  timezone,
 }: {
   editEntry?: StepsEntry;
   onDone?: () => void;
+  timezone?: string;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
-  const today = new Date().toISOString().split("T")[0];
+  const today = getTodayDateString(timezone);
 
   async function handleSubmit(formData: FormData) {
     setIsPending(true);

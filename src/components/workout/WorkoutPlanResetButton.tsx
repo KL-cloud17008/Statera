@@ -12,6 +12,14 @@ export function WorkoutPlanResetButton() {
   const [isPending, startTransition] = useTransition();
 
   function handleReset() {
+    const confirmed = window.confirm(
+      "Start a fresh copy of the current 4-day workout plan? Any open session will be closed."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     startTransition(async () => {
       const result = await resetCurrentWorkoutPlan();
       if (result.error) {
@@ -25,9 +33,22 @@ export function WorkoutPlanResetButton() {
   }
 
   return (
-    <Button type="button" variant="outline" onClick={handleReset} disabled={isPending} className="gap-2">
+    <Button
+      type="button"
+      variant="outline"
+      onClick={handleReset}
+      disabled={isPending}
+      className="max-w-full whitespace-normal text-left sm:whitespace-nowrap"
+    >
       <RotateCcw className="h-4 w-4" />
-      {isPending ? "Resetting current workout plan..." : "Reset current workout plan / Start new 4-day plan"}
+      {isPending ? (
+        "Resetting plan..."
+      ) : (
+        <>
+          <span className="sm:hidden">Start new plan</span>
+          <span className="hidden sm:inline">Reset current workout plan / Start new 4-day plan</span>
+        </>
+      )}
     </Button>
   );
 }

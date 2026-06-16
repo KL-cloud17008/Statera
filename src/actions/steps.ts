@@ -4,10 +4,9 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import {
-  addDays,
+  addDaysToDateString,
   getTodayDateString,
   parseDate,
-  startOfDay,
 } from "@/lib/dates";
 
 type StepsActionError = {
@@ -27,8 +26,8 @@ type ParsedStepsPayload =
     }
   | StepsActionError;
 
-export async function getStepsEntries(userId: string, days = 180) {
-  const since = startOfDay(addDays(new Date(), -(days - 1)));
+export async function getStepsEntries(userId: string, days = 180, timezone?: string) {
+  const since = parseDate(addDaysToDateString(getTodayDateString(timezone), -(days - 1)));
 
   return prisma.dailyLog.findMany({
     where: {

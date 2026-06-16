@@ -74,6 +74,15 @@ export function SetInput({
   }
 
   function handleSave() {
+    const hasLoggableValue =
+      weight.trim().length > 0 ||
+      (!isFinisher && reps.trim().length > 0) ||
+      notes.trim().length > 0;
+
+    if (!hasLoggableValue || isPending) {
+      return;
+    }
+
     startTransition(async () => {
       const formData = new FormData();
       formData.set("sessionId", sessionId);

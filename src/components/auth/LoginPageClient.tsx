@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { signIn, signUp } from "@/actions/auth";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,13 @@ import { Label } from "@/components/ui/label";
 
 export function LoginPageClient() {
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isSignUp, setIsSignUp] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setError(null);
+    setSuccess(null);
     setIsPending(true);
 
     try {
@@ -22,6 +24,9 @@ export function LoginPageClient() {
       const result = await action(formData);
       if (result?.error) {
         setError(result.error);
+      } else if (result && "success" in result && result.success) {
+        setSuccess(result.success);
+        setIsSignUp(false);
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -106,6 +111,13 @@ export function LoginPageClient() {
                   </div>
                 ) : null}
 
+                {success ? (
+                  <div className="flex items-start gap-2 rounded-[1rem] border border-primary/20 bg-primary/8 p-3 text-sm text-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                    <p>{success}</p>
+                  </div>
+                ) : null}
+
                 <Button type="submit" className="h-12 w-full" disabled={isPending}>
                   {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   {isSignUp ? "Create Account" : "Sign In"}
@@ -119,6 +131,7 @@ export function LoginPageClient() {
                   onClick={() => {
                     setIsSignUp(!isSignUp);
                     setError(null);
+                    setSuccess(null);
                   }}
                   className="font-semibold text-primary underline-offset-4 transition-colors hover:text-foreground hover:underline"
                 >

@@ -12,21 +12,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { addWeightEntry, updateWeightEntry } from "@/actions/weight";
 import type { SerializedWeightEntry } from "@/lib/weight";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
+import { getTodayDateString } from "@/lib/dates";
 import { convertWeight, toPounds } from "@/lib/units";
 
 type Props = {
   editEntry?: SerializedWeightEntry;
   onDone?: () => void;
+  timezone?: string;
 };
 
-export function WeightEntryForm({ editEntry, onDone }: Props) {
+export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
   const [showMore, setShowMore] = useState(!!editEntry?.bodyFatPercent || !!editEntry?.notes);
   const [status, setStatus] = useState<string>(editEntry?.status ?? "NORMAL");
   const { settings } = useAppSettings();
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = getTodayDateString(timezone);
   const displayedWeight = editEntry?.weight != null ? convertWeight(editEntry.weight, settings.weightUnit).toFixed(1) : "";
 
   async function handleSubmit(formData: FormData) {

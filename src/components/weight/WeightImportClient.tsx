@@ -197,24 +197,26 @@ export function WeightImportClient() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="max-h-80 overflow-y-auto rounded-[1.25rem] border border-border">
-              <div className="sticky top-0 grid grid-cols-4 gap-2 bg-[color-mix(in_srgb,var(--mist)_82%,var(--bone)_18%)] px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                <span>Date</span>
-                <span>Weight</span>
-                <span>Status</span>
-                <span>Body Fat</span>
-              </div>
-              {state.rows.map((row, i) => (
-                <div
-                  key={i}
-                  className={`grid grid-cols-4 gap-2 border-t border-border px-4 py-3 text-sm ${!row.valid ? "bg-destructive/10 text-destructive" : "text-foreground"}`}
-                >
-                  <span className="truncate">{row.date}</span>
-                  <span>{row.valid ? `${row.weight} lbs` : "Invalid"}</span>
-                  <span className="truncate">{row.status}</span>
-                  <span>{row.bodyFatPercent != null ? `${row.bodyFatPercent}%` : "-"}</span>
+            <div className="max-h-80 overflow-auto rounded-[1.25rem] border border-border">
+              <div className="min-w-[34rem]">
+                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-[color-mix(in_srgb,var(--mist)_82%,var(--bone)_18%)] px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                  <span>Date</span>
+                  <span>Weight</span>
+                  <span>Status</span>
+                  <span>Body Fat</span>
                 </div>
-              ))}
+                {state.rows.map((row, i) => (
+                  <div
+                    key={i}
+                    className={`grid grid-cols-4 gap-2 border-t border-border px-4 py-3 text-sm ${!row.valid ? "bg-destructive/10 text-destructive" : "text-foreground"}`}
+                  >
+                    <span className="truncate">{row.date}</span>
+                    <span>{row.valid ? `${row.weight} lbs` : "Invalid"}</span>
+                    <span className="truncate">{row.status}</span>
+                    <span>{row.bodyFatPercent != null ? `${row.bodyFatPercent}%` : "-"}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">

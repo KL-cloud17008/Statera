@@ -33,7 +33,7 @@ const WEEKLY_RHYTHM = [
 ];
 
 const NEXT_BY_DAY = [
-  "Upper A",
+  "Complete rest",
   "Upper A",
   "Lower A",
   "Mobility",

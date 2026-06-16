@@ -29,6 +29,92 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   activeWorkoutDrafts: {},
 };
 
+const MUSCLE_GROUPS = new Set([
+  "Chest",
+  "Back",
+  "Legs",
+  "Shoulders",
+  "Arms",
+  "Core",
+  "Cardio",
+  "Full Body",
+]);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function parseCustomExercises(value: unknown): LibraryExercise[] {
+  if (!Array.isArray(value)) {
+    return DEFAULT_APP_SETTINGS.customExercises;
+  }
+
+  return value
+    .filter(isRecord)
+    .filter(
+      (exercise) =>
+        typeof exercise.id === "string" &&
+        typeof exercise.name === "string" &&
+        typeof exercise.defaultSets === "number" &&
+        typeof exercise.defaultReps === "string" &&
+        typeof exercise.defaultRestSeconds === "number" &&
+        typeof exercise.muscleGroup === "string" &&
+        MUSCLE_GROUPS.has(exercise.muscleGroup)
+    )
+    .map((exercise) => ({
+      id: exercise.id as string,
+      name: exercise.name as string,
+      muscleGroup: exercise.muscleGroup as LibraryExercise["muscleGroup"],
+      defaultSets: Math.min(20, Math.max(1, exercise.defaultSets as number)),
+      defaultReps: exercise.defaultReps as string,
+      defaultRestSeconds: Math.min(7200, Math.max(0, exercise.defaultRestSeconds as number)),
+      notes: typeof exercise.notes === "string" ? exercise.notes : undefined,
+      source: "custom",
+    }));
+}
+
+function parseWorkoutTemplates(value: unknown): WorkoutTemplate[] {
+  if (!Array.isArray(value)) {
+    return DEFAULT_APP_SETTINGS.workoutTemplates;
+  }
+
+  return value
+    .filter(isRecord)
+    .map((template, templateIndex) => {
+      const exercises = Array.isArray(template.exercises)
+        ? template.exercises
+            .filter(isRecord)
+            .filter(
+              (exercise) =>
+                typeof exercise.exerciseId === "string" &&
+                typeof exercise.name === "string" &&
+                typeof exercise.muscleGroup === "string" &&
+                MUSCLE_GROUPS.has(exercise.muscleGroup) &&
+                typeof exercise.sets === "number" &&
+                typeof exercise.reps === "string" &&
+                typeof exercise.restSeconds === "number"
+            )
+            .map((exercise) => ({
+              exerciseId: exercise.exerciseId as string,
+              name: exercise.name as string,
+              muscleGroup: exercise.muscleGroup as LibraryExercise["muscleGroup"],
+              sets: Math.min(20, Math.max(1, exercise.sets as number)),
+              reps: exercise.reps as string,
+              restSeconds: Math.min(7200, Math.max(0, exercise.restSeconds as number)),
+              notes: typeof exercise.notes === "string" ? exercise.notes : undefined,
+            }))
+        : [];
+
+      return {
+        id: typeof template.id === "string" ? template.id : `imported-template-${templateIndex}`,
+        name: typeof template.name === "string" && template.name.trim() ? template.name : "Imported Template",
+        exercises,
+        createdAt: typeof template.createdAt === "string" ? template.createdAt : new Date().toISOString(),
+      };
+    })
+    .filter((template) => template.exercises.length > 0);
+}
+
 export function parseAppSettings(value: string | null | undefined): AppSettings {
   if (!value) {
     return DEFAULT_APP_SETTINGS;
@@ -48,12 +134,8 @@ export function parseAppSettings(value: string | null | undefined): AppSettings 
         typeof parsed.weightGoalTargetDate === "string" && parsed.weightGoalTargetDate.length > 0
           ? parsed.weightGoalTargetDate
           : null,
-      customExercises: Array.isArray(parsed.customExercises)
-        ? parsed.customExercises
-        : DEFAULT_APP_SETTINGS.customExercises,
-      workoutTemplates: Array.isArray(parsed.workoutTemplates)
-        ? parsed.workoutTemplates
-        : DEFAULT_APP_SETTINGS.workoutTemplates,
+      customExercises: parseCustomExercises(parsed.customExercises),
+      workoutTemplates: parseWorkoutTemplates(parsed.workoutTemplates),
       activeWorkoutDrafts:
         parsed.activeWorkoutDrafts && typeof parsed.activeWorkoutDrafts === "object"
           ? parsed.activeWorkoutDrafts

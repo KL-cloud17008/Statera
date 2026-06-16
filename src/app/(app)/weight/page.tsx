@@ -52,8 +52,8 @@ export default async function WeightPage() {
       <WeightStatsCards stats={stats} />
       <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
       <div className="grid gap-4 xl:grid-cols-2">
-        <WeightEntryForm />
-        <WeightHistoryList entries={serializedEntries} />
+        <WeightEntryForm timezone={user.timezone} />
+        <WeightHistoryList entries={serializedEntries} timezone={user.timezone} />
       </div>
     </div>
   );
