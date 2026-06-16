@@ -4,10 +4,9 @@ import { useState, useTransition } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logSet } from "@/actions/workout";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { convertWeight, toPounds } from "@/lib/units";
+import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
 type SetData = {
@@ -48,11 +47,8 @@ export function SetInput({
   onCompletedChange: (checked: boolean) => void;
   className?: string;
 }) {
-  const { settings } = useAppSettings();
   const [weight, setWeight] = useState(
-    logged?.weightUsed != null
-      ? convertWeight(logged.weightUsed, settings.weightUnit).toFixed(1)
-      : ""
+    logged?.weightUsed != null ? logged.weightUsed.toFixed(1) : ""
   );
   const [reps, setReps] = useState(logged?.repsCompleted?.toString() ?? "");
   const [rpe, setRpe] = useState(logged?.actualRPE?.toString() ?? "");
@@ -66,7 +62,7 @@ export function SetInput({
     }
 
     if (previous.weightUsed != null) {
-      setWeight(convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1));
+      setWeight(previous.weightUsed.toFixed(1));
     }
     if (previous.repsCompleted != null) {
       setReps(previous.repsCompleted.toString());
@@ -94,7 +90,7 @@ export function SetInput({
       if (weight) {
         const parsedWeight = Number.parseFloat(weight);
         if (!Number.isNaN(parsedWeight)) {
-          formData.set("weightUsed", toPounds(parsedWeight, settings.weightUnit).toString());
+          formData.set("weightUsed", parsedWeight.toString());
         }
       }
       if (!isFinisher && reps) {
@@ -127,7 +123,7 @@ export function SetInput({
             <p className="text-sm font-semibold tracking-normal text-foreground">Set {setNumber}</p>
             {previous ? (
               <p className="mt-1 text-xs text-muted-foreground">
-                Last {previous.weightUsed != null ? convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1) : "--"} x {previous.repsCompleted ?? "--"}
+                Last {previous.weightUsed != null ? `${previous.weightUsed.toFixed(1)} ${WORKOUT_LOAD_UNIT}` : "--"} x {previous.repsCompleted ?? "--"}
               </p>
             ) : null}
           </div>
@@ -156,7 +152,7 @@ export function SetInput({
           type="number"
           inputMode="decimal"
           step="0.1"
-          placeholder={isFinisher ? "Score" : `Weight (${settings.weightUnit})`}
+          placeholder={isFinisher ? "Score" : `Weight (${WORKOUT_LOAD_UNIT})`}
           value={weight}
           onChange={(event) => {
             setWeight(event.target.value);

@@ -35,7 +35,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeader } from "@/components/ui/section-header";
 import { parseAppSettings, type AppSettings } from "@/lib/app-settings";
-import { inchesToCm } from "@/lib/units";
+import { BODYWEIGHT_UNIT, WORKOUT_LOAD_UNIT, formatBodyweightConversion, inchesToCm } from "@/lib/units";
 
 type SettingsPageClientProps = {
   profile: {
@@ -69,6 +69,10 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const [isClearing, setIsClearing] = useState(false);
   const [isClearOpen, setIsClearOpen] = useState(false);
   const { settings, updateSettings, resetSettings } = useAppSettings();
+  const [startWeightValue, setStartWeightValue] = useState(profile.startWeight != null ? String(profile.startWeight) : "");
+  const [goalWeightValue, setGoalWeightValue] = useState(profile.goalWeight != null ? String(profile.goalWeight) : "");
+  const startWeightConversion = formatBodyweightConversion(startWeightValue);
+  const goalWeightConversion = formatBodyweightConversion(goalWeightValue);
 
   async function handleProfileSave(formData: FormData) {
     setIsSaving(true);
@@ -215,11 +219,37 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <Field label="Timezone" htmlFor="timezone">
               <Input id="timezone" name="timezone" type="text" defaultValue={profile.timezone} className="h-12" />
             </Field>
-            <Field label="Start Weight (lbs)" htmlFor="startWeight">
-              <Input id="startWeight" name="startWeight" type="number" step="0.1" min="50" max="999" defaultValue={profile.startWeight ?? ""} className="h-12" />
+            <Field label="Start Weight (lb)" htmlFor="startWeight">
+              <Input
+                id="startWeight"
+                name="startWeight"
+                type="number"
+                step="0.1"
+                min="50"
+                max="999"
+                value={startWeightValue}
+                onChange={(event) => setStartWeightValue(event.target.value)}
+                className="h-12"
+              />
+              {startWeightConversion ? (
+                <p className="text-xs text-muted-foreground">{startWeightConversion}</p>
+              ) : null}
             </Field>
-            <Field label="Goal Weight (lbs)" htmlFor="goalWeight">
-              <Input id="goalWeight" name="goalWeight" type="number" step="0.1" min="50" max="999" defaultValue={profile.goalWeight ?? ""} className="h-12" />
+            <Field label="Goal Weight (lb)" htmlFor="goalWeight">
+              <Input
+                id="goalWeight"
+                name="goalWeight"
+                type="number"
+                step="0.1"
+                min="50"
+                max="999"
+                value={goalWeightValue}
+                onChange={(event) => setGoalWeightValue(event.target.value)}
+                className="h-12"
+              />
+              {goalWeightConversion ? (
+                <p className="text-xs text-muted-foreground">{goalWeightConversion}</p>
+              ) : null}
             </Field>
             <div className="md:col-span-2">
               <Button type="submit" disabled={isSaving}>
@@ -275,25 +305,12 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 }}
               />
             </Field>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Field label="Weight Unit" htmlFor="weightUnit">
-                <Select
-                  value={settings.weightUnit}
-                  onValueChange={(value) => {
-                    updateSettings((current) => ({
-                      ...current,
-                      weightUnit: value === "kg" ? "kg" : "lb",
-                    }));
-                  }}
-                >
-                  <SelectTrigger id="weightUnit" className="h-12 w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lb">Pounds</SelectItem>
-                    <SelectItem value="kg">Kilograms</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Field label="Bodyweight Unit" htmlFor="bodyweightUnit">
+                <Input id="bodyweightUnit" value={`Pounds (${BODYWEIGHT_UNIT})`} readOnly className="h-12" />
+              </Field>
+              <Field label="Workout Load Unit" htmlFor="workoutLoadUnit">
+                <Input id="workoutLoadUnit" value={`Kilograms (${WORKOUT_LOAD_UNIT})`} readOnly className="h-12" />
               </Field>
               <Field label="Distance Unit" htmlFor="distanceUnit">
                 <Select

@@ -2,7 +2,8 @@
 import { prisma } from "@/lib/db";
 import { getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { getWorkoutSessionLoadUnit, parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { workoutLoadToKg } from "@/lib/units";
 import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
 
@@ -40,6 +41,7 @@ export default async function WorkoutPage() {
   let activeSession = null;
   if (openSession) {
     const meta = parseWorkoutSessionMeta(openSession.notes);
+    const loadUnit = getWorkoutSessionLoadUnit(openSession.notes);
     const exercises = openSession.workoutPlan?.exercises ?? meta?.exercises?.map((exercise, index) => ({
       id: `${exercise.exerciseId}-${index}`,
       exerciseName: exercise.name,
@@ -65,7 +67,7 @@ export default async function WorkoutPage() {
       sets: openSession.sets.map((set) => ({
         exerciseName: set.exerciseName,
         setNumber: set.setNumber,
-        weightUsed: set.weightUsed,
+        weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
         repsCompleted: set.repsCompleted,
         actualRPE: set.actualRPE,
         notes: set.notes,

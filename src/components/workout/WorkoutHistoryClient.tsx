@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
+import { formatWorkoutVolume } from "@/lib/units";
 import { buildWorkoutCalendar } from "@/lib/workout-stats";
 
 type HistorySession = {
@@ -144,7 +145,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                         </div>
                         <div>
                           <p className="eyebrow">Volume</p>
-                          <p className="mt-2 text-lg font-semibold text-foreground data-number">{Math.round(session.volume).toLocaleString()}</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground data-number">{formatWorkoutVolume(session.volume)} moved</p>
                         </div>
                         <div>
                           <p className="eyebrow">Duration</p>

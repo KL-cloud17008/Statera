@@ -1,4 +1,5 @@
 import { parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { WORKOUT_LOAD_UNIT, workoutLoadToKg, type WorkoutLoadUnit } from "@/lib/units";
 
 type SessionSetLike = {
   exerciseName: string;
@@ -15,16 +16,23 @@ type SessionLike = {
   sets: SessionSetLike[];
 };
 
-export function calculateSetVolume(weightUsed: number | null, repsCompleted: number | null) {
+export function calculateSetVolume(
+  weightUsed: number | null,
+  repsCompleted: number | null,
+  sourceUnit: WorkoutLoadUnit = WORKOUT_LOAD_UNIT
+) {
   if (weightUsed == null || repsCompleted == null) {
     return 0;
   }
 
-  return weightUsed * repsCompleted;
+  return (workoutLoadToKg(weightUsed, sourceUnit) ?? 0) * repsCompleted;
 }
 
-export function calculateSessionVolume(sets: SessionSetLike[]) {
-  return sets.reduce((sum, set) => sum + calculateSetVolume(set.weightUsed, set.repsCompleted), 0);
+export function calculateSessionVolume(
+  sets: SessionSetLike[],
+  sourceUnit: WorkoutLoadUnit = WORKOUT_LOAD_UNIT
+) {
+  return sets.reduce((sum, set) => sum + calculateSetVolume(set.weightUsed, set.repsCompleted, sourceUnit), 0);
 }
 
 export function getSessionLabel(session: Pick<SessionLike, "notes" | "workoutPlan">) {
@@ -32,13 +40,16 @@ export function getSessionLabel(session: Pick<SessionLike, "notes" | "workoutPla
   return meta?.label || session.workoutPlan?.sessionName || "Free Session";
 }
 
-export function computeExercisePRs(sets: SessionSetLike[]) {
+export function computeExercisePRs(
+  sets: SessionSetLike[],
+  sourceUnit: WorkoutLoadUnit = WORKOUT_LOAD_UNIT
+) {
   const prs = new Map<string, { bestWeight: number; bestVolume: number }>();
 
   for (const set of sets) {
     const current = prs.get(set.exerciseName) ?? { bestWeight: 0, bestVolume: 0 };
-    const weight = set.weightUsed ?? 0;
-    const volume = calculateSetVolume(set.weightUsed, set.repsCompleted);
+    const weight = workoutLoadToKg(set.weightUsed, sourceUnit) ?? 0;
+    const volume = calculateSetVolume(set.weightUsed, set.repsCompleted, sourceUnit);
     prs.set(set.exerciseName, {
       bestWeight: Math.max(current.bestWeight, weight),
       bestVolume: Math.max(current.bestVolume, volume),

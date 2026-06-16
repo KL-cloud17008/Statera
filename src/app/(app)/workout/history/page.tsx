@@ -2,7 +2,9 @@
 import { getRecentSessions } from "@/actions/workout";
 import { WorkoutHistoryClient } from "@/components/workout/WorkoutHistoryClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { calculateSessionVolume, calculateSetVolume, getSessionLabel } from "@/lib/workout-stats";
+import { workoutLoadToKg } from "@/lib/units";
 
 export const metadata: Metadata = {
   title: "Workout History | Athanor",
@@ -21,10 +23,11 @@ export default async function WorkoutHistoryPage() {
 
   const serialized = sortedAsc.map((session) => {
     const sessionPrs = new Set<string>();
+    const loadUnit = getWorkoutSessionLoadUnit(session.notes);
     for (const set of session.sets) {
       const current = prState.get(set.exerciseName) ?? { bestWeight: 0, bestVolume: 0 };
-      const weight = set.weightUsed ?? 0;
-      const volume = calculateSetVolume(set.weightUsed, set.repsCompleted);
+      const weight = workoutLoadToKg(set.weightUsed, loadUnit) ?? 0;
+      const volume = calculateSetVolume(set.weightUsed, set.repsCompleted, loadUnit);
       if (weight > current.bestWeight || volume > current.bestVolume) {
         sessionPrs.add(set.exerciseName);
       }
@@ -39,7 +42,7 @@ export default async function WorkoutHistoryPage() {
       trainingDate: session.trainingDate.toISOString().split("T")[0],
       label: getSessionLabel(session),
       setCount: session.sets.length,
-      volume: calculateSessionVolume(session.sets),
+      volume: calculateSessionVolume(session.sets, loadUnit),
       durationMinutes:
         session.startTime && session.endTime
           ? Math.round((session.endTime.getTime() - session.startTime.getTime()) / 60000)

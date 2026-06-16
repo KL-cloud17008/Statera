@@ -4,8 +4,14 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { serializeWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import {
+  getWorkoutSessionLoadUnit,
+  parseWorkoutSessionMeta,
+  serializeWorkoutSessionMeta,
+  type WorkoutSessionMeta,
+} from "@/lib/workout-session-meta";
 import { createDefaultWorkoutPlans, ensureDefaultWorkoutPlans } from "@/lib/workout-plan-seed";
+import { WORKOUT_LOAD_UNIT, poundsToKg, workoutLoadToKg } from "@/lib/units";
 import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
 
 type WorkoutSessionActionResult = {
@@ -137,6 +143,7 @@ export async function startWorkoutSession(
       notes: serializeWorkoutSessionMeta({
         label: plan.sessionName,
         source: "plan",
+        loadUnit: WORKOUT_LOAD_UNIT,
       }),
     },
   });
@@ -189,6 +196,7 @@ export async function startCustomWorkoutSession(
       notes: serializeWorkoutSessionMeta({
         label,
         source,
+        loadUnit: WORKOUT_LOAD_UNIT,
         exercises: exercises.map((exercise) => ({
           exerciseId:
             exercise.exerciseId ||
@@ -242,9 +250,9 @@ export async function logSet(
 
   if (
     weightUsed != null &&
-    (Number.isNaN(weightUsed) || weightUsed < 0 || weightUsed > 3000)
+    (Number.isNaN(weightUsed) || weightUsed < 0 || weightUsed > 1500)
   ) {
-    return { error: "Weight must be between 0 and 3000 lbs" };
+    return { error: "Weight must be between 0 and 1500 kg" };
   }
   if (
     repsCompleted != null &&
@@ -273,9 +281,41 @@ export async function logSet(
 
   const session = await prisma.workoutSession.findFirst({
     where: { id: sessionId, userId: user.id },
+    include: {
+      sets: true,
+      workoutPlan: true,
+    },
   });
   if (!session) {
     return { error: "Session not found" };
+  }
+
+  const sessionMeta = parseWorkoutSessionMeta(session.notes);
+  if (sessionMeta?.loadUnit !== WORKOUT_LOAD_UNIT && !session.completed) {
+    const normalizedMeta: WorkoutSessionMeta = sessionMeta
+      ? { ...sessionMeta, loadUnit: WORKOUT_LOAD_UNIT }
+      : {
+          label: session.workoutPlan?.sessionName || session.notes || "Free Session",
+          source: session.workoutPlanId ? "plan" : "free",
+          loadUnit: WORKOUT_LOAD_UNIT,
+        };
+
+    // Older workout sets were stored as implicit pounds. Open legacy sessions are normalized
+    // before accepting new kg input so one session never mixes raw lb and kg values.
+    await prisma.$transaction([
+      ...session.sets
+        .filter((set) => set.weightUsed != null)
+        .map((set) =>
+          prisma.sessionSet.update({
+            where: { id: set.id },
+            data: { weightUsed: poundsToKg(set.weightUsed) },
+          })
+        ),
+      prisma.workoutSession.update({
+        where: { id: session.id },
+        data: { notes: serializeWorkoutSessionMeta(normalizedMeta) },
+      }),
+    ]);
   }
 
   const existingSet = await prisma.sessionSet.findFirst({
@@ -395,10 +435,11 @@ export async function getPreviousSessionSets(
     return [];
   }
 
+  const loadUnit = getWorkoutSessionLoadUnit(prevSession.notes);
   return prevSession.sets.map((set) => ({
     exerciseName: set.exerciseName,
     setNumber: set.setNumber,
-    weightUsed: set.weightUsed,
+    weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
     repsCompleted: set.repsCompleted,
   }));
 }

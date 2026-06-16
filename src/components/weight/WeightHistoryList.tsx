@@ -4,7 +4,6 @@ import { useState } from "react";
 import { CalendarClock, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteWeightEntry } from "@/actions/weight";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { WeightEntryForm } from "@/components/weight/WeightEntryForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { SerializedWeightEntry } from "@/lib/weight";
-import { formatWeight } from "@/lib/units";
+import { formatBodyweight } from "@/lib/units";
 
 const statusVariant = {
   BASELINE: "default",
@@ -36,7 +35,6 @@ export function WeightHistoryList({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { settings } = useAppSettings();
 
   async function handleDelete() {
     if (!deleteId) {
@@ -106,7 +104,7 @@ export function WeightHistoryList({
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
                               <span className="text-lg font-semibold text-foreground data-number">
-                                {formatWeight(entry.weight, settings.weightUnit)}
+                                {formatBodyweight(entry.weight)}
                               </span>
                               <Badge variant={statusVariant[entry.status]}>
                                 {statusLabel[entry.status]}

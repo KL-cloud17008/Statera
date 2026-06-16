@@ -11,9 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addWeightEntry, updateWeightEntry } from "@/actions/weight";
 import type { SerializedWeightEntry } from "@/lib/weight";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { getTodayDateString } from "@/lib/dates";
-import { convertWeight, toPounds } from "@/lib/units";
+import { formatBodyweightConversion } from "@/lib/units";
 
 type Props = {
   editEntry?: SerializedWeightEntry;
@@ -26,20 +25,14 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
   const [isPending, setIsPending] = useState(false);
   const [showMore, setShowMore] = useState(!!editEntry?.bodyFatPercent || !!editEntry?.notes);
   const [status, setStatus] = useState<string>(editEntry?.status ?? "NORMAL");
-  const { settings } = useAppSettings();
 
   const today = getTodayDateString(timezone);
-  const displayedWeight = editEntry?.weight != null ? convertWeight(editEntry.weight, settings.weightUnit).toFixed(1) : "";
+  const displayedWeight = editEntry?.weight != null ? editEntry.weight.toFixed(1) : "";
+  const [weightValue, setWeightValue] = useState(displayedWeight);
+  const bodyweightConversion = formatBodyweightConversion(weightValue);
 
   async function handleSubmit(formData: FormData) {
     formData.set("status", status);
-    const weightValue = formData.get("weight") as string;
-    if (weightValue) {
-      const parsed = Number.parseFloat(weightValue);
-      if (!Number.isNaN(parsed)) {
-        formData.set("weight", toPounds(parsed, settings.weightUnit).toString());
-      }
-    }
 
     setIsPending(true);
     try {
@@ -56,6 +49,7 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
           formRef.current?.reset();
           setStatus("NORMAL");
           setShowMore(false);
+          setWeightValue("");
         }
         onDone?.();
       }
@@ -82,7 +76,7 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="weight-value" className="text-xs">
-                Weight ({settings.weightUnit})
+                Weight (lb)
               </Label>
               <Input
                 id="weight-value"
@@ -90,13 +84,17 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
                 type="number"
                 inputMode="decimal"
                 step="0.1"
-                min={settings.weightUnit === "kg" ? "22" : "50"}
-                max={settings.weightUnit === "kg" ? "453" : "999"}
-                defaultValue={displayedWeight}
-                placeholder={settings.weightUnit === "kg" ? "147.4" : "325.0"}
+                min="50"
+                max="999"
+                value={weightValue}
+                onChange={(event) => setWeightValue(event.target.value)}
+                placeholder="325.0"
                 required
                 className="h-10"
               />
+              {bodyweightConversion ? (
+                <p className="text-xs text-muted-foreground">{bodyweightConversion}</p>
+              ) : null}
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Status</Label>

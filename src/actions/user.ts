@@ -4,7 +4,8 @@ import { prisma } from "@/lib/db";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseDate } from "@/lib/dates";
 import { revalidatePath } from "next/cache";
-import { cmToInches } from "@/lib/units";
+import { WORKOUT_LOAD_UNIT, cmToInches, workoutLoadToKg } from "@/lib/units";
+import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 
 type WeighInStatus = "BASELINE" | "FASTING" | "NORMAL";
 
@@ -62,6 +63,8 @@ type BackupWorkoutPlan = {
 type BackupSessionSet = {
   exerciseName: string;
   setNumber: number;
+  // Workout loads use kg when session notes contain loadUnit: "kg".
+  // Sessions without loadUnit are legacy exports and are treated as implicit pounds.
   weightUsed?: number | null;
   repsCompleted?: number | null;
   actualRPE?: number | null;
@@ -365,13 +368,16 @@ export async function exportUserData() {
   ].join("\n");
 
   const workoutsCsv = [
-    "Training Date,Session,Completed,Exercise,Set,Weight,Reps,RPE,Notes",
-    ...workoutSessions.flatMap((session: ExportedWorkoutSession) =>
-      session.sets.map((set: ExportedSessionSet) => {
+    `Training Date,Session,Completed,Exercise,Set,Weight (${WORKOUT_LOAD_UNIT}),Reps,RPE,Notes`,
+    ...workoutSessions.flatMap((session: ExportedWorkoutSession) => {
+      const loadUnit = getWorkoutSessionLoadUnit(session.notes);
+      return session.sets.map((set: ExportedSessionSet) => {
         const label = session.notes || session.workoutPlanId || "Free Session";
-        return `${session.trainingDate.toISOString().split("T")[0]},${JSON.stringify(label)},${session.completed},${JSON.stringify(set.exerciseName)},${set.setNumber},${set.weightUsed ?? ""},${set.repsCompleted ?? ""},${set.actualRPE ?? ""},${JSON.stringify(set.notes ?? "")}`;
-      })
-    ),
+        const weightKg = workoutLoadToKg(set.weightUsed, loadUnit);
+        const exportedWeight = weightKg != null ? Number(weightKg.toFixed(2)) : "";
+        return `${session.trainingDate.toISOString().split("T")[0]},${JSON.stringify(label)},${session.completed},${JSON.stringify(set.exerciseName)},${set.setNumber},${exportedWeight},${set.repsCompleted ?? ""},${set.actualRPE ?? ""},${JSON.stringify(set.notes ?? "")}`;
+      });
+    }),
   ].join("\n");
 
   return {

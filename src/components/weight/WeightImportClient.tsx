@@ -211,7 +211,7 @@ export function WeightImportClient() {
                     className={`grid grid-cols-4 gap-2 border-t border-border px-4 py-3 text-sm ${!row.valid ? "bg-destructive/10 text-destructive" : "text-foreground"}`}
                   >
                     <span className="truncate">{row.date}</span>
-                    <span>{row.valid ? `${row.weight} lbs` : "Invalid"}</span>
+                    <span>{row.valid ? `${row.weight} lb` : "Invalid"}</span>
                     <span className="truncate">{row.status}</span>
                     <span>{row.bodyFatPercent != null ? `${row.bodyFatPercent}%` : "-"}</span>
                   </div>

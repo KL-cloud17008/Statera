@@ -1,9 +1,15 @@
 import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { createRequire } from "node:module";
 import test from "node:test";
 import assert from "node:assert/strict";
+import vm from "node:vm";
 
 const planSource = readFileSync("src/lib/default-workout-plan.ts", "utf8");
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
+const require = createRequire(import.meta.url);
+const ts = require("typescript");
+const units = loadTypescriptModule("src/lib/units.ts");
 
 const requiredExercises = [
   "Machine Chest Press",
@@ -43,6 +49,55 @@ test("settings do not expose dark or system theme controls", () => {
   assert.doesNotMatch(settingsSource, />\s*System\s*</);
 });
 
+test("bodyweight conversion helpers convert pounds to kilograms", () => {
+  assert.equal(Number(units.poundsToKg(310.3).toFixed(2)), 140.75);
+});
+
+test("bodyweight conversion helpers split pounds into stone and remaining pounds", () => {
+  const parts = units.poundsToStoneParts(310.3);
+  assert.equal(parts.stone, 22);
+  assert.equal(parts.pounds.toFixed(1), "2.3");
+});
+
+test("bodyweight conversion formatting includes lb, kg, and stone", () => {
+  assert.equal(
+    units.formatBodyweightConversion(310.3),
+    "310.3 lb = 140.75 kg = 22 st 2.3 lb"
+  );
+  assert.equal(units.formatBodyweightConversion(""), "");
+  assert.equal(units.formatBodyweightConversion(Number.NaN), "");
+});
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function loadTypescriptModule(path) {
+  const source = readFileSync(path, "utf8");
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: path,
+  }).outputText;
+  const compiledModule = { exports: {} };
+  const filename = resolve(path);
+  const contextRequire = (specifier) => {
+    if (specifier.startsWith("@/")) {
+      return require(resolve(specifier.replace("@/", "src/")));
+    }
+    return require(specifier);
+  };
+
+  vm.runInNewContext(output, {
+    exports: compiledModule.exports,
+    module: compiledModule,
+    require: contextRequire,
+    __filename: filename,
+    __dirname: dirname(filename),
+  }, {
+    filename,
+  });
+  return compiledModule.exports;
 }

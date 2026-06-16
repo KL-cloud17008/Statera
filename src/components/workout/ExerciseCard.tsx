@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SetInput } from "./SetInput";
-import { formatWeight } from "@/lib/units";
+import { formatWorkoutLoad } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
 type PlanExercise = {
@@ -58,7 +57,6 @@ export function ExerciseCard({
   onSetCompleteChange: (exerciseName: string, setNumber: number, complete: boolean) => void;
 }) {
   const [showCues, setShowCues] = useState(false);
-  const { settings } = useAppSettings();
   const isFinisher = exercise.exerciseType === "FINISHER";
   const setCount = isFinisher ? 1 : exercise.sets;
   const exercisePrevSets = previousSets.filter(
@@ -120,7 +118,7 @@ export function ExerciseCard({
               <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
                 {exercisePrevSets.map((set) => (
                   <span key={set.setNumber}>
-                    S{set.setNumber}: {set.weightUsed != null ? formatWeight(set.weightUsed, settings.weightUnit) : "--"} x {set.repsCompleted ?? "--"}
+                    S{set.setNumber}: {formatWorkoutLoad(set.weightUsed)} x {set.repsCompleted ?? "--"}
                   </span>
                 ))}
               </div>

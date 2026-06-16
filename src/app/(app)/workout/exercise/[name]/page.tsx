@@ -7,7 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { calculateSetVolume } from "@/lib/workout-stats";
+import { formatWorkoutLoad, formatWorkoutVolume } from "@/lib/units";
 import { Dumbbell } from "lucide-react";
 
 export async function generateMetadata({
@@ -50,11 +52,14 @@ export default async function ExerciseHistoryPage({
 
   let bestVolume = 0;
   let bestSet: (typeof sets)[number] | null = null;
+  let bestSetLoadUnit = getWorkoutSessionLoadUnit(null);
   for (const set of sets) {
-    const volume = calculateSetVolume(set.weightUsed, set.repsCompleted);
+    const loadUnit = getWorkoutSessionLoadUnit(set.workoutSession.notes);
+    const volume = calculateSetVolume(set.weightUsed, set.repsCompleted, loadUnit);
     if (volume > bestVolume) {
       bestVolume = volume;
       bestSet = set;
+      bestSetLoadUnit = loadUnit;
     }
   }
 
@@ -79,7 +84,7 @@ export default async function ExerciseHistoryPage({
           <CardContent className="grid gap-4 sm:grid-cols-3">
             <div>
               <p className="eyebrow">Best Set</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{bestSet.weightUsed ?? "--"} lbs</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{formatWorkoutLoad(bestSet.weightUsed, bestSetLoadUnit)}</p>
             </div>
             <div>
               <p className="eyebrow">Reps</p>
@@ -87,7 +92,7 @@ export default async function ExerciseHistoryPage({
             </div>
             <div>
               <p className="eyebrow">Volume</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{Math.round(bestVolume).toLocaleString()}</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{formatWorkoutVolume(bestVolume)}</p>
             </div>
           </CardContent>
         </Card>
@@ -118,7 +123,7 @@ export default async function ExerciseHistoryPage({
               {dateSets.sort((a, b) => a.setNumber - b.setNumber).map((set) => (
                 <div key={set.id} className="interactive-row warm-row flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm">
                   <span className="text-muted-foreground">Set {set.setNumber}</span>
-                  <span className="font-semibold text-foreground data-number">{set.weightUsed ?? "--"} lbs</span>
+                  <span className="font-semibold text-foreground data-number">{formatWorkoutLoad(set.weightUsed, getWorkoutSessionLoadUnit(set.workoutSession.notes))}</span>
                   <span className="text-muted-foreground">x {set.repsCompleted ?? "--"}</span>
                   {set.actualRPE ? <span className="text-muted-foreground">RPE {set.actualRPE}</span> : null}
                   {set.notes ? <span className="text-muted-foreground">{set.notes}</span> : null}

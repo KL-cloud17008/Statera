@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { computeStepStats, type SerializedStepsEntry } from "@/lib/steps";
-import { convertWeight, formatWeight } from "@/lib/units";
+import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
 
 type WeightStats = {
   currentWeight: number | null;
@@ -61,13 +61,9 @@ export function DashboardPageClient({
   const stepCompletion = settings.stepGoal > 0
     ? Math.min(100, Math.round((todaySteps / settings.stepGoal) * 100))
     : 0;
-  const weeklyVolume = Math.round(
-    convertWeight(workoutSummary.weeklyVolume, settings.weightUnit)
-  ).toLocaleString();
+  const weeklyVolume = formatWorkoutVolume(workoutSummary.weeklyVolume);
   const lastWorkoutVolume = workoutSummary.lastWorkout
-    ? Math.round(
-        convertWeight(workoutSummary.lastWorkout.volume, settings.weightUnit)
-      ).toLocaleString()
+    ? formatWorkoutVolume(workoutSummary.lastWorkout.volume)
     : null;
   const lastWorkoutDate = workoutSummary.lastWorkout
     ? formatShortDate(workoutSummary.lastWorkout.trainingDate)
@@ -181,7 +177,7 @@ export function DashboardPageClient({
             <p className="eyebrow">Bodyweight trend</p>
             <div className="mt-4 flex items-end justify-between gap-4">
               <p className="data-number text-4xl font-medium text-foreground">
-                {formatWeight(weightStats.currentWeight, settings.weightUnit)}
+                {formatBodyweight(weightStats.currentWeight)}
               </p>
               <TrendIcon className="h-5 w-5 text-muted-foreground" />
             </div>
@@ -194,7 +190,6 @@ export function DashboardPageClient({
             <p className="eyebrow">Training output</p>
             <p className="data-number mt-4 text-4xl font-medium text-foreground">
               {weeklyVolume}
-              <span className="ml-2 text-base text-muted-foreground">{settings.weightUnit}</span>
             </p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Across {workoutSummary.weeklySessions} completed sessions this week.
@@ -227,7 +222,7 @@ export function DashboardPageClient({
                   <span className="data-number text-foreground">{workoutSummary.lastWorkout.setCount}</span> sets logged
                 </p>
                 <p>
-                  <span className="data-number text-foreground">{lastWorkoutVolume}</span> {settings.weightUnit} moved
+                  <span className="data-number text-foreground">{lastWorkoutVolume}</span> moved
                 </p>
               </div>
             </>

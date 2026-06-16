@@ -9,18 +9,14 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { StatCard } from "@/components/ui/stat-card";
 import type { WeightStats } from "@/lib/weight";
 import {
-  formatWeight,
-  formatWeightDelta,
-  poundsPerWeekToUnit,
+  formatBodyweight,
+  formatBodyweightDelta,
 } from "@/lib/units";
 
 export function WeightStatsCards({ stats }: { stats: WeightStats }) {
-  const { settings } = useAppSettings();
-
   const trendIcon =
     stats.trend === "down" ? (
       <TrendingDown className="h-5 w-5" />
@@ -32,26 +28,26 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
 
   const weeklyRate =
     stats.weeklyRate != null
-      ? `${stats.weeklyRate > 0 ? "+" : ""}${poundsPerWeekToUnit(stats.weeklyRate, settings.weightUnit).toFixed(1)} ${settings.weightUnit}/wk`
+      ? `${stats.weeklyRate > 0 ? "+" : ""}${stats.weeklyRate.toFixed(1)} lb/wk`
       : "--";
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <StatCard
         label="Current Weight"
-        value={formatWeight(stats.currentWeight, settings.weightUnit)}
+        value={formatBodyweight(stats.currentWeight)}
         hint={stats.lastEntryDate ?? "No data yet"}
         icon={<Scale className="h-5 w-5" />}
       />
       <StatCard
         label="This Week"
-        value={formatWeightDelta(stats.totalChange, settings.weightUnit)}
+        value={formatBodyweightDelta(stats.totalChange)}
         hint={`Rate ${weeklyRate}`}
         icon={trendIcon}
       />
       <StatCard
         label="7-Day Trend"
-        value={formatWeight(stats.avg7Day, settings.weightUnit)}
+        value={formatBodyweight(stats.avg7Day)}
         hint="Smoothed moving average"
         icon={<Activity className="h-5 w-5" />}
       />
@@ -63,7 +59,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       />
       <StatCard
         label="Goal Weight"
-        value={formatWeight(stats.goalWeight, settings.weightUnit)}
+        value={formatBodyweight(stats.goalWeight)}
         hint={
           stats.projectedGoalDate
             ? `Projected ${stats.projectedGoalDate}`

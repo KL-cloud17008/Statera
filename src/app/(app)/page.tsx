@@ -5,6 +5,7 @@ import { getRecentSessions } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
+import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { computeWeightStats } from "@/lib/weight";
 
 export const metadata: Metadata = {
@@ -52,12 +53,15 @@ export default async function DashboardPage() {
   startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
   startOfWeek.setHours(0, 0, 0, 0);
   const weeklySessions = recentSessions.filter((session) => session.trainingDate >= startOfWeek);
-  const weeklyVolume = weeklySessions.reduce((sum, session) => sum + calculateSessionVolume(session.sets), 0);
+  const weeklyVolume = weeklySessions.reduce(
+    (sum, session) => sum + calculateSessionVolume(session.sets, getWorkoutSessionLoadUnit(session.notes)),
+    0
+  );
   const lastWorkout = recentSessions[0]
     ? {
         label: getSessionLabel(recentSessions[0]),
         trainingDate: recentSessions[0].trainingDate.toISOString().split("T")[0],
-        volume: calculateSessionVolume(recentSessions[0].sets),
+        volume: calculateSessionVolume(recentSessions[0].sets, getWorkoutSessionLoadUnit(recentSessions[0].notes)),
         setCount: recentSessions[0].sets.length,
       }
     : null;

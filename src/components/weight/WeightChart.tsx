@@ -16,7 +16,6 @@ import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buildChartData, type SerializedWeightEntry } from "@/lib/weight";
-import { convertWeight } from "@/lib/units";
 
 type ZoomRange = "1W" | "1M" | "3M" | "ALL";
 
@@ -63,12 +62,8 @@ export function WeightChart({
   const chartData = useMemo<WeightChartPoint[]>(() => {
     const transformed: WeightChartPoint[] = filteredData.map((point) => ({
       ...point,
-      displayWeight:
-        point.weight != null
-          ? convertWeight(point.weight, settings.weightUnit)
-          : null,
-      displayAvg7:
-        point.avg7 != null ? convertWeight(point.avg7, settings.weightUnit) : null,
+      displayWeight: point.weight,
+      displayAvg7: point.avg7,
       projection: null,
     }));
 
@@ -82,7 +77,7 @@ export function WeightChart({
 
     const lastPoint = transformed[transformed.length - 1];
     const currentWeight = lastPoint.displayWeight;
-    const targetWeight = convertWeight(goalWeight, settings.weightUnit);
+    const targetWeight = goalWeight;
     if (currentWeight == null) {
       return transformed;
     }
@@ -118,7 +113,7 @@ export function WeightChart({
         projection: targetWeight,
       },
     ].sort((a, b) => a.date.localeCompare(b.date));
-  }, [filteredData, goalWeight, settings.weightGoalTargetDate, settings.weightUnit]);
+  }, [filteredData, goalWeight, settings.weightGoalTargetDate]);
 
   if (entries.length === 0) {
     return (
@@ -144,8 +139,7 @@ export function WeightChart({
   );
   const minY = values.length > 0 ? Math.floor(Math.min(...values) - 2) : 0;
   const maxY = values.length > 0 ? Math.ceil(Math.max(...values) + 2) : 10;
-  const goalLine =
-    goalWeight != null ? convertWeight(goalWeight, settings.weightUnit) : null;
+  const goalLine = goalWeight;
 
   return (
     <Card>
@@ -213,7 +207,7 @@ export function WeightChart({
                 });
               }}
               formatter={(value, name) => [
-                `${Number(value).toFixed(1)} ${settings.weightUnit}`,
+                `${Number(value).toFixed(1)} lb`,
                 name === "displayWeight"
                   ? "Weight"
                   : name === "displayAvg7"

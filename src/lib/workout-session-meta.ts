@@ -1,9 +1,11 @@
 import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
+import { WORKOUT_LOAD_UNIT, type WorkoutLoadUnit } from "@/lib/units";
 
 export type WorkoutSessionMeta = {
   label: string;
   source: "plan" | "template" | "free";
   exercises?: WorkoutTemplateExercise[];
+  loadUnit?: WorkoutLoadUnit;
 };
 
 export function serializeWorkoutSessionMeta(meta: WorkoutSessionMeta) {
@@ -21,8 +23,16 @@ export function parseWorkoutSessionMeta(notes: string | null | undefined): Worko
       return null;
     }
 
-    return parsed;
+    return {
+      ...parsed,
+      loadUnit: parsed.loadUnit === WORKOUT_LOAD_UNIT ? WORKOUT_LOAD_UNIT : parsed.loadUnit === "lb" ? "lb" : undefined,
+    };
   } catch {
     return null;
   }
+}
+
+export function getWorkoutSessionLoadUnit(notes: string | null | undefined): WorkoutLoadUnit {
+  const meta = parseWorkoutSessionMeta(notes);
+  return meta?.loadUnit === WORKOUT_LOAD_UNIT ? WORKOUT_LOAD_UNIT : "lb";
 }

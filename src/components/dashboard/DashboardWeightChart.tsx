@@ -98,7 +98,7 @@ export function DashboardWeightChart({
             });
           }}
           formatter={(value, name) => [
-            `${Number(value).toFixed(1)} lbs`,
+            `${Number(value).toFixed(1)} lb`,
             name === "weight" ? "Weight" : "7-Day Avg",
           ]}
         />
