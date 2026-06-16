@@ -14,8 +14,7 @@ const units = loadTypescriptModule("src/lib/units.ts");
 const requiredExercises = [
   "Machine Chest Press",
   "Leg Press",
-  "Machine Hip Thrust",
-  "Machine Abdominal Crunch",
+  "Walking Lunges",
   "Hack Squat Machine",
   "Glute Kickback Machine",
   "Back Extension Machine",
@@ -28,15 +27,17 @@ const removedExercises = [
   "Pallof Press",
   "Dead Bug",
   "Dumbbell Romanian Deadlift",
+  "Machine Hip Thrust",
+  "Machine Abdominal Crunch",
 ];
 
-test("canonical workout plan keeps the machine-supported exercise set", () => {
+test("canonical workout plan keeps the selected beginner exercise set", () => {
   for (const exercise of requiredExercises) {
     assert.match(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should stay in the plan`);
   }
 });
 
-test("canonical workout plan does not restore removed bodyweight exercises", () => {
+test("canonical workout plan does not restore removed or replaced exercises", () => {
   for (const exercise of removedExercises) {
     assert.doesNotMatch(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should not return`);
   }

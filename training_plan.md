@@ -18,7 +18,7 @@ This is the documentation copy of the canonical training plan used by the app se
 
 - Beginner restart block for a 311 lb sedentary male returning to training.
 - A/B/C circuit blocks.
-- A1/A2, B1/B2, and C1/C2/C3 pairings.
+- Listed pairings or sequences for each day.
 - Machine, seated, cable, and bench-supported movements are prioritized.
 - Controlled rest after each pair or full circuit instead of long rest between paired exercises.
 - RPE 6-7 on working sets.
@@ -45,11 +45,12 @@ This is the documentation copy of the canonical training plan used by the app se
 | Warm-up | Ramp-Up: Recumbent Bike + Leg Press Rehearsal | 1 | 5 min bike + 8 light reps | easy | 60 sec | 3-4 |
 | A1 | Leg Press | 3 | 8-12 | 3-1-1 | after A2: 120 sec | 6-7 |
 | A2 | Seated Hamstring Curl | 3 | 10-15 | 2-1-2 | after A2: 120 sec | 6-7 |
-| B1 | Machine Hip Thrust | 3 | 8-12 | 2-1-2 | after B2: 120 sec | 6-7 |
-| B2 | Machine Abdominal Crunch | 3 | 10-15 | 2-1-2 | after B2: 120 sec | 6-7 |
+| B1 | Walking Lunges | 2 | 8-12 steps per leg | controlled pace | after set or block: 90 sec | 6-7 |
 | C1 | Leg Extension | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C2 | Seated Calf Raise | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Hip Abduction Machine | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
+
+Walking Lunges beginner note: use bodyweight first; hold dumbbells only when stable and pain-free.
 
 ## Thursday - Upper B: Machine Back/Shoulder Emphasis
 

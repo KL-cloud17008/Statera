@@ -127,7 +127,8 @@ export function WorkoutDayPreview({
         {blockOrder.map((block) => {
           const blockExercises = workingExercises.filter((exercise) => exercise.supersetGroup === block);
           if (blockExercises.length === 0) return null;
-          const roundTarget = block === "C" ? "2 rounds" : "3 rounds";
+          const blockSets = Math.max(...blockExercises.map((exercise) => exercise.sets));
+          const roundTarget = `${blockSets} ${blockSets === 1 ? "round" : "rounds"}`;
           const restNote = blockExercises[blockExercises.length - 1]?.restSeconds ?? 90;
 
           return (
