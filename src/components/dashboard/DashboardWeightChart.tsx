@@ -29,7 +29,7 @@ export function DashboardWeightChart({
 
   if (chartData.length === 0) {
     return (
-      <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[1.25rem]">
+      <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[var(--radius-card)]">
         <span className="text-sm text-muted-foreground">
           No weight data yet
         </span>

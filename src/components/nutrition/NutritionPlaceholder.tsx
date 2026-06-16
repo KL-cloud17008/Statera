@@ -15,15 +15,17 @@ export function NutritionPlaceholder({
     <div className="page-shell">
       <SectionHeader eyebrow={eyebrow} title={title} description={description} />
       <section className="document-panel">
-        <EmptyState
-          icon={Apple}
-          title="Coming soon"
-          description="Nutrition tracking is on the roadmap. Meal logging, macro targets, and saved foods will appear here."
-          className="border-t-0 py-0"
-        />
+        <div className="command-panel rounded-[var(--radius-panel)] p-6">
+          <EmptyState
+            icon={Apple}
+            title="Coming soon"
+            description="Nutrition tracking is on the roadmap. Meal logging, macro targets, and saved foods will appear here."
+            className="border-t-0 py-0"
+          />
+        </div>
         <div className="grid gap-3 sm:grid-cols-3">
           {["Daily log", "Macro rhythm", "Saved foods"].map((item) => (
-            <div key={item} className="warm-row rounded-[var(--radius-card)] px-4 py-4">
+            <div key={item} className="interactive-row warm-row rounded-[var(--radius-card)] px-4 py-4">
               <p className="eyebrow text-[10px]">{item}</p>
               <p className="mt-2 text-sm text-muted-foreground">Queued for the nutrition workspace.</p>
             </div>

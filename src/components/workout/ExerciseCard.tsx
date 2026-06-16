@@ -66,7 +66,7 @@ export function ExerciseCard({
   );
 
   return (
-    <section className={cn("space-y-6", exerciseComplete && "opacity-65")}>
+    <section className={cn("space-y-6", exerciseComplete && "opacity-75")}>
       <div className="flex items-start gap-4">
         <Checkbox
           checked={exerciseComplete}
@@ -109,7 +109,7 @@ export function ExerciseCard({
           </div>
 
           {showCues && exercise.cues ? (
-            <p className="max-w-2xl border-l border-border/70 pl-4 text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-2xl rounded-[var(--radius-tight)] border-l-2 border-[color-mix(in_srgb,var(--ember)_42%,var(--border)_58%)] bg-accent/45 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
               {exercise.cues}
             </p>
           ) : null}
@@ -120,7 +120,7 @@ export function ExerciseCard({
               <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
                 {exercisePrevSets.map((set) => (
                   <span key={set.setNumber}>
-                    S{set.setNumber}: {set.weightUsed != null ? formatWeight(set.weightUsed, settings.weightUnit) : "--"} × {set.repsCompleted ?? "--"}
+                    S{set.setNumber}: {set.weightUsed != null ? formatWeight(set.weightUsed, settings.weightUnit) : "--"} x {set.repsCompleted ?? "--"}
                   </span>
                 ))}
               </div>
@@ -183,5 +183,5 @@ function getExerciseMeta(exercise: PlanExercise) {
     parts.push(`RPE ${exercise.targetRPE}`);
   }
 
-  return parts.join(" • ");
+  return parts.join(" / ");
 }

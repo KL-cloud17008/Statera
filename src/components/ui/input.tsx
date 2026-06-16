@@ -7,8 +7,8 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        "w-full min-w-0 rounded-[var(--radius)] border border-border bg-input/95 px-4 py-3 text-sm text-foreground shadow-[rgba(22,15,12,0.024)_0_0_0_1px_inset] transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground/62 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)] focus-visible:border-primary/40",
+        "w-full min-w-0 rounded-[var(--radius)] border border-border bg-[color-mix(in_srgb,var(--input)_84%,var(--cream-paper)_16%)] px-4 py-3 text-sm text-foreground shadow-[var(--shadow-soft)] transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground/62 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "hover:border-[color-mix(in_srgb,var(--foreground)_22%,var(--border)_78%)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] focus-visible:border-[color-mix(in_srgb,var(--ember)_46%,var(--border)_54%)]",
         className
       )}
       {...props}

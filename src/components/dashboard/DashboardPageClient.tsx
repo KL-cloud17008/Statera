@@ -87,20 +87,21 @@ export function DashboardPageClient({
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-end">
           <div className="max-w-5xl">
             <p className="eyebrow">{greeting}</p>
-            <h1 className="mt-5 max-w-5xl">Today, weekly rhythm, and recovery status in one quiet ledger.</h1>
+            <h1 className="mt-5 max-w-5xl">Today, training rhythm, and recovery status in one command ledger.</h1>
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground">
               A focused operating view for movement, training, bodyweight, and mobility without
               turning the day into a grid of competing widgets.
             </p>
           </div>
 
-          <div className="border-t border-border pt-6 xl:border-l xl:border-t-0 xl:pl-8 xl:pt-0">
+          <div className="command-panel rounded-[var(--radius-panel)] p-6">
             <p className="eyebrow">Next protocol</p>
-            <p className="mt-3 text-3xl font-medium text-foreground">{nextProtocol}</p>
+            <p className="mt-3 text-3xl font-semibold text-foreground">{nextProtocol}</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               {workoutSummary.weeklySessions} lift sessions logged this week.
             </p>
-            <Link href="/workout" className="text-link mt-5 inline-flex items-center gap-2 text-sm font-medium">
+            <div className="copper-rule mt-5" />
+            <Link href="/workout" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-foreground transition-colors hover:text-[#e6a07d]">
               Open workout
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -166,7 +167,7 @@ export function DashboardPageClient({
 
           <div className="mt-5 divide-y divide-border border-y border-border">
             {WEEKLY_RHYTHM.map((item) => (
-              <div key={item.day} className="grid gap-3 py-3 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_8rem] sm:items-center">
+              <div key={item.day} className="interactive-row grid gap-3 px-2 py-3 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_8rem] sm:items-center">
                 <p className="eyebrow text-[10px]">{item.day}</p>
                 <p className="font-medium text-foreground">{item.label}</p>
                 <p className="text-muted-foreground sm:text-right">{item.type}</p>
@@ -176,7 +177,7 @@ export function DashboardPageClient({
         </div>
 
         <div className="grid gap-0 border-y border-border lg:grid-cols-3 lg:divide-x lg:divide-border">
-          <Link href="/weight" className="group block py-6 lg:px-6 lg:first:pl-0">
+          <Link href="/weight" className="interactive-row group block py-6 lg:px-6 lg:first:pl-0">
             <p className="eyebrow">Bodyweight trend</p>
             <div className="mt-4 flex items-end justify-between gap-4">
               <p className="data-number text-4xl font-medium text-foreground">
@@ -189,7 +190,7 @@ export function DashboardPageClient({
             </p>
           </Link>
 
-          <Link href="/workout/history" className="group block border-t border-border py-6 lg:border-t-0 lg:px-6">
+          <Link href="/workout/history" className="interactive-row group block border-t border-border py-6 lg:border-t-0 lg:px-6">
             <p className="eyebrow">Training output</p>
             <p className="data-number mt-4 text-4xl font-medium text-foreground">
               {weeklyVolume}
@@ -200,7 +201,7 @@ export function DashboardPageClient({
             </p>
           </Link>
 
-          <Link href="/mobility" className="group block border-t border-border py-6 lg:border-t-0 lg:px-6 lg:last:pr-0">
+          <Link href="/mobility" className="interactive-row group block border-t border-border py-6 lg:border-t-0 lg:px-6 lg:last:pr-0">
             <p className="eyebrow">Mobility cadence</p>
             <p className="mt-4 text-4xl font-medium text-foreground">2+2</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">

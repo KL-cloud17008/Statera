@@ -201,7 +201,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-2xl text-primary">
+            <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-primary">
               <UserRound className="h-5 w-5" />
             </div>
             <CardTitle>Profile</CardTitle>
@@ -235,7 +235,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-2xl text-secondary-foreground">
+              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-secondary-foreground">
                 <Paintbrush className="h-5 w-5" />
               </div>
               <CardTitle>Units & Goals</CardTitle>
@@ -321,7 +321,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-2xl text-primary">
+              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-primary">
                 <Palette className="h-5 w-5" />
               </div>
               <CardTitle>Appearance</CardTitle>
@@ -329,10 +329,10 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Appearance is fixed to the Duna-inspired light system for visual consistency.
+              Appearance is fixed to the Athanor ledger system for visual consistency.
             </p>
-            <div className="warm-row rounded-[1.25rem] p-4 text-sm leading-relaxed text-muted-foreground">
-              Cream canvas, Bone surfaces, Mist inputs, and Aubergine Ink remain consistent across the app.
+            <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
+              Warm cream canvas, ink navigation, copper accents, and quiet paper surfaces remain consistent across the app.
             </div>
           </CardContent>
         </Card>
@@ -370,7 +370,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             />
           </div>
 
-          <div className="warm-row rounded-[1.25rem] p-4 text-sm text-muted-foreground">
+          <div className="warm-row rounded-[var(--radius-card)] border-l-2 border-l-[color-mix(in_srgb,var(--ember)_52%,var(--border)_48%)] p-4 text-sm text-muted-foreground">
             JSON backups include tracker data plus local app preferences. CSV exports produce separate weight, steps, and workout files for spreadsheet use.
           </div>
         </CardContent>
@@ -382,15 +382,15 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <CardTitle>About</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>Athanor is a fitness tracker for movement, bodyweight, training volume, and recovery — all in one place.</p>
+            <p>Athanor is a fitness tracker for movement, bodyweight, training volume, and recovery in one place.</p>
             <p>Backups include server-side tracker data and local presentation preferences so the app can be restored without rebuilding your setup.</p>
           </CardContent>
         </Card>
 
-        <Card className="border-destructive/25">
+        <Card className="border-destructive/30 bg-[color-mix(in_srgb,var(--cream-paper)_82%,var(--destructive)_18%)]">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-destructive/12 text-destructive">
+              <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] bg-destructive/12 text-destructive">
                 <ShieldAlert className="h-5 w-5" />
               </div>
               <CardTitle>Danger Zone</CardTitle>

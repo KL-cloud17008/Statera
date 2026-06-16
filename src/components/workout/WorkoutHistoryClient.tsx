@@ -93,7 +93,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
               </div>
               <div className="grid grid-cols-7 gap-2">
                 {Array.from({ length: calendar[0]?.weekday ?? 0 }).map((_, index) => (
-                  <div key={`pad-${index}`} className="h-18 rounded-[1rem] border border-transparent" />
+                  <div key={`pad-${index}`} className="h-18 rounded-[var(--radius-card)] border border-transparent" />
                 ))}
                 {calendar.map((day) => {
                   const daySessions = sessionMap.get(day.date) ?? [];
@@ -103,7 +103,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                       key={day.date}
                       type="button"
                       onClick={() => setSelectedDate(isSelected ? null : day.date)}
-                      className={`flex h-18 flex-col rounded-[1rem] border px-3 py-3 text-left transition-colors ${isSelected ? "border-primary/45 bg-primary/10" : "border-border bg-[color-mix(in_srgb,var(--mist)_76%,var(--bone)_24%)] hover:bg-accent/70"}`}
+                      className={`interactive-row flex h-18 flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[color-mix(in_srgb,var(--ember)_45%,var(--primary)_55%)] bg-[color-mix(in_srgb,var(--ember)_12%,var(--cream-paper)_88%)]" : "border-border bg-[color-mix(in_srgb,var(--mist)_64%,var(--bone)_36%)]"}`}
                     >
                       <span className="text-sm font-semibold text-foreground data-number">{day.day}</span>
                       <div className="mt-auto flex flex-wrap gap-1">
@@ -129,7 +129,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                 <p className="text-sm text-muted-foreground">No completed sessions in this view yet.</p>
               ) : (
                 filteredSessions.map((session) => (
-                  <div key={session.id} className="warm-row rounded-[1.25rem] p-4">
+                  <div key={session.id} className="interactive-row warm-row rounded-[var(--radius-card)] p-4">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="text-lg font-semibold text-foreground">{session.label}</p>

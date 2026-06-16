@@ -127,7 +127,7 @@ export function WeightChart({
           <CardTitle className="text-foreground">Weight Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[1.25rem]">
+          <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[var(--radius-card)]">
             <span className="text-muted-foreground">
               Add weight entries to see your trend
             </span>

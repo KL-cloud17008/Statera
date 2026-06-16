@@ -299,7 +299,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11 rounded-xl"
+                  className="h-11 rounded-[var(--radius)]"
                   aria-label={`${exercise.name} sets`}
                 />
                 <Input
@@ -311,7 +311,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11 rounded-xl"
+                  className="h-11 rounded-[var(--radius)]"
                   aria-label={`${exercise.name} reps`}
                 />
                 <Input
@@ -328,7 +328,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11 rounded-xl"
+                  className="h-11 rounded-[var(--radius)]"
                   aria-label={`${exercise.name} rest seconds`}
                 />
 

@@ -119,7 +119,7 @@ export function SetInput({
   }
 
   return (
-    <div className={cn("grid gap-4 border-t border-border/70 py-4", completed && "opacity-60", className)}>
+    <div className={cn("interactive-row grid gap-4 border-t border-border/70 px-2 py-4", completed && "completed-row opacity-85", className)}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />
@@ -127,7 +127,7 @@ export function SetInput({
             <p className="text-sm font-semibold tracking-normal text-foreground">Set {setNumber}</p>
             {previous ? (
               <p className="mt-1 text-xs text-muted-foreground">
-                Last {previous.weightUsed != null ? convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1) : "--"} × {previous.repsCompleted ?? "--"}
+                Last {previous.weightUsed != null ? convertWeight(previous.weightUsed, settings.weightUnit).toFixed(1) : "--"} x {previous.repsCompleted ?? "--"}
               </p>
             ) : null}
           </div>

@@ -4,15 +4,15 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-medium tracking-normal transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_36%,transparent),0_0_0_5px_var(--ring)]",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-semibold tracking-normal transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_58%,transparent),0_0_0_5px_var(--ring)] active:translate-y-px",
   {
     variants: {
       variant: {
-        default: "border-primary bg-primary text-primary-foreground shadow-[rgba(255,254,250,0.12)_0_1px_0_inset] hover:bg-primary/90",
-        destructive: "border-transparent bg-destructive text-destructive-foreground hover:brightness-105",
-        outline: "border-border bg-card/30 text-foreground shadow-[rgba(22,15,12,0.03)_0_0_0_1px_inset] hover:border-foreground/22 hover:bg-accent/60",
-        secondary: "border-border bg-secondary/80 text-secondary-foreground shadow-[rgba(22,15,12,0.025)_0_0_0_1px_inset] hover:bg-accent",
-        ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-accent/58 hover:text-foreground",
+        default: "border-primary bg-primary text-primary-foreground shadow-[rgba(255,246,236,0.12)_0_1px_0_inset] hover:border-[color-mix(in_srgb,var(--ember)_58%,var(--primary)_42%)] hover:bg-[color-mix(in_srgb,var(--primary)_88%,var(--ember)_12%)]",
+        destructive: "border-transparent bg-destructive text-destructive-foreground shadow-[rgba(255,246,236,0.12)_0_1px_0_inset] hover:brightness-105",
+        outline: "border-border bg-[color-mix(in_srgb,var(--cream-paper)_58%,transparent)] text-foreground shadow-[var(--shadow-soft)] hover:border-[color-mix(in_srgb,var(--ember)_32%,var(--border)_68%)] hover:bg-accent/70",
+        secondary: "border-border bg-secondary/90 text-secondary-foreground shadow-[var(--shadow-soft)] hover:border-[color-mix(in_srgb,var(--ember)_24%,var(--border)_76%)] hover:bg-accent",
+        ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-accent/64 hover:text-foreground",
         link: "border-transparent bg-transparent px-0 text-foreground/76 hover:text-foreground hover:underline hover:underline-offset-4",
       },
       size: {

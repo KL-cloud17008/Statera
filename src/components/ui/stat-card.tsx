@@ -20,12 +20,12 @@ export function StatCard({
   children?: ReactNode;
 }) {
   return (
-    <Card className={cn("relative overflow-hidden", className)}>
+    <Card className={cn("interactive-row relative overflow-hidden", className)}>
       <CardContent className="space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-3">
             <p className="eyebrow">{label}</p>
-            <div className="text-5xl font-semibold tracking-normal text-foreground data-number">
+            <div className="text-4xl font-semibold tracking-normal text-foreground data-number sm:text-5xl">
               {value}
             </div>
           </div>

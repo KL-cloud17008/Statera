@@ -47,7 +47,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
       <EmptyState
         icon={CalendarRange}
         title="No logged step entries"
-        description="Start with today’s total or backfill past days to build a movement history."
+        description="Start with today's total or backfill past days to build a movement history."
       />
     );
   }
@@ -75,7 +75,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
             ) : (
               <div
                 key={entry.id}
-                className="warm-row group flex items-center justify-between rounded-[1.25rem] px-4 py-4 transition-colors hover:bg-accent/70"
+                className="interactive-row warm-row group flex items-center justify-between rounded-[var(--radius-card)] px-4 py-4"
               >
                 <div>
                   <p className="text-lg font-semibold text-foreground data-number">

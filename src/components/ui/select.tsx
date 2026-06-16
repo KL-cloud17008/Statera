@@ -30,7 +30,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-[var(--radius)] border border-border bg-input/95 px-4 text-sm text-foreground shadow-[rgba(22,15,12,0.032)_0_0_0_1px_inset] transition-[border-color,box-shadow,background-color] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)] data-[size=default]:h-12 data-[size=sm]:h-10 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex w-full items-center justify-between gap-2 rounded-[var(--radius)] border border-border bg-[color-mix(in_srgb,var(--input)_84%,var(--cream-paper)_16%)] px-4 text-sm text-foreground shadow-[var(--shadow-soft)] transition-[border-color,box-shadow,background-color] duration-150 hover:border-[color-mix(in_srgb,var(--foreground)_22%,var(--border)_78%)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] data-[size=default]:h-12 data-[size=sm]:h-10 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -88,9 +88,9 @@ function SelectItem({
 }: React.ComponentProps<typeof SelectPrimitive.Item>) {
   return (
     <SelectPrimitive.Item
-      data-slot="select-item"
-      className={cn(
-        "relative flex w-full cursor-default items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:bg-accent/72 data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
+        data-slot="select-item"
+        className={cn(
+        "relative flex w-full cursor-default items-center gap-2 rounded-[var(--radius-tight)] px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:bg-accent/80 data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
         className
       )}
       {...props}

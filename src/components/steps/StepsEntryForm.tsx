@@ -54,7 +54,7 @@ export function StepsEntryForm({
     <Card className={editEntry ? "border-primary/35" : ""}>
       <CardHeader>
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/12 text-primary">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] bg-primary/12 text-primary">
             <Footprints className="h-5 w-5" />
           </div>
           <div>

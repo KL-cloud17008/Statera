@@ -49,7 +49,7 @@ export default async function WorkoutPlanPage() {
       ) : null}
 
       <section className="document-panel">
-        <div className="grid gap-4 border-b border-border pb-7 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end">
+        <div className="command-panel grid gap-4 rounded-[var(--radius-panel)] p-6 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end">
           <div>
             <p className="eyebrow">Week structure</p>
             <p className="data-number mt-3 text-4xl text-foreground">4/2/1</p>
@@ -104,7 +104,7 @@ export default async function WorkoutPlanPage() {
                 {plan ? (
                   <div className="mt-6 divide-y divide-border border-y border-border">
                     {plan.exercises.map((exercise) => (
-                      <article key={exercise.id} className="grid gap-4 py-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,auto)] md:items-start">
+                      <article key={exercise.id} className="interactive-row grid gap-4 px-2 py-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,auto)] md:items-start">
                         <div>
                           <div className="flex flex-wrap items-center gap-2.5">
                             <p className="font-medium text-foreground">{exercise.exerciseName}</p>

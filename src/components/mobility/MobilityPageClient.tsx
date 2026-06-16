@@ -86,7 +86,7 @@ export function MobilityPageClient({
       </SectionHeader>
 
       <section className="document-panel">
-        <div className="grid gap-5 border-b border-border pb-7 md:grid-cols-3">
+        <div className="grid gap-4 border-b border-border pb-7 md:grid-cols-3">
           <FocusCell label="Feet and ankles" value="Activation" note="Short-foot work, ankle pumps, calf range." />
           <FocusCell label="Hips" value="Access" note="Hip flexors, 90/90 transitions, adductors." />
           <FocusCell label="Back and trunk" value="Control" note="Thoracic rotation, cat-cow, seated bracing breaths." />
@@ -103,15 +103,17 @@ export function MobilityPageClient({
               actionLabel="Mark pre-workout complete"
               onLog={() => handleLogCompletion("PRE_WORKOUT")}
               headerAside={
-                <div className="inline-flex rounded-full border border-border bg-[color-mix(in_srgb,var(--mist)_78%,var(--bone)_22%)] p-1 shadow-[var(--shadow-soft)]">
+                <div className="inline-flex rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_68%,var(--bone)_32%)] p-1 shadow-[var(--shadow-soft)]">
                   {(["A", "B"] as const).map((item) => (
                     <button
                       key={item}
                       type="button"
                       onClick={() => setVersion(item)}
                       className={cn(
-                        "rounded-full px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
-                        version === item ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                        "rounded-full border border-transparent px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em] transition-[background-color,border-color,color,box-shadow]",
+                        version === item
+                          ? "border-[color-mix(in_srgb,var(--ember)_40%,var(--primary)_60%)] bg-primary text-primary-foreground shadow-[rgba(255,246,236,0.12)_0_1px_0_inset]"
+                          : "text-muted-foreground hover:text-foreground"
                       )}
                     >
                       {item}
@@ -191,7 +193,7 @@ function FocusCell({
   note: string;
 }) {
   return (
-    <div className="border-t border-border pt-4">
+    <div className="warm-row rounded-[var(--radius-card)] p-4">
       <p className="eyebrow text-[10px]">{label}</p>
       <p className="mt-2 text-2xl font-medium text-foreground">{value}</p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{note}</p>
@@ -223,10 +225,10 @@ function RoutineSection({
   meta?: string;
 }) {
   return (
-    <section className="border-t border-border pt-8 first:border-t-0 first:pt-0">
+    <section className="border-t border-border pt-9 first:border-t-0 first:pt-0">
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div className="space-y-3">
-          <p className="eyebrow">{completed ? "Completed today" : "Ready"}</p>
+          <p className="eyebrow">{completed ? "Completed today" : "Ready protocol"}</p>
           <h2 className="text-3xl">{title}</h2>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
           {meta ? <p className="text-sm text-muted-foreground">{meta}</p> : null}
@@ -235,7 +237,7 @@ function RoutineSection({
         <div className="flex flex-wrap items-center gap-4">
           {headerAside}
           {completed ? (
-            <span className="inline-flex items-center gap-2 text-sm text-foreground">
+            <span className="completed-row inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-foreground">
               <CheckCircle2 className="h-4 w-4" />
               Logged
             </span>

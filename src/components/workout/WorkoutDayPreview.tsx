@@ -88,14 +88,14 @@ export function WorkoutDayPreview({
         </div>
       ) : null}
 
-      <div className="grid gap-4 border-b border-border pb-8 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+      <div className="command-panel grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
         <div className="grid gap-4 md:grid-cols-3">
           <ProtocolMeta label="Primer" value={warmups[0]?.exerciseName ?? "Ramp-up"} note={warmups[0]?.reps ?? "5 min easy"} />
           <ProtocolMeta label="Walk target" value="Easy nasal pace" note="Keep breathing conversational." />
           <ProtocolMeta label="Session rule" value="RPE 6-7" note="Leave 2-4 reps in reserve." />
         </div>
 
-        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2">
+        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#f7efe3] text-primary hover:bg-white">
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
           Start Session
         </Button>
@@ -106,7 +106,7 @@ export function WorkoutDayPreview({
           <p className="eyebrow">Primer block</p>
           <div className="mt-4 divide-y divide-border border-y border-border">
             {warmups.map((exercise) => (
-              <div key={exercise.id} className="grid gap-4 py-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,auto)] md:items-start">
+              <div key={exercise.id} className="interactive-row grid gap-4 px-2 py-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,auto)] md:items-start">
                 <div>
                   <p className="font-medium text-foreground">{exercise.exerciseName}</p>
                   {exercise.cues ? (
@@ -132,7 +132,8 @@ export function WorkoutDayPreview({
 
           return (
             <article key={block} className="border-t border-border pt-7 first:border-t-0 first:pt-0">
-              <div className="grid gap-4 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:items-end">
+              <div className="warm-row rounded-[var(--radius-card)] p-5">
+                <div className="grid gap-4 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:items-end">
                 <div>
                   <p className="eyebrow">Circuit {block}</p>
                   <p className="mt-2 text-sm text-muted-foreground">{roundTarget}</p>
@@ -141,11 +142,12 @@ export function WorkoutDayPreview({
                   Move through the pair or sequence cleanly, then take the programmed rest.
                 </p>
                 <Badge variant="outline">{restNote}s rest</Badge>
+                </div>
               </div>
 
               <div className="mt-5 divide-y divide-border border-y border-border">
                 {blockExercises.map((exercise, i) => (
-                  <div key={exercise.id} className="protocol-row">
+                  <div key={exercise.id} className="protocol-row interactive-row px-2">
                     <p className="data-number text-xl text-muted-foreground">{block}{i + 1}</p>
                     <div>
                       <h3 className="text-[1.2rem] leading-snug">{exercise.exerciseName}</h3>
@@ -178,10 +180,10 @@ function ProtocolMeta({
   note: string;
 }) {
   return (
-    <div className="border-t border-border pt-4">
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="mt-2 text-sm font-medium text-foreground">{value}</p>
-      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{note}</p>
+    <div className="border-t border-white/12 pt-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">{label}</p>
+      <p className="mt-2 text-sm font-semibold text-primary-foreground">{value}</p>
+      <p className="mt-1 text-xs leading-relaxed text-white/58">{note}</p>
     </div>
   );
 }

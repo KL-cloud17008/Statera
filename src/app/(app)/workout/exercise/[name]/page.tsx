@@ -116,10 +116,10 @@ export default async function ExerciseHistoryPage({
             </CardHeader>
             <CardContent className="space-y-2">
               {dateSets.sort((a, b) => a.setNumber - b.setNumber).map((set) => (
-                <div key={set.id} className="warm-row flex flex-wrap items-center gap-3 rounded-[1rem] px-4 py-3 text-sm">
+                <div key={set.id} className="interactive-row warm-row flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm">
                   <span className="text-muted-foreground">Set {set.setNumber}</span>
                   <span className="font-semibold text-foreground data-number">{set.weightUsed ?? "--"} lbs</span>
-                  <span className="text-muted-foreground">× {set.repsCompleted ?? "--"}</span>
+                  <span className="text-muted-foreground">x {set.repsCompleted ?? "--"}</span>
                   {set.actualRPE ? <span className="text-muted-foreground">RPE {set.actualRPE}</span> : null}
                   {set.notes ? <span className="text-muted-foreground">{set.notes}</span> : null}
                 </div>

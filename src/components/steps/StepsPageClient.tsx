@@ -32,7 +32,7 @@ export function StepsPageClient({
       <SectionHeader
         eyebrow="Step Counter"
         title="Build daily movement momentum"
-        description="Track today’s total, review your weekly and monthly trends, and keep your streak alive with a clear goal target."
+        description="Track today's total, review your weekly and monthly trends, and keep your streak alive with a clear goal target."
       >
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <span className="warm-pill rounded-full px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
@@ -41,7 +41,7 @@ export function StepsPageClient({
       </SectionHeader>
 
       <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="surface-elevated flex flex-col items-center justify-center rounded-[1.75rem] px-6 py-8">
+        <div className="surface-elevated flex flex-col items-center justify-center rounded-[var(--radius-panel)] px-6 py-8">
           <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             <span className="warm-pill rounded-full px-3 py-1.5 text-primary">

@@ -101,7 +101,7 @@ export function WeightHistoryList({
                       ) : (
                         <div
                           key={entry.id}
-                          className="warm-row group flex items-start justify-between gap-3 rounded-[1.25rem] p-4 transition-colors hover:bg-accent/70"
+                          className="interactive-row warm-row group flex items-start justify-between gap-3 rounded-[var(--radius-card)] p-4"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center gap-2">
