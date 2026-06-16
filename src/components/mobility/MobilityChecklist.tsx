@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-import type { MobilityBlock } from "@/lib/mobility";
+import {
+  RECOVERY_INTRO,
+  RECOVERY_STOP_NOTE,
+  type MobilityBlock,
+  type MobilityExercise,
+} from "@/lib/mobility";
+import { cn } from "@/lib/utils";
 
 export function MobilityChecklist({
   blocks,
@@ -15,6 +21,7 @@ export function MobilityChecklist({
 }) {
   const allExercises = blocks.flatMap((block) => block.exercises);
   const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const totalCount = allExercises.length;
   const checkedCount = checked.size;
@@ -23,6 +30,18 @@ export function MobilityChecklist({
 
   function toggle(key: string) {
     setChecked((current) => {
+      const next = new Set(current);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }
+
+  function toggleExpanded(key: string) {
+    setExpanded((current) => {
       const next = new Set(current);
       if (next.has(key)) {
         next.delete(key);
@@ -64,48 +83,306 @@ export function MobilityChecklist({
               <p className="eyebrow text-[10px]">Block {blockIndex + 1}</p>
               <h3 className="mt-2 tracking-normal">{block.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{block.duration}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{block.purpose}</p>
             </div>
 
-            <div className="space-y-3">
-              {block.exercises.map((exercise, exerciseIndex) => {
-                const key = `${blockIndex}-${exerciseIndex}`;
-                const isDone = checked.has(key);
-                return (
-                  <div
-                    key={key}
-                    className={`interactive-row grid w-full gap-2 rounded-[var(--radius-card)] border px-4 py-4 text-left ${isDone ? "completed-row" : "bg-[color-mix(in_srgb,var(--cream-paper)_58%,var(--bone)_42%)]"}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <Checkbox
-                        checked={isDone}
-                        onCheckedChange={() => toggle(key)}
-                        className="mt-1 shrink-0"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => toggle(key)}
-                        className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)]"
-                      >
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <p className={`text-sm font-semibold tracking-normal ${isDone ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                            {exercise.name}
-                          </p>
-                          <p className="rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,transparent)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                            {exercise.dose}
-                          </p>
+            <div className="space-y-4">
+              {block.recoveryIntro ? <RecoveryIntro /> : null}
+              {block.previousDayReason || block.adaptationNote ? (
+                <BlockContext block={block} />
+              ) : null}
+
+              <div className="space-y-3">
+                {block.exercises.map((exercise, exerciseIndex) => {
+                  const key = `${block.id}-${exercise.id}-${exerciseIndex}`;
+                  const detailsId = `mobility-details-${key}`;
+                  const isDone = checked.has(key);
+                  const isExpanded = expanded.has(key);
+                  const hasDetails = Boolean(
+                    exercise.goal ||
+                      exercise.howTo?.length ||
+                      exercise.beginnerPointers?.length ||
+                      exercise.commonMistakes?.length ||
+                      exercise.scaleDown?.length ||
+                      exercise.completionTarget ||
+                      exercise.intensity
+                  );
+
+                  return (
+                    <div
+                      key={key}
+                      className={cn(
+                        "interactive-row grid w-full gap-3 rounded-[var(--radius-card)] border px-4 py-4 text-left",
+                        isDone ? "completed-row" : "bg-[color-mix(in_srgb,var(--cream-paper)_58%,var(--bone)_42%)]"
+                      )}
+                    >
+                      <div className="flex items-start gap-3">
+                        <Checkbox
+                          checked={isDone}
+                          onCheckedChange={() => toggle(key)}
+                          className="mt-1 shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
+                            <button
+                              type="button"
+                              onClick={() => toggle(key)}
+                              className="w-full min-w-0 text-left focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] sm:flex-1"
+                            >
+                              <p className={cn("text-sm font-semibold tracking-normal", isDone ? "text-muted-foreground line-through" : "text-foreground")}>
+                                {exercise.name}
+                              </p>
+                              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                                {exercise.cues}
+                              </p>
+                            </button>
+
+                            <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:justify-end">
+                              <p className="rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,transparent)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                                {exercise.dose}
+                              </p>
+                              {hasDetails ? (
+                                <button
+                                  type="button"
+                                  aria-expanded={isExpanded}
+                                  aria-controls={detailsId}
+                                  onClick={() => toggleExpanded(key)}
+                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,var(--bone)_36%)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:border-[color-mix(in_srgb,var(--ember)_32%,var(--border)_68%)] hover:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none"
+                                >
+                                  <span>How to do it</span>
+                                  <ChevronDown
+                                    className={cn(
+                                      "h-3.5 w-3.5 transition-transform duration-150 motion-reduce:transition-none",
+                                      isExpanded && "rotate-180"
+                                    )}
+                                  />
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
+
+                          {hasDetails && isExpanded ? (
+                            <MovementDetails exercise={exercise} detailsId={detailsId} />
+                          ) : null}
                         </div>
-                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                          {exercise.cues}
-                        </p>
-                      </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </section>
         ))}
       </div>
+    </div>
+  );
+}
+
+function RecoveryIntro({
+}: Record<string, never>) {
+  return (
+    <div className="warm-row overflow-hidden rounded-[var(--radius-card)]">
+      <div className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.72fr)]">
+        <div>
+          <p className="eyebrow text-[10px]">Recovery intensity</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{RECOVERY_INTRO}</p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+          {[
+            "Effort: 2-4/10",
+            "Pain: 0-2/10 maximum",
+            "Breathing: calm enough to breathe through the nose",
+            "Goal: finish looser, warmer, and calmer - not exhausted",
+          ].map((rule) => (
+            <p
+              key={rule}
+              className="rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--cream-paper)_58%,transparent)] px-3 py-2 text-xs font-semibold text-foreground"
+            >
+              {rule}
+            </p>
+          ))}
+        </div>
+      </div>
+      <p className="border-t border-border/70 px-5 py-4 text-sm leading-relaxed text-muted-foreground">
+        <span className="font-semibold text-foreground">Safety note: </span>
+        {RECOVERY_STOP_NOTE}
+      </p>
+    </div>
+  );
+}
+
+function BlockContext({
+  block,
+}: {
+  block: MobilityBlock;
+}) {
+  return (
+    <div className="grid gap-3 rounded-[var(--radius-card)] border border-border bg-[color-mix(in_srgb,var(--bone)_54%,var(--cream-paper)_46%)] p-5 shadow-[var(--shadow-soft)] md:grid-cols-2">
+      {block.previousDayReason ? (
+        <DetailCopy label="Previous-day reset" value={block.previousDayReason} />
+      ) : null}
+      {block.adaptationNote ? (
+        <DetailCopy label="How to use this block" value={block.adaptationNote} />
+      ) : null}
+    </div>
+  );
+}
+
+function MovementDetails({
+  exercise,
+  detailsId,
+}: {
+  exercise: MobilityExercise;
+  detailsId: string;
+}) {
+  return (
+    <div
+      id={detailsId}
+      className="mt-4 rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--bone)_42%,var(--cream-paper)_58%)] p-4"
+    >
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
+        <div className="space-y-4">
+          <DetailCopy label="Goal" value={exercise.goal} />
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+            <DetailCopy label="Completion target" value={exercise.completionTarget} />
+            <IntensityBox exercise={exercise} />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <NumberedSteps label="How to do it" items={exercise.howTo} />
+          <DetailList label="Pointers" items={exercise.beginnerPointers} />
+          <DetailList label="Common mistakes" items={exercise.commonMistakes} />
+          <DetailList label="Scale down" items={exercise.scaleDown} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IntensityBox({
+  exercise,
+}: {
+  exercise: MobilityExercise;
+}) {
+  return (
+    <div>
+      <p className="eyebrow text-[10px]">Intensity</p>
+      <div className="mt-2 grid gap-2">
+        {[
+          exercise.intensity.effort,
+          exercise.intensity.pain,
+          exercise.intensity.breathing,
+          exercise.intensity.goal,
+        ].map((item) => (
+          <p
+            key={item}
+            className="rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--cream-paper)_60%,transparent)] px-3 py-2 text-xs font-semibold leading-relaxed text-foreground"
+          >
+            {item}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DetailCopy({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div>
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{value}</p>
+    </div>
+  );
+}
+
+function NumberedSteps({
+  label,
+  items,
+}: {
+  label: string;
+  items?: string[];
+}) {
+  if (!items?.length) {
+    return null;
+  }
+
+  const rows = items.reduce<{
+    stepNumber: number;
+    rows: Array<{ item: string; isSectionLabel: boolean; stepNumber: number }>;
+  }>(
+    (acc, item) => {
+      const isSectionLabel = item.startsWith("Part ");
+      if (isSectionLabel) {
+        return {
+          stepNumber: acc.stepNumber,
+          rows: [...acc.rows, { item, isSectionLabel, stepNumber: 0 }],
+        };
+      }
+
+      const nextStepNumber = acc.stepNumber + 1;
+      return {
+        stepNumber: nextStepNumber,
+        rows: [...acc.rows, { item, isSectionLabel, stepNumber: nextStepNumber }],
+      };
+    },
+    { stepNumber: 0, rows: [] }
+  ).rows;
+
+  return (
+    <div>
+      <p className="eyebrow text-[10px]">{label}</p>
+      <div className="mt-2 space-y-2">
+        {rows.map((row) => {
+          if (row.isSectionLabel) {
+            return (
+              <p key={row.item} className="pt-1 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">
+                {row.item.replace(/:$/, "")}
+              </p>
+            );
+          }
+
+          return (
+            <div key={`${row.stepNumber}-${row.item}`} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
+              <span className="data-number mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_62%,transparent)] text-[11px] text-foreground">
+                {row.stepNumber}
+              </span>
+              <p>{row.item}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function DetailList({
+  label,
+  items,
+}: {
+  label: string;
+  items?: string[];
+}) {
+  if (!items?.length) {
+    return null;
+  }
+
+  return (
+    <div>
+      <p className="eyebrow text-[10px]">{label}</p>
+      <ul className="mt-2 space-y-2">
+        {items.map((item) => (
+          <li key={item} className="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
+            <span className="mt-[0.6em] h-1.5 w-1.5 rounded-full bg-[color-mix(in_srgb,var(--ember)_62%,var(--border)_38%)]" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

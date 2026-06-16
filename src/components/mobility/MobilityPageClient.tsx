@@ -7,38 +7,26 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logMobility } from "@/actions/mobility";
 import { MobilityChecklist } from "./MobilityChecklist";
-import { getPostWorkoutChecklist, getPreWorkoutChecklist, UNDO_SITTING } from "@/lib/mobility";
+import { getMobilityProgram, UNDO_SITTING } from "@/lib/mobility";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
-import { cn } from "@/lib/utils";
-
-const DAY_NAMES: Record<number, string> = {
-  1: "Monday - Upper A",
-  2: "Tuesday - Lower A",
-  4: "Thursday - Upper B",
-  5: "Friday - Lower B",
-};
 
 export function MobilityPageClient({
   dayOfWeek,
-  isTrainingDay,
   completedTypes,
 }: {
   dayOfWeek: number;
-  isTrainingDay: boolean;
   completedTypes: string[];
 }) {
   const router = useRouter();
-  const [version, setVersion] = useState<"A" | "B">("A");
   const [pendingType, setPendingType] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const preBlocks = isTrainingDay ? getPreWorkoutChecklist(dayOfWeek, version) : [];
-  const postBlocks = getPostWorkoutChecklist(dayOfWeek);
+  const program = getMobilityProgram(dayOfWeek);
+  const sessionBlocks = program.blocks;
   const undoBlocks = [UNDO_SITTING];
 
-  const preCompleted = completedTypes.includes("PRE_WORKOUT");
-  const postCompleted = completedTypes.includes("POST_WORKOUT");
+  const sessionCompleted = completedTypes.includes(program.logType);
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
 
   function handleLogCompletion(type: string) {
@@ -46,7 +34,7 @@ export function MobilityPageClient({
     startTransition(async () => {
       const formData = new FormData();
       formData.set("type", type);
-      formData.set("version", version);
+      formData.set("version", program.sessionTitle);
       const result = await logMobility(formData);
       if (result.error) {
         toast.error(result.error);
@@ -56,9 +44,9 @@ export function MobilityPageClient({
 
       toast.success(
         type === "PRE_WORKOUT"
-          ? "Pre-workout logged"
+          ? "Mobility primer logged"
           : type === "POST_WORKOUT"
-            ? "Post-workout logged"
+            ? "Recovery mobility logged"
             : "Undo-sitting logged"
       );
       setPendingType(null);
@@ -71,113 +59,48 @@ export function MobilityPageClient({
       <SectionHeader
         className="page-hero-muted"
         eyebrow="Mobility protocol"
-        title={isTrainingDay ? DAY_NAMES[dayOfWeek] ?? "Training day preparation" : "Mobility-only recovery day"}
-        description={
-          isTrainingDay
-            ? "Use the primer before lifting, the recovery sequence after training or later, and the desk reset when long sitting blocks stack up."
-            : "Keep the day recovery-led: one longer movement sequence, optional desk resets, and no competing training dashboard."
-        }
+        title={`${program.dayName} - ${program.trainingRole}`}
+        description={program.todayPurpose}
       >
         <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-          <span>Pre: {preCompleted ? "logged" : "open"}</span>
-          <span>Post: {postCompleted ? "logged" : "open"}</span>
+          <span>Session: {sessionCompleted ? "logged" : "open"}</span>
+          <span>Duration: {program.totalDuration}</span>
           <span>Desk resets: {undoCount}</span>
         </div>
       </SectionHeader>
 
       <section className="document-panel">
         <div className="grid gap-4 border-b border-border pb-7 md:grid-cols-3">
-          <FocusCell label="Feet and ankles" value="Activation" note="Short-foot work, ankle pumps, calf range." />
-          <FocusCell label="Hips" value="Access" note="Hip flexors, 90/90 transitions, adductors." />
-          <FocusCell label="Back and trunk" value="Control" note="Thoracic rotation, cat-cow, seated bracing breaths." />
+          {program.focus.map((item) => (
+            <FocusCell key={item.label} label={item.label} value={item.value} note={item.note} />
+          ))}
         </div>
 
-        {isTrainingDay ? (
-          <>
-            <RoutineSection
-              title="Pre-workout primer"
-              summary="Choose the version that matches how you feel, run the sequence, and log it once you are done."
-              completed={preCompleted}
-              isPending={isPending}
-              isCurrentAction={pendingType === "PRE_WORKOUT"}
-              actionLabel="Mark pre-workout complete"
-              onLog={() => handleLogCompletion("PRE_WORKOUT")}
-              headerAside={
-                <div className="inline-flex rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_68%,var(--bone)_32%)] p-1 shadow-[var(--shadow-soft)]">
-                  {(["A", "B"] as const).map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => setVersion(item)}
-                      className={cn(
-                        "rounded-full border border-transparent px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em] transition-[background-color,border-color,color,box-shadow]",
-                        version === item
-                          ? "border-[color-mix(in_srgb,var(--ember)_40%,var(--primary)_60%)] bg-primary text-primary-foreground shadow-[rgba(255,246,236,0.12)_0_1px_0_inset]"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              }
-            >
-              <MobilityChecklist blocks={preBlocks} title="Pre-workout sequence" />
-            </RoutineSection>
+        <RoutineSection
+          title={program.sessionTitle}
+          summary={program.adaptationNote}
+          completed={sessionCompleted}
+          isPending={isPending}
+          isCurrentAction={pendingType === program.logType}
+          actionLabel={program.logType === "PRE_WORKOUT" ? "Mark primer complete" : "Mark recovery complete"}
+          onLog={() => handleLogCompletion(program.logType)}
+          meta={program.completionSummary}
+        >
+          <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
+        </RoutineSection>
 
-            <RoutineSection
-              title="Recovery mobility session"
-              summary="This can be done after training or later in the day. Keep intensity easy and breathing controlled."
-              completed={postCompleted}
-              isPending={isPending}
-              isCurrentAction={pendingType === "POST_WORKOUT"}
-              actionLabel="Mark post-workout complete"
-              onLog={() => handleLogCompletion("POST_WORKOUT")}
-            >
-              <MobilityChecklist blocks={postBlocks} title="Post-workout cooldown" />
-            </RoutineSection>
-
-            <RoutineSection
-              title="Optional desk reset"
-              summary="Use this as the short reset that breaks up desk-heavy blocks during the day."
-              completed={false}
-              isPending={isPending}
-              isCurrentAction={pendingType === "UNDO_SITTING"}
-              actionLabel="Log desk reset"
-              onLog={() => handleLogCompletion("UNDO_SITTING")}
-              meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
-            >
-              <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
-            </RoutineSection>
-          </>
-        ) : (
-          <>
-            <RoutineSection
-              title="Recovery mobility session"
-              summary="Run the longer sequence at an easy pace and keep the day free from lifting intensity."
-              completed={postCompleted}
-              isPending={isPending}
-              isCurrentAction={pendingType === "POST_WORKOUT"}
-              actionLabel="Mark recovery complete"
-              onLog={() => handleLogCompletion("POST_WORKOUT")}
-            >
-              <MobilityChecklist blocks={postBlocks} title="Recovery sequence" />
-            </RoutineSection>
-
-            <RoutineSection
-              title="Optional desk reset"
-              summary="Run the short reset any time you have been parked at a desk for too long."
-              completed={false}
-              isPending={isPending}
-              isCurrentAction={pendingType === "UNDO_SITTING"}
-              actionLabel="Log desk reset"
-              onLog={() => handleLogCompletion("UNDO_SITTING")}
-              meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
-            >
-              <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
-            </RoutineSection>
-          </>
-        )}
+        <RoutineSection
+          title="Optional desk reset"
+          summary="Use this short reset when long sitting blocks stack up during the day."
+          completed={false}
+          isPending={isPending}
+          isCurrentAction={pendingType === "UNDO_SITTING"}
+          actionLabel="Log desk reset"
+          onLog={() => handleLogCompletion("UNDO_SITTING")}
+          meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
+        >
+          <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
+        </RoutineSection>
       </section>
     </div>
   );

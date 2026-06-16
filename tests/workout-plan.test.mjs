@@ -10,6 +10,7 @@ const settingsSource = readFileSync("src/components/settings/SettingsPageClient.
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 const units = loadTypescriptModule("src/lib/units.ts");
+const mobility = loadTypescriptModule("src/lib/mobility.ts");
 
 const requiredExercises = [
   "Machine Chest Press",
@@ -40,6 +41,62 @@ test("canonical workout plan keeps the selected beginner exercise set", () => {
 test("canonical workout plan does not restore removed or replaced exercises", () => {
   for (const exercise of removedExercises) {
     assert.doesNotMatch(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should not return`);
+  }
+});
+
+test("mobility program has adaptive content for all 7 days", () => {
+  const programs = mobility.getAllMobilityPrograms();
+  const weekdays = Array.from(programs, (program) => Number(program.dayOfWeek));
+  assert.deepEqual(
+    weekdays,
+    [0, 1, 2, 3, 4, 5, 6]
+  );
+
+  for (const program of programs) {
+    assert.ok(program.todayPurpose.length > 24, `${program.dayName} should explain today's purpose`);
+    assert.ok(program.previousDayReason.length > 24, `${program.dayName} should explain previous-day recovery`);
+    assert.ok(program.adaptationNote.length > 24, `${program.dayName} should explain adaptation`);
+    assert.ok(program.completionSummary.length > 24, `${program.dayName} should explain completion`);
+    assert.ok(program.blocks.length >= 3, `${program.dayName} should include base, main block, and finisher`);
+  }
+});
+
+test("every mobility day includes the daily lower-leg base", () => {
+  for (const program of mobility.getAllMobilityPrograms()) {
+    const base = program.blocks.find((block) => block.id === "daily-lower-leg-base");
+    assert.ok(base, `${program.dayName} should include Daily lower-leg base`);
+    assert.equal(base.title, "Daily lower-leg base");
+    assert.match(base.purpose, /foot control/i);
+    assert.match(base.purpose, /ankle range/i);
+    assert.match(base.purpose, /shin and calf stiffness/i);
+
+    const baseNames = base.exercises.map((exercise) => exercise.name);
+    assert.ok(baseNames.includes("Toe spreads / short-foot drill"));
+    assert.ok(baseNames.includes("Seated ankle pumps"));
+    assert.ok(baseNames.includes("Ankle rocks"));
+    assert.ok(baseNames.includes("Calf stretch"));
+    assert.ok(baseNames.includes("Optional tibialis raises"));
+  }
+});
+
+test("each mobility movement includes beginner coaching details", () => {
+  const dayExercises = mobility
+    .getAllMobilityPrograms()
+    .flatMap((program) => program.blocks)
+    .flatMap((block) => block.exercises);
+  const deskResetExercises = mobility.UNDO_SITTING.exercises;
+
+  for (const exercise of [...dayExercises, ...deskResetExercises]) {
+    assert.ok(exercise.goal.length > 12, `${exercise.name} needs a goal`);
+    assert.ok(exercise.howTo.length >= 3, `${exercise.name} needs step-by-step instructions`);
+    assert.ok(exercise.beginnerPointers.length >= 2, `${exercise.name} needs beginner pointers`);
+    assert.ok(exercise.commonMistakes.length >= 2, `${exercise.name} needs common mistakes`);
+    assert.ok(exercise.scaleDown.length >= 2, `${exercise.name} needs scale-down options`);
+    assert.ok(exercise.completionTarget.length > 12, `${exercise.name} needs a completion target`);
+    assert.match(exercise.intensity.effort, /Effort: /, `${exercise.name} needs effort guidance`);
+    assert.match(exercise.intensity.pain, /Pain: 0-2\/10 maximum/, `${exercise.name} needs pain guidance`);
+    assert.match(exercise.intensity.breathing, /Breathing: /, `${exercise.name} needs breathing guidance`);
+    assert.match(exercise.intensity.goal, /Goal: /, `${exercise.name} needs intensity goal guidance`);
   }
 });
 
