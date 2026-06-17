@@ -7,7 +7,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logMobility } from "@/actions/mobility";
 import { MobilityChecklist } from "./MobilityChecklist";
-import { getMobilityProgram, UNDO_SITTING } from "@/lib/mobility";
+import { getMobilityProgram, OPTIONAL_LATER_RECOVERY, UNDO_SITTING } from "@/lib/mobility";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
 
@@ -24,17 +24,19 @@ export function MobilityPageClient({
 
   const program = getMobilityProgram(dayOfWeek);
   const sessionBlocks = program.blocks;
+  const showLaterRecovery = program.logType === "PRE_WORKOUT";
+  const laterRecoveryCompleted = completedTypes.includes("POST_WORKOUT");
   const undoBlocks = [UNDO_SITTING];
 
   const sessionCompleted = completedTypes.includes(program.logType);
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
 
-  function handleLogCompletion(type: string) {
+  function handleLogCompletion(type: string, version = program.sessionTitle) {
     setPendingType(type);
     startTransition(async () => {
       const formData = new FormData();
       formData.set("type", type);
-      formData.set("version", program.sessionTitle);
+      formData.set("version", version);
       const result = await logMobility(formData);
       if (result.error) {
         toast.error(result.error);
@@ -88,6 +90,21 @@ export function MobilityPageClient({
         >
           <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
         </RoutineSection>
+
+        {showLaterRecovery ? (
+          <RoutineSection
+            title="Optional later recovery"
+            summary="Use this after training or before bed if the lift leaves hips, calves, shoulders, or breathing feeling guarded."
+            completed={laterRecoveryCompleted}
+            isPending={isPending}
+            isCurrentAction={pendingType === "POST_WORKOUT"}
+            actionLabel="Mark recovery complete"
+            onLog={() => handleLogCompletion("POST_WORKOUT", OPTIONAL_LATER_RECOVERY.title)}
+            meta="Separate from the primer. Keep effort low and finish calmer."
+          >
+            <MobilityChecklist blocks={[OPTIONAL_LATER_RECOVERY]} title="Later recovery" />
+          </RoutineSection>
+        ) : null}
 
         <RoutineSection
           title="Optional desk reset"

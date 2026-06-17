@@ -456,13 +456,18 @@ export async function importUserData(formData: FormData) {
     await tx.savedFood.deleteMany({ where: { userId: user.id } });
     await tx.progressPhoto.deleteMany({ where: { userId: user.id } });
 
+    const importedTimezone =
+      payload.profile?.timezone && isValidTimeZone(payload.profile.timezone)
+        ? payload.profile.timezone
+        : user.timezone;
+
     await tx.user.update({
       where: { id: user.id },
       data: {
         heightInches: payload.profile?.heightInches ?? null,
         startWeight: payload.profile?.startWeight ?? null,
         goalWeight: payload.profile?.goalWeight ?? null,
-        timezone: payload.profile?.timezone || user.timezone,
+        timezone: importedTimezone,
         caloricTarget: payload.profile?.caloricTarget ?? user.caloricTarget,
         proteinTarget: payload.profile?.proteinTarget ?? user.proteinTarget,
         carbTarget: payload.profile?.carbTarget ?? user.carbTarget,

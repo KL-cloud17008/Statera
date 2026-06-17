@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
+  CheckCircle2,
   Download,
   Loader2,
   Palette,
@@ -71,8 +72,17 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const { settings, updateSettings, resetSettings } = useAppSettings();
   const [startWeightValue, setStartWeightValue] = useState(profile.startWeight != null ? String(profile.startWeight) : "");
   const [goalWeightValue, setGoalWeightValue] = useState(profile.goalWeight != null ? String(profile.goalWeight) : "");
+  const [stepGoalValue, setStepGoalValue] = useState(String(settings.stepGoal));
+  const [stepGoalStatus, setStepGoalStatus] = useState<{
+    type: "saved" | "error";
+    message: string;
+  } | null>(null);
   const startWeightConversion = formatBodyweightConversion(startWeightValue);
   const goalWeightConversion = formatBodyweightConversion(goalWeightValue);
+
+  useEffect(() => {
+    setStepGoalValue(String(settings.stepGoal));
+  }, [settings.stepGoal]);
 
   async function handleProfileSave(formData: FormData) {
     setIsSaving(true);
@@ -194,6 +204,27 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     toast.success("All tracker data cleared");
   }
 
+  function handleStepGoalSave() {
+    const next = Number.parseInt(stepGoalValue, 10);
+    if (Number.isNaN(next) || next < 1000 || next > 50000) {
+      setStepGoalStatus({
+        type: "error",
+        message: "Daily step goal must be between 1,000 and 50,000.",
+      });
+      return;
+    }
+
+    updateSettings((current) => ({
+      ...current,
+      stepGoal: next,
+    }));
+    setStepGoalValue(String(next));
+    setStepGoalStatus({
+      type: "saved",
+      message: `Daily goal saved at ${next.toLocaleString()} steps.`,
+    });
+  }
+
   return (
     <div className="page-shell">
       <SectionHeader
@@ -273,23 +304,42 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <Field label="Daily Step Goal" htmlFor="stepGoal">
-              <Input
-                id="stepGoal"
-                type="number"
-                min="1000"
-                max="50000"
-                value={settings.stepGoal}
-                className="h-12"
-                onChange={(event) => {
-                  const next = Number.parseInt(event.target.value || "0", 10);
-                  updateSettings((current) => ({
-                    ...current,
-                    stepGoal: Number.isNaN(next)
-                      ? current.stepGoal
-                      : Math.min(50000, Math.max(1000, next)),
-                  }));
-                }}
-              />
+              <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <Input
+                  id="stepGoal"
+                  type="number"
+                  min="1000"
+                  max="50000"
+                  inputMode="numeric"
+                  value={stepGoalValue}
+                  className="h-12"
+                  aria-invalid={stepGoalStatus?.type === "error"}
+                  aria-describedby={stepGoalStatus ? "stepGoalStatus" : undefined}
+                  onChange={(event) => {
+                    setStepGoalValue(event.target.value);
+                    setStepGoalStatus(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleStepGoalSave();
+                    }
+                  }}
+                />
+                <Button type="button" variant="outline" onClick={handleStepGoalSave} className="h-12">
+                  Save Goal
+                </Button>
+              </div>
+              {stepGoalStatus ? (
+                <p
+                  id="stepGoalStatus"
+                  role={stepGoalStatus.type === "error" ? "alert" : "status"}
+                  className={`status-note ${stepGoalStatus.type === "error" ? "status-note-error" : "status-note-success"} flex items-start gap-2 px-3 py-2 text-xs`}
+                >
+                  {stepGoalStatus.type === "saved" ? <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : null}
+                  <span>{stepGoalStatus.message}</span>
+                </p>
+              ) : null}
             </Field>
             <Field label="Goal Target Date" htmlFor="goalDate">
               <Input

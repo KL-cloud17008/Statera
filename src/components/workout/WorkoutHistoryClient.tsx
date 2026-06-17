@@ -94,7 +94,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
               </div>
               <div className="grid grid-cols-7 gap-2">
                 {Array.from({ length: calendar[0]?.weekday ?? 0 }).map((_, index) => (
-                  <div key={`pad-${index}`} className="h-18 rounded-[var(--radius-card)] border border-transparent" />
+                  <div key={`pad-${index}`} className="h-[4.5rem] rounded-[var(--radius-card)] border border-transparent" />
                 ))}
                 {calendar.map((day) => {
                   const daySessions = sessionMap.get(day.date) ?? [];
@@ -103,8 +103,9 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                     <button
                       key={day.date}
                       type="button"
+                      aria-pressed={isSelected}
                       onClick={() => setSelectedDate(isSelected ? null : day.date)}
-                      className={`interactive-row flex h-18 flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[color-mix(in_srgb,var(--ember)_45%,var(--primary)_55%)] bg-[color-mix(in_srgb,var(--ember)_12%,var(--cream-paper)_88%)]" : "border-border bg-[color-mix(in_srgb,var(--mist)_64%,var(--bone)_36%)]"}`}
+                      className={`interactive-row flex h-[4.5rem] flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[color-mix(in_srgb,var(--ember)_45%,var(--primary)_55%)] bg-[color-mix(in_srgb,var(--ember)_12%,var(--cream-paper)_88%)]" : "border-border bg-[color-mix(in_srgb,var(--mist)_64%,var(--bone)_36%)]"}`}
                     >
                       <span className="text-sm font-semibold text-foreground data-number">{day.day}</span>
                       <div className="mt-auto flex flex-wrap gap-1">

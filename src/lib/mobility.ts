@@ -1076,6 +1076,44 @@ function breathingFinisher(label = "Breathing/reset finisher"): MobilityBlock {
   });
 }
 
+export const OPTIONAL_LATER_RECOVERY: MobilityBlock = block({
+  id: "optional-later-recovery",
+  title: "Optional later recovery",
+  duration: "8-12 min",
+  purpose:
+    "Use later in the day after a lift if joints feel compressed, calves or hips feel stiff, or breathing needs to settle.",
+  adaptationNote:
+    "Keep this easier than the primer. It should reduce stiffness and downshift the day, not add more training stress.",
+  recoveryIntro: true,
+  exercises: [
+    movement("calfStretch", {
+      id: "later-calf-stretch",
+      dose: "30 sec/side",
+      completionTarget: "Hold one relaxed calf stretch per side without forcing ankle range.",
+      intensity: RECOVERY_INTENSITY,
+    }),
+    movement("hipFlexorMobility", {
+      id: "later-hip-flexor-mobility",
+      dose: "30 sec/side",
+      completionTarget: "Complete one easy hip-flexor position per side with calm breathing.",
+      intensity: RECOVERY_INTENSITY,
+    }),
+    movement("thoracicOpenBooks", {
+      id: "later-open-books",
+      dose: "4-6 reps/side",
+      completionTarget: "Complete 4-6 gentle reps per side without chasing maximum range.",
+      intensity: RECOVERY_INTENSITY,
+    }),
+    movement("childPoseBreathing", {
+      id: "later-supported-breathing",
+      name: "Supported breathing reset",
+      dose: "60-90 sec",
+      completionTarget: "Finish with 60-90 seconds of supported breathing that feels calmer than when you started.",
+      intensity: RECOVERY_INTENSITY,
+    }),
+  ],
+});
+
 const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   1: {
     dayOfWeek: 1,

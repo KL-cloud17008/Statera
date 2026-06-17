@@ -5,6 +5,7 @@ import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { computeStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
+import { cn } from "@/lib/utils";
 
 type WeightStats = {
   currentWeight: number | null;
@@ -23,13 +24,13 @@ type WorkoutSummary = {
 };
 
 const WEEKLY_RHYTHM = [
-  { day: "Mon", label: "Upper A", type: "Lift" },
-  { day: "Tue", label: "Lower A", type: "Lift" },
-  { day: "Wed", label: "Mobility", type: "Recovery" },
-  { day: "Thu", label: "Upper B", type: "Lift" },
-  { day: "Fri", label: "Lower B", type: "Lift" },
-  { day: "Sat", label: "Mobility", type: "Recovery" },
-  { day: "Sun", label: "Complete rest", type: "Off" },
+  { day: "Mon", label: "Upper A", type: "Lift", dayOfWeek: 1 },
+  { day: "Tue", label: "Lower A", type: "Lift", dayOfWeek: 2 },
+  { day: "Wed", label: "Mobility", type: "Recovery", dayOfWeek: 3 },
+  { day: "Thu", label: "Upper B", type: "Lift", dayOfWeek: 4 },
+  { day: "Fri", label: "Lower B", type: "Lift", dayOfWeek: 5 },
+  { day: "Sat", label: "Mobility", type: "Recovery", dayOfWeek: 6 },
+  { day: "Sun", label: "Complete rest", type: "Off", dayOfWeek: 0 },
 ];
 
 const NEXT_BY_DAY = [
@@ -48,12 +49,14 @@ export function DashboardPageClient({
   weightStats,
   workoutSummary,
   timezone,
+  trainingDayOfWeek,
 }: {
   stepsEntries: SerializedStepsEntry[];
   todaySteps: number;
   weightStats: WeightStats;
   workoutSummary: WorkoutSummary;
   timezone?: string;
+  trainingDayOfWeek: number;
 }) {
   const { settings } = useAppSettings();
   const stepStats = computeStepStats(stepsEntries, settings.stepGoal, timezone);
@@ -68,7 +71,7 @@ export function DashboardPageClient({
   const lastWorkoutDate = workoutSummary.lastWorkout
     ? formatShortDate(workoutSummary.lastWorkout.trainingDate)
     : null;
-  const nextProtocol = getNextProtocol();
+  const nextProtocol = getNextProtocol(trainingDayOfWeek);
 
   const TrendIcon =
     weightStats.trend === "down"
@@ -162,13 +165,25 @@ export function DashboardPageClient({
           </div>
 
           <div className="mt-5 divide-y divide-border border-y border-border">
-            {WEEKLY_RHYTHM.map((item) => (
-              <div key={item.day} className="interactive-row grid gap-3 px-2 py-3 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_8rem] sm:items-center">
-                <p className="eyebrow text-[10px]">{item.day}</p>
-                <p className="font-medium text-foreground">{item.label}</p>
-                <p className="text-muted-foreground sm:text-right">{item.type}</p>
-              </div>
-            ))}
+            {WEEKLY_RHYTHM.map((item) => {
+              const isToday = item.dayOfWeek === trainingDayOfWeek;
+              return (
+                <div
+                  key={item.day}
+                  className={cn(
+                    "interactive-row grid gap-3 px-2 py-3 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_8rem] sm:items-center",
+                    isToday && "completed-row -mx-2 rounded-[var(--radius-card)] px-4"
+                  )}
+                >
+                  <p className="eyebrow text-[10px]">{item.day}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-medium text-foreground">{item.label}</p>
+                    {isToday ? <span className="warm-pill rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em]">Today</span> : null}
+                  </div>
+                  <p className="text-muted-foreground sm:text-right">{item.type}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -250,9 +265,8 @@ function getGreeting() {
   return "Good evening";
 }
 
-function getNextProtocol() {
-  const day = new Date().getDay();
-  return NEXT_BY_DAY[day] ?? "Upper A";
+function getNextProtocol(dayOfWeek: number) {
+  return NEXT_BY_DAY[dayOfWeek] ?? "Upper A";
 }
 
 function getTrendCopy(trend: WeightStats["trend"]) {

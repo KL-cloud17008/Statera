@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { startWorkoutSession } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
 // data shape only; do not alter workout payloads
 type Exercise = {
@@ -89,10 +90,11 @@ export function WorkoutDayPreview({
       ) : null}
 
       <div className="command-panel grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <ProtocolMeta label="Primer" value={warmups[0]?.exerciseName ?? "Ramp-up"} note={warmups[0]?.reps ?? "5 min easy"} />
           <ProtocolMeta label="Walk target" value="Easy nasal pace" note="Keep breathing conversational." />
           <ProtocolMeta label="Session rule" value="RPE 6-7" note="Leave 2-4 reps in reserve." />
+          <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 
         <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#f7efe3] text-primary hover:bg-white">

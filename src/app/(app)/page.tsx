@@ -4,6 +4,7 @@ import { getWeightEntries } from "@/actions/weight";
 import { getRecentSessions } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
 import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { computeWeightStats } from "@/lib/weight";
@@ -49,7 +50,9 @@ export default async function DashboardPage() {
     goalWeight: user.goalWeight,
   });
 
-  const startOfWeek = new Date();
+  const trainingDate = getTrainingDate(new Date(), user.timezone);
+  const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
+  const startOfWeek = new Date(trainingDate);
   startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
   startOfWeek.setHours(0, 0, 0, 0);
   const weeklySessions = recentSessions.filter((session) => session.trainingDate >= startOfWeek);
@@ -80,6 +83,7 @@ export default async function DashboardPage() {
         lastWorkout,
       }}
       timezone={user.timezone}
+      trainingDayOfWeek={trainingDayOfWeek}
     />
   );
 }

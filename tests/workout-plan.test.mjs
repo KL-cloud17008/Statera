@@ -10,12 +10,14 @@ const settingsSource = readFileSync("src/components/settings/SettingsPageClient.
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 const units = loadTypescriptModule("src/lib/units.ts");
+const appSettings = loadTypescriptModule("src/lib/app-settings.ts");
 const mobility = loadTypescriptModule("src/lib/mobility.ts");
 
 const requiredExercises = [
   "Machine Chest Press",
   "Leg Press",
   "Walking Lunges",
+  "Leg Press Calf Press",
   "Hack Squat Machine",
   "Glute Kickback Machine",
   "Back Extension Machine",
@@ -111,6 +113,12 @@ test("bodyweight conversion helpers convert pounds to kilograms", () => {
   assert.equal(Number(units.poundsToKg(310.3).toFixed(2)), 140.75);
 });
 
+test("workout load helpers keep kilograms as the canonical workout unit", () => {
+  assert.equal(units.WORKOUT_LOAD_UNIT, "kg");
+  assert.equal(units.formatWorkoutLoad(42.5), "42.5 kg");
+  assert.equal(units.formatWorkoutVolume(1234.4), "1,234 kg");
+});
+
 test("bodyweight conversion helpers split pounds into stone and remaining pounds", () => {
   const parts = units.poundsToStoneParts(310.3);
   assert.equal(parts.stone, 22);
@@ -124,6 +132,27 @@ test("bodyweight conversion formatting includes lb, kg, and stone", () => {
   );
   assert.equal(units.formatBodyweightConversion(""), "");
   assert.equal(units.formatBodyweightConversion(Number.NaN), "");
+});
+
+test("daily step goal settings accept 8000 and reject unsafe values", () => {
+  assert.equal(
+    appSettings.parseAppSettings(JSON.stringify({ stepGoal: 8000 })).stepGoal,
+    8000
+  );
+  assert.equal(
+    appSettings.parseAppSettings(JSON.stringify({ stepGoal: 999 })).stepGoal,
+    appSettings.DEFAULT_APP_SETTINGS.stepGoal
+  );
+  assert.equal(
+    appSettings.parseAppSettings(JSON.stringify({ stepGoal: 50001 })).stepGoal,
+    appSettings.DEFAULT_APP_SETTINGS.stepGoal
+  );
+});
+
+test("training-day mobility preserves optional later recovery", () => {
+  assert.equal(mobility.OPTIONAL_LATER_RECOVERY.title, "Optional later recovery");
+  assert.equal(mobility.OPTIONAL_LATER_RECOVERY.recoveryIntro, true);
+  assert.ok(mobility.OPTIONAL_LATER_RECOVERY.exercises.length >= 4);
 });
 
 function escapeRegExp(value) {

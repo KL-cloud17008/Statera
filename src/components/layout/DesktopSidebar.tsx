@@ -30,13 +30,14 @@ export function DesktopSidebar() {
           </div>
         </Link>
 
-        <nav className="flex flex-1 items-center justify-center gap-1">
+        <nav aria-label="Primary navigation" className="flex flex-1 items-center justify-center gap-1">
           {NAV_ITEMS.map((item) => {
             const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "group inline-flex h-10 items-center gap-2 rounded-full border px-3.5 text-[0.74rem] font-semibold uppercase tracking-[0.12em] transition-[background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_rgba(191,110,72,0.72),0_0_0_5px_rgba(191,110,72,0.22)]",
                   isActive

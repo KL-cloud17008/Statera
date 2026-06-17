@@ -96,7 +96,7 @@ export function LoginPageClient() {
               <form action={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" placeholder="you@example.com" required autoComplete="email" className="h-12" />
+                  <Input id="email" name="email" type="email" placeholder="you@example.com" required autoComplete="email" autoCapitalize="none" className="h-12" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
@@ -105,14 +105,14 @@ export function LoginPageClient() {
                 </div>
 
                 {error ? (
-                  <div className="flex items-start gap-2 rounded-[var(--radius-card)] border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+                  <div className="status-note status-note-error flex items-start gap-2 p-3 text-sm" role="alert" aria-live="polite">
                     <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                     <p>{error}</p>
                   </div>
                 ) : null}
 
                 {success ? (
-                  <div className="flex items-start gap-2 rounded-[var(--radius-card)] border border-primary/20 bg-primary/8 p-3 text-sm text-foreground">
+                  <div className="status-note status-note-success flex items-start gap-2 p-3 text-sm" role="status" aria-live="polite">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
                     <p>{success}</p>
                   </div>

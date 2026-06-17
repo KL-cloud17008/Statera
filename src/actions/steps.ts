@@ -26,6 +26,21 @@ type ParsedStepsPayload =
     }
   | StepsActionError;
 
+function isValidDateString(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const parsed = parseDate(value);
+  const [year, month, day] = value.split("-").map(Number);
+  return (
+    !Number.isNaN(parsed.getTime()) &&
+    parsed.getFullYear() === year &&
+    parsed.getMonth() === month - 1 &&
+    parsed.getDate() === day
+  );
+}
+
 export async function getStepsEntries(userId: string, days = 180, timezone?: string) {
   const since = parseDate(addDaysToDateString(getTodayDateString(timezone), -(days - 1)));
 
@@ -64,6 +79,10 @@ function parseStepsPayload(formData: FormData): ParsedStepsPayload {
 
   if (!dateStr) {
     return { error: "Date is required" };
+  }
+
+  if (!isValidDateString(dateStr)) {
+    return { error: "Enter a valid date" };
   }
 
   const steps = Number.parseInt(stepsStr, 10);

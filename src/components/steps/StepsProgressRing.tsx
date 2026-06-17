@@ -21,6 +21,10 @@ export function StepsProgressRing({
       className="relative"
       style={{ width: size, height: size }}
       aria-label={`${current.toLocaleString()} of ${goal.toLocaleString()} steps`}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={safeGoal}
+      aria-valuenow={Math.min(current, safeGoal)}
     >
       <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
         <defs>
@@ -34,7 +38,7 @@ export function StepsProgressRing({
           cy="100"
           r={radius}
           className="fill-none"
-          stroke="color-mix(in srgb, var(--stone) 20%, transparent)"
+          stroke="color-mix(in srgb, var(--border) 74%, var(--mist) 26%)"
           strokeWidth="14"
         />
         <circle

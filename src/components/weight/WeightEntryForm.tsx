@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Scale } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,15 +61,23 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
   }
 
   return (
-    <Card>
+    <Card className={editEntry ? "border-primary/35" : ""}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-foreground">
-          {editEntry ? "Edit Entry" : "Log Weight"}
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-primary">
+            <Scale className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="eyebrow">Bodyweight</p>
+            <CardTitle className="text-foreground">
+              {editEntry ? "Edit weigh-in" : "Log a weigh-in"}
+            </CardTitle>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <form ref={formRef} action={handleSubmit} className="space-y-3">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,0.9fr)_auto] xl:items-start">
             <div className="space-y-1.5">
               <Label htmlFor="weight-date" className="text-xs">Date</Label>
               <Input id="weight-date" name="date" type="date" defaultValue={editEntry?.date ?? today} required className="h-10" />
@@ -93,7 +101,7 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
                 className="h-10"
               />
               {bodyweightConversion ? (
-                <p className="text-xs text-muted-foreground">{bodyweightConversion}</p>
+                <p className="status-note mt-2 px-3 py-2 text-xs">{bodyweightConversion}</p>
               ) : null}
             </div>
             <div className="space-y-1.5">
