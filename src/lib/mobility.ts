@@ -5,6 +5,10 @@ export type MobilityIntensity = {
   goal: string;
 };
 
+export type RecoveryMode = "standard" | "footFlare";
+
+export type RecoveryIntroVariant = "standard" | "footFlare";
+
 export type MobilityExercise = {
   id: string;
   name: string;
@@ -27,6 +31,7 @@ export type MobilityBlock = {
   adaptationNote?: string;
   previousDayReason?: string;
   recoveryIntro?: boolean;
+  recoveryIntroVariant?: RecoveryIntroVariant;
   exercises: MobilityExercise[];
 };
 
@@ -78,13 +83,123 @@ const BREATHING_INTENSITY: MobilityIntensity = {
   goal: "Goal: finish calmer than you started",
 };
 
+const FOOT_FLARE_RECOVERY_INTENSITY: MobilityIntensity = {
+  effort: "Effort: 1-3/10",
+  pain: "Pain: 0-2/10 maximum",
+  breathing: "Breathing: calm enough to breathe through the nose",
+  goal: "Goal: feet feel less guarded; body feels calmer; no extra fatigue",
+};
+
 const RECOVERY_INTRO =
   "This is a low-intensity recovery session, not a workout. The goal is to make your ankles, hips, back, and breathing feel better without adding fatigue.";
 
 const RECOVERY_STOP_NOTE =
-  "Stop or scale down if you feel sharp pain, numbness, tingling, joint pinching, dizziness, or pain that increases as you continue.";
+  "Stop or scale down if you feel sharp pain, numbness, tingling, joint pinching, dizziness, swelling, warmth, or pain that increases as you continue. If foot pain does not settle or keeps returning, get assessed by a clinician.";
+
+const FOOT_FLARE_RECOVERY_INTRO =
+  "Your feet are telling you the walking load jumped faster than the tissue tolerance. Today's recovery keeps the work easy: restore the soles, arches, shins, calves, and ankles first, then downshift the rest of the body.";
+
+const FOOT_FLARE_RECOVERY_NOT_WORKOUT =
+  "This is not a workout. Do not chase pain or deep stretching. Finish calmer and less guarded.";
+
+const FOOT_FLARE_RECOVERY_RULES = [
+  FOOT_FLARE_RECOVERY_INTENSITY.effort,
+  FOOT_FLARE_RECOVERY_INTENSITY.pain,
+  FOOT_FLARE_RECOVERY_INTENSITY.breathing,
+  FOOT_FLARE_RECOVERY_INTENSITY.goal,
+] as const;
 
 const MOVEMENT_CATALOG = {
+  footCheckIn: {
+    id: "foot-check-in",
+    name: "Foot check-in",
+    dose: "30-45 sec/foot",
+    cues: "Map the heel, big toe, little toe, and midfoot without forcing pressure.",
+    goal: "Notice where the sole is irritated without forcing movement.",
+    howTo: [
+      "Sit down.",
+      "Place both feet on the floor.",
+      "Slowly shift pressure between heel, big toe, little toe, and midfoot.",
+      "Notice whether the arch, heel, or forefoot feels irritated.",
+      "Keep pressure gentle.",
+    ],
+    beginnerPointers: [
+      "This is assessment, not stretching.",
+      "Stay below pain.",
+      "If one foot is more irritated, reduce pressure on that side.",
+    ],
+    commonMistakes: [
+      "Pressing hard to test the sore spot.",
+      "Holding the breath while checking the foot.",
+      "Trying to stretch the arch during the check-in.",
+    ],
+    scaleDown: [
+      "Keep both feet relaxed and only breathe slowly.",
+      "Use less bodyweight through the irritated foot.",
+    ],
+    completionTarget: "Spend 30-45 seconds per foot with gentle pressure only.",
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+  },
+  plantarSoleStretch: {
+    id: "gentle-plantar-fascia-sole-stretch",
+    name: "Gentle plantar fascia / sole stretch",
+    dose: "20-30 sec/side, 1-2 rounds",
+    cues: "Lightly pull the toes back only until the sole begins to stretch.",
+    goal: "Gently lengthen the sole and arch without yanking on irritated tissue.",
+    howTo: [
+      "Sit on a chair.",
+      "Cross one ankle over the opposite knee if comfortable.",
+      "Gently pull the toes back toward the shin until the sole lightly stretches.",
+      "Hold 20-30 seconds.",
+      "Switch sides.",
+    ],
+    beginnerPointers: [
+      "Mild stretch only.",
+      "Do not force the toes back.",
+      "No sharp heel or arch pain.",
+    ],
+    commonMistakes: [
+      "Pulling the toes back hard.",
+      "Digging into the heel while stretching.",
+      "Holding through sharp arch pain.",
+    ],
+    scaleDown: [
+      "Keep the foot on the floor and only lift the toes slightly.",
+      "Use one short 10-15 second hold per side.",
+    ],
+    completionTarget: "Hold 20-30 seconds per side for 1-2 easy rounds.",
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+  },
+  softFootRoll: {
+    id: "soft-foot-roll",
+    name: "Soft foot roll",
+    dose: "60-90 sec/foot",
+    cues: "Use light pressure and roll slowly from heel to forefoot.",
+    goal: "Calm the sole and reduce guarding.",
+    howTo: [
+      "Sit down.",
+      "Place a soft ball, massage ball, or rolled towel under the foot.",
+      "Roll slowly from heel to forefoot.",
+      "Pause on tight areas but do not dig hard.",
+      "Switch feet.",
+    ],
+    beginnerPointers: [
+      "Use light pressure.",
+      "Avoid aggressive rolling during a flare.",
+      "This should feel relieving, not painful.",
+    ],
+    commonMistakes: [
+      "Grinding hard into the sore area.",
+      "Using a hard object when the sole is irritated.",
+      "Rolling quickly and tensing the toes.",
+    ],
+    scaleDown: [
+      "Use a rolled towel instead of a ball.",
+      "Shorten the roll to 30 seconds per foot.",
+    ],
+    completionTarget: "Roll 60-90 seconds per foot with pressure that stays easy.",
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+  },
   toeSpreads: {
     id: "toe-spreads-short-foot",
     name: "Toe spreads / short-foot drill",
@@ -215,6 +330,39 @@ const MOVEMENT_CATALOG = {
     ],
     completionTarget: "Hold 30 seconds per side, or do 2 shorter 15-second holds per side.",
     intensity: DEFAULT_INTENSITY,
+  },
+  calfStretchBent: {
+    id: "calf-stretch-knee-bent",
+    name: "Calf stretch - knee bent",
+    dose: "30 sec/side",
+    cues: "Slightly bend the back knee while the heel stays grounded.",
+    goal: "Stretch the deeper calf and soleus area that often affects ankle and foot loading.",
+    howTo: [
+      "Face a wall.",
+      "Step one foot back.",
+      "Keep the back heel on the floor.",
+      "Slightly bend the back knee.",
+      "Hold a mild stretch.",
+      "Switch sides.",
+    ],
+    beginnerPointers: [
+      "Keep the heel grounded.",
+      "Do not force range.",
+      "Stop if sole pain increases.",
+    ],
+    commonMistakes: [
+      "Letting the heel lift.",
+      "Turning the foot outward.",
+      "Dropping into a deep stretch.",
+      "Pushing through arch or heel pain.",
+    ],
+    scaleDown: [
+      "Move the back foot closer.",
+      "Do seated ankle pumps instead.",
+      "Hold 10-15 seconds per side.",
+    ],
+    completionTarget: "Hold 30 seconds per side with the heel grounded and the stretch mild.",
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
   },
   tibialisRaises: {
     id: "optional-tibialis-raises",
@@ -482,6 +630,38 @@ const MOVEMENT_CATALOG = {
     ],
     completionTarget: "Complete 6-8 slow total switches.",
     intensity: DEFAULT_INTENSITY,
+  },
+  hipRotations90Seated: {
+    id: "90-90-or-seated-hip-rotations",
+    name: "90/90 or seated hip rotations",
+    dose: "6-8 slow reps",
+    cues: "Choose floor or chair version and rotate without loading the feet.",
+    goal: "Restore hip rotation without loading the feet.",
+    howTo: [
+      "Use 90/90 on the floor if comfortable.",
+      "Otherwise sit on a chair.",
+      "Rotate the knees side to side gently.",
+      "Move slowly.",
+      "Keep the range easy.",
+    ],
+    beginnerPointers: [
+      "Hands on the floor or chair are encouraged.",
+      "Do not force the knees down.",
+      "Stay with the chair version if the floor feels like work.",
+    ],
+    commonMistakes: [
+      "Rushing side to side.",
+      "Pushing into hip pinching.",
+      "Pressing the feet hard into the floor.",
+      "Holding the breath.",
+    ],
+    scaleDown: [
+      "Use the chair version.",
+      "Move through a smaller range.",
+      "Do 3-4 reps only.",
+    ],
+    completionTarget: "Complete 6-8 slow reps using the floor or chair version.",
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
   },
   hipFlexorStretch: {
     id: "half-kneeling-hip-flexor-stretch",
@@ -751,6 +931,36 @@ const MOVEMENT_CATALOG = {
     completionTarget: "Complete 60-90 seconds of easy breathing.",
     intensity: BREATHING_INTENSITY,
   },
+  supportedBreathingReset: {
+    id: "supported-breathing-reset",
+    name: "Supported breathing reset",
+    dose: "60-90 sec",
+    cues: "Use slow nasal inhales, longer exhales, and relaxed feet.",
+    goal: "Downshift the nervous system and reduce guarding.",
+    howTo: [
+      "Sit or lie comfortably.",
+      "Inhale through the nose.",
+      "Exhale slowly.",
+      "Let shoulders and feet relax.",
+      "Keep breathing easy.",
+    ],
+    beginnerPointers: [
+      "Use a long exhale.",
+      "Do not force bracing.",
+      "Finish calmer.",
+    ],
+    commonMistakes: [
+      "Trying to take huge breaths.",
+      "Clenching the feet during the exhale.",
+      "Holding the breath after inhaling.",
+    ],
+    scaleDown: [
+      "Sit with feet supported on the floor.",
+      "Breathe normally and simply make the exhale a little slower.",
+    ],
+    completionTarget: "Breathe calmly for 60-90 seconds and finish less guarded.",
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+  },
   latStretch: {
     id: "lat-stretch",
     name: "Lat stretch",
@@ -1018,7 +1228,7 @@ const MOVEMENT_CATALOG = {
 } satisfies Record<string, MobilityExercise>;
 
 type MovementKey = keyof typeof MOVEMENT_CATALOG;
-type MovementOverride = Partial<Pick<MobilityExercise, "id" | "name" | "dose" | "cues" | "completionTarget" | "intensity">>;
+type MovementOverride = Partial<MobilityExercise>;
 
 function movement(key: MovementKey, override: MovementOverride = {}): MobilityExercise {
   return {
@@ -1053,6 +1263,7 @@ function block({
   adaptationNote,
   previousDayReason,
   recoveryIntro = false,
+  recoveryIntroVariant,
 }: Omit<MobilityBlock, "exercises"> & { exercises: MobilityExercise[] }): MobilityBlock {
   return {
     id,
@@ -1062,6 +1273,7 @@ function block({
     adaptationNote,
     previousDayReason,
     recoveryIntro,
+    recoveryIntroVariant,
     exercises,
   };
 }
@@ -1075,6 +1287,203 @@ function breathingFinisher(label = "Breathing/reset finisher"): MobilityBlock {
     exercises: [movement("seatedBracingBreaths")],
   });
 }
+
+function footFlareMovement(
+  key: MovementKey,
+  id: string,
+  override: MovementOverride = {}
+): MobilityExercise {
+  return movement(key, {
+    id,
+    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+    ...override,
+  });
+}
+
+function footFlareFootBlock(idPrefix = "foot-flare"): MobilityBlock {
+  return block({
+    id: `${idPrefix}-foot-sole-downshift`,
+    title: "Foot and sole downshift",
+    duration: "4-6 min",
+    purpose: "Start with the soles and arches so recovery reduces guarding before anything else.",
+    adaptationNote:
+      "Use light pressure only. Do not push through pain, dig into the sole, or chase a deep stretch.",
+    recoveryIntro: true,
+    recoveryIntroVariant: "footFlare",
+    exercises: [
+      footFlareMovement("footCheckIn", `${idPrefix}-foot-check-in`),
+      footFlareMovement("plantarSoleStretch", `${idPrefix}-sole-stretch`),
+      footFlareMovement("softFootRoll", `${idPrefix}-soft-foot-roll`),
+      footFlareMovement("toeSpreads", `${idPrefix}-toe-spreads-short-foot`, {
+        dose: "5-8 gentle reps/foot",
+        completionTarget: "Complete 5-8 gentle reps per foot with full relaxation between reps.",
+      }),
+    ],
+  });
+}
+
+function footFlareLowerLegBlock(idPrefix = "foot-flare"): MobilityBlock {
+  return block({
+    id: `${idPrefix}-shins-calves-ankles`,
+    title: "Shins, calves, ankles",
+    duration: "4-6 min",
+    purpose: "Move the ankle and lower leg without impact so the sole does not take more load.",
+    exercises: [
+      footFlareMovement("anklePumps", `${idPrefix}-seated-ankle-pumps`),
+      footFlareMovement("ankleRocks", `${idPrefix}-wall-ankle-rocks`, {
+        name: "Wall ankle rocks",
+        completionTarget: "Complete 8-10 controlled rocks per side and stop before foot pain.",
+      }),
+      footFlareMovement("calfStretch", `${idPrefix}-calf-stretch-knee-straight`, {
+        name: "Calf stretch - knee straight",
+        completionTarget: "Hold 30 seconds per side with a mild stretch and no bouncing.",
+      }),
+      footFlareMovement("calfStretchBent", `${idPrefix}-calf-stretch-knee-bent`),
+    ],
+  });
+}
+
+function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): MobilityBlock {
+  if (dayOfWeek === 1) {
+    return block({
+      id: `${idPrefix}-upper-a-downshift`,
+      title: "Chest, lats, upper-back reset",
+      duration: "4-6 min",
+      purpose: "After Upper A, keep the foot work first and finish by easing the chest, lats, ribs, and upper back.",
+      exercises: [
+        footFlareMovement("pecLatOpener", `${idPrefix}-pec-lat-opener`, {
+          dose: "30 sec/side",
+          completionTarget: "Hold 30 easy seconds per side without hanging on the shoulder.",
+        }),
+        footFlareMovement("latStretch", `${idPrefix}-lat-stretch`, {
+          dose: "30 sec/side",
+          completionTarget: "Hold 30 easy seconds per side with the neck relaxed.",
+        }),
+        footFlareMovement("thoracicOpenBooks", `${idPrefix}-thoracic-open-books`, {
+          dose: "4-6 reps/side",
+          completionTarget: "Complete 4-6 gentle reps per side without chasing maximum range.",
+        }),
+        footFlareMovement("supportedBreathingReset", `${idPrefix}-supported-breathing-reset`),
+      ],
+    });
+  }
+
+  if (dayOfWeek === 2) {
+    return block({
+      id: `${idPrefix}-lower-a-downshift`,
+      title: "Hips, adductors, glutes reset",
+      duration: "4-6 min",
+      purpose: "After Lower A, keep the soles calm first and finish with easy hip and inner-thigh mobility.",
+      exercises: [
+        footFlareMovement("hipFlexorMobility", `${idPrefix}-hip-flexor-mobility`, {
+          dose: "30 sec/side",
+          completionTarget: "Complete one easy hip-flexor position per side with calm breathing.",
+        }),
+        footFlareMovement("hipRotations90Seated", `${idPrefix}-hip-rotations`),
+        footFlareMovement("adductorRockBacks", `${idPrefix}-adductor-rock-backs`, {
+          dose: "6-8 reps/side",
+          completionTarget: "Complete 6-8 easy rock-backs per side without forcing depth.",
+        }),
+        footFlareMovement("supportedBreathingReset", `${idPrefix}-supported-breathing-reset`),
+      ],
+    });
+  }
+
+  if (dayOfWeek === 4) {
+    return block({
+      id: `${idPrefix}-upper-b-downshift`,
+      title: "Lats, upper-back, neck reset",
+      duration: "4-6 min",
+      purpose: "After Upper B, keep the lower legs quiet first and finish with lats, shoulder blades, and upper-back rotation.",
+      exercises: [
+        footFlareMovement("latStretch", `${idPrefix}-lat-stretch`, {
+          dose: "30 sec/side",
+          completionTarget: "Hold 30 easy seconds per side without shoulder pinching.",
+        }),
+        footFlareMovement("thoracicOpenBooks", `${idPrefix}-thoracic-open-books`, {
+          dose: "4-6 reps/side",
+          completionTarget: "Complete 4-6 gentle reps per side with an easy exhale.",
+        }),
+        footFlareMovement("scapularRetractionDepression", `${idPrefix}-scapular-reset`, {
+          dose: "6-8 easy reps",
+          completionTarget: "Complete 6-8 easy reps while the neck stays quiet.",
+        }),
+        footFlareMovement("supportedBreathingReset", `${idPrefix}-supported-breathing-reset`),
+      ],
+    });
+  }
+
+  if (dayOfWeek === 5) {
+    return block({
+      id: `${idPrefix}-lower-b-downshift`,
+      title: "Hamstrings, glutes, low-back reset",
+      duration: "4-6 min",
+      purpose: "After Lower B, keep the soles quiet first and finish with posterior-chain and low-back downshifting.",
+      exercises: [
+        footFlareMovement("hamstringFloss", `${idPrefix}-hamstring-floss`, {
+          dose: "6-8 reps/side or 30 sec/side",
+          completionTarget: "Complete 6-8 gentle reps per side or one mild 30-second hold.",
+        }),
+        footFlareMovement("hipRotations90Seated", `${idPrefix}-hip-rotations`),
+        footFlareMovement("catCow", `${idPrefix}-cat-cow`, {
+          dose: "6 slow reps",
+          completionTarget: "Complete 6 slow reps with steady breathing.",
+        }),
+        footFlareMovement("supportedBreathingReset", `${idPrefix}-supported-breathing-reset`),
+      ],
+    });
+  }
+
+  return block({
+    id: `${idPrefix}-full-body-downshift`,
+    title: "Full-body downshift",
+    duration: "4-6 min",
+    purpose: "After the foot and lower-leg work, restore easy hips, ribs, and breathing without loading the feet.",
+    exercises: [
+      footFlareMovement("hipFlexorMobility", `${idPrefix}-hip-flexor-mobility`, {
+        dose: "30 sec/side",
+        completionTarget: "Complete one easy hip-flexor position per side with calm breathing.",
+      }),
+      footFlareMovement("hipRotations90Seated", `${idPrefix}-hip-rotations`),
+      footFlareMovement("thoracicOpenBooks", `${idPrefix}-thoracic-open-books`, {
+        dose: "4-6 reps/side",
+        completionTarget: "Complete 4-6 gentle reps per side without chasing maximum range.",
+        scaleDown: [
+          "Use a standing wall version.",
+          "Open only halfway.",
+          "Do seated thoracic rotations if floor work is uncomfortable.",
+        ],
+      }),
+      footFlareMovement("supportedBreathingReset", `${idPrefix}-supported-breathing-reset`),
+    ],
+  });
+}
+
+function sundayFootFlareResetBlock(): MobilityBlock {
+  return block({
+    id: "sunday-foot-flare-supported-reset",
+    title: "Supported full-body downshift",
+    duration: "6-10 min",
+    purpose: "Very gentle seated and supported options for a full reset without fatigue.",
+    adaptationNote:
+      "No aggressive stretching today. Keep every position supported and stop before anything feels worked.",
+    exercises: [
+      footFlareMovement("anklePumps", "sunday-foot-flare-ankle-pumps", {
+        dose: "10-15 reps/side",
+        completionTarget: "Complete 10-15 smooth pumps per side with the heel supported.",
+      }),
+      footFlareMovement("seatedHipRotations", "sunday-foot-flare-seated-hip-rotations"),
+      footFlareMovement("seatedSpinalFlexionExtension", "sunday-foot-flare-seated-spine"),
+      footFlareMovement("supportedBreathingReset", "sunday-foot-flare-supported-breathing-reset", {
+        dose: "90 sec",
+        completionTarget: "Breathe calmly for about 90 seconds and finish quieter than you started.",
+      }),
+    ],
+  });
+}
+
+export const OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE =
+  "Optional later recovery - foot flare focus";
 
 export const OPTIONAL_LATER_RECOVERY: MobilityBlock = block({
   id: "optional-later-recovery",
@@ -1113,6 +1522,24 @@ export const OPTIONAL_LATER_RECOVERY: MobilityBlock = block({
     }),
   ],
 });
+
+export function getOptionalLaterRecoveryBlocks(
+  mode: RecoveryMode = "standard",
+  dayOfWeek = 1
+): MobilityBlock[] {
+  if (mode === "footFlare") {
+    const idPrefix = `optional-day-${dayOfWeek}-foot-flare`;
+    return [
+      footFlareFootBlock(idPrefix),
+      footFlareLowerLegBlock(idPrefix),
+      footFlareFullBodyBlock(dayOfWeek, idPrefix),
+    ];
+  }
+
+  return [OPTIONAL_LATER_RECOVERY];
+}
+
+export const OPTIONAL_LATER_RECOVERY_FOOT_FLARE = getOptionalLaterRecoveryBlocks("footFlare", 1);
 
 const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   1: {
@@ -1423,6 +1850,32 @@ export function getMobilityProgram(dayOfWeek: number): MobilityDayProgram {
   return MOBILITY_PROGRAMS[dayOfWeek] ?? MOBILITY_PROGRAMS[0];
 }
 
+export function getRecoverySessionBlocks(
+  dayOfWeek: number,
+  mode: RecoveryMode = "standard"
+): MobilityBlock[] {
+  const program = getMobilityProgram(dayOfWeek);
+
+  if (mode !== "footFlare" || program.logType !== "POST_WORKOUT") {
+    return program.blocks;
+  }
+
+  if (program.dayOfWeek === 0) {
+    return [
+      footFlareFootBlock("sunday-foot-flare"),
+      sundayFootFlareResetBlock(),
+      breathingFinisher("Calm finish"),
+    ];
+  }
+
+  const idPrefix = `day-${program.dayOfWeek}-foot-flare`;
+  return [
+    footFlareFootBlock(idPrefix),
+    footFlareLowerLegBlock(idPrefix),
+    ...program.blocks.filter((block) => block.id !== "daily-lower-leg-base"),
+  ];
+}
+
 export function getAllMobilityPrograms(): MobilityDayProgram[] {
   return Object.values(MOBILITY_PROGRAMS).sort((left, right) => left.dayOfWeek - right.dayOfWeek);
 }
@@ -1432,8 +1885,17 @@ export function getPreWorkoutChecklist(dayOfWeek: number, version: "A" | "B"): M
   return getMobilityProgram(dayOfWeek).blocks;
 }
 
-export function getPostWorkoutChecklist(dayOfWeek: number): MobilityBlock[] {
-  return getMobilityProgram(dayOfWeek).blocks;
+export function getPostWorkoutChecklist(
+  dayOfWeek: number,
+  mode: RecoveryMode = "standard"
+): MobilityBlock[] {
+  return getRecoverySessionBlocks(dayOfWeek, mode);
 }
 
-export { RECOVERY_INTRO, RECOVERY_STOP_NOTE };
+export {
+  FOOT_FLARE_RECOVERY_INTRO,
+  FOOT_FLARE_RECOVERY_NOT_WORKOUT,
+  FOOT_FLARE_RECOVERY_RULES,
+  RECOVERY_INTRO,
+  RECOVERY_STOP_NOTE,
+};

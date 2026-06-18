@@ -7,26 +7,55 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logMobility } from "@/actions/mobility";
 import { MobilityChecklist } from "./MobilityChecklist";
-import { getMobilityProgram, OPTIONAL_LATER_RECOVERY, UNDO_SITTING } from "@/lib/mobility";
+import {
+  getMobilityProgram,
+  getOptionalLaterRecoveryBlocks,
+  getRecoverySessionBlocks,
+  OPTIONAL_LATER_RECOVERY,
+  OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE,
+  UNDO_SITTING,
+  type RecoveryMode,
+} from "@/lib/mobility";
 import { Button } from "@/components/ui/button";
 import { SectionHeader } from "@/components/ui/section-header";
+import { cn } from "@/lib/utils";
 
 export function MobilityPageClient({
   dayOfWeek,
   completedTypes,
+  highStepLoad,
+  recentStepTotal,
 }: {
   dayOfWeek: number;
   completedTypes: string[];
+  highStepLoad?: boolean;
+  recentStepTotal?: number;
 }) {
   const router = useRouter();
   const [pendingType, setPendingType] = useState<string | null>(null);
+  const [recoveryMode, setRecoveryMode] = useState<RecoveryMode>(
+    highStepLoad ? "footFlare" : "standard"
+  );
   const [isPending, startTransition] = useTransition();
 
   const program = getMobilityProgram(dayOfWeek);
-  const sessionBlocks = program.blocks;
   const showLaterRecovery = program.logType === "PRE_WORKOUT";
   const laterRecoveryCompleted = completedTypes.includes("POST_WORKOUT");
   const undoBlocks = [UNDO_SITTING];
+  const sessionBlocks =
+    program.logType === "POST_WORKOUT"
+      ? getRecoverySessionBlocks(dayOfWeek, recoveryMode)
+      : program.blocks;
+  const laterRecoveryBlocks = getOptionalLaterRecoveryBlocks(recoveryMode, dayOfWeek);
+  const laterRecoveryTitle =
+    recoveryMode === "footFlare"
+      ? OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE
+      : OPTIONAL_LATER_RECOVERY.title;
+  const highStepLoadNote = highStepLoad
+    ? `High step load detected${
+        recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
+      }. Keep today's recovery easy and foot-focused.`
+    : undefined;
 
   const sessionCompleted = completedTypes.includes(program.logType);
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
@@ -80,29 +109,56 @@ export function MobilityPageClient({
 
         <RoutineSection
           title={program.sessionTitle}
-          summary={program.adaptationNote}
+          summary={
+            program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
+              ? "Foot flare focus puts the soles, arches, shins, calves, and ankles first, then continues into the rest of the recovery session."
+              : program.adaptationNote
+          }
           completed={sessionCompleted}
           isPending={isPending}
           isCurrentAction={pendingType === program.logType}
           actionLabel={program.logType === "PRE_WORKOUT" ? "Mark primer complete" : "Mark recovery complete"}
-          onLog={() => handleLogCompletion(program.logType)}
+          onLog={() =>
+            handleLogCompletion(
+              program.logType,
+              program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
+                ? `${program.sessionTitle} - foot flare focus`
+                : program.sessionTitle
+            )
+          }
+          headerAside={
+            program.logType === "POST_WORKOUT" ? (
+              <RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />
+            ) : undefined
+          }
           meta={program.completionSummary}
+          contextNote={program.logType === "POST_WORKOUT" ? highStepLoadNote : undefined}
         >
           <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
         </RoutineSection>
 
         {showLaterRecovery ? (
           <RoutineSection
-            title="Optional later recovery"
-            summary="Use this after training or before bed if the lift leaves hips, calves, shoulders, or breathing feeling guarded."
+            title={laterRecoveryTitle}
+            summary={
+              recoveryMode === "footFlare"
+                ? "Use later today, not immediately after training. Prioritize the soles, arches, shins, calves, and ankles before full-body mobility."
+                : "Use this after training or before bed if the lift leaves hips, calves, shoulders, or breathing feeling guarded."
+            }
             completed={laterRecoveryCompleted}
             isPending={isPending}
             isCurrentAction={pendingType === "POST_WORKOUT"}
             actionLabel="Mark recovery complete"
-            onLog={() => handleLogCompletion("POST_WORKOUT", OPTIONAL_LATER_RECOVERY.title)}
-            meta="Separate from the primer. Keep effort low and finish calmer."
+            onLog={() => handleLogCompletion("POST_WORKOUT", laterRecoveryTitle)}
+            headerAside={<RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />}
+            meta={
+              recoveryMode === "footFlare"
+                ? "Duration 12-18 minutes. Effort 1-3/10. Pain 0-2/10 maximum. Reduce stiffness without creating fatigue."
+                : "Separate from the primer. Keep effort low and finish calmer."
+            }
+            contextNote={highStepLoadNote}
           >
-            <MobilityChecklist blocks={[OPTIONAL_LATER_RECOVERY]} title="Later recovery" />
+            <MobilityChecklist blocks={laterRecoveryBlocks} title="Later recovery" />
           </RoutineSection>
         ) : null}
 
@@ -152,6 +208,7 @@ function RoutineSection({
   children,
   headerAside,
   meta,
+  contextNote,
 }: {
   title: string;
   summary: string;
@@ -162,7 +219,8 @@ function RoutineSection({
   onLog: () => void;
   children: ReactNode;
   headerAside?: ReactNode;
-  meta?: string;
+  meta?: ReactNode;
+  contextNote?: string;
 }) {
   return (
     <section className="border-t border-border pt-9 first:border-t-0 first:pt-0">
@@ -172,6 +230,11 @@ function RoutineSection({
           <h2 className="text-3xl">{title}</h2>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
           {meta ? <p className="text-sm text-muted-foreground">{meta}</p> : null}
+          {contextNote ? (
+            <p className="status-note inline-flex max-w-3xl px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
+              {contextNote}
+            </p>
+          ) : null}
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
@@ -196,5 +259,59 @@ function RoutineSection({
 
       <div className="mt-7">{children}</div>
     </section>
+  );
+}
+
+function RecoveryModeControl({
+  value,
+  onChange,
+}: {
+  value: RecoveryMode;
+  onChange: (mode: RecoveryMode) => void;
+}) {
+  const options: Array<{ value: RecoveryMode; label: string; note: string }> = [
+    {
+      value: "standard",
+      label: "Standard",
+      note: "General easy mobility",
+    },
+    {
+      value: "footFlare",
+      label: "Foot flare focus",
+      note: "Feet and lower legs first",
+    },
+  ];
+
+  return (
+    <div className="warm-row w-full min-w-0 rounded-[var(--radius-card)] p-3 sm:w-auto sm:min-w-[21rem]">
+      <p className="eyebrow text-[10px]">Recovery mode</p>
+      <div
+        className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-border/80 bg-[color-mix(in_srgb,var(--bone)_60%,var(--cream-paper)_40%)] p-1"
+        aria-label="Recovery mode"
+      >
+        {options.map((option) => {
+          const isActive = value === option.value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => onChange(option.value)}
+              className={cn(
+                "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-[rgba(255,246,236,0.12)_0_1px_0_inset]"
+                  : "text-muted-foreground hover:bg-[color-mix(in_srgb,var(--cream-paper)_72%,transparent)] hover:text-foreground"
+              )}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+        {options.find((option) => option.value === value)?.note}
+      </p>
+    </div>
   );
 }

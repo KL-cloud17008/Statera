@@ -155,6 +155,47 @@ test("training-day mobility preserves optional later recovery", () => {
   assert.ok(mobility.OPTIONAL_LATER_RECOVERY.exercises.length >= 4);
 });
 
+test("mobility optional later recovery supports standard and foot flare modes", () => {
+  const standardBlocks = mobility.getOptionalLaterRecoveryBlocks("standard", 1);
+  const footFlareBlocks = mobility.getOptionalLaterRecoveryBlocks("footFlare", 1);
+
+  assert.equal(standardBlocks.length, 1);
+  assert.equal(standardBlocks[0].title, "Optional later recovery");
+  assert.equal(mobility.OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE, "Optional later recovery - foot flare focus");
+  assert.ok(footFlareBlocks.length >= 3);
+  assert.equal(footFlareBlocks[0].recoveryIntroVariant, "footFlare");
+});
+
+test("foot flare focus includes foot, sole, shin, calf, and ankle recovery items", () => {
+  const exerciseNames = mobility
+    .getOptionalLaterRecoveryBlocks("footFlare", 2)
+    .flatMap((block) => block.exercises)
+    .map((exercise) => exercise.name);
+
+  for (const expected of [
+    "Foot check-in",
+    "Gentle plantar fascia / sole stretch",
+    "Soft foot roll",
+    "Toe spreads / short-foot drill",
+    "Seated ankle pumps",
+    "Wall ankle rocks",
+    "Calf stretch - knee straight",
+    "Calf stretch - knee bent",
+  ]) {
+    assert.ok(exerciseNames.includes(expected), `${expected} should be in foot flare recovery`);
+  }
+});
+
+test("rest-day foot flare recovery puts foot and lower-leg work first", () => {
+  const wednesdayBlocks = mobility.getRecoverySessionBlocks(3, "footFlare");
+  const sundayBlocks = mobility.getRecoverySessionBlocks(0, "footFlare");
+
+  assert.equal(wednesdayBlocks[0].title, "Foot and sole downshift");
+  assert.equal(wednesdayBlocks[1].title, "Shins, calves, ankles");
+  assert.equal(sundayBlocks[0].title, "Foot and sole downshift");
+  assert.equal(sundayBlocks[1].title, "Supported full-body downshift");
+});
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

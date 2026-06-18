@@ -5,10 +5,14 @@ import { Check, ChevronDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import {
+  FOOT_FLARE_RECOVERY_INTRO,
+  FOOT_FLARE_RECOVERY_NOT_WORKOUT,
+  FOOT_FLARE_RECOVERY_RULES,
   RECOVERY_INTRO,
   RECOVERY_STOP_NOTE,
   type MobilityBlock,
   type MobilityExercise,
+  type RecoveryIntroVariant,
 } from "@/lib/mobility";
 import { cn } from "@/lib/utils";
 
@@ -87,7 +91,9 @@ export function MobilityChecklist({
             </div>
 
             <div className="space-y-4">
-              {block.recoveryIntro ? <RecoveryIntro /> : null}
+              {block.recoveryIntro ? (
+                <RecoveryIntro variant={block.recoveryIntroVariant ?? "standard"} />
+              ) : null}
               {block.previousDayReason || block.adaptationNote ? (
                 <BlockContext block={block} />
               ) : null}
@@ -179,21 +185,36 @@ export function MobilityChecklist({
 }
 
 function RecoveryIntro({
-}: Record<string, never>) {
+  variant,
+}: {
+  variant: RecoveryIntroVariant;
+}) {
+  const isFootFlare = variant === "footFlare";
+  const rules = isFootFlare
+    ? FOOT_FLARE_RECOVERY_RULES
+    : [
+        "Effort: 2-4/10",
+        "Pain: 0-2/10 maximum",
+        "Breathing: calm enough to breathe through the nose",
+        "Goal: finish looser, warmer, and calmer - not exhausted",
+      ];
+
   return (
     <div className="warm-row overflow-hidden rounded-[var(--radius-card)]">
       <div className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.72fr)]">
         <div>
           <p className="eyebrow text-[10px]">Recovery intensity</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{RECOVERY_INTRO}</p>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            {isFootFlare ? FOOT_FLARE_RECOVERY_INTRO : RECOVERY_INTRO}
+          </p>
+          {isFootFlare ? (
+            <p className="mt-3 text-sm font-semibold leading-relaxed text-foreground">
+              {FOOT_FLARE_RECOVERY_NOT_WORKOUT}
+            </p>
+          ) : null}
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-          {[
-            "Effort: 2-4/10",
-            "Pain: 0-2/10 maximum",
-            "Breathing: calm enough to breathe through the nose",
-            "Goal: finish looser, warmer, and calmer - not exhausted",
-          ].map((rule) => (
+          {rules.map((rule) => (
             <p
               key={rule}
               className="rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--cream-paper)_58%,transparent)] px-3 py-2 text-xs font-semibold text-foreground"
