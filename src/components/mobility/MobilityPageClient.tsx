@@ -142,8 +142,8 @@ export function MobilityPageClient({
             title={laterRecoveryTitle}
             summary={
               recoveryMode === "footFlare"
-                ? "Use later today, not immediately after training. Prioritize the soles, arches, shins, calves, and ankles before full-body mobility."
-                : "Use this after training or before bed if the lift leaves hips, calves, shoulders, or breathing feeling guarded."
+                ? "Use later today after walking home, food, shower, or before bed. Prioritize the soles, arches, shins, calves, and ankles before full-body mobility."
+                : "Use later after walking home, food, shower, or before bed if the lift leaves hips, calves, shoulders, or breathing feeling guarded."
             }
             completed={laterRecoveryCompleted}
             isPending={isPending}

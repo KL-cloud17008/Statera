@@ -138,7 +138,7 @@ const MOVEMENT_CATALOG = {
       "Use less bodyweight through the irritated foot.",
     ],
     completionTarget: "Spend 30-45 seconds per foot with gentle pressure only.",
-    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+    intensity: DEFAULT_INTENSITY,
   },
   plantarSoleStretch: {
     id: "gentle-plantar-fascia-sole-stretch",
@@ -203,9 +203,9 @@ const MOVEMENT_CATALOG = {
   toeSpreads: {
     id: "toe-spreads-short-foot",
     name: "Toe spreads / short-foot drill",
-    dose: "60-90 sec",
-    cues: "Spread the toes, then gently lift the arch without clawing the floor.",
-    goal: "Wake up the arch of the foot and improve foot control.",
+    dose: "45-60 sec/foot",
+    cues: "Wake up the arches and foot control without clawing the toes.",
+    goal: "Wake up arches and foot control before walking or training.",
     howTo: [
       "Sit or stand barefoot with the whole foot on the floor.",
       "Spread the toes gently without lifting the heel.",
@@ -230,7 +230,7 @@ const MOVEMENT_CATALOG = {
       "Use 1-2 second holds if the foot cramps.",
       "Skip the arch lift and only spread the toes if needed.",
     ],
-    completionTarget: "Complete 6-10 calm arch lifts per foot, or about 60-90 seconds total.",
+    completionTarget: "Work for 45-60 seconds per foot without toe clawing.",
     intensity: DEFAULT_INTENSITY,
   },
   anklePumps: {
@@ -238,7 +238,7 @@ const MOVEMENT_CATALOG = {
     name: "Seated ankle pumps",
     dose: "15-20 reps/side",
     cues: "Move slowly between toes-up and toes-down without rushing.",
-    goal: "Improve ankle circulation and reduce shin and calf stiffness.",
+    goal: "Move the ankles and lower legs before walking or training.",
     howTo: [
       "Sit tall on a chair with one heel on the floor.",
       "Pull the toes toward the shin.",
@@ -260,17 +260,17 @@ const MOVEMENT_CATALOG = {
     ],
     scaleDown: [
       "Do both feet at the same time with a smaller range.",
-      "Prop the heel on a folded towel if the floor position feels awkward.",
+      "Sit farther back on the chair if the heel position feels awkward.",
     ],
     completionTarget: "Complete 15-20 smooth pumps per side.",
     intensity: DEFAULT_INTENSITY,
   },
   ankleRocks: {
-    id: "ankle-rocks",
-    name: "Ankle rocks",
+    id: "wall-ankle-rocks",
+    name: "Wall ankle rocks",
     dose: "8-10 reps/side",
-    cues: "Rock the knee forward while the heel stays heavy and the foot points straight.",
-    goal: "Improve ankle range for walking, leg press, squatting machines, and stairs.",
+    cues: "Heel stays down; knee tracks over the middle toes.",
+    goal: "Improve ankle dorsiflexion for walking, leg press, squatting machines, and stairs.",
     howTo: [
       "Stand facing a wall or hold a sturdy support.",
       "Place one foot a few inches from the wall.",
@@ -299,11 +299,11 @@ const MOVEMENT_CATALOG = {
     intensity: DEFAULT_INTENSITY,
   },
   calfStretch: {
-    id: "calf-stretch",
-    name: "Calf stretch",
-    dose: "30 sec/side",
-    cues: "Keep the back heel down and the back foot pointing straight ahead.",
-    goal: "Reduce calf stiffness and improve ankle comfort.",
+    id: "wall-calf-stretch-knee-straight",
+    name: "Wall calf stretch, knee straight",
+    dose: "20-30 sec/side",
+    cues: "Point the foot straight ahead and keep the back heel down.",
+    goal: "Improve calf length without forcing the ankle.",
     howTo: [
       "Stand facing a wall or sturdy support.",
       "Step one foot behind you.",
@@ -325,18 +325,18 @@ const MOVEMENT_CATALOG = {
     ],
     scaleDown: [
       "Move the back foot closer to reduce the stretch.",
-      "Use a seated towel calf stretch.",
       "Skip the hold and do seated ankle pumps if standing is uncomfortable.",
+      "Hold 10-15 seconds per side.",
     ],
-    completionTarget: "Hold 30 seconds per side, or do 2 shorter 15-second holds per side.",
+    completionTarget: "Hold 20-30 seconds per side with the foot pointing straight ahead.",
     intensity: DEFAULT_INTENSITY,
   },
   calfStretchBent: {
-    id: "calf-stretch-knee-bent",
-    name: "Calf stretch - knee bent",
-    dose: "30 sec/side",
-    cues: "Slightly bend the back knee while the heel stays grounded.",
-    goal: "Stretch the deeper calf and soleus area that often affects ankle and foot loading.",
+    id: "wall-calf-stretch-knee-bent",
+    name: "Wall calf stretch, knee bent",
+    dose: "20-30 sec/side",
+    cues: "Mild stretch only; slightly bend the back knee while the heel stays grounded.",
+    goal: "Open the soleus and Achilles area gently.",
     howTo: [
       "Face a wall.",
       "Step one foot back.",
@@ -361,8 +361,8 @@ const MOVEMENT_CATALOG = {
       "Do seated ankle pumps instead.",
       "Hold 10-15 seconds per side.",
     ],
-    completionTarget: "Hold 30 seconds per side with the heel grounded and the stretch mild.",
-    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+    completionTarget: "Hold 20-30 seconds per side with a mild stretch only.",
+    intensity: DEFAULT_INTENSITY,
   },
   tibialisRaises: {
     id: "optional-tibialis-raises",
@@ -465,6 +465,39 @@ const MOVEMENT_CATALOG = {
     completionTarget: "Complete 8 smooth rotations per side.",
     intensity: DEFAULT_INTENSITY,
   },
+  wallThoracicRotations: {
+    id: "wall-thoracic-rotations",
+    name: "Wall thoracic rotations",
+    dose: "6 reps/side",
+    cues: "Turn through the ribs and upper back while the hips stay quiet.",
+    goal: "Prepare thoracic rotation for pressing, pulling, and easier breathing.",
+    howTo: [
+      "Stand side-on near a wall.",
+      "Place the outside hand lightly on the wall at chest height.",
+      "Keep feet planted and hips mostly forward.",
+      "Rotate the ribcage away from the wall as far as comfortable.",
+      "Exhale, return to the start, and repeat.",
+      "Switch sides after the target reps.",
+    ],
+    beginnerPointers: [
+      "Keep the shoulders down.",
+      "Use a small range if the lower back wants to twist.",
+      "Move slowly enough to breathe through each rep.",
+    ],
+    commonMistakes: [
+      "Shrugging toward the ears.",
+      "Twisting mostly through the low back.",
+      "Forcing the hand farther than the shoulder likes.",
+      "Holding the breath.",
+    ],
+    scaleDown: [
+      "Do the same rotation seated.",
+      "Cross the arms over the chest instead of touching the wall.",
+      "Use 3-4 reps per side.",
+    ],
+    completionTarget: "Complete 6 slow reps per side without shoulder pinch or low-back twist.",
+    intensity: DEFAULT_INTENSITY,
+  },
   bandPullApart: {
     id: "band-pull-aparts-face-pulls",
     name: "Band pull-aparts or light face pulls",
@@ -500,9 +533,9 @@ const MOVEMENT_CATALOG = {
   },
   scapularWallSlides: {
     id: "scapular-wall-slides",
-    name: "Scapular wall slides or scapular circles",
-    dose: "6-8 reps",
-    cues: "Move the shoulder blades without shrugging or arching the back.",
+    name: "Wall slides",
+    dose: "8 reps",
+    cues: "Slide only as high as comfortable without shrugging or arching the back.",
     goal: "Prepare shoulder-blade control for machine pressing, rows, and pulldowns.",
     howTo: [
       "Stand with your back near a wall or sit tall.",
@@ -510,7 +543,6 @@ const MOVEMENT_CATALOG = {
       "Slide forearms upward as far as comfortable.",
       "Let the shoulder blades rotate without shrugging.",
       "Lower with control.",
-      "If wall slides pinch, make slow shoulder-blade circles instead.",
     ],
     beginnerPointers: [
       "The range can be small.",
@@ -524,11 +556,76 @@ const MOVEMENT_CATALOG = {
       "Moving quickly through discomfort.",
     ],
     scaleDown: [
-      "Do scapular circles instead of wall slides.",
       "Sit on a chair and use a smaller arm range.",
       "Keep elbows lower than shoulder height.",
+      "Do 4-6 reps if 8 feels like work.",
     ],
-    completionTarget: "Complete 6-8 slow wall slides or 6-8 shoulder-blade circles each direction.",
+    completionTarget: "Complete 8 slow wall slides without shrugging.",
+    intensity: DEFAULT_INTENSITY,
+  },
+  wallAngelsOrSlides: {
+    id: "wall-angels-or-wall-slides",
+    name: "Wall angels or wall slides",
+    dose: "6-8 reps",
+    cues: "Do not force overhead range; stop before shoulder pinch.",
+    goal: "Prepare shoulder position and upper-back control for rows, pulldowns, and shoulder work.",
+    howTo: [
+      "Stand with your back near a wall or sit tall.",
+      "Keep ribs down and chin gently tucked.",
+      "Set the elbows and forearms near the wall if comfortable.",
+      "Slide the arms upward only through a smooth range.",
+      "Lower with control.",
+      "Use wall slides if full wall angels feel pinchy.",
+    ],
+    beginnerPointers: [
+      "Keep the ribs down.",
+      "Let the range be smaller than you think.",
+      "The neck should stay relaxed.",
+    ],
+    commonMistakes: [
+      "Forcing the hands to touch the wall.",
+      "Arching the low back to reach overhead.",
+      "Shrugging through the movement.",
+      "Pushing into shoulder pinch.",
+    ],
+    scaleDown: [
+      "Use wall slides instead of wall angels.",
+      "Keep elbows below shoulder height.",
+      "Do the drill seated with a small range.",
+    ],
+    completionTarget: "Complete 6-8 easy reps without shoulder pinching.",
+    intensity: DEFAULT_INTENSITY,
+  },
+  scapularCircles: {
+    id: "scapular-circles",
+    name: "Scapular circles",
+    dose: "8 each direction",
+    cues: "Move the shoulder blades in slow circles while the neck stays quiet.",
+    goal: "Prepare scapular control without adding arm fatigue.",
+    howTo: [
+      "Stand or sit tall with arms relaxed.",
+      "Gently move the shoulder blades up, back, down, and forward.",
+      "Make slow circles in one direction.",
+      "Reverse direction after 8 circles.",
+      "Keep the ribs stacked and jaw relaxed.",
+    ],
+    beginnerPointers: [
+      "The circles can be small.",
+      "Keep shoulders away from the ears as much as possible.",
+      "Move the shoulder blades, not the whole torso.",
+    ],
+    commonMistakes: [
+      "Shrugging hard.",
+      "Moving quickly through pinching.",
+      "Arching the back.",
+      "Holding the breath.",
+    ],
+    scaleDown: [
+      "Do one shoulder blade at a time.",
+      "Use smaller circles.",
+      "Do 4 circles each direction.",
+    ],
+    completionTarget: "Complete 8 smooth circles each direction with no neck tension.",
     intensity: DEFAULT_INTENSITY,
   },
   doorwayPecStretch: {
@@ -567,7 +664,7 @@ const MOVEMENT_CATALOG = {
   seatedBracingBreaths: {
     id: "seated-bracing-breaths",
     name: "Seated bracing breaths",
-    dose: "5-6 breaths",
+    dose: "5 slow breaths",
     cues: "Breathe low into the ribs, then make a gentle trunk brace after the exhale.",
     goal: "Practice trunk support without breath-holding.",
     howTo: [
@@ -595,7 +692,7 @@ const MOVEMENT_CATALOG = {
       "Hold the brace for 1 second.",
       "Do normal slow breathing without the brace if it feels confusing.",
     ],
-    completionTarget: "Complete 5-6 controlled breaths.",
+    completionTarget: "Complete 5 slow controlled breaths.",
     intensity: BRACING_INTENSITY,
   },
   ninetyNinetySwitches: {
@@ -614,7 +711,7 @@ const MOVEMENT_CATALOG = {
     ],
     beginnerPointers: [
       "Hands on the floor are encouraged.",
-      "Sit on a cushion if the hips feel stuck.",
+      "Use your hands for support if the hips feel stuck.",
       "Do not force the knees flat.",
     ],
     commonMistakes: [
@@ -624,7 +721,7 @@ const MOVEMENT_CATALOG = {
       "Pushing into hip pinching.",
     ],
     scaleDown: [
-      "Sit on a cushion, yoga block, or low bench.",
+      "Sit on the edge of a chair or low bench.",
       "Keep both hands behind you.",
       "Do seated hip rotations from a chair instead.",
     ],
@@ -665,13 +762,13 @@ const MOVEMENT_CATALOG = {
   },
   hipFlexorStretch: {
     id: "half-kneeling-hip-flexor-stretch",
-    name: "Half-kneeling hip flexor stretch",
-    dose: "30 sec/side",
+    name: "Half-kneeling or standing hip flexor stretch",
+    dose: "20-30 sec/side",
     cues: "Tuck the pelvis slightly, squeeze the back-leg glute, then shift forward.",
     goal: "Open the front of the hips without irritating the lower back.",
     howTo: [
       "Set up in half-kneeling with one knee down and one foot forward.",
-      "Place a pad under the down knee.",
+      "Use the standing version if kneeling on the floor is uncomfortable.",
       "Hold a wall, bench, or chair if balance is hard.",
       "Gently tuck the pelvis under.",
       "Squeeze the glute on the kneeling side.",
@@ -694,7 +791,7 @@ const MOVEMENT_CATALOG = {
       "Hold support with one or both hands.",
       "Use a shorter 15-20 second hold.",
     ],
-    completionTarget: "Hold 30 seconds per side without lower-back pinching.",
+    completionTarget: "Hold 20-30 seconds per side without lower-back pinching.",
     intensity: DEFAULT_INTENSITY,
   },
   adductorRockBacks: {
@@ -713,7 +810,7 @@ const MOVEMENT_CATALOG = {
       "Return forward and repeat before switching sides.",
     ],
     beginnerPointers: [
-      "Use a pad under the knee.",
+      "Use the chair-supported version if the floor position bothers the knee.",
       "Keep the movement slow.",
       "Stop before the back rounds heavily.",
     ],
@@ -733,7 +830,7 @@ const MOVEMENT_CATALOG = {
   },
   gluteBridge: {
     id: "glute-bridge-activation",
-    name: "Glute bridge or machine-friendly glute activation",
+    name: "Bodyweight glute bridge",
     dose: "8-10 easy reps",
     cues: "Squeeze the glutes without arching the lower back.",
     goal: "Wake up the glutes before leg press, hack squat, or posterior-chain work.",
@@ -760,7 +857,7 @@ const MOVEMENT_CATALOG = {
     scaleDown: [
       "Do seated glute squeezes for 5-second holds.",
       "Use a smaller bridge height.",
-      "Place the upper back on a bench if getting to the floor is uncomfortable.",
+      "Use chair-supported sit-to-stand practice if getting to the floor is uncomfortable.",
     ],
     completionTarget: "Complete 8-10 easy reps, or 6 seated glute squeezes per side.",
     intensity: DEFAULT_INTENSITY,
@@ -833,8 +930,8 @@ const MOVEMENT_CATALOG = {
   },
   hamstringFloss: {
     id: "hamstring-floss-seated-stretch",
-    name: "Hamstring floss or seated hamstring stretch",
-    dose: "8 reps/side or 30 sec/side",
+    name: "Hamstring floss, seated or standing",
+    dose: "8 reps/side",
     cues: "Move in and out of a mild hamstring stretch without forcing the knee straight.",
     goal: "Reduce back-of-thigh tension and prepare the posterior chain.",
     howTo: [
@@ -858,10 +955,10 @@ const MOVEMENT_CATALOG = {
     ],
     scaleDown: [
       "Bend the knee more.",
-      "Sit on a cushion.",
+      "Use the standing version with hands on a wall or chair.",
       "Do only ankle pumps with the leg forward if the hamstring stretch feels too intense.",
     ],
-    completionTarget: "Complete 8 gentle floss reps per side or hold 30 seconds per side.",
+    completionTarget: "Complete 8 gentle floss reps per side without aggressive stretching.",
     intensity: DEFAULT_INTENSITY,
   },
   catCow: {
@@ -963,12 +1060,12 @@ const MOVEMENT_CATALOG = {
   },
   latStretch: {
     id: "lat-stretch",
-    name: "Lat stretch",
-    dose: "30 sec/side",
+    name: "Wall lat stretch",
+    dose: "20-30 sec/side",
     cues: "Reach long without hanging on the shoulder or flaring the ribs.",
     goal: "Open the lats for pulldowns, rows, and overhead shoulder positions.",
     howTo: [
-      "Place both hands on a bench, counter, or wall.",
+      "Place both hands on a wall at about chest to shoulder height.",
       "Step back until the arms are long.",
       "Soften the knees.",
       "Shift the hips back.",
@@ -978,7 +1075,7 @@ const MOVEMENT_CATALOG = {
     beginnerPointers: [
       "Keep the neck soft.",
       "Do not force the shoulders overhead.",
-      "Use a higher surface if the back rounds.",
+      "Move the hands lower on the wall if the back rounds.",
     ],
     commonMistakes: [
       "Hanging through the shoulders.",
@@ -987,11 +1084,11 @@ const MOVEMENT_CATALOG = {
       "Pushing into shoulder pinching.",
     ],
     scaleDown: [
-      "Use a wall instead of a bench.",
       "Keep the arms lower.",
       "Hold for 15-20 seconds per side.",
+      "Stand closer to the wall.",
     ],
-    completionTarget: "Hold 30 seconds per side with no shoulder pinching.",
+    completionTarget: "Hold 20-30 seconds per side with no shoulder pinching.",
     intensity: DEFAULT_INTENSITY,
   },
   scapularRetractionDepression: {
@@ -1029,15 +1126,15 @@ const MOVEMENT_CATALOG = {
   },
   hipHingePattern: {
     id: "hip-hinge-patterning",
-    name: "Hip hinge patterning without load",
-    dose: "6-8 reps",
-    cues: "Push the hips back while the spine stays long and the knees stay soft.",
+    name: "Hip hinge patterning against wall",
+    dose: "8 reps",
+    cues: "Push the hips back toward the wall without rounding the lower back.",
     goal: "Prepare the posterior chain for hamstring, glute, and back-extension work.",
     howTo: [
-      "Stand tall with feet about hip-width.",
-      "Place hands on the hips or hold a dowel along the back if available.",
+      "Stand about 6-10 inches in front of a wall with feet about hip-width.",
+      "Place hands on the hips.",
       "Soften the knees.",
-      "Push the hips backward as if closing a car door.",
+      "Push the hips backward until they lightly touch the wall.",
       "Keep the chest long and ribs down.",
       "Return by gently squeezing the glutes.",
     ],
@@ -1053,11 +1150,11 @@ const MOVEMENT_CATALOG = {
       "Holding the breath.",
     ],
     scaleDown: [
-      "Put hands on a countertop for support.",
+      "Put hands on a wall or chair for support.",
       "Use a smaller hip shift.",
       "Practice seated hip hinges from a chair.",
     ],
-    completionTarget: "Complete 6-8 slow reps with the movement coming from the hips.",
+    completionTarget: "Complete 8 slow reps with the movement coming from the hips.",
     intensity: DEFAULT_INTENSITY,
   },
   seatedHipRotations: {
@@ -1241,15 +1338,15 @@ function dailyLowerLegBase(): MobilityBlock {
   return {
     id: "daily-lower-leg-base",
     title: "Daily lower-leg base",
-    duration: "6-8 min",
+    duration: "5-6 min",
     purpose:
-      "Build foot control, improve ankle range, reduce shin and calf stiffness, and support walking and lower-body training.",
+      "Wake up arches and foot control, move the ankles and lower legs, improve ankle dorsiflexion, and gently open the calf, soleus, and Achilles area.",
     exercises: [
       movement("toeSpreads"),
       movement("anklePumps"),
       movement("ankleRocks"),
       movement("calfStretch"),
-      movement("tibialisRaises"),
+      movement("calfStretchBent"),
     ],
   };
 }
@@ -1335,7 +1432,7 @@ function footFlareLowerLegBlock(idPrefix = "foot-flare"): MobilityBlock {
         completionTarget: "Complete 8-10 controlled rocks per side and stop before foot pain.",
       }),
       footFlareMovement("calfStretch", `${idPrefix}-calf-stretch-knee-straight`, {
-        name: "Calf stretch - knee straight",
+        name: "Wall calf stretch, knee straight",
         completionTarget: "Hold 30 seconds per side with a mild stretch and no bouncing.",
       }),
       footFlareMovement("calfStretchBent", `${idPrefix}-calf-stretch-knee-bent`),
@@ -1549,12 +1646,12 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "8-12 min",
     todayPurpose:
-      "Prepare shoulders, upper back, chest, elbows, wrists, and trunk for pressing and pulling.",
+      "Prepare shoulders, thoracic spine, chest, lats, elbows, wrists, and trunk before walking to the gym.",
     previousDayReason:
-      "Sunday was complete rest, so this gently restores general movement before loading the upper body.",
+      "Sunday was complete rest, so this gently restores general movement before the walk and upper-body circuits.",
     adaptationNote:
-      "The work should make the shoulders and upper back feel warm and organized without creating fatigue.",
-    completionSummary: "Done means your shoulders feel warmer, your chest feels less tight, and your breathing is calm.",
+      "Keep shoulders down. Do not shrug. Move slowly. This is preparation, not a workout.",
+    completionSummary: "Done means your shoulders feel mobile, your chest and lats feel less tight, and your breathing is calm.",
     logType: "PRE_WORKOUT",
     focus: [
       { label: "Training match", value: "Press/pull setup", note: "Upper back, chest, scapulae, elbows, wrists, and trunk." },
@@ -1566,14 +1663,14 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
       block({
         id: "monday-upper-a-prep",
         title: "Upper A prep block",
-        duration: "4-5 min",
-        purpose: "Prepare pressing and pulling positions with upper-back control.",
-        adaptationNote: "Keep shoulders down. Do not shrug. Move slowly. The goal is warm shoulders and upper back, not fatigue.",
+        duration: "3-5 min",
+        purpose: "Prepare shoulders, thoracic spine, chest, lats, elbows, wrists, and trunk.",
+        adaptationNote: "Keep shoulders down. Do not shrug. Move slowly. This is preparation, not a workout.",
         exercises: [
-          movement("thoracicOpenBooks"),
-          movement("bandPullApart"),
+          movement("wallThoracicRotations"),
           movement("scapularWallSlides"),
           movement("doorwayPecStretch"),
+          movement("latStretch"),
         ],
       }),
       breathingFinisher(),
@@ -1583,35 +1680,34 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayOfWeek: 2,
     dayName: "Tuesday",
     trainingRole: "Lower A training day",
-    sessionTitle: "Lower A primer + Monday upper reset",
+    sessionTitle: "Lower A primer",
     totalDuration: "8-12 min",
     todayPurpose:
-      "Prepare ankles, knees, hips, hamstrings, glutes, and trunk for leg press and machine lower-body work.",
+      "Prepare feet, ankles, knees, hips, adductors, glutes, and trunk before lower-body circuits.",
     previousDayReason:
-      "Monday upper-body work can leave the chest, lats, and upper back tight, so the session includes a light pec/lat opener.",
+      "Monday upper-body work was separate, so today stays focused on lower-body positions without adding fatigue.",
     adaptationNote:
-      "Lower-body prep stays controlled so the hips and knees feel ready without spending energy before training.",
-    completionSummary: "Done means hips feel easier to position, ankles feel awake, and the upper body feels less compressed.",
+      "Use hands for support. Keep range comfortable. Do not force knees or hips. If floor work is hard, use chair-supported versions where possible.",
+    completionSummary: "Done means hips feel easier to position, ankles feel awake, and the trunk feels steady.",
     logType: "PRE_WORKOUT",
     focus: [
       { label: "Training match", value: "Lower A setup", note: "Ankles, knees, hips, glutes, hamstrings, and trunk." },
-      { label: "Previous day", value: "Upper reset", note: "A light pec/lat opener counters Monday pressing and pulling tightness." },
+      { label: "At home", value: "Primer first", note: "Finish the primer before walking to the gym." },
       { label: "Feel target", value: "Ready joints", note: "Leg press positions should feel smoother, not stretched to the limit." },
     ],
     blocks: [
       dailyLowerLegBase(),
       block({
         id: "tuesday-lower-a-prep",
-        title: "Lower A prep + upper reset",
-        duration: "5-6 min",
-        purpose: "Prepare hips, knees, ankles, and trunk while easing Monday upper-body tightness.",
-        previousDayReason: "Monday upper work can tighten the pecs, lats, and upper back.",
+        title: "Lower A prep block",
+        duration: "3-5 min",
+        purpose: "Prepare feet, ankles, knees, hips, adductors, glutes, and trunk.",
+        adaptationNote: "Use hands for support. Keep range comfortable. Do not force knees or hips. If floor work is hard, use chair-supported versions where possible.",
         exercises: [
           movement("ninetyNinetySwitches"),
           movement("hipFlexorStretch"),
           movement("adductorRockBacks"),
           movement("gluteBridge"),
-          movement("pecLatOpener"),
         ],
       }),
       breathingFinisher(),
@@ -1670,11 +1766,11 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper B primer",
     totalDuration: "8-12 min",
     todayPurpose:
-      "Prepare shoulders, scapulae, thoracic spine, lats, rear delts, and elbows for back and shoulder work.",
+      "Prepare upper back, lats, rear delts, shoulders, scapulae, elbows, and trunk.",
     previousDayReason:
       "Tuesday and Wednesday lower-body work can leave hips and ankles stiff, so the daily lower-leg base keeps them moving without adding fatigue.",
     adaptationNote:
-      "The upper-body work emphasizes scapular control for rows, pulldowns, shoulder work, and rear delts.",
+      "Do not force overhead range. Keep ribs down. Stop before shoulder pinch. The goal is shoulder position and upper-back control.",
     completionSummary: "Done means lats and pecs feel open, shoulder blades feel controllable, and hips/ankles still feel easy.",
     logType: "PRE_WORKOUT",
     focus: [
@@ -1687,14 +1783,15 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
       block({
         id: "thursday-upper-b-prep",
         title: "Upper B prep block",
-        duration: "4-5 min",
-        purpose: "Prepare back, shoulders, and lats for rows, pulldowns, and shoulder work.",
+        duration: "3-5 min",
+        purpose: "Prepare upper back, lats, rear delts, shoulders, scapulae, elbows, and trunk.",
+        adaptationNote: "Do not force overhead range. Keep ribs down. Stop before shoulder pinch. The goal is shoulder position and upper-back control.",
         exercises: [
-          movement("thoracicRotations"),
-          movement("latStretch"),
-          movement("bandPullApart"),
-          movement("scapularRetractionDepression"),
+          movement("wallThoracicRotations"),
+          movement("wallAngelsOrSlides"),
+          movement("scapularCircles"),
           movement("doorwayPecStretch"),
+          movement("latStretch"),
         ],
       }),
       breathingFinisher(),
@@ -1704,36 +1801,35 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayOfWeek: 5,
     dayName: "Friday",
     trainingRole: "Lower B training day",
-    sessionTitle: "Lower B primer + Thursday upper reset",
+    sessionTitle: "Lower B primer",
     totalDuration: "8-12 min",
     todayPurpose:
       "Prepare hips, posterior chain, hamstrings, glutes, calves, ankles, and trunk for lower-body and posterior-chain work.",
     previousDayReason:
-      "Thursday upper-body work can tighten lats, pecs, neck, and upper back, so the primer includes an upper reset.",
+      "Thursday upper-body work was separate, so today stays focused on posterior-chain setup without adding fatigue.",
     adaptationNote:
-      "The hinge and glute work should make the posterior chain feel easier to access before machines, not pre-fatigued.",
+      "Hinge by pushing hips back, not rounding lower back. Keep hamstring work gentle. No aggressive stretching before lifting. If soles are flaring, keep foot pressure light.",
     completionSummary: "Done means the hinge pattern feels clear, hamstrings feel gently awake, and the upper body feels less tight.",
     logType: "PRE_WORKOUT",
     focus: [
       { label: "Training match", value: "Posterior chain", note: "Hips, hamstrings, glutes, calves, ankles, and trunk." },
-      { label: "Previous day", value: "Upper reset", note: "Pec/lat opening counters Thursday rows, pulldowns, and shoulder work." },
+      { label: "At home", value: "Primer first", note: "Finish the primer before walking to the gym." },
       { label: "Feel target", value: "Patterned, not tired", note: "Hinge and glute activation should feel crisp and easy." },
     ],
     blocks: [
       dailyLowerLegBase(),
       block({
         id: "friday-lower-b-prep",
-        title: "Lower B prep + upper reset",
-        duration: "5-6 min",
-        purpose: "Prepare posterior chain, hips, hamstrings, glutes, and trunk while easing Thursday upper tightness.",
-        previousDayReason: "Thursday upper work can leave lats, pecs, neck, and upper back tight.",
+        title: "Lower B prep block",
+        duration: "3-5 min",
+        purpose: "Prepare posterior chain, hips, hamstrings, glutes, calves, ankles, and trunk.",
+        adaptationNote: "Hinge by pushing hips back, not rounding lower back. Keep hamstring work gentle. No aggressive stretching before lifting. If soles are flaring, keep foot pressure light.",
         exercises: [
           movement("hipHingePattern"),
           movement("hamstringFloss"),
           movement("ninetyNinetySwitches"),
           movement("hipFlexorStretch"),
           movement("gluteBridge"),
-          movement("pecLatOpener"),
         ],
       }),
       breathingFinisher(),

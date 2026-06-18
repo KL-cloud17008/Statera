@@ -19,7 +19,7 @@ const WEEK_STRUCTURE = [
 
 export const metadata: Metadata = {
   title: "Workout Plan | Athanor",
-  description: "Review the scheduled training split, exercise order, warm-ups, finishers, and rest guidance.",
+  description: "Review the scheduled training split, exercise order, at-home primers, circuit blocks, and rest guidance.",
 };
 
 export default async function WorkoutPlanPage() {
@@ -36,7 +36,7 @@ export default async function WorkoutPlanPage() {
       <SectionHeader
         eyebrow="Training split"
         title="A weekly protocol for four lift days, two recovery days, and one full rest day."
-        description="The plan is organized as a structured document: day, intent, sequence, exercise details, and programmed rest all stay in one readable rhythm."
+        description="The plan is organized as a structured document: at-home mobility primer, walk to gym, gym ramp-up sets, circuit blocks, and optional later recovery."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -56,7 +56,9 @@ export default async function WorkoutPlanPage() {
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday and Saturday are
-            mobility days. Sunday is complete rest.
+            mobility days. Sunday is complete rest. On lift days, do the mobility primer at home,
+            walk to the gym as the general warm-up, then do 1-2 easy ramp-up sets on the first
+            machine before Block A.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
             <Badge variant="secondary">4 lift days</Badge>
@@ -69,7 +71,9 @@ export default async function WorkoutPlanPage() {
           {WEEK_STRUCTURE.map((day, index) => {
             const plan = "dayOfWeek" in day ? plansByDay.get(day.dayOfWeek) : null;
             const workingCount = plan?.exercises.filter((exercise) => exercise.exerciseType === "WORKING").length ?? 0;
-            const totalSets = plan?.exercises.reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
+            const totalSets = plan?.exercises
+              .filter((exercise) => exercise.exerciseType === "WORKING")
+              .reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
 
             return (
               <section key={day.day} className="py-8 first:pt-0 last:pb-0">
@@ -109,7 +113,7 @@ export default async function WorkoutPlanPage() {
                           <div className="flex flex-wrap items-center gap-2.5">
                             <p className="font-medium text-foreground">{exercise.exerciseName}</p>
                             {exercise.supersetGroup ? <Badge variant="outline">Circuit {exercise.supersetGroup}</Badge> : null}
-                            {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">Warm-up</Badge> : null}
+                            {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">At-home primer</Badge> : null}
                             {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
                           </div>
                           {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p> : null}

@@ -157,7 +157,7 @@ export function ExerciseCard({
 
 function getExerciseLabel(exercise: PlanExercise) {
   if (exercise.exerciseType === "WARMUP") {
-    return "Warm-up";
+    return "At-home primer";
   }
   if (exercise.exerciseType === "FINISHER") {
     return "Finisher";

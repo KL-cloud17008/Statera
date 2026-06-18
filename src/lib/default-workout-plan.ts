@@ -25,10 +25,18 @@ export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Use RPE 6-7 and leave 2-4 reps in reserve on every working set.",
   "Weeks 1-2 may use optional 2-round mode: complete two rounds per block instead of all listed sets.",
   "Rest only after each pair or full circuit, not between paired exercises unless needed for safety.",
+  "Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first machine before the first working circuit.",
 ];
 
 const PLAN_CUE_PREFIX =
   "Beginner machine-supported block: move smoothly, stop 2-4 reps before failure, and use optional 2-round mode in weeks 1-2. ";
+
+const OPTIONAL_LATER_RECOVERY_NOTE =
+  "Optional later recovery does not need to happen immediately after training; it can be done later after walking home, food, shower, or before bed. If feet/soles flare, choose Foot flare focus.";
+
+function gymArrivalCue(firstMachine: string) {
+  return `At the gym: do not add treadmill or bike warm-up. Do 1-2 easy ramp-up sets on ${firstMachine} around RPE 3-5. Ramp-up set 1: very easy x 8-10 reps. Ramp-up set 2: moderate/easy x 5-8 reps if needed. Then begin the first working circuit.`;
+}
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
@@ -36,13 +44,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: "Upper A - Machine Push/Pull Foundation",
     exercises: [
       {
-        exerciseName: "Ramp-Up: Treadmill Walk + Light Face Pull",
+        exerciseName: "At home - Upper A Mobility Primer",
         sets: 1,
-        reps: "5 min walk + 12 light reps",
+        reps: "8-12 min before walking to gym",
         tempo: "easy",
-        restSeconds: 60,
-        targetRPE: "3-4",
-        cues: "Nasal-breathing pace on the treadmill, then use a very light rope face pull to warm the upper back before the circuit blocks.",
+        restSeconds: 0,
+        targetRPE: "2-4",
+        cues: `At home: daily lower-leg base, wall thoracic rotations 6 per side, wall slides 8, doorway pec stretch 20-30 sec per side, wall lat stretch 20-30 sec per side, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Machine Chest Press")} ${OPTIONAL_LATER_RECOVERY_NOTE}`,
         supersetGroup: null,
         exerciseType: "WARMUP",
       },
@@ -130,13 +138,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: "Lower A - Machine Lower Body Foundation",
     exercises: [
       {
-        exerciseName: "Ramp-Up: Recumbent Bike + Leg Press Rehearsal",
+        exerciseName: "At home - Lower A Mobility Primer",
         sets: 1,
-        reps: "5 min bike + 8 light reps",
+        reps: "8-12 min before walking to gym",
         tempo: "easy",
-        restSeconds: 60,
-        targetRPE: "3-4",
-        cues: "Warm the knees and hips gently, then use a very light leg press set to practice foot position and range before the first block.",
+        restSeconds: 0,
+        targetRPE: "2-4",
+        cues: `At home: daily lower-leg base, 90/90 hip switches 6-8 slow reps, half-kneeling or standing hip flexor stretch 20-30 sec per side, adductor rock-backs 6-8 per side, bodyweight glute bridge 8-10 controlled reps, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Leg Press")} ${OPTIONAL_LATER_RECOVERY_NOTE}`,
         supersetGroup: null,
         exerciseType: "WARMUP",
       },
@@ -213,13 +221,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: "Upper B - Machine Back/Shoulder Emphasis",
     exercises: [
       {
-        exerciseName: "Ramp-Up: Arm Bike + Light Pulldown",
+        exerciseName: "At home - Upper B Mobility Primer",
         sets: 1,
-        reps: "5 min arm bike + 10 light reps",
+        reps: "8-12 min before walking to gym",
         tempo: "easy",
-        restSeconds: 60,
-        targetRPE: "3-4",
-        cues: "Keep breathing calm on the arm bike, then use a very light pulldown set to groove shoulder blade motion before the first block.",
+        restSeconds: 0,
+        targetRPE: "2-4",
+        cues: `At home: daily lower-leg base, wall thoracic rotations 6 per side, wall angels or wall slides 6-8, scapular circles 8 each direction, doorway pec stretch 20-30 sec per side, wall lat stretch 20-30 sec per side, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Incline Machine Press")} ${OPTIONAL_LATER_RECOVERY_NOTE}`,
         supersetGroup: null,
         exerciseType: "WARMUP",
       },
@@ -307,13 +315,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: "Lower B - Machine Posterior Chain",
     exercises: [
       {
-        exerciseName: "Ramp-Up: Recumbent Bike + Hamstring Curl Rehearsal",
+        exerciseName: "At home - Lower B Mobility Primer",
         sets: 1,
-        reps: "5 min bike + 10 light reps",
+        reps: "8-12 min before walking to gym",
         tempo: "easy",
-        restSeconds: 60,
-        targetRPE: "3-4",
-        cues: "Warm up with easy cycling, then use a very light hamstring curl set to find a comfortable knee range before the circuit blocks.",
+        restSeconds: 0,
+        targetRPE: "2-4",
+        cues: `At home: daily lower-leg base, hip hinge patterning against wall 8 reps, hamstring floss seated or standing 8 per side, 90/90 hip switches 6-8, half-kneeling or standing hip flexor stretch 20-30 sec per side, bodyweight glute bridge 8-10 reps, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Hack Squat Machine")} ${OPTIONAL_LATER_RECOVERY_NOTE}`,
         supersetGroup: null,
         exerciseType: "WARMUP",
       },
