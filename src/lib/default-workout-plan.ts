@@ -16,7 +16,7 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-machine-circuit-v2";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-machine-circuit-v3";
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Beginner restart block for a 311 lb sedentary male returning to training.",
@@ -35,7 +35,7 @@ const OPTIONAL_LATER_RECOVERY_NOTE =
   "Optional later recovery does not need to happen immediately after training; it can be done later after walking home, food, shower, or before bed. If feet/soles flare, choose Foot flare focus.";
 
 function gymArrivalCue(firstMachine: string) {
-  return `At the gym: do not add treadmill or bike warm-up. Do 1-2 easy ramp-up sets on ${firstMachine} around RPE 3-5. Ramp-up set 1: very easy x 8-10 reps. Ramp-up set 2: moderate/easy x 5-8 reps if needed. Then begin the first working circuit.`;
+  return `Gym arrival ramp-up: on ${firstMachine}, do 1-2 easy ramp-up sets before the first working circuit. Set 1: very easy x 8-10 reps at RPE 3-4. Set 2: easy/moderate x 5-8 reps at RPE 4-5 only if needed. Then begin the first working circuit.`;
 }
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [

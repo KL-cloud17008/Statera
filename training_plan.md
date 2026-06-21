@@ -36,7 +36,7 @@ This is the documentation copy of the canonical training plan used by the app se
 
 At the gym:
 
-- Do not add treadmill or bike warm-up.
+- Do not add any machine-cardio warm-up; walking to the gym already covers the general warm-up.
 - Do 1-2 easy ramp-up sets on the first machine of Block A.
 - Ramp-up sets should feel easy, around RPE 3-5.
 - Then begin the first working circuit.

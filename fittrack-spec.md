@@ -368,7 +368,7 @@ model SessionSet {
   planExerciseId    String?
   exerciseName      String  // denormalized for history queries
   setNumber         Int
-  weightUsed        Float?  // lbs
+  weightUsed        Float?  // kg for current workout sessions
   repsCompleted     Int?
   actualRPE         Int?    // 5-10
   duration          Int?    // seconds (for timed sets)

@@ -64,7 +64,6 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "plank", name: "Plank", muscleGroup: "Core", defaultSets: 3, defaultReps: "30-60 sec", defaultRestSeconds: 45, source: "builtin" },
   { id: "hanging-knee-raise", name: "Hanging Knee Raise", muscleGroup: "Core", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 60, source: "builtin" },
   { id: "farmers-carry", name: "Farmer's Carry", muscleGroup: "Full Body", defaultSets: 3, defaultReps: "40 m", defaultRestSeconds: 90, source: "builtin" },
-  { id: "assault-bike", name: "Assault Bike", muscleGroup: "Cardio", defaultSets: 1, defaultReps: "10 min", defaultRestSeconds: 0, source: "builtin" }
 ];
 
 export function makeCustomExerciseId(name: string) {
