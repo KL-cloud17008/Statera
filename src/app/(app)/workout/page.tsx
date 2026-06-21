@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
-import { getTrainingDayNumber } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getWorkoutSessionLoadUnit, parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
 import { workoutLoadToKg } from "@/lib/units";
@@ -19,6 +19,7 @@ export default async function WorkoutPage() {
   }
 
   const plans = await getWorkoutPlans(user.id);
+  const currentTrainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayNum = getTrainingDayNumber(new Date(), user.timezone);
   const todayPlan = trainingDayNum ? plans.find((plan) => plan.dayOfWeek === trainingDayNum) ?? null : null;
 
@@ -63,6 +64,8 @@ export default async function WorkoutPage() {
       id: openSession.id,
       sessionName: meta?.label || openSession.workoutPlan?.sessionName || "Custom Session",
       startTime: openSession.startTime?.toISOString() ?? new Date().toISOString(),
+      trainingDate: openSession.trainingDate.toISOString().split("T")[0],
+      isStale: openSession.trainingDate.getTime() !== currentTrainingDate.getTime(),
       exercises,
       sets: openSession.sets.map((set) => ({
         exerciseName: set.exerciseName,

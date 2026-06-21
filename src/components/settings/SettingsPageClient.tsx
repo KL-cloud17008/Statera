@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
+  AlertTriangle,
   CheckCircle2,
   Download,
   Loader2,
@@ -35,7 +36,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeader } from "@/components/ui/section-header";
-import { parseAppSettings, type AppSettings } from "@/lib/app-settings";
+import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload, unwrapBackupEnvelope, type BackupPreview } from "@/lib/backup";
+import { parseAppSettings } from "@/lib/app-settings";
 import { BODYWEIGHT_UNIT, WORKOUT_LOAD_UNIT, formatBodyweightConversion, inchesToCm } from "@/lib/units";
 
 type SettingsPageClientProps = {
@@ -47,9 +49,11 @@ type SettingsPageClientProps = {
   };
 };
 
-type BackupEnvelope = {
-  serverData?: unknown;
-  localSettings?: Partial<AppSettings>;
+type PendingImport = {
+  fileName: string;
+  json: string;
+  localSettings: unknown;
+  preview: BackupPreview;
 };
 
 function downloadTextFile(filename: string, text: string, mimeType: string) {
@@ -69,6 +73,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const [isImporting, setIsImporting] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
   const [isClearOpen, setIsClearOpen] = useState(false);
+  const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
+  const [importConfirmation, setImportConfirmation] = useState("");
   const { settings, updateSettings, resetSettings } = useAppSettings();
   const [startWeightValue, setStartWeightValue] = useState(profile.startWeight != null ? String(profile.startWeight) : "");
   const [goalWeightValue, setGoalWeightValue] = useState(profile.goalWeight != null ? String(profile.goalWeight) : "");
@@ -152,6 +158,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       downloadTextFile("athanor-weight.csv", weightCsv.csv, "text/csv;charset=utf-8;");
       downloadTextFile("athanor-steps.csv", csv.steps, "text/csv;charset=utf-8;");
       downloadTextFile("athanor-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
+      downloadTextFile("athanor-nutrition.csv", csv.nutrition, "text/csv;charset=utf-8;");
       toast.success("CSV exports downloaded");
     } finally {
       setIsExporting(false);
@@ -161,31 +168,68 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   async function handleImportFile(file: File) {
     setIsImporting(true);
     try {
-      const text = await file.text();
-      const parsed = JSON.parse(text) as BackupEnvelope;
+      if (file.size > MAX_BACKUP_FILE_BYTES) {
+        toast.error(`Backup file must be smaller than ${formatBytes(MAX_BACKUP_FILE_BYTES)}`);
+        return;
+      }
 
+      const text = await file.text();
+      const parsed = JSON.parse(text) as unknown;
+      const { payload, localSettings } = unwrapBackupEnvelope(parsed);
+      const analysis = analyzeBackupPayload(payload);
+
+      if (!analysis.valid) {
+        toast.error(`Backup validation failed: ${analysis.errors.slice(0, 2).join(" ")}`);
+        return;
+      }
+
+      setPendingImport({
+        fileName: file.name,
+        json: JSON.stringify(payload),
+        localSettings,
+        preview: analysis.preview,
+      });
+      setImportConfirmation("");
+    } catch {
+      toast.error("Import preview failed");
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }
+
+  async function handleConfirmImport() {
+    if (!pendingImport) {
+      return;
+    }
+    if (importConfirmation !== "REPLACE") {
+      toast.error("Type REPLACE to confirm the import.");
+      return;
+    }
+
+    setIsImporting(true);
+    try {
       const formData = new FormData();
-      formData.set("json", JSON.stringify(parsed.serverData ?? parsed));
+      formData.set("json", pendingImport.json);
       const result = await importUserData(formData);
       if (result.error) {
         toast.error(result.error);
         return;
       }
 
-      if (parsed.localSettings) {
+      if (pendingImport.localSettings) {
         updateSettings((current) =>
-          parseAppSettings(JSON.stringify({ ...current, ...parsed.localSettings }))
+          parseAppSettings(JSON.stringify({ ...current, ...toRecord(pendingImport.localSettings) }))
         );
       }
 
       toast.success("Backup imported");
-    } catch {
-      toast.error("Import failed");
+      setPendingImport(null);
+      setImportConfirmation("");
     } finally {
       setIsImporting(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
   }
 
@@ -303,6 +347,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
+              Step goal, distance unit, templates, and custom exercise preferences are local device settings. JSON backup includes them so they can be restored intentionally.
+            </div>
             <Field label="Daily Step Goal" htmlFor="stepGoal">
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <Input
@@ -472,6 +519,65 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </Card>
       </div>
 
+      <Dialog open={!!pendingImport} onOpenChange={(open) => !open && setPendingImport(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Preview destructive import</DialogTitle>
+            <DialogDescription>
+              This backup will replace existing tracker data after confirmation. Review the counts before continuing.
+            </DialogDescription>
+          </DialogHeader>
+          {pendingImport ? (
+            <div className="space-y-4">
+              <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm">
+                <p className="font-semibold text-foreground">{pendingImport.fileName}</p>
+                <p className="mt-1 text-muted-foreground">
+                  Version {pendingImport.preview.version ?? "unknown"} / {pendingImport.preview.exportedAt ? new Date(pendingImport.preview.exportedAt).toLocaleString() : "export date unavailable"}
+                </p>
+                <p className="mt-1 text-muted-foreground">
+                  Date range: {pendingImport.preview.dateRange ? `${pendingImport.preview.dateRange.start} to ${pendingImport.preview.dateRange.end}` : "no dated records"}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
+                <ImportCount label="Weight" value={pendingImport.preview.counts.weightEntries} />
+                <ImportCount label="Steps" value={pendingImport.preview.counts.dailyLogs} />
+                <ImportCount label="Workouts" value={pendingImport.preview.counts.workoutSessions} />
+                <ImportCount label="Mobility" value={pendingImport.preview.counts.mobilityLogs} />
+                <ImportCount label="Nutrition" value={pendingImport.preview.counts.nutritionDays} />
+                <ImportCount label="Saved foods" value={pendingImport.preview.counts.savedFoods} />
+              </div>
+
+              <div className="status-note status-note-error px-4 py-3 text-sm leading-relaxed">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <p>This import replaces steps, weight entries, workouts, mobility logs, nutrition records, saved foods, saved meals, and progress photos.</p>
+                </div>
+              </div>
+
+              <Field label="Type REPLACE to import" htmlFor="import-confirmation">
+                <Input
+                  id="import-confirmation"
+                  value={importConfirmation}
+                  onChange={(event) => setImportConfirmation(event.target.value)}
+                  className="h-12"
+                  autoComplete="off"
+                />
+              </Field>
+            </div>
+          ) : null}
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setPendingImport(null)} disabled={isImporting}>
+              Cancel
+            </Button>
+            <Button type="button" variant="destructive" onClick={handleConfirmImport} disabled={isImporting || importConfirmation !== "REPLACE"}>
+              {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              Replace and import
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={isClearOpen} onOpenChange={setIsClearOpen}>
         <DialogContent>
           <DialogHeader>
@@ -510,5 +616,27 @@ function Field({
       {children}
     </div>
   );
+}
+
+function ImportCount({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="metric-panel">
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="data-number mt-1 text-2xl text-foreground">{value.toLocaleString()}</p>
+    </div>
+  );
+}
+
+function formatBytes(bytes: number) {
+  if (bytes >= 1024 * 1024) {
+    return `${Math.round(bytes / (1024 * 1024))} MB`;
+  }
+  return `${Math.round(bytes / 1024)} KB`;
+}
+
+function toRecord(value: unknown): Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
 }
 

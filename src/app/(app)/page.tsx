@@ -4,7 +4,9 @@ import { getWeightEntries } from "@/actions/weight";
 import { getRecentSessions } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
+import { getTodayDateString, getTrainingDate, getTrainingDayOfWeek, parseDate } from "@/lib/dates";
+import { prisma } from "@/lib/db";
+import { calculateNutritionTotals } from "@/lib/nutrition";
 import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { computeWeightStats } from "@/lib/weight";
@@ -20,11 +22,23 @@ export default async function DashboardPage() {
     return null;
   }
 
-  const [stepsEntries, todaySteps, weightEntries, recentSessions] = await Promise.all([
+  const trainingDate = getTrainingDate(new Date(), user.timezone);
+  const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
+  const todayCalendarDate = parseDate(getTodayDateString(user.timezone));
+
+  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs, todayNutritionDay] = await Promise.all([
     getStepsEntries(user.id, 180, user.timezone),
     getTodaySteps(user.id, user.timezone),
     getWeightEntries(user.id),
     getRecentSessions(user.id, 20),
+    prisma.mobilityLog.findMany({
+      where: { userId: user.id, date: trainingDate },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.nutritionDay.findUnique({
+      where: { userId_date: { userId: user.id, date: todayCalendarDate } },
+      include: { entries: true },
+    }),
   ]);
 
   const serializedSteps = stepsEntries.map((entry) => ({
@@ -50,12 +64,13 @@ export default async function DashboardPage() {
     goalWeight: user.goalWeight,
   });
 
-  const trainingDate = getTrainingDate(new Date(), user.timezone);
-  const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
   const startOfWeek = new Date(trainingDate);
   startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
   startOfWeek.setHours(0, 0, 0, 0);
   const weeklySessions = recentSessions.filter((session) => session.trainingDate >= startOfWeek);
+  const hasCompletedWorkoutToday = recentSessions.some(
+    (session) => session.trainingDate.getTime() === trainingDate.getTime()
+  );
   const weeklyVolume = weeklySessions.reduce(
     (sum, session) => sum + calculateSessionVolume(session.sets, getWorkoutSessionLoadUnit(session.notes)),
     0
@@ -80,8 +95,18 @@ export default async function DashboardPage() {
       workoutSummary={{
         weeklyVolume,
         weeklySessions: weeklySessions.length,
+        hasCompletedWorkoutToday,
         lastWorkout,
       }}
+      mobilitySummary={{
+        completedTypes: todayMobilityLogs.map((log) => log.type),
+        footFlareLogged: todayMobilityLogs.some((log) => log.version.toLowerCase().includes("foot flare")),
+      }}
+      nutritionSummary={{
+        entryCount: todayNutritionDay?.entries.length ?? 0,
+        totals: calculateNutritionTotals(todayNutritionDay?.entries ?? []),
+      }}
+      latestWeightDate={serializedWeights[0]?.date ?? null}
       timezone={user.timezone}
       trainingDayOfWeek={trainingDayOfWeek}
     />

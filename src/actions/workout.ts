@@ -384,6 +384,29 @@ export async function completeSession(
   return {};
 }
 
+export async function discardWorkoutSession(
+  sessionId: string
+): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) {
+    return { error: "Not authenticated" };
+  }
+
+  const session = await prisma.workoutSession.findFirst({
+    where: { id: sessionId, userId: user.id, completed: false },
+  });
+  if (!session) {
+    return { error: "Open session not found" };
+  }
+
+  await prisma.workoutSession.delete({ where: { id: sessionId } });
+
+  revalidatePath("/workout");
+  revalidatePath("/workout/history");
+  revalidatePath("/");
+  return {};
+}
+
 export async function getSessionWithSets(sessionId: string) {
   return prisma.workoutSession.findUnique({
     where: { id: sessionId },

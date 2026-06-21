@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logSet } from "@/actions/workout";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { WORKOUT_LOAD_UNIT } from "@/lib/units";
@@ -55,6 +56,10 @@ export function SetInput({
   const [notes, setNotes] = useState(logged?.notes ?? "");
   const [saved, setSaved] = useState(!!logged);
   const [isPending, startTransition] = useTransition();
+  const hasLoggableValue =
+    weight.trim().length > 0 ||
+    (!isFinisher && reps.trim().length > 0) ||
+    notes.trim().length > 0;
 
   function copyPrevious() {
     if (!previous) {
@@ -70,11 +75,6 @@ export function SetInput({
   }
 
   function handleSave() {
-    const hasLoggableValue =
-      weight.trim().length > 0 ||
-      (!isFinisher && reps.trim().length > 0) ||
-      notes.trim().length > 0;
-
     if (!hasLoggableValue || isPending) {
       return;
     }
@@ -206,20 +206,36 @@ export function SetInput({
         />
       </div>
 
-      {!isFinisher ? (
-        <Input
-          aria-label={`${exerciseName} set ${setNumber} notes`}
-          type="text"
-          value={notes}
-          onChange={(event) => {
-            setNotes(event.target.value);
-            setSaved(false);
-          }}
-          onBlur={handleSave}
-          className="h-11"
-          placeholder="Optional notes"
-        />
-      ) : null}
+      <div className={`grid gap-3 ${!isFinisher ? "md:grid-cols-[minmax(0,1fr)_auto]" : ""}`}>
+        {!isFinisher ? (
+          <Input
+            aria-label={`${exerciseName} set ${setNumber} notes`}
+            type="text"
+            value={notes}
+            onChange={(event) => {
+              setNotes(event.target.value);
+              setSaved(false);
+            }}
+            onBlur={handleSave}
+            className="h-11"
+            placeholder="Optional notes"
+          />
+        ) : null}
+        <Button
+          type="button"
+          variant={saved ? "outline" : "secondary"}
+          onClick={handleSave}
+          disabled={!hasLoggableValue || isPending}
+          className={cn("h-11 w-full md:w-auto", isFinisher && "md:justify-self-end")}
+        >
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : saved ? (
+            <Check className="h-4 w-4" />
+          ) : null}
+          {saved ? "Saved" : "Save set"}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { parseDate } from "@/lib/dates";
 import { revalidatePath } from "next/cache";
 import { WORKOUT_LOAD_UNIT, cmToInches, workoutLoadToKg } from "@/lib/units";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
+import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload } from "@/lib/backup";
 
 type WeighInStatus = "BASELINE" | "FASTING" | "NORMAL";
 
@@ -150,18 +151,6 @@ type BackupPayload = {
   progressPhotos?: BackupProgressPhoto[];
 };
 
-const BACKUP_COLLECTION_KEYS = [
-  "weightEntries",
-  "dailyLogs",
-  "workoutPlans",
-  "workoutSessions",
-  "mobilityLogs",
-  "nutritionDays",
-  "savedFoods",
-  "savedMeals",
-  "progressPhotos",
-] as const;
-
 type ExportedDailyLog = {
   date: Date;
   sleepHours: number | null;
@@ -187,6 +176,21 @@ type ExportedWorkoutSession = {
   sets: ExportedSessionSet[];
 };
 
+type ExportedNutritionEntry = {
+  mealLabel: string;
+  foodName: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  servingSize: string | null;
+};
+
+type ExportedNutritionDay = {
+  date: Date;
+  entries: ExportedNutritionEntry[];
+};
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -200,20 +204,13 @@ function isValidTimeZone(timezone: string) {
   }
 }
 
-function hasRecognizedBackupPayload(payload: BackupPayload) {
-  return (
-    typeof payload.version === "number" ||
-    isPlainObject(payload.profile) ||
-    BACKUP_COLLECTION_KEYS.some((key) => Array.isArray(payload[key]))
-  );
-}
-
 function revalidateAllUserRoutes() {
   revalidatePath("/");
   revalidatePath("/steps");
   revalidatePath("/weight");
   revalidatePath("/workout");
   revalidatePath("/mobility");
+  revalidatePath("/nutrition");
   revalidatePath("/settings");
 }
 
@@ -380,11 +377,30 @@ export async function exportUserData() {
     }),
   ].join("\n");
 
+  const nutritionCsv = [
+    "Date,Meal,Food,Calories,Protein,Carbs,Fat,Serving Size",
+    ...nutritionDays.flatMap((day: ExportedNutritionDay) =>
+      day.entries.map((entry: ExportedNutritionEntry) =>
+        [
+          day.date.toISOString().split("T")[0],
+          JSON.stringify(entry.mealLabel),
+          JSON.stringify(entry.foodName),
+          entry.calories,
+          entry.protein,
+          entry.carbs,
+          entry.fat,
+          JSON.stringify(entry.servingSize ?? ""),
+        ].join(",")
+      )
+    ),
+  ].join("\n");
+
   return {
     payload,
     csv: {
       steps: stepsCsv,
       workouts: workoutsCsv,
+      nutrition: nutritionCsv,
     },
   };
 }
@@ -425,6 +441,9 @@ export async function importUserData(formData: FormData) {
   if (!json) {
     return { error: "No backup data provided" };
   }
+  if (json.length > MAX_BACKUP_FILE_BYTES) {
+    return { error: "Backup file is too large" };
+  }
 
   let payload: BackupPayload;
   try {
@@ -437,8 +456,11 @@ export async function importUserData(formData: FormData) {
     return { error: "Invalid backup format" };
   }
 
-  if (!hasRecognizedBackupPayload(payload)) {
-    return { error: "Backup file is missing tracker data" };
+  const analysis = analyzeBackupPayload(payload);
+  if (!analysis.valid) {
+    return {
+      error: `Backup validation failed: ${analysis.errors.slice(0, 3).join(" ")}`,
+    };
   }
 
   await prisma.$transaction(async (tx) => {
@@ -626,6 +648,7 @@ export async function importUserData(formData: FormData) {
         typeof food.fat === "number"
     );
 
+    const foodIdMap = new Map<string, string>();
     if (savedFoods.length > 0) {
       const createdFoods = await Promise.all(
         savedFoods.map((food) =>
@@ -643,38 +666,36 @@ export async function importUserData(formData: FormData) {
         )
       );
 
-      const foodIdMap = new Map<string, string>();
       savedFoods.forEach((food, index) => {
         if (food.id) {
           foodIdMap.set(food.id, createdFoods[index].id);
         }
       });
+    }
 
-      const savedMeals = (payload.savedMeals ?? []).filter(
-        (meal) => typeof meal.name === "string"
+    const savedMeals = (payload.savedMeals ?? []).filter(
+      (meal) => typeof meal.name === "string"
+    );
+    for (const meal of savedMeals) {
+      const createdMeal = await tx.savedMeal.create({
+        data: {
+          userId: user.id,
+          name: meal.name,
+        },
+      });
+
+      const items = (meal.items ?? []).filter(
+        (item) => typeof item.savedFoodId === "string" && foodIdMap.has(item.savedFoodId)
       );
-      for (const meal of savedMeals) {
-        const createdMeal = await tx.savedMeal.create({
-          data: {
-            userId: user.id,
-            name: meal.name,
-          },
+
+      if (items.length > 0) {
+        await tx.savedMealItem.createMany({
+          data: items.map((item) => ({
+            savedMealId: createdMeal.id,
+            savedFoodId: foodIdMap.get(item.savedFoodId) as string,
+            quantity: item.quantity ?? 1,
+          })),
         });
-
-        const items = (meal.items ?? []).filter(
-          (item) => typeof item.savedFoodId === "string"
-        );
-
-        if (items.length > 0) {
-          await tx.savedMealItem.createMany({
-            data: items.map((item) => ({
-              savedMealId: createdMeal.id,
-              savedFoodId:
-                foodIdMap.get(item.savedFoodId) ?? item.savedFoodId,
-              quantity: item.quantity ?? 1,
-            })),
-          });
-        }
       }
     }
 

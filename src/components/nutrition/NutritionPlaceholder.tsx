@@ -5,7 +5,7 @@ import { SectionHeader } from "@/components/ui/section-header";
 const NUTRITION_MODULES = [
   {
     title: "Daily log",
-    description: "Meals, calories, and macro totals will live here once nutrition logging is enabled.",
+    description: "Daily calorie and macro logging is active on the main nutrition page.",
     icon: Utensils,
   },
   {
@@ -36,15 +36,15 @@ export function NutritionPlaceholder({
         <div className="command-panel grid gap-6 rounded-[var(--radius-panel)] p-6 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end">
           <EmptyState
             icon={Apple}
-            title="Nutrition workspace is staged"
-            description="This area is intentionally read-only until meal logging, macro targets, and saved foods are connected to persistence."
+            title="Supporting nutrition workspace"
+            description="Daily logging is connected to persistence. This supporting area is reserved for the next saved-foods, meal-template, and import pass."
             className="border-t-0 py-0"
           />
           <div className="rounded-[var(--radius-card)] border border-white/10 bg-white/7 p-4">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/48">Status</p>
-            <p className="mt-2 text-2xl font-semibold text-primary-foreground">Read-only</p>
+            <p className="mt-2 text-2xl font-semibold text-primary-foreground">Staged support</p>
             <p className="mt-2 text-sm leading-relaxed text-white/58">
-              No nutrition data is being saved from these screens yet.
+              Use the daily nutrition log for persisted entries and targets.
             </p>
           </div>
         </div>

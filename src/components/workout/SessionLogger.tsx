@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { completeSession } from "@/actions/workout";
+import { completeSession, discardWorkoutSession } from "@/actions/workout";
 import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,8 @@ export function SessionLogger({
   existingSets,
   previousSets,
   startTime,
+  trainingDate,
+  isStale,
 }: {
   sessionId: string;
   sessionName: string;
@@ -61,6 +63,8 @@ export function SessionLogger({
   existingSets: SessionSet[];
   previousSets: PrevSet[];
   startTime: string;
+  trainingDate: string;
+  isStale: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -178,6 +182,23 @@ export function SessionLogger({
     });
   }
 
+  function handleDiscard() {
+    if (!window.confirm("Discard this incomplete workout session and its logged sets?")) {
+      return;
+    }
+
+    startTransition(async () => {
+      const result = await discardWorkoutSession(sessionId);
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success("Open session discarded");
+      router.refresh();
+    });
+  }
+
   return (
     <div className="space-y-8">
       <section className="editorial-surface space-y-8">
@@ -189,6 +210,14 @@ export function SessionLogger({
               Log sets as you go. Previous numbers stay nearby, rest timing stays quiet, and the
               session reads like one continuous ledger instead of a stack of components.
             </p>
+            {isStale ? (
+              <div className="status-note mt-5 flex max-w-2xl items-start gap-3 px-4 py-3 text-sm leading-relaxed">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-foreground/70" />
+                <p>
+                  Resume previous open session from {formatSessionDate(trainingDate)}. Discard it to return to today&apos;s programmed session.
+                </p>
+              </div>
+            ) : null}
           </div>
 
           <div className="space-y-5 xl:text-right">
@@ -213,10 +242,18 @@ export function SessionLogger({
               </div>
             </div>
 
-            <Button type="button" size="lg" onClick={handleComplete} disabled={isPending} className="gap-2">
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-              Complete Session
-            </Button>
+            <div className="flex flex-wrap gap-3 xl:justify-end">
+              {isStale ? (
+                <Button type="button" variant="outline" size="lg" onClick={handleDiscard} disabled={isPending} className="gap-2">
+                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  Discard old incomplete session
+                </Button>
+              ) : null}
+              <Button type="button" size="lg" onClick={handleComplete} disabled={isPending} className="gap-2">
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                Complete Session
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -279,4 +316,11 @@ export function SessionLogger({
       </section>
     </div>
   );
+}
+
+function formatSessionDate(dateString: string) {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }

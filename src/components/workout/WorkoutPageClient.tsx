@@ -47,6 +47,8 @@ type ActiveSession = {
   id: string;
   sessionName: string;
   startTime: string;
+  trainingDate: string;
+  isStale: boolean;
   exercises: Exercise[];
   sets: SessionSet[];
   previousSets: PrevSet[];
@@ -100,6 +102,8 @@ export function WorkoutPageClient({
           existingSets={activeSession.sets}
           previousSets={activeSession.previousSets}
           startTime={activeSession.startTime}
+          trainingDate={activeSession.trainingDate}
+          isStale={activeSession.isStale}
         />
       ) : todayPlan ? (
         <div className="grid gap-8">

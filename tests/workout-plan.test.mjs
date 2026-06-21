@@ -9,14 +9,19 @@ const planSource = readFileSync("src/lib/default-workout-plan.ts", "utf8");
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
+const moduleCache = new Map();
 const units = loadTypescriptModule("src/lib/units.ts");
 const appSettings = loadTypescriptModule("src/lib/app-settings.ts");
+const backup = loadTypescriptModule("src/lib/backup.ts");
 const mobility = loadTypescriptModule("src/lib/mobility.ts");
+const nutrition = loadTypescriptModule("src/lib/nutrition.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
 
 const requiredExercises = [
   "Machine Chest Press",
+  "Chest-Supported Row Machine",
   "Leg Press",
+  "Seated Hamstring Curl",
   "Walking Lunges",
   "Leg Press Calf Press",
   "Hack Squat Machine",
@@ -39,6 +44,11 @@ test("canonical workout plan keeps the selected beginner exercise set", () => {
   for (const exercise of requiredExercises) {
     assert.match(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should stay in the plan`);
   }
+
+  const walkingLunges = workoutPlan.DEFAULT_WORKOUT_PLAN
+    .flatMap((day) => day.exercises)
+    .find((exercise) => exercise.exerciseName.includes("Walking Lunges"));
+  assert.equal(walkingLunges.sets, 2);
 });
 
 test("canonical workout plan does not restore removed or replaced exercises", () => {
@@ -258,6 +268,50 @@ test("daily step goal settings accept 8000 and reject unsafe values", () => {
   );
 });
 
+test("nutrition totals calculate daily calories and macros", () => {
+  const totals = nutrition.calculateNutritionTotals([
+    { calories: 450, protein: 52.5, carbs: 40, fat: 8 },
+    { calories: 180, protein: 22, carbs: 12.5, fat: 4.5 },
+  ]);
+
+  assert.equal(totals.calories, 630);
+  assert.equal(totals.protein, 74.5);
+  assert.equal(totals.carbs, 52.5);
+  assert.equal(totals.fat, 12.5);
+});
+
+test("backup validation rejects invalid shapes and previews nutrition counts", () => {
+  const invalid = backup.analyzeBackupPayload({
+    version: 1,
+    nutritionDays: [
+      {
+        date: "2026-02-31",
+        entries: [{ mealLabel: "Meal 1", foodName: "", calories: -1 }],
+      },
+    ],
+  });
+
+  assert.equal(invalid.valid, false);
+  assert.ok(invalid.errors.some((error) => error.includes("nutritionDays[0].date")));
+  assert.ok(invalid.errors.some((error) => error.includes("foodName")));
+
+  const valid = backup.analyzeBackupPayload({
+    version: 1,
+    exportedAt: "2026-06-21T12:00:00.000Z",
+    nutritionDays: [
+      {
+        date: "2026-06-21",
+        entries: [{ mealLabel: "Meal 1", foodName: "Greek yogurt", calories: 180, protein: 22, carbs: 12, fat: 4 }],
+      },
+    ],
+  });
+
+  assert.equal(valid.valid, true);
+  assert.equal(valid.preview.counts.nutritionDays, 1);
+  assert.equal(valid.preview.dateRange.start, "2026-06-21");
+  assert.equal(valid.preview.dateRange.end, "2026-06-21");
+});
+
 test("training-day mobility preserves optional later recovery", () => {
   assert.equal(mobility.OPTIONAL_LATER_RECOVERY.title, "Optional later recovery");
   assert.equal(mobility.OPTIONAL_LATER_RECOVERY.recoveryIntro, true);
@@ -310,6 +364,11 @@ function escapeRegExp(value) {
 }
 
 function loadTypescriptModule(path) {
+  const filename = resolve(path);
+  if (moduleCache.has(filename)) {
+    return moduleCache.get(filename).exports;
+  }
+
   const source = readFileSync(path, "utf8");
   const output = ts.transpileModule(source, {
     compilerOptions: {
@@ -319,10 +378,19 @@ function loadTypescriptModule(path) {
     fileName: path,
   }).outputText;
   const compiledModule = { exports: {} };
-  const filename = resolve(path);
+  moduleCache.set(filename, compiledModule);
   const contextRequire = (specifier) => {
     if (specifier.startsWith("@/")) {
-      return require(resolve(specifier.replace("@/", "src/")));
+      const resolvedPath = resolve(specifier.replace("@/", "src/"));
+      try {
+        return loadTypescriptModule(`${resolvedPath}.ts`);
+      } catch {
+        try {
+          return loadTypescriptModule(`${resolvedPath}.tsx`);
+        } catch {
+          return require(resolvedPath);
+        }
+      }
     }
     return require(specifier);
   };

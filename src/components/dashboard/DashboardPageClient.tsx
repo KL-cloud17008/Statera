@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, CheckCircle2 } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { computeStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
@@ -15,12 +15,28 @@ type WeightStats = {
 type WorkoutSummary = {
   weeklyVolume: number;
   weeklySessions: number;
+  hasCompletedWorkoutToday: boolean;
   lastWorkout: {
     label: string;
     trainingDate: string;
     volume: number;
     setCount: number;
   } | null;
+};
+
+type MobilitySummary = {
+  completedTypes: string[];
+  footFlareLogged: boolean;
+};
+
+type NutritionSummary = {
+  entryCount: number;
+  totals: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+  };
 };
 
 const WEEKLY_RHYTHM = [
@@ -48,6 +64,9 @@ export function DashboardPageClient({
   todaySteps,
   weightStats,
   workoutSummary,
+  mobilitySummary,
+  nutritionSummary,
+  latestWeightDate,
   timezone,
   trainingDayOfWeek,
 }: {
@@ -55,6 +74,9 @@ export function DashboardPageClient({
   todaySteps: number;
   weightStats: WeightStats;
   workoutSummary: WorkoutSummary;
+  mobilitySummary: MobilitySummary;
+  nutritionSummary: NutritionSummary;
+  latestWeightDate: string | null;
   timezone?: string;
   trainingDayOfWeek: number;
 }) {
@@ -72,6 +94,16 @@ export function DashboardPageClient({
     ? formatShortDate(workoutSummary.lastWorkout.trainingDate)
     : null;
   const nextProtocol = getNextProtocol(trainingDayOfWeek);
+  const decision = buildDecision({
+    stepsEntries,
+    todaySteps,
+    stepGoal: settings.stepGoal,
+    workoutSummary,
+    mobilitySummary,
+    nutritionSummary,
+    latestWeightDate,
+    trainingDayOfWeek,
+  });
 
   const TrendIcon =
     weightStats.trend === "down"
@@ -149,6 +181,33 @@ export function DashboardPageClient({
         </div>
 
         <div className="quiet-rule" />
+
+        <div className="warm-row rounded-[var(--radius-card)] p-5">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+            <div>
+              <p className="eyebrow">Today&apos;s decision</p>
+              <h2 className="mt-2 text-3xl">{decision.title}</h2>
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                {decision.description}
+              </p>
+            </div>
+            <Link href={decision.href} className="text-link inline-flex items-center gap-2 text-sm font-semibold">
+              Open next action
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-5 grid gap-2 md:grid-cols-3">
+            {decision.signals.map((signal) => (
+              <p
+                key={signal}
+                className="status-note flex items-start gap-2 px-3 py-2 text-xs leading-relaxed"
+              >
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground/70" />
+                <span>{signal}</span>
+              </p>
+            ))}
+          </div>
+        </div>
 
         <div>
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -285,4 +344,109 @@ function formatShortDate(dateString: string) {
     month: "short",
     day: "numeric",
   });
+}
+
+function buildDecision({
+  stepsEntries,
+  todaySteps,
+  stepGoal,
+  workoutSummary,
+  mobilitySummary,
+  nutritionSummary,
+  latestWeightDate,
+  trainingDayOfWeek,
+}: {
+  stepsEntries: SerializedStepsEntry[];
+  todaySteps: number;
+  stepGoal: number;
+  workoutSummary: WorkoutSummary;
+  mobilitySummary: MobilitySummary;
+  nutritionSummary: NutritionSummary;
+  latestWeightDate: string | null;
+  trainingDayOfWeek: number;
+}) {
+  const recentStepEntries = [...stepsEntries]
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3);
+  const recentStepTotal = recentStepEntries.reduce((sum, entry) => sum + (entry.steps ?? 0), 0);
+  const recentStepAverage = recentStepEntries.length > 0
+    ? Math.round(recentStepTotal / recentStepEntries.length)
+    : todaySteps;
+  const highStepLoad =
+    (recentStepEntries.length >= 3 && recentStepAverage >= stepGoal * 1.15) ||
+    todaySteps >= stepGoal * 1.35;
+  const isLiftDay = [1, 2, 4, 5].includes(trainingDayOfWeek);
+  const expectedMobilityType = isLiftDay ? "PRE_WORKOUT" : "POST_WORKOUT";
+  const mobilityDone = mobilitySummary.completedTypes.includes(expectedMobilityType);
+  const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;
+  const signals = [
+    `${todaySteps.toLocaleString()} of ${stepGoal.toLocaleString()} steps logged today.`,
+    nutritionSummary.entryCount > 0
+      ? `${nutritionSummary.entryCount} nutrition ${nutritionSummary.entryCount === 1 ? "entry" : "entries"} logged today.`
+      : "Nutrition ledger has no entries today.",
+    mobilityDone ? "Expected mobility is logged." : "Expected mobility is still open.",
+  ];
+
+  if (mobilitySummary.footFlareLogged || highStepLoad) {
+    return {
+      title: mobilitySummary.footFlareLogged
+        ? "Prioritize foot recovery later today."
+        : "High step load. Keep lower-leg recovery easy.",
+      description: highStepLoad
+        ? `The recent step average is ${recentStepAverage.toLocaleString()}, so keep lower-leg work easy and recovery-focused.`
+        : "Foot flare recovery is already part of the day. Do not turn the later block into extra training.",
+      href: "/mobility",
+      signals,
+    };
+  }
+
+  if (isLiftDay && !workoutSummary.hasCompletedWorkoutToday) {
+    return {
+      title: "Start today's programmed session.",
+      description: "No completed lift is logged for the current training date. Run the programmed session before adding optional work.",
+      href: "/workout",
+      signals,
+    };
+  }
+
+  if (nutritionSummary.entryCount === 0) {
+    return {
+      title: "Log the first meal to start the nutrition ledger.",
+      description: "Calorie and macro adherence only becomes useful after the first food entry is in the day.",
+      href: "/nutrition",
+      signals,
+    };
+  }
+
+  if (!mobilityDone) {
+    return {
+      title: isLiftDay ? "Complete the at-home mobility primer." : "Log recovery mobility.",
+      description: "The day is missing its expected mobility check-in. Keep it short, easy, and specific to the program.",
+      href: "/mobility",
+      signals,
+    };
+  }
+
+  if (weightStale) {
+    return {
+      title: "Log bodyweight to keep the trend useful.",
+      description: "The dashboard can only interpret pace when the weight trend has recent entries.",
+      href: "/weight",
+      signals,
+    };
+  }
+
+  return {
+    title: "Execute the plan and keep the ledger current.",
+    description: "Training, nutrition, movement, and recovery all have enough signal today. Keep logging without adding noise.",
+    href: "/steps",
+    signals,
+  };
+}
+
+function daysSince(dateString: string) {
+  const start = new Date(`${dateString}T00:00:00`).getTime();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return Math.floor((today.getTime() - start) / 86400000);
 }
