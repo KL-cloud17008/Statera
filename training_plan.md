@@ -1,4 +1,4 @@
-# 4-Day Beginner Machine-Supported Circuit Workout Plan
+# 4-Day Beginner Circuit Workout Plan
 
 This is the documentation copy of the canonical training plan used by the app seed scripts and default workout constants.
 
@@ -6,7 +6,7 @@ This is the documentation copy of the canonical training plan used by the app se
 
 | Day | Focus |
 | --- | --- |
-| Monday | Upper A - Machine Push/Pull Foundation |
+| Monday | Upper A - Free-Weight Push/Pull Foundation |
 | Tuesday | Lower A - Machine Lower Body Foundation |
 | Wednesday | Mobility / Recovery |
 | Thursday | Upper B - Machine Back/Shoulder Emphasis |
@@ -19,46 +19,54 @@ This is the documentation copy of the canonical training plan used by the app se
 - Beginner restart block for a 311 lb sedentary male returning to training.
 - A/B/C circuit blocks.
 - Listed pairings or sequences for each day.
-- Machine, seated, cable, and bench-supported movements are prioritized.
+- Upper A uses the preferred free-weight push/pull foundation; Upper B remains machine-supported.
+- Machine, seated, cable, and bench-supported movements are used where programmed.
 - Controlled rest after each pair or full circuit instead of long rest between paired exercises.
 - RPE 6-7 on working sets.
 - Leave 2-4 reps in reserve.
 - Optional 2-round mode for weeks 1-2: complete two rounds per block when fatigue, soreness, or time makes the full prescription too much.
-- Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first machine before the first working circuit.
+- Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.
 
 ## Workout Day Format
 
 1. At home - mobility primer.
 2. Walk to gym - general warm-up.
-3. At gym - ramp-up sets on the first machine in Block A.
+3. At gym - ramp-up sets on the first programmed lift or machine in Block A.
 4. Main circuit blocks.
 5. Optional later recovery - done later, not immediately required.
 
 At the gym:
 
 - Do not add any machine-cardio warm-up; walking to the gym already covers the general warm-up.
-- Do 1-2 easy ramp-up sets on the first machine of Block A.
+- Do 1-2 easy ramp-up sets on the first programmed lift or machine of Block A.
 - Ramp-up sets should feel easy, around RPE 3-5.
 - Then begin the first working circuit.
 
 Optional later recovery does not need to happen immediately after training. It can be done later after walking home, food, shower, or before bed. If feet/soles flare, choose Foot flare focus.
 
-## Monday - Upper A: Machine Push/Pull Foundation
+## Monday - Upper A: Free-Weight Push/Pull Foundation
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
 | At home | Upper A Mobility Primer | 1 | 8-12 min before walking to gym | easy | - | 2-4 |
-| A1 | Machine Chest Press | 3 | 8-12 | 3-1-1 | after A2: 90 sec | 6-7 |
-| A2 | Chest-Supported Row Machine | 3 | 8-12 | 2-1-2 | after A2: 90 sec | 6-7 |
+| A1 | Incline Dumbbell Press | 3 | 8-12 | 3-1-1 | after A2: 90 sec | 6-7 |
+| A2 | One-Arm Dumbbell Row | 3 | 8-12 per side | 2-1-2 | after A2: 90 sec | 6-7 |
 | B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 2-1-2 | after B2: 90 sec | 6-7 |
-| B2 | Machine Shoulder Press | 3 | 8-10 | 2-1-2 | after B2: 90 sec | 6-7 |
+| B2 | Barbell Overhead Press / Military Press | 3 | 8-10 | 2-1-2 | after B2: 90 sec | 6-7 |
 | C1 | Rope Triceps Pressdown | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C2 | Cable Curl | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Face Pull | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 
 Upper A at-home primer: daily lower-leg base; wall thoracic rotations, 6 reps per side; wall slides, 8 reps; doorway pec stretch, 20-30 sec per side; wall lat stretch, 20-30 sec per side; seated bracing breaths, 5 slow breaths.
 
-At the gym: ramp-up on Machine Chest Press before Block A.
+At the gym: ramp-up on Incline Dumbbell Press before Block A.
+
+Upper A form sources and key cues:
+
+- Incline Dumbbell Press: Incline Dumbbell Bench Press - Muscle & Strength, https://www.muscleandstrength.com/exercises/incline-dumbbell-bench-press.html. Bench around 30-45 degrees; shoulder blades back and down; elbows slightly tucked; control the bottom; stop 2-4 reps before failure; do not bounce dumbbells together at the top; stop if shoulder pain or front-shoulder pinch appears.
+- One-Arm Dumbbell Row: One-Arm Dumbbell Row - Muscle & Strength, https://www.muscleandstrength.com/exercises/one-arm-dumbbell-row.html. Brace hard; keep torso square; pull elbow toward hip/ribs; do not twist the body to cheat the rep; control the lowering phase; use bench support if needed.
+- Neutral-Grip Lat Pulldown: Neutral-Grip Lat Pulldown - Catalyst Athletics, https://www.catalystathletics.com/exercise/540/Neutral-Grip-Lat-Pulldown/. Pull handles to upper chest; keep ribs down; do not lean far back; let shoulder blades rise on the return; control the stretch at the top; do not yank the first rep.
+- Barbell Overhead Press / Military Press: Military Press / Overhead Press - Muscle & Strength, https://www.muscleandstrength.com/exercises/military-press.html. Start light, even if that means empty bar; brace glutes and abs before pressing; ribs down; press bar vertically overhead; do not turn it into a push press; no excessive lower-back arch; stop if shoulder pinch, low-back discomfort, dizziness, or form breakdown appears.
 
 ## Tuesday - Lower A: Machine Lower Body Foundation
 

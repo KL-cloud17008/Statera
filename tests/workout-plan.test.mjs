@@ -18,15 +18,33 @@ const nutrition = loadTypescriptModule("src/lib/nutrition.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
 
 const requiredExercises = [
-  "Machine Chest Press",
-  "Chest-Supported Row Machine",
+  "Incline Dumbbell Press",
+  "One-Arm Dumbbell Row",
+  "Neutral-Grip Lat Pulldown",
+  "Barbell Overhead Press / Military Press",
   "Leg Press",
-  "Seated Hamstring Curl",
   "Walking Lunges",
   "Leg Press Calf Press",
   "Hack Squat Machine",
   "Glute Kickback Machine",
   "Back Extension Machine",
+];
+
+const day1Exercises = [
+  "Incline Dumbbell Press",
+  "One-Arm Dumbbell Row",
+  "Neutral-Grip Lat Pulldown",
+  "Barbell Overhead Press / Military Press",
+];
+
+const day4MachineSupportedExercises = [
+  "Incline Machine Press",
+  "Seated Cable Row",
+  "Lat Pulldown Variation",
+  "Machine Lateral Raise",
+  "Reverse Pec Deck",
+  "Rope Triceps Pressdown",
+  "Cable Curl",
 ];
 
 const removedExercises = [
@@ -49,6 +67,74 @@ test("canonical workout plan keeps the selected beginner exercise set", () => {
     .flatMap((day) => day.exercises)
     .find((exercise) => exercise.exerciseName.includes("Walking Lunges"));
   assert.equal(walkingLunges.sets, 2);
+});
+
+test("canonical workout plan keeps the four-day circuit rhythm", () => {
+  assert.deepEqual(
+    Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.dayOfWeek),
+    [1, 2, 4, 5]
+  );
+  assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
+    "Monday: Upper A - Free-Weight Push/Pull Foundation",
+    "Tuesday: Lower A - Machine Lower Body Foundation",
+    "Wednesday: Mobility / Recovery",
+    "Thursday: Upper B - Machine Back/Shoulder Emphasis",
+    "Friday: Lower B - Machine Posterior Chain",
+    "Saturday: Mobility / Recovery",
+    "Sunday: Complete Rest",
+  ]);
+  assert.match(planSource, /optional 2-round mode/i);
+  assert.match(planSource, /RPE 6-7/);
+  assert.match(planSource, /2-4 reps in reserve/);
+});
+
+test("day 1 upper a uses the requested free-weight push pull circuit", () => {
+  const day1 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 1);
+  assert.ok(day1, "Day 1 should exist");
+  assert.match(day1.sessionName, /Free-Weight Push\/Pull Foundation/);
+
+  for (const exercise of day1Exercises) {
+    const match = day1.exercises.find((item) => item.exerciseName.includes(exercise));
+    assert.ok(match, `Day 1 should include ${exercise}`);
+    assert.equal(match.targetRPE, "6-7", `${exercise} should use RPE 6-7`);
+  }
+
+  assert.equal(day1.exercises.find((item) => item.exerciseName.includes("Incline Dumbbell Press")).sets, 3);
+  assert.equal(day1.exercises.find((item) => item.exerciseName.includes("One-Arm Dumbbell Row")).reps, "8-12 per side");
+  assert.equal(day1.exercises.find((item) => item.exerciseName.includes("Barbell Overhead Press / Military Press")).reps, "8-10");
+
+  for (const url of [
+    "https://www.muscleandstrength.com/exercises/incline-dumbbell-bench-press.html",
+    "https://www.muscleandstrength.com/exercises/one-arm-dumbbell-row.html",
+    "https://www.catalystathletics.com/exercise/540/Neutral-Grip-Lat-Pulldown/",
+    "https://www.muscleandstrength.com/exercises/military-press.html",
+  ]) {
+    assert.match(planSource, new RegExp(escapeRegExp(url)), `${url} should be stored with the plan cues`);
+  }
+});
+
+test("day 4 upper b remains machine supported", () => {
+  const day4 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 4);
+  assert.ok(day4, "Day 4 should exist");
+  assert.match(day4.sessionName, /Machine Back\/Shoulder Emphasis/);
+
+  for (const exercise of day4MachineSupportedExercises) {
+    assert.ok(
+      day4.exercises.some((item) => item.exerciseName.includes(exercise)),
+      `Day 4 should keep ${exercise}`
+    );
+  }
+
+  for (const day1OnlyExercise of [
+    "Incline Dumbbell Press",
+    "One-Arm Dumbbell Row",
+    "Barbell Overhead Press / Military Press",
+  ]) {
+    assert.ok(
+      !day4.exercises.some((item) => item.exerciseName.includes(day1OnlyExercise)),
+      `Day 4 should not duplicate ${day1OnlyExercise}`
+    );
+  }
 });
 
 test("canonical workout plan does not restore removed or replaced exercises", () => {
@@ -92,7 +178,7 @@ test("workout data remains circuit based after the primer row", () => {
     assert.equal(primers.length, 1, `${day.sessionName} should have one at-home primer`);
 
     const workingExercises = day.exercises.filter((exercise) => exercise.exerciseType === "WORKING");
-    assert.ok(workingExercises.length >= 6, `${day.sessionName} should keep machine-supported working sets`);
+    assert.ok(workingExercises.length >= 6, `${day.sessionName} should keep working sets`);
     assert.deepEqual(
       Array.from(new Set(workingExercises.map((exercise) => exercise.supersetGroup))).sort(),
       ["A", "B", "C"],

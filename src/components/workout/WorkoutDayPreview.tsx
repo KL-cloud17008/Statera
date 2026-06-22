@@ -68,7 +68,7 @@ export function WorkoutDayPreview({
             <h2 className="mt-3 max-w-3xl">{plan.sessionName}</h2>
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               Run the session as a sequence: at-home mobility primer, walk to the gym as the
-              general warm-up, easy ramp-up sets on the first machine, then paired circuit blocks.
+              general warm-up, easy ramp-up sets on the first programmed lift or machine, then paired circuit blocks.
               Optional later recovery can happen later in the day.
             </p>
           </div>
@@ -94,7 +94,7 @@ export function WorkoutDayPreview({
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <ProtocolMeta label="At home" value="Mobility primer" note={primers[0]?.reps ?? "8-12 min before leaving"} />
           <ProtocolMeta label="Walk to gym" value="General warm-up" note="Keep breathing conversational." />
-          <ProtocolMeta label="At gym" value="Ramp-up sets" note="First Block A machine, RPE 3-5." />
+          <ProtocolMeta label="At gym" value="Ramp-up sets" note="First Block A lift or machine, RPE 3-5." />
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 

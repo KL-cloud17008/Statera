@@ -16,32 +16,40 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-machine-circuit-v3";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-circuit-free-upper-a-v4";
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Beginner restart block for a 311 lb sedentary male returning to training.",
   "Run A/B/C circuit blocks as the listed pairings or sequences for each day.",
-  "Use machine, seated, cable, and bench-supported exercises to keep setup simple and stable.",
+  "Upper A uses the preferred free-weight push/pull foundation while Upper B remains machine-supported.",
+  "Use machine, seated, cable, and bench-supported exercises where programmed to keep setup simple and stable.",
   "Use RPE 6-7 and leave 2-4 reps in reserve on every working set.",
   "Weeks 1-2 may use optional 2-round mode: complete two rounds per block instead of all listed sets.",
   "Rest only after each pair or full circuit, not between paired exercises unless needed for safety.",
-  "Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first machine before the first working circuit.",
+  "Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.",
 ];
 
 const PLAN_CUE_PREFIX =
   "Beginner machine-supported block: move smoothly, stop 2-4 reps before failure, and use optional 2-round mode in weeks 1-2. ";
 
+const UPPER_A_CUE_PREFIX =
+  "Beginner free-weight upper-body circuit: move smoothly, stop 2-4 reps before failure, and use optional 2-round mode in weeks 1-2. ";
+
 const OPTIONAL_LATER_RECOVERY_NOTE =
   "Optional later recovery does not need to happen immediately after training; it can be done later after walking home, food, shower, or before bed. If feet/soles flare, choose Foot flare focus.";
 
-function gymArrivalCue(firstMachine: string) {
-  return `Gym arrival ramp-up: on ${firstMachine}, do 1-2 easy ramp-up sets before the first working circuit. Set 1: very easy x 8-10 reps at RPE 3-4. Set 2: easy/moderate x 5-8 reps at RPE 4-5 only if needed. Then begin the first working circuit.`;
+function formSource(label: string, url: string) {
+  return `Form source: ${label} (${url}).`;
+}
+
+function gymArrivalCue(firstExercise: string) {
+  return `Gym arrival ramp-up: on ${firstExercise}, do 1-2 easy ramp-up sets before the first working circuit. Set 1: very easy x 8-10 reps at RPE 3-4. Set 2: easy/moderate x 5-8 reps at RPE 4-5 only if needed. Then begin the first working circuit.`;
 }
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
     dayOfWeek: 1,
-    sessionName: "Upper A - Machine Push/Pull Foundation",
+    sessionName: "Upper A - Free-Weight Push/Pull Foundation",
     exercises: [
       {
         exerciseName: "At home - Upper A Mobility Primer",
@@ -50,29 +58,29 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "easy",
         restSeconds: 0,
         targetRPE: "2-4",
-        cues: `At home: daily lower-leg base, wall thoracic rotations 6 per side, wall slides 8, doorway pec stretch 20-30 sec per side, wall lat stretch 20-30 sec per side, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Machine Chest Press")} ${OPTIONAL_LATER_RECOVERY_NOTE}`,
+        cues: `At home: daily lower-leg base, wall thoracic rotations 6 per side, wall slides 8, doorway pec stretch 20-30 sec per side, wall lat stretch 20-30 sec per side, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Incline Dumbbell Press")} ${OPTIONAL_LATER_RECOVERY_NOTE}`,
         supersetGroup: null,
         exerciseType: "WARMUP",
       },
       {
-        exerciseName: "A1 Machine Chest Press",
+        exerciseName: "A1 Incline Dumbbell Press",
         sets: 3,
         reps: "8-12",
         tempo: "3-1-1",
         restSeconds: 90,
         targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Set the handles around mid-chest, keep the back against the pad, press smoothly, and rest 90 seconds after A2.`,
+        cues: `${UPPER_A_CUE_PREFIX}${formSource("Incline Dumbbell Bench Press - Muscle & Strength", "https://www.muscleandstrength.com/exercises/incline-dumbbell-bench-press.html")} Bench around 30-45 degrees, set shoulder blades back and down, keep elbows slightly tucked, control the bottom, stop 2-4 reps before failure, do not bounce dumbbells together at the top, stop if shoulder pain or front-shoulder pinch appears, and rest 90 seconds after A2.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "A2 Chest-Supported Row Machine",
+        exerciseName: "A2 One-Arm Dumbbell Row",
         sets: 3,
-        reps: "8-12",
+        reps: "8-12 per side",
         tempo: "2-1-2",
         restSeconds: 90,
         targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Keep the chest on the pad, pull elbows toward ribs, pause one second, then lower under control before resting after the pair.`,
+        cues: `${UPPER_A_CUE_PREFIX}${formSource("One-Arm Dumbbell Row - Muscle & Strength", "https://www.muscleandstrength.com/exercises/one-arm-dumbbell-row.html")} Brace hard, keep torso square, pull elbow toward hip/ribs, do not twist the body to cheat the rep, control the lowering phase, use bench support if needed, and rest 90 seconds after A2.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
@@ -83,18 +91,18 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "2-1-2",
         restSeconds: 90,
         targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Pull handles toward the upper chest, keep ribs down, and let the shoulder blades glide upward on the return.`,
+        cues: `${UPPER_A_CUE_PREFIX}${formSource("Neutral-Grip Lat Pulldown - Catalyst Athletics", "https://www.catalystathletics.com/exercise/540/Neutral-Grip-Lat-Pulldown/")} Pull handles to the upper chest, keep ribs down, do not lean far back, let shoulder blades rise on the return, control the stretch at the top, do not yank the first rep, and rest 90 seconds after B2.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B2 Machine Shoulder Press",
+        exerciseName: "B2 Barbell Overhead Press / Military Press",
         sets: 3,
         reps: "8-10",
         tempo: "2-1-2",
         restSeconds: 90,
         targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Use the seat and back pad for support, press in a pain-free path, and stop short of any shoulder pinch before resting after B2.`,
+        cues: `${UPPER_A_CUE_PREFIX}${formSource("Military Press / Overhead Press - Muscle & Strength", "https://www.muscleandstrength.com/exercises/military-press.html")} Start light, even if that means empty bar, brace glutes and abs before pressing, keep ribs down, press the bar vertically overhead, do not turn it into a push press, avoid excessive lower-back arch, stop if shoulder pinch, low-back discomfort, dizziness, or form breakdown appears, and rest 90 seconds after B2.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -407,7 +415,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
 ];
 
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Upper A - Machine Push/Pull Foundation",
+  "Monday: Upper A - Free-Weight Push/Pull Foundation",
   "Tuesday: Lower A - Machine Lower Body Foundation",
   "Wednesday: Mobility / Recovery",
   "Thursday: Upper B - Machine Back/Shoulder Emphasis",
