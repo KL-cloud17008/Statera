@@ -16,16 +16,16 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-circuit-free-upper-a-v4";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-circuit-free-upper-a-v5";
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
-  "Beginner restart block for a 311 lb sedentary male returning to training.",
-  "Run A/B/C circuit blocks as the listed pairings or sequences for each day.",
+  "Beginner restart block for a 315 lb sedentary male returning to training.",
+  "Run A/B/C circuit blocks as the listed pairings, single-exercise blocks, or sequences for each day.",
   "Upper A uses the preferred free-weight push/pull foundation while Upper B remains machine-supported.",
   "Use machine, seated, cable, and bench-supported exercises where programmed to keep setup simple and stable.",
-  "Use RPE 6-7 and leave 2-4 reps in reserve on every working set.",
+  "Use the listed RPE targets: most working sets are RPE 6-7 with 2-4 reps in reserve, while the Day 1 shoulder isolation block starts at RPE 5-6 with 3-4 reps in reserve.",
   "Weeks 1-2 may use optional 2-round mode: complete two rounds per block instead of all listed sets.",
-  "Rest only after each pair or full circuit, not between paired exercises unless needed for safety.",
+  "Rest as listed after each pair, single-exercise block, or full circuit, not between paired exercises unless needed for safety.",
   "Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.",
 ];
 
@@ -85,24 +85,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B1 Neutral-Grip Lat Pulldown",
-        sets: 3,
-        reps: "8-12",
+        exerciseName: "B1 Plate Lateral Raise / Dumbbell Lateral Raise",
+        sets: 2,
+        reps: "12-20",
         tempo: "2-1-2",
         restSeconds: 90,
-        targetRPE: "6-7",
-        cues: `${UPPER_A_CUE_PREFIX}${formSource("Neutral-Grip Lat Pulldown - Catalyst Athletics", "https://www.catalystathletics.com/exercise/540/Neutral-Grip-Lat-Pulldown/")} Pull handles to the upper chest, keep ribs down, do not lean far back, let shoulder blades rise on the return, control the stretch at the top, do not yank the first rep, and rest 90 seconds after B2.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B2 Barbell Overhead Press / Military Press",
-        sets: 3,
-        reps: "8-10",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "6-7",
-        cues: `${UPPER_A_CUE_PREFIX}${formSource("Military Press / Overhead Press - Muscle & Strength", "https://www.muscleandstrength.com/exercises/military-press.html")} Start light, even if that means empty bar, brace glutes and abs before pressing, keep ribs down, press the bar vertically overhead, do not turn it into a push press, avoid excessive lower-back arch, stop if shoulder pinch, low-back discomfort, dizziness, or form breakdown appears, and rest 90 seconds after B2.`,
+        targetRPE: "5-6",
+        cues: `${UPPER_A_CUE_PREFIX}Shoulder isolation / low-cardio demand: use light plates or dumbbells, start with 5 lb plates if using imperial plates or about 2-2.5 kg per hand when logging in kg, raise to shoulder height or slightly below, lead with elbows slightly bent, do not shrug, do not swing, stop before shoulder pinch, leave 3-4 reps in reserve, and rest 60-90 seconds after each set. This is intentionally lower cardiovascular demand than the previous heavy pull/press pairing.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },

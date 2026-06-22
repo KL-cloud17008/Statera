@@ -1,3 +1,5 @@
+import { diffDays, isValidISODateString } from "@/lib/dates";
+
 export type SerializedWeightEntry = {
   id: string;
   userId: string;
@@ -153,6 +155,33 @@ export function projectGoalDate(currentWeight: number | null, goalWeight: number
 
   const projected = addDays(new Date(), Math.round(weeks * 7));
   return formatDateISO(projected);
+}
+
+export function computeRequiredWeeklyLossPace(
+  currentWeight: number | null,
+  goalWeight: number | null,
+  fromDate: string | null,
+  targetDate: string | null
+) {
+  if (
+    currentWeight == null ||
+    goalWeight == null ||
+    !fromDate ||
+    !targetDate ||
+    !isValidISODateString(fromDate) ||
+    !isValidISODateString(targetDate)
+  ) {
+    return null;
+  }
+
+  const remainingLoss = currentWeight - goalWeight;
+  const daysToTarget = diffDays(fromDate, targetDate);
+  if (remainingLoss <= 0 || daysToTarget <= 0) {
+    return null;
+  }
+
+  const weeksToTarget = daysToTarget / 7;
+  return Math.round((remainingLoss / weeksToTarget) * 10) / 10;
 }
 
 export function computeWeightStats(

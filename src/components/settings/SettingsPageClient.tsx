@@ -37,7 +37,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SectionHeader } from "@/components/ui/section-header";
 import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload, unwrapBackupEnvelope, type BackupPreview } from "@/lib/backup";
-import { parseAppSettings } from "@/lib/app-settings";
+import { normalizeGoalTargetDate, parseAppSettings } from "@/lib/app-settings";
 import { BODYWEIGHT_UNIT, WORKOUT_LOAD_UNIT, formatBodyweightConversion, inchesToCm } from "@/lib/units";
 
 type SettingsPageClientProps = {
@@ -68,6 +68,7 @@ function downloadTextFile(filename: string, text: string, mimeType: string) {
 
 export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const goalDateInputRef = useRef<HTMLInputElement>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -83,12 +84,21 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     type: "saved" | "error";
     message: string;
   } | null>(null);
+  const [goalDateValue, setGoalDateValue] = useState(settings.weightGoalTargetDate ?? "");
+  const [goalDateStatus, setGoalDateStatus] = useState<{
+    type: "saved" | "error";
+    message: string;
+  } | null>(null);
   const startWeightConversion = formatBodyweightConversion(startWeightValue);
   const goalWeightConversion = formatBodyweightConversion(goalWeightValue);
 
   useEffect(() => {
     setStepGoalValue(String(settings.stepGoal));
   }, [settings.stepGoal]);
+
+  useEffect(() => {
+    setGoalDateValue(settings.weightGoalTargetDate ?? "");
+  }, [settings.weightGoalTargetDate]);
 
   async function handleProfileSave(formData: FormData) {
     setIsSaving(true);
@@ -269,6 +279,37 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     });
   }
 
+  function handleGoalDateSave() {
+    if (goalDateInputRef.current && !goalDateInputRef.current.validity.valid) {
+      setGoalDateStatus({
+        type: "error",
+        message: "Enter a valid target date in YYYY-MM-DD format, such as 2027-10-22.",
+      });
+      return;
+    }
+
+    const normalizedDate = normalizeGoalTargetDate(goalDateValue);
+    if (goalDateValue.trim() && !normalizedDate) {
+      setGoalDateStatus({
+        type: "error",
+        message: "Enter a valid target date in YYYY-MM-DD format, such as 2027-10-22.",
+      });
+      return;
+    }
+
+    updateSettings((current) => ({
+      ...current,
+      weightGoalTargetDate: normalizedDate,
+    }));
+    setGoalDateValue(normalizedDate ?? "");
+    setGoalDateStatus({
+      type: "saved",
+      message: normalizedDate
+        ? `Goal target date saved for ${normalizedDate}.`
+        : "Goal target date cleared.",
+    });
+  }
+
   return (
     <div className="page-shell">
       <SectionHeader
@@ -389,18 +430,40 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               ) : null}
             </Field>
             <Field label="Goal Target Date" htmlFor="goalDate">
-              <Input
-                id="goalDate"
-                type="date"
-                value={settings.weightGoalTargetDate ?? ""}
-                className="h-12"
-                onChange={(event) => {
-                  updateSettings((current) => ({
-                    ...current,
-                    weightGoalTargetDate: event.target.value || null,
-                  }));
-                }}
-              />
+              <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+                <Input
+                  id="goalDate"
+                  ref={goalDateInputRef}
+                  type="date"
+                  value={goalDateValue}
+                  className="h-12"
+                  aria-invalid={goalDateStatus?.type === "error"}
+                  aria-describedby={goalDateStatus ? "goalDateStatus" : undefined}
+                  onChange={(event) => {
+                    setGoalDateValue(event.target.value);
+                    setGoalDateStatus(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleGoalDateSave();
+                    }
+                  }}
+                />
+                <Button type="button" variant="outline" onClick={handleGoalDateSave} className="h-12">
+                  Save Date
+                </Button>
+              </div>
+              {goalDateStatus ? (
+                <p
+                  id="goalDateStatus"
+                  role={goalDateStatus.type === "error" ? "alert" : "status"}
+                  className={`status-note ${goalDateStatus.type === "error" ? "status-note-error" : "status-note-success"} flex items-start gap-2 px-3 py-2 text-xs`}
+                >
+                  {goalDateStatus.type === "saved" ? <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : null}
+                  <span>{goalDateStatus.message}</span>
+                </p>
+              ) : null}
             </Field>
             <div className="grid gap-4 md:grid-cols-3">
               <Field label="Bodyweight Unit" htmlFor="bodyweightUnit">

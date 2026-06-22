@@ -16,14 +16,14 @@ This is the documentation copy of the canonical training plan used by the app se
 
 ## Training Style
 
-- Beginner restart block for a 311 lb sedentary male returning to training.
+- Beginner restart block for a 315 lb sedentary male returning to training.
 - A/B/C circuit blocks.
-- Listed pairings or sequences for each day.
+- Listed pairings, single-exercise blocks, or sequences for each day.
 - Upper A uses the preferred free-weight push/pull foundation; Upper B remains machine-supported.
 - Machine, seated, cable, and bench-supported movements are used where programmed.
-- Controlled rest after each pair or full circuit instead of long rest between paired exercises.
-- RPE 6-7 on working sets.
-- Leave 2-4 reps in reserve.
+- Controlled rest after each pair, single-exercise block, or full circuit instead of long rest between paired exercises.
+- Most working sets use RPE 6-7 with 2-4 reps in reserve.
+- The Day 1 shoulder isolation block starts easier at RPE 5-6 with 3-4 reps in reserve.
 - Optional 2-round mode for weeks 1-2: complete two rounds per block when fatigue, soreness, or time makes the full prescription too much.
 - Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.
 
@@ -51,8 +51,7 @@ Optional later recovery does not need to happen immediately after training. It c
 | At home | Upper A Mobility Primer | 1 | 8-12 min before walking to gym | easy | - | 2-4 |
 | A1 | Incline Dumbbell Press | 3 | 8-12 | 3-1-1 | after A2: 90 sec | 6-7 |
 | A2 | One-Arm Dumbbell Row | 3 | 8-12 per side | 2-1-2 | after A2: 90 sec | 6-7 |
-| B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 2-1-2 | after B2: 90 sec | 6-7 |
-| B2 | Barbell Overhead Press / Military Press | 3 | 8-10 | 2-1-2 | after B2: 90 sec | 6-7 |
+| B1 | Plate Lateral Raise / Dumbbell Lateral Raise | 2 | 12-20 | 2-1-2 | after each set: 60-90 sec | 5-6 initially |
 | C1 | Rope Triceps Pressdown | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C2 | Cable Curl | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Face Pull | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
@@ -65,8 +64,7 @@ Upper A form sources and key cues:
 
 - Incline Dumbbell Press: Incline Dumbbell Bench Press - Muscle & Strength, https://www.muscleandstrength.com/exercises/incline-dumbbell-bench-press.html. Bench around 30-45 degrees; shoulder blades back and down; elbows slightly tucked; control the bottom; stop 2-4 reps before failure; do not bounce dumbbells together at the top; stop if shoulder pain or front-shoulder pinch appears.
 - One-Arm Dumbbell Row: One-Arm Dumbbell Row - Muscle & Strength, https://www.muscleandstrength.com/exercises/one-arm-dumbbell-row.html. Brace hard; keep torso square; pull elbow toward hip/ribs; do not twist the body to cheat the rep; control the lowering phase; use bench support if needed.
-- Neutral-Grip Lat Pulldown: Neutral-Grip Lat Pulldown - Catalyst Athletics, https://www.catalystathletics.com/exercise/540/Neutral-Grip-Lat-Pulldown/. Pull handles to upper chest; keep ribs down; do not lean far back; let shoulder blades rise on the return; control the stretch at the top; do not yank the first rep.
-- Barbell Overhead Press / Military Press: Military Press / Overhead Press - Muscle & Strength, https://www.muscleandstrength.com/exercises/military-press.html. Start light, even if that means empty bar; brace glutes and abs before pressing; ribs down; press bar vertically overhead; do not turn it into a push press; no excessive lower-back arch; stop if shoulder pinch, low-back discomfort, dizziness, or form breakdown appears.
+- Plate Lateral Raise / Dumbbell Lateral Raise: shoulder isolation / low-cardio demand. Use light plates or dumbbells; start with 5 lb plates if using imperial plates, or about 2-2.5 kg per hand when logging in kg; raise to shoulder height or slightly below; lead with elbows slightly bent; do not shrug; do not swing; stop before shoulder pinch; leave 3-4 reps in reserve. This is intentionally lower cardiovascular demand than the previous heavy pull/press pairing.
 
 ## Tuesday - Lower A: Machine Lower Body Foundation
 

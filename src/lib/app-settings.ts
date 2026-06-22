@@ -3,6 +3,7 @@ import type {
   LibraryExercise,
   WorkoutTemplate,
 } from "@/lib/exercise-library";
+import { isValidISODateString } from "@/lib/dates";
 
 export type WeightUnit = "lb" | "kg";
 export type DistanceUnit = "mi" | "km";
@@ -115,6 +116,19 @@ function parseWorkoutTemplates(value: unknown): WorkoutTemplate[] {
     .filter((template) => template.exercises.length > 0);
 }
 
+export function normalizeGoalTargetDate(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  return isValidISODateString(trimmed) ? trimmed : null;
+}
+
 export function parseAppSettings(value: string | null | undefined): AppSettings {
   if (!value) {
     return DEFAULT_APP_SETTINGS;
@@ -130,10 +144,7 @@ export function parseAppSettings(value: string | null | undefined): AppSettings 
           : DEFAULT_APP_SETTINGS.stepGoal,
       weightUnit: parsed.weightUnit === "kg" ? "kg" : "lb",
       distanceUnit: parsed.distanceUnit === "km" ? "km" : "mi",
-      weightGoalTargetDate:
-        typeof parsed.weightGoalTargetDate === "string" && parsed.weightGoalTargetDate.length > 0
-          ? parsed.weightGoalTargetDate
-          : null,
+      weightGoalTargetDate: normalizeGoalTargetDate(parsed.weightGoalTargetDate),
       customExercises: parseCustomExercises(parsed.customExercises),
       workoutTemplates: parseWorkoutTemplates(parsed.workoutTemplates),
       activeWorkoutDrafts:
@@ -147,5 +158,8 @@ export function parseAppSettings(value: string | null | undefined): AppSettings 
 }
 
 export function serializeAppSettings(settings: AppSettings) {
-  return JSON.stringify(settings);
+  return JSON.stringify({
+    ...settings,
+    weightGoalTargetDate: normalizeGoalTargetDate(settings.weightGoalTargetDate),
+  });
 }

@@ -7,6 +7,7 @@ import vm from "node:vm";
 
 const planSource = readFileSync("src/lib/default-workout-plan.ts", "utf8");
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
+const weightChartSource = readFileSync("src/components/weight/WeightChart.tsx", "utf8");
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 const moduleCache = new Map();
@@ -15,13 +16,13 @@ const appSettings = loadTypescriptModule("src/lib/app-settings.ts");
 const backup = loadTypescriptModule("src/lib/backup.ts");
 const mobility = loadTypescriptModule("src/lib/mobility.ts");
 const nutrition = loadTypescriptModule("src/lib/nutrition.ts");
+const weight = loadTypescriptModule("src/lib/weight.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
 
 const requiredExercises = [
   "Incline Dumbbell Press",
   "One-Arm Dumbbell Row",
-  "Neutral-Grip Lat Pulldown",
-  "Barbell Overhead Press / Military Press",
+  "Plate Lateral Raise / Dumbbell Lateral Raise",
   "Leg Press",
   "Walking Lunges",
   "Leg Press Calf Press",
@@ -30,11 +31,11 @@ const requiredExercises = [
   "Back Extension Machine",
 ];
 
-const day1Exercises = [
-  "Incline Dumbbell Press",
-  "One-Arm Dumbbell Row",
+const day1RemovedExercises = [
   "Neutral-Grip Lat Pulldown",
   "Barbell Overhead Press / Military Press",
+  "Barbell Overhead Press",
+  "Military Press",
 ];
 
 const day4MachineSupportedExercises = [
@@ -88,26 +89,44 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
   assert.match(planSource, /2-4 reps in reserve/);
 });
 
-test("day 1 upper a uses the requested free-weight push pull circuit", () => {
+test("day 1 upper a keeps the free-weight pair and low-cardio shoulder isolation block", () => {
   const day1 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 1);
   assert.ok(day1, "Day 1 should exist");
   assert.match(day1.sessionName, /Free-Weight Push\/Pull Foundation/);
 
-  for (const exercise of day1Exercises) {
+  for (const exercise of ["Incline Dumbbell Press", "One-Arm Dumbbell Row"]) {
     const match = day1.exercises.find((item) => item.exerciseName.includes(exercise));
     assert.ok(match, `Day 1 should include ${exercise}`);
     assert.equal(match.targetRPE, "6-7", `${exercise} should use RPE 6-7`);
+    assert.equal(match.sets, 3, `${exercise} should keep 3 sets`);
   }
 
   assert.equal(day1.exercises.find((item) => item.exerciseName.includes("Incline Dumbbell Press")).sets, 3);
   assert.equal(day1.exercises.find((item) => item.exerciseName.includes("One-Arm Dumbbell Row")).reps, "8-12 per side");
-  assert.equal(day1.exercises.find((item) => item.exerciseName.includes("Barbell Overhead Press / Military Press")).reps, "8-10");
+
+  const lateralRaise = day1.exercises.find((item) =>
+    item.exerciseName.includes("Plate Lateral Raise / Dumbbell Lateral Raise")
+  );
+  assert.ok(lateralRaise, "Day 1 should include Plate Lateral Raise / Dumbbell Lateral Raise");
+  assert.equal(lateralRaise.sets, 2);
+  assert.equal(lateralRaise.reps, "12-20");
+  assert.equal(lateralRaise.targetRPE, "5-6");
+  assert.equal(lateralRaise.restSeconds, 90);
+  assert.match(lateralRaise.cues, /5 lb plates/);
+  assert.match(lateralRaise.cues, /2-2\.5 kg per hand/);
+  assert.match(lateralRaise.cues, /3-4 reps in reserve/);
+  assert.match(lateralRaise.cues, /lower cardiovascular demand/i);
+
+  for (const exercise of day1RemovedExercises) {
+    assert.ok(
+      !day1.exercises.some((item) => item.exerciseName.includes(exercise)),
+      `Day 1 should no longer include ${exercise}`
+    );
+  }
 
   for (const url of [
     "https://www.muscleandstrength.com/exercises/incline-dumbbell-bench-press.html",
     "https://www.muscleandstrength.com/exercises/one-arm-dumbbell-row.html",
-    "https://www.catalystathletics.com/exercise/540/Neutral-Grip-Lat-Pulldown/",
-    "https://www.muscleandstrength.com/exercises/military-press.html",
   ]) {
     assert.match(planSource, new RegExp(escapeRegExp(url)), `${url} should be stored with the plan cues`);
   }
@@ -128,7 +147,7 @@ test("day 4 upper b remains machine supported", () => {
   for (const day1OnlyExercise of [
     "Incline Dumbbell Press",
     "One-Arm Dumbbell Row",
-    "Barbell Overhead Press / Military Press",
+    "Plate Lateral Raise / Dumbbell Lateral Raise",
   ]) {
     assert.ok(
       !day4.exercises.some((item) => item.exerciseName.includes(day1OnlyExercise)),
@@ -138,7 +157,7 @@ test("day 4 upper b remains machine supported", () => {
 });
 
 test("canonical workout plan does not restore removed or replaced exercises", () => {
-  for (const exercise of removedExercises) {
+  for (const exercise of [...removedExercises, ...day1RemovedExercises]) {
     assert.doesNotMatch(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should not return`);
   }
 });
@@ -354,6 +373,52 @@ test("daily step goal settings accept 8000 and reject unsafe values", () => {
   );
 });
 
+test("goal target date settings persist stable ISO dates and reject ambiguous dates", () => {
+  const parsed = appSettings.parseAppSettings(JSON.stringify({
+    weightGoalTargetDate: "2027-10-22",
+  }));
+  assert.equal(parsed.weightGoalTargetDate, "2027-10-22");
+  assert.equal(appSettings.normalizeGoalTargetDate(" 2027-10-22 "), "2027-10-22");
+  assert.equal(appSettings.parseAppSettings(JSON.stringify({ weightGoalTargetDate: "10/22/2027" })).weightGoalTargetDate, null);
+  assert.equal(appSettings.parseAppSettings(JSON.stringify({ weightGoalTargetDate: "2027-02-29" })).weightGoalTargetDate, null);
+  assert.equal(appSettings.parseAppSettings(JSON.stringify({ weightGoalTargetDate: "" })).weightGoalTargetDate, null);
+  assert.match(
+    appSettings.serializeAppSettings({
+      ...appSettings.DEFAULT_APP_SETTINGS,
+      weightGoalTargetDate: "10/22/2027",
+    }),
+    /"weightGoalTargetDate":null/
+  );
+});
+
+test("weight goal target date supports a 154 lb goal and 16-month pace readout", () => {
+  const entries = [
+    {
+      id: "weight-1",
+      userId: "user-1",
+      date: "2026-06-22",
+      weight: 315,
+      bodyFatPercent: null,
+      status: "NORMAL",
+      timeOfDay: null,
+      notes: null,
+      createdAt: "2026-06-22T12:00:00.000Z",
+    },
+  ];
+  const stats = weight.computeWeightStats(entries, {
+    startWeight: 315,
+    heightInches: null,
+    goalWeight: 154,
+  });
+
+  assert.equal(stats.currentWeight, 315);
+  assert.equal(stats.goalWeight, 154);
+  assert.equal(units.BODYWEIGHT_UNIT, "lb");
+  assert.equal(weight.computeRequiredWeeklyLossPace(315, 154, "2026-06-22", "2027-10-22"), 2.3);
+  assert.match(weightChartSource, /Required pace: about/);
+  assert.match(weightChartSource, /This is an aggressive target; use the trend as guidance, not medical advice\./);
+});
+
 test("nutrition totals calculate daily calories and macros", () => {
   const totals = nutrition.calculateNutritionTotals([
     { calories: 450, protein: 52.5, carbs: 40, fat: 8 },
@@ -468,6 +533,18 @@ function loadTypescriptModule(path) {
   const contextRequire = (specifier) => {
     if (specifier.startsWith("@/")) {
       const resolvedPath = resolve(specifier.replace("@/", "src/"));
+      try {
+        return loadTypescriptModule(`${resolvedPath}.ts`);
+      } catch {
+        try {
+          return loadTypescriptModule(`${resolvedPath}.tsx`);
+        } catch {
+          return require(resolvedPath);
+        }
+      }
+    }
+    if (specifier.startsWith(".")) {
+      const resolvedPath = resolve(dirname(filename), specifier);
       try {
         return loadTypescriptModule(`${resolvedPath}.ts`);
       } catch {

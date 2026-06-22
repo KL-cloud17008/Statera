@@ -15,7 +15,12 @@ import {
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { buildChartData, type SerializedWeightEntry } from "@/lib/weight";
+import { normalizeGoalTargetDate } from "@/lib/app-settings";
+import {
+  buildChartData,
+  computeRequiredWeeklyLossPace,
+  type SerializedWeightEntry,
+} from "@/lib/weight";
 
 type ZoomRange = "1W" | "1M" | "3M" | "ALL";
 
@@ -26,6 +31,11 @@ type WeightChartPoint = {
   displayWeight: number | null;
   displayAvg7: number | null;
   projection: number | null;
+};
+
+type TargetDateSummary = {
+  targetDate: string;
+  requiredPace: number | null;
 };
 
 export function WeightChart({
@@ -39,6 +49,22 @@ export function WeightChart({
   const [zoom, setZoom] = useState<ZoomRange>("1M");
 
   const allChartData = useMemo(() => buildChartData(entries), [entries]);
+  const targetDate = normalizeGoalTargetDate(settings.weightGoalTargetDate);
+
+  const targetSummary = useMemo<TargetDateSummary | null>(() => {
+    if (!targetDate) {
+      return null;
+    }
+
+    const lastPoint = allChartData[allChartData.length - 1];
+    const currentWeight = lastPoint?.weight ?? lastPoint?.avg7 ?? null;
+    return {
+      targetDate,
+      requiredPace: lastPoint
+        ? computeRequiredWeeklyLossPace(currentWeight, goalWeight, lastPoint.date, targetDate)
+        : null,
+    };
+  }, [allChartData, goalWeight, targetDate]);
 
   const filteredData = useMemo(() => {
     if (zoom === "ALL" || allChartData.length === 0) {
@@ -68,7 +94,7 @@ export function WeightChart({
     }));
 
     if (
-      !settings.weightGoalTargetDate ||
+      !targetDate ||
       goalWeight == null ||
       transformed.length === 0
     ) {
@@ -83,7 +109,7 @@ export function WeightChart({
     }
 
     const hasTarget = transformed.some(
-      (point) => point.date === settings.weightGoalTargetDate
+      (point) => point.date === targetDate
     );
     const base = transformed.map((point) => ({
       ...point,
@@ -96,7 +122,7 @@ export function WeightChart({
         projection:
           point.date === lastPoint.date
             ? currentWeight
-            : point.date === settings.weightGoalTargetDate
+            : point.date === targetDate
               ? targetWeight
               : point.projection,
       }));
@@ -105,7 +131,7 @@ export function WeightChart({
     return [
       ...base,
       {
-        date: settings.weightGoalTargetDate,
+        date: targetDate,
         weight: null,
         avg7: null,
         displayWeight: null,
@@ -113,7 +139,7 @@ export function WeightChart({
         projection: targetWeight,
       },
     ].sort((a, b) => a.date.localeCompare(b.date));
-  }, [filteredData, goalWeight, settings.weightGoalTargetDate]);
+  }, [filteredData, goalWeight, targetDate]);
 
   if (entries.length === 0) {
     return (
@@ -127,6 +153,7 @@ export function WeightChart({
               Add weight entries to see your trend
             </span>
           </div>
+          <TargetDateNote summary={targetSummary} />
         </CardContent>
       </Card>
     );
@@ -247,8 +274,30 @@ export function WeightChart({
             />
           </ComposedChart>
         </ResponsiveContainer>
+        <TargetDateNote summary={targetSummary} />
       </CardContent>
     </Card>
+  );
+}
+
+function TargetDateNote({ summary }: { summary: TargetDateSummary | null }) {
+  if (!summary) {
+    return null;
+  }
+
+  const paceCopy =
+    summary.requiredPace != null
+      ? `Required pace: about ${summary.requiredPace.toFixed(1)} lb/week. ${
+          summary.requiredPace >= 2
+            ? "This is an aggressive target; use the trend as guidance, not medical advice."
+            : "Use the trend as guidance, not medical advice."
+        }`
+      : "Log current weight and goal weight to estimate the required pace.";
+
+  return (
+    <p className="status-note mt-4 px-3 py-2 text-xs">
+      Target date: {formatTargetDate(summary.targetDate)}. {paceCopy}
+    </p>
   );
 }
 
@@ -260,4 +309,14 @@ function formatChartDate(dateStr: string, zoom: ZoomRange): string {
   }
 
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function formatTargetDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
