@@ -8,11 +8,11 @@ import { toast } from "sonner";
 import { logMobility } from "@/actions/mobility";
 import { MobilityChecklist } from "./MobilityChecklist";
 import {
+  getRequiredLaterRecoveryBlocks,
   getMobilityProgram,
-  getOptionalLaterRecoveryBlocks,
   getRecoverySessionBlocks,
-  OPTIONAL_LATER_RECOVERY,
-  OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE,
+  REQUIRED_LATER_RECOVERY,
+  REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE,
   UNDO_SITTING,
   type RecoveryMode,
 } from "@/lib/mobility";
@@ -46,15 +46,15 @@ export function MobilityPageClient({
     program.logType === "POST_WORKOUT"
       ? getRecoverySessionBlocks(dayOfWeek, recoveryMode)
       : program.blocks;
-  const laterRecoveryBlocks = getOptionalLaterRecoveryBlocks(recoveryMode, dayOfWeek);
+  const laterRecoveryBlocks = getRequiredLaterRecoveryBlocks(recoveryMode, dayOfWeek);
   const laterRecoveryTitle =
     recoveryMode === "footFlare"
-      ? OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE
-      : OPTIONAL_LATER_RECOVERY.title;
+      ? REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE
+      : REQUIRED_LATER_RECOVERY.title;
   const highStepLoadNote = highStepLoad
     ? `High step load detected${
         recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
-      }. Keep today's recovery easy and foot-focused.`
+      }. Required foot-flare recovery is active; keep it easy and foot-focused.`
     : undefined;
 
   const sessionCompleted = completedTypes.includes(program.logType);
@@ -111,7 +111,7 @@ export function MobilityPageClient({
           title={program.sessionTitle}
           summary={
             program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-              ? "Foot flare focus puts the soles, arches, shins, calves, and ankles first, then continues into the rest of the recovery session."
+              ? "Required foot-flare recovery puts the soles, arches, shins, calves, and ankles first, then continues into the rest of the recovery session."
               : program.adaptationNote
           }
           completed={sessionCompleted}
@@ -122,7 +122,7 @@ export function MobilityPageClient({
             handleLogCompletion(
               program.logType,
               program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-                ? `${program.sessionTitle} - foot flare focus`
+                ? `${program.sessionTitle} - required foot-flare recovery`
                 : program.sessionTitle
             )
           }
@@ -142,8 +142,8 @@ export function MobilityPageClient({
             title={laterRecoveryTitle}
             summary={
               recoveryMode === "footFlare"
-                ? "Use later today after walking home, food, shower, or before bed. Prioritize the soles, arches, shins, calves, and ankles before full-body mobility."
-                : "Use later after walking home, food, shower, or before bed if the lift leaves hips, calves, shoulders, or breathing feeling guarded."
+                ? "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout."
+                : "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work."
             }
             completed={laterRecoveryCompleted}
             isPending={isPending}
@@ -153,12 +153,12 @@ export function MobilityPageClient({
             headerAside={<RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />}
             meta={
               recoveryMode === "footFlare"
-                ? "Duration 12-18 minutes. Effort 1-3/10. Pain 0-2/10 maximum. Reduce stiffness without creating fatigue."
-                : "Separate from the primer. Keep effort low and finish calmer."
+                ? "Effort 1-3/10. Pain 0-2/10 maximum. No aggressive stretching, no digging hard into the sole, and no extra fatigue."
+                : "Required means consistently completed, not intense. Effort 1-3/10, pain 0-2/10 maximum, no fatigue."
             }
             contextNote={highStepLoadNote}
           >
-            <MobilityChecklist blocks={laterRecoveryBlocks} title="Later recovery" />
+            <MobilityChecklist blocks={laterRecoveryBlocks} title="Required later recovery" />
           </RoutineSection>
         ) : null}
 
@@ -277,8 +277,8 @@ function RecoveryModeControl({
     },
     {
       value: "footFlare",
-      label: "Foot flare focus",
-      note: "Feet and lower legs first",
+      label: "Foot flare recovery",
+      note: "Required when soles are irritated or step load is high",
     },
   ];
 

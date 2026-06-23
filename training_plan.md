@@ -6,7 +6,7 @@ This is the documentation copy of the canonical training plan used by the app se
 
 | Day | Focus |
 | --- | --- |
-| Monday | Upper A - Free-Weight Push/Pull Foundation |
+| Monday | Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit |
 | Tuesday | Lower A - Machine Lower Body Foundation |
 | Wednesday | Mobility / Recovery |
 | Thursday | Upper B - Machine Back/Shoulder Emphasis |
@@ -24,6 +24,7 @@ This is the documentation copy of the canonical training plan used by the app se
 - Controlled rest after each pair, single-exercise block, or full circuit instead of long rest between paired exercises.
 - Most working sets use RPE 6-7 with 2-4 reps in reserve.
 - The Day 1 shoulder isolation block starts easier at RPE 5-6 with 3-4 reps in reserve.
+- Overhead pressing can return later as a progression once breathing, bracing, and shoulder tolerance improve.
 - Optional 2-round mode for weeks 1-2: complete two rounds per block when fatigue, soreness, or time makes the full prescription too much.
 - Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.
 
@@ -33,7 +34,7 @@ This is the documentation copy of the canonical training plan used by the app se
 2. Walk to gym - general warm-up.
 3. At gym - ramp-up sets on the first programmed lift or machine in Block A.
 4. Main circuit blocks.
-5. Optional later recovery - done later, not immediately required.
+5. Required later recovery - done later the same day, not necessarily immediately after training.
 
 At the gym:
 
@@ -42,16 +43,21 @@ At the gym:
 - Ramp-up sets should feel easy, around RPE 3-5.
 - Then begin the first working circuit.
 
-Optional later recovery does not need to happen immediately after training. It can be done later after walking home, food, shower, or before bed. If feet/soles flare, choose Foot flare focus.
+Required later recovery does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work.
 
-## Monday - Upper A: Free-Weight Push/Pull Foundation
+Required does not mean push through pain. Stop or scale down if you feel sharp pain, numbness, tingling, swelling, warmth, limping, dizziness, or pain that increases as you continue.
+
+If feet/soles flare, choose required foot-flare recovery. Foot flare recovery is required when your soles are irritated or recent step load is high. The goal is to reduce guarding, restore easy motion, and protect tomorrow's training.
+
+## Monday - Upper A: Free-Weight Push/Pull + Low-Stress Shoulder Circuit
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
 | At home | Upper A Mobility Primer | 1 | 8-12 min before walking to gym | easy | - | 2-4 |
-| A1 | Incline Dumbbell Press | 3 | 8-12 | 3-1-1 | after A2: 90 sec | 6-7 |
-| A2 | One-Arm Dumbbell Row | 3 | 8-12 per side | 2-1-2 | after A2: 90 sec | 6-7 |
-| B1 | Plate Lateral Raise / Dumbbell Lateral Raise | 2 | 12-20 | 2-1-2 | after each set: 60-90 sec | 5-6 initially |
+| A1 | Incline Dumbbell Press | 3 | 8-12 | 3-1-1 | after A2: 90-120 sec | 6-7 |
+| A2 | One-Arm Dumbbell Row | 3 | 8-12 per side | 2-1-2 | after A2: 90-120 sec; longer if breathing is not recovered | 6-7 |
+| B1 | Neutral-Grip Lat Pulldown | 2-3 | 8-12 | 2-1-2 | after B2: 2-3 min if needed; minimum 90 sec | 5-6 initially |
+| B2 | Plate Lateral Raise / Dumbbell Lateral Raise | 2-3 | 12-20 | 2-1-2 | after B2: 2-3 min if needed; minimum 90 sec | 5-6 initially |
 | C1 | Rope Triceps Pressdown | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C2 | Cable Curl | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Face Pull | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
@@ -64,25 +70,25 @@ Upper A form sources and key cues:
 
 - Incline Dumbbell Press: Incline Dumbbell Bench Press - Muscle & Strength, https://www.muscleandstrength.com/exercises/incline-dumbbell-bench-press.html. Bench around 30-45 degrees; shoulder blades back and down; elbows slightly tucked; control the bottom; stop 2-4 reps before failure; do not bounce dumbbells together at the top; stop if shoulder pain or front-shoulder pinch appears.
 - One-Arm Dumbbell Row: One-Arm Dumbbell Row - Muscle & Strength, https://www.muscleandstrength.com/exercises/one-arm-dumbbell-row.html. Brace hard; keep torso square; pull elbow toward hip/ribs; do not twist the body to cheat the rep; control the lowering phase; use bench support if needed.
-- Plate Lateral Raise / Dumbbell Lateral Raise: shoulder isolation / low-cardio demand. Use light plates or dumbbells; start with 5 lb plates if using imperial plates, or about 2-2.5 kg per hand when logging in kg; raise to shoulder height or slightly below; lead with elbows slightly bent; do not shrug; do not swing; stop before shoulder pinch; leave 3-4 reps in reserve. This is intentionally lower cardiovascular demand than the previous heavy pull/press pairing.
+- Neutral-Grip Lat Pulldown: pull handles to the upper chest; keep ribs down; do not lean far back; let shoulder blades rise on the return; control the stretch at the top; no yanking; stop before form breaks or breathing spikes too hard; leave 2-4 reps in reserve. Progress to RPE 6-7 only when conditioning improves.
+- Plate Lateral Raise / Dumbbell Lateral Raise: use light plates or dumbbells; start with 5 lb plates if using imperial plates, or about 2-2.5 kg per hand when logging in kg; raise to shoulder height or slightly below; elbows slightly bent; do not shrug; do not swing; stop before shoulder pinch; leave 3-4 reps in reserve.
+- Circuit B is still a circuit, but it is not conditioning. The goal is controlled strength practice with enough rest to recover breathing.
 
 ## Tuesday - Lower A: Machine Lower Body Foundation
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
 | At home | Lower A Mobility Primer | 1 | 8-12 min before walking to gym | easy | - | 2-4 |
-| A1 | Leg Press | 3 | 8-12 | 3-1-1 | after A2: 120 sec | 6-7 |
-| A2 | Seated Hamstring Curl | 3 | 10-15 | 2-1-2 | after A2: 120 sec | 6-7 |
-| B1 | Walking Lunges | 2 | 8-12 steps per leg | controlled pace | after set or block: 90 sec | 6-7 |
-| C1 | Leg Extension | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
-| C2 | Seated Calf Raise | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
-| C3 | Hip Abduction Machine | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
+| A1 | Single-Leg Leg Press | 3 | 8-12 per side | 3-1-1 | after each set: 120 sec | 6-7 |
+| B1 | Lunges / Walking Lunges | 2 | 8-12 steps per leg | controlled pace | after set or block: 90 sec | 6-7 |
+| C1 | Leg Extension | 2 | 10-15 | 2-1-2 | after C2: 120 sec | 6-7 |
+| C2 | Lying Leg Curl | 2 | 10-15 | 2-1-2 | after C2: 120 sec | 6-7 |
 
-Walking Lunges beginner note: use bodyweight first; hold dumbbells only when stable and pain-free.
+Lunges / Walking Lunges beginner note: use bodyweight first; hold dumbbells only when stable and pain-free.
 
 Lower A at-home primer: daily lower-leg base; 90/90 hip switches, 6-8 slow reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; adductor rock-backs, 6-8 reps per side; bodyweight glute bridge, 8-10 controlled reps; seated bracing breaths, 5 slow breaths.
 
-At the gym: ramp-up on Leg Press before Block A.
+At the gym: ramp-up on Single-Leg Leg Press before Block A.
 
 ## Thursday - Upper B: Machine Back/Shoulder Emphasis
 
@@ -106,14 +112,13 @@ At the gym: ramp-up on Incline Machine Press before Block A.
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
 | At home | Lower B Mobility Primer | 1 | 8-12 min before walking to gym | easy | - | 2-4 |
-| A1 | Hack Squat Machine | 3 | 8-12 | 3-1-1 | after A2: 120 sec | 6-7 |
-| A2 | Lying Hamstring Curl | 3 | 10-15 | 2-1-2 | after A2: 120 sec | 6-7 |
-| B1 | Glute Kickback Machine | 3 | 8-12/side | 2-1-2 | after B2: 120 sec | 6-7 |
-| B2 | Back Extension Machine | 3 | 10-12 | 2-1-2 | after B2: 120 sec | 6-7 |
-| C1 | Leg Extension | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
+| A1 | Leg Press | 3 | 8-12 | 3-1-1 | straight sets: 120 sec after each set | 6-7 |
+| B1 | Lying Hamstring Curl | 3 | 10-15 | 2-1-2 | after B2: 120 sec | 6-7 |
+| B2 | Glute Kickback Machine | 3 | 8-12/side | 2-1-2 | after B2: 120 sec | 6-7 |
+| C1 | Hyperextension / Back Extension Machine | 2 | 10-12 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C2 | Leg Press Calf Press | 2 | 12-20 | 2-1-2 | after C3: 120 sec | 6-7 |
-| C3 | Hip Adduction Machine | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
+| C3 | Leg Extension | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 
 Lower B at-home primer: daily lower-leg base; hip hinge patterning against wall, 8 reps; hamstring floss seated or standing, 8 reps per side; 90/90 hip switches, 6-8 reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; bodyweight glute bridge, 8-10 reps; seated bracing breaths, 5 slow breaths.
 
-At the gym: ramp-up on Hack Squat Machine before Block A.
+At the gym: ramp-up on Leg Press before Block A.

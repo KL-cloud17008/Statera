@@ -100,7 +100,10 @@ export default async function DashboardPage() {
       }}
       mobilitySummary={{
         completedTypes: todayMobilityLogs.map((log) => log.type),
-        footFlareLogged: todayMobilityLogs.some((log) => log.version.toLowerCase().includes("foot flare")),
+        footFlareLogged: todayMobilityLogs.some((log) => {
+          const version = log.version.toLowerCase();
+          return version.includes("foot flare") || version.includes("foot-flare");
+        }),
       }}
       nutritionSummary={{
         entryCount: todayNutritionDay?.entries.length ?? 0,

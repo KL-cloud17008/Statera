@@ -65,8 +65,8 @@ const DEFAULT_INTENSITY: MobilityIntensity = {
 
 const RECOVERY_INTENSITY: MobilityIntensity = {
   ...DEFAULT_INTENSITY,
-  effort: "Effort: 2-3/10",
-  goal: "Goal: leave the area easier to move without adding fatigue",
+  effort: "Effort: 1-3/10",
+  goal: "Goal: finish looser and calmer with no fatigue",
 };
 
 const BRACING_INTENSITY: MobilityIntensity = {
@@ -91,16 +91,16 @@ const FOOT_FLARE_RECOVERY_INTENSITY: MobilityIntensity = {
 };
 
 const RECOVERY_INTRO =
-  "This is a low-intensity recovery session, not a workout. The goal is to make your ankles, hips, back, and breathing feel better without adding fatigue.";
+  "Required does not mean intense. This is low-intensity recovery mobility, not a workout. The goal is to restore feet, ankles, calves, hips, spine, shoulders, and breathing without adding fatigue.";
 
 const RECOVERY_STOP_NOTE =
-  "Stop or scale down if you feel sharp pain, numbness, tingling, joint pinching, dizziness, swelling, warmth, or pain that increases as you continue. If foot pain does not settle or keeps returning, get assessed by a clinician.";
+  "Required does not mean push through pain. Stop or scale down if you feel sharp pain, numbness, tingling, swelling, warmth, limping, dizziness, or pain that increases as you continue. If foot pain does not settle or keeps returning, get assessed by a clinician.";
 
 const FOOT_FLARE_RECOVERY_INTRO =
-  "Your feet are telling you the walking load jumped faster than the tissue tolerance. Today's recovery keeps the work easy: restore the soles, arches, shins, calves, and ankles first, then downshift the rest of the body.";
+  "Foot flare recovery is required when your soles are irritated or recent step load is high. The goal is to reduce guarding, restore easy motion, and protect tomorrow's training.";
 
 const FOOT_FLARE_RECOVERY_NOT_WORKOUT =
-  "This is not a workout. Do not chase pain or deep stretching. Finish calmer and less guarded.";
+  "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout. No aggressive stretching, no digging hard into the sole, and no extra fatigue.";
 
 const FOOT_FLARE_RECOVERY_RULES = [
   FOOT_FLARE_RECOVERY_INTENSITY.effort,
@@ -1400,11 +1400,12 @@ function footFlareMovement(
 function footFlareFootBlock(idPrefix = "foot-flare"): MobilityBlock {
   return block({
     id: `${idPrefix}-foot-sole-downshift`,
-    title: "Foot and sole downshift",
+    title: "Required foot-flare recovery",
     duration: "4-6 min",
-    purpose: "Start with the soles and arches so recovery reduces guarding before anything else.",
+    purpose:
+      "Foot flare recovery is required when your soles are irritated or recent step load is high. Reduce guarding, restore easy motion, and protect tomorrow's training.",
     adaptationNote:
-      "Use light pressure only. Do not push through pain, dig into the sole, or chase a deep stretch.",
+      "Effort 1-3/10. Pain 0-2/10 maximum. Use light pressure only. No aggressive stretching, no digging hard into the sole, and no extra fatigue.",
     recoveryIntro: true,
     recoveryIntroVariant: "footFlare",
     exercises: [
@@ -1579,17 +1580,17 @@ function sundayFootFlareResetBlock(): MobilityBlock {
   });
 }
 
-export const OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE =
-  "Optional later recovery - foot flare focus";
+export const REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE =
+  "Required foot-flare recovery";
 
-export const OPTIONAL_LATER_RECOVERY: MobilityBlock = block({
-  id: "optional-later-recovery",
-  title: "Optional later recovery",
+export const REQUIRED_LATER_RECOVERY: MobilityBlock = block({
+  id: "required-later-recovery",
+  title: "Required later recovery",
   duration: "8-12 min",
   purpose:
-    "Use later in the day after a lift if joints feel compressed, calves or hips feel stiff, or breathing needs to settle.",
+    "Complete later the same day after a lift. It does not have to be done immediately after training.",
   adaptationNote:
-    "Keep this easier than the primer. It should reduce stiffness and downshift the day, not add more training stress.",
+    "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work.",
   recoveryIntro: true,
   exercises: [
     movement("calfStretch", {
@@ -1620,12 +1621,12 @@ export const OPTIONAL_LATER_RECOVERY: MobilityBlock = block({
   ],
 });
 
-export function getOptionalLaterRecoveryBlocks(
+export function getRequiredLaterRecoveryBlocks(
   mode: RecoveryMode = "standard",
   dayOfWeek = 1
 ): MobilityBlock[] {
   if (mode === "footFlare") {
-    const idPrefix = `optional-day-${dayOfWeek}-foot-flare`;
+    const idPrefix = `required-day-${dayOfWeek}-foot-flare`;
     return [
       footFlareFootBlock(idPrefix),
       footFlareLowerLegBlock(idPrefix),
@@ -1633,10 +1634,10 @@ export function getOptionalLaterRecoveryBlocks(
     ];
   }
 
-  return [OPTIONAL_LATER_RECOVERY];
+  return [REQUIRED_LATER_RECOVERY];
 }
 
-export const OPTIONAL_LATER_RECOVERY_FOOT_FLARE = getOptionalLaterRecoveryBlocks("footFlare", 1);
+export const REQUIRED_LATER_RECOVERY_FOOT_FLARE = getRequiredLaterRecoveryBlocks("footFlare", 1);
 
 const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   1: {

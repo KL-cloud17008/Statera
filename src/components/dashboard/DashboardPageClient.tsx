@@ -390,11 +390,11 @@ function buildDecision({
   if (mobilitySummary.footFlareLogged || highStepLoad) {
     return {
       title: mobilitySummary.footFlareLogged
-        ? "Prioritize foot recovery later today."
-        : "High step load. Keep lower-leg recovery easy.",
+        ? "Required foot-flare recovery is logged."
+        : "High step load. Required foot-flare recovery applies.",
       description: highStepLoad
-        ? `The recent step average is ${recentStepAverage.toLocaleString()}, so keep lower-leg work easy and recovery-focused.`
-        : "Foot flare recovery is already part of the day. Do not turn the later block into extra training.",
+        ? `The recent step average is ${recentStepAverage.toLocaleString()}, so complete required foot-flare recovery and keep it easy.`
+        : "Foot flare recovery is part of the day. Do not turn the later block into extra training.",
       href: "/mobility",
       signals,
     };
@@ -403,7 +403,7 @@ function buildDecision({
   if (isLiftDay && !workoutSummary.hasCompletedWorkoutToday) {
     return {
       title: "Start today's programmed session.",
-      description: "No completed lift is logged for the current training date. Run the programmed session before adding optional work.",
+      description: "No completed lift is logged for the current training date. Run the programmed session before adding extra work.",
       href: "/workout",
       signals,
     };

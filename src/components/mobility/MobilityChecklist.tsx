@@ -193,10 +193,10 @@ function RecoveryIntro({
   const rules = isFootFlare
     ? FOOT_FLARE_RECOVERY_RULES
     : [
-        "Effort: 2-4/10",
+        "Effort: 1-3/10",
         "Pain: 0-2/10 maximum",
         "Breathing: calm enough to breathe through the nose",
-        "Goal: finish looser, warmer, and calmer - not exhausted",
+        "Goal: finish looser and calmer with no fatigue",
       ];
 
   return (

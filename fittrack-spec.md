@@ -771,7 +771,7 @@ SUPABASE_SERVICE_ROLE_KEY=    # For server-side operations
 
 ### Session 5: Mobility Checklists
 
-**Goal:** Pre-workout and post-workout checklists that match the training plan.
+**Goal:** Pre-workout primers and required recovery mobility checklists that match the training plan.
 
 **Build:**
 1. Pre-workout mobility checklist:
@@ -780,7 +780,10 @@ SUPABASE_SERVICE_ROLE_KEY=    # For server-side operations
    - Exercise name, dose, brief cue for each item
    - Checkbox to mark complete
    - Completion logged to MobilityLog
-2. Post-workout cooldown checklist:
+2. Required recovery mobility checklist:
+   - Training-day later recovery can be completed later the same day after walking home, food, shower, or before bed
+   - Rest-day recovery mobility stays low intensity and supports feet, ankles, calves, hips, spine, shoulders, and breathing
+   - Foot-flare recovery is required when soles are irritated or recent step load is high
    - Universal closer + day-specific stretches
    - Same checkbox pattern
 3. "Undo Sitting" micro-routine:
@@ -794,7 +797,7 @@ SUPABASE_SERVICE_ROLE_KEY=    # For server-side operations
 - Version A/B toggle works
 - Block 4 changes based on which gym day it is
 - Completion saves to database
-- Post-workout checklist shows after session is saved
+- Required later recovery remains visible and independently trackable without blocking workout completion
 
 ---
 

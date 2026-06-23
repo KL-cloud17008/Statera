@@ -10,11 +10,11 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 const WEEK_STRUCTURE = [
   { day: "Monday", role: "Lift", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
   { day: "Tuesday", role: "Lift", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
-  { day: "Wednesday", role: "Mobility", note: "Recovery mobility and optional desk reset." },
+  { day: "Wednesday", role: "Mobility", note: "Required recovery mobility and optional desk reset." },
   { day: "Thursday", role: "Lift", dayOfWeek: 4, note: "Back and shoulder emphasis." },
   { day: "Friday", role: "Lift", dayOfWeek: 5, note: "Hips, hinge pattern, and posterior chain." },
-  { day: "Saturday", role: "Mobility", note: "Recovery mobility and easy walking." },
-  { day: "Sunday", role: "Complete rest", note: "No programmed lifting or mobility requirement." },
+  { day: "Saturday", role: "Mobility", note: "Required recovery mobility and easy walking." },
+  { day: "Sunday", role: "Complete rest", note: "Full reset mobility; no programmed lifting." },
 ] as const;
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default async function WorkoutPlanPage() {
       <SectionHeader
         eyebrow="Training split"
         title="A weekly protocol for four lift days, two recovery days, and one full rest day."
-        description="The plan is organized as a structured document: at-home mobility primer, walk to gym, gym ramp-up sets, circuit blocks, and optional later recovery."
+        description="The plan is organized as a structured document: at-home mobility primer, walk to gym, gym ramp-up sets, circuit blocks, and required later recovery."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -56,9 +56,9 @@ export default async function WorkoutPlanPage() {
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday and Saturday are
-            mobility days. Sunday is complete rest. On lift days, do the mobility primer at home,
+            required mobility days. Sunday is complete rest with a full reset. On lift days, do the mobility primer at home,
             walk to the gym as the general warm-up, then do 1-2 easy ramp-up sets on the first
-            machine before Block A.
+            programmed lift or machine before Block A. Required later recovery is completed separately later the same day.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
             <Badge variant="secondary">4 lift days</Badge>
@@ -130,8 +130,8 @@ export default async function WorkoutPlanPage() {
                 ) : (
                   <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
                     {day.role === "Mobility"
-                      ? "Use the mobility page for preparation and recovery flows. Keep intensity easy and finish with calm breathing."
-                      : "Keep this day deliberately empty so the lifting week has room to absorb."}
+                      ? "Use the mobility page for recovery mobility. Keep intensity easy and finish with calm breathing."
+                      : "Use the mobility page for the full reset. Keep the day deliberately empty of lifting so the week has room to absorb."}
                   </div>
                 )}
               </section>

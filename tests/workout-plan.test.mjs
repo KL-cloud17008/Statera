@@ -6,7 +6,12 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 
 const planSource = readFileSync("src/lib/default-workout-plan.ts", "utf8");
+const mobilitySource = readFileSync("src/lib/mobility.ts", "utf8");
+const mobilityPageSource = readFileSync("src/components/mobility/MobilityPageClient.tsx", "utf8");
+const workoutDayPreviewSource = readFileSync("src/components/workout/WorkoutDayPreview.tsx", "utf8");
+const workoutPlanPageSource = readFileSync("src/app/(app)/workout/plan/page.tsx", "utf8");
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
+const trainingPlanSource = readFileSync("training_plan.md", "utf8");
 const weightChartSource = readFileSync("src/components/weight/WeightChart.tsx", "utf8");
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
@@ -23,16 +28,18 @@ const requiredExercises = [
   "Incline Dumbbell Press",
   "One-Arm Dumbbell Row",
   "Plate Lateral Raise / Dumbbell Lateral Raise",
+  "Neutral-Grip Lat Pulldown",
+  "Single-Leg Leg Press",
+  "Lunges / Walking Lunges",
+  "Leg Extension",
+  "Lying Leg Curl",
   "Leg Press",
-  "Walking Lunges",
   "Leg Press Calf Press",
-  "Hack Squat Machine",
   "Glute Kickback Machine",
-  "Back Extension Machine",
+  "Hyperextension / Back Extension Machine",
 ];
 
-const day1RemovedExercises = [
-  "Neutral-Grip Lat Pulldown",
+const temporarilyExcludedPlanExercises = [
   "Barbell Overhead Press / Military Press",
   "Barbell Overhead Press",
   "Military Press",
@@ -57,6 +64,8 @@ const removedExercises = [
   "Dumbbell Romanian Deadlift",
   "Machine Hip Thrust",
   "Machine Abdominal Crunch",
+  "Hack Squat Machine",
+  "Hip Adduction Machine",
 ];
 
 test("canonical workout plan keeps the selected beginner exercise set", () => {
@@ -64,10 +73,10 @@ test("canonical workout plan keeps the selected beginner exercise set", () => {
     assert.match(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should stay in the plan`);
   }
 
-  const walkingLunges = workoutPlan.DEFAULT_WORKOUT_PLAN
+  const lunges = workoutPlan.DEFAULT_WORKOUT_PLAN
     .flatMap((day) => day.exercises)
-    .find((exercise) => exercise.exerciseName.includes("Walking Lunges"));
-  assert.equal(walkingLunges.sets, 2);
+    .find((exercise) => exercise.exerciseName.includes("Lunges / Walking Lunges"));
+  assert.equal(lunges.sets, 2);
 });
 
 test("canonical workout plan keeps the four-day circuit rhythm", () => {
@@ -76,7 +85,7 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
     [1, 2, 4, 5]
   );
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
-    "Monday: Upper A - Free-Weight Push/Pull Foundation",
+    "Monday: Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit",
     "Tuesday: Lower A - Machine Lower Body Foundation",
     "Wednesday: Mobility / Recovery",
     "Thursday: Upper B - Machine Back/Shoulder Emphasis",
@@ -89,10 +98,10 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
   assert.match(planSource, /2-4 reps in reserve/);
 });
 
-test("day 1 upper a keeps the free-weight pair and low-cardio shoulder isolation block", () => {
+test("day 1 upper a restores pulldown with a low-stress lateral raise circuit", () => {
   const day1 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 1);
   assert.ok(day1, "Day 1 should exist");
-  assert.match(day1.sessionName, /Free-Weight Push\/Pull Foundation/);
+  assert.match(day1.sessionName, /Free-Weight Push\/Pull \+ Low-Stress Shoulder Circuit/);
 
   for (const exercise of ["Incline Dumbbell Press", "One-Arm Dumbbell Row"]) {
     const match = day1.exercises.find((item) => item.exerciseName.includes(exercise));
@@ -104,23 +113,39 @@ test("day 1 upper a keeps the free-weight pair and low-cardio shoulder isolation
   assert.equal(day1.exercises.find((item) => item.exerciseName.includes("Incline Dumbbell Press")).sets, 3);
   assert.equal(day1.exercises.find((item) => item.exerciseName.includes("One-Arm Dumbbell Row")).reps, "8-12 per side");
 
+  const pulldown = day1.exercises.find((item) =>
+    item.exerciseName.includes("Neutral-Grip Lat Pulldown")
+  );
+  assert.ok(pulldown, "Day 1 should include Neutral-Grip Lat Pulldown");
+  assert.equal(pulldown.supersetGroup, "B");
+  assert.ok(pulldown.sets >= 2 && pulldown.sets <= 3);
+  assert.equal(pulldown.reps, "8-12");
+  assert.equal(pulldown.targetRPE, "5-6");
+  assert.match(pulldown.cues, /upper chest/);
+  assert.match(pulldown.cues, /ribs down/);
+  assert.match(pulldown.cues, /shoulder blades rise/);
+  assert.match(pulldown.cues, /breathing spikes/);
+  assert.match(pulldown.cues, /Progress to RPE 6-7 only when conditioning improves/);
+
   const lateralRaise = day1.exercises.find((item) =>
     item.exerciseName.includes("Plate Lateral Raise / Dumbbell Lateral Raise")
   );
   assert.ok(lateralRaise, "Day 1 should include Plate Lateral Raise / Dumbbell Lateral Raise");
-  assert.equal(lateralRaise.sets, 2);
+  assert.equal(lateralRaise.supersetGroup, "B");
+  assert.ok(lateralRaise.sets >= 2 && lateralRaise.sets <= 3);
   assert.equal(lateralRaise.reps, "12-20");
   assert.equal(lateralRaise.targetRPE, "5-6");
-  assert.equal(lateralRaise.restSeconds, 90);
+  assert.equal(lateralRaise.restSeconds, 180);
   assert.match(lateralRaise.cues, /5 lb plates/);
   assert.match(lateralRaise.cues, /2-2\.5 kg per hand/);
   assert.match(lateralRaise.cues, /3-4 reps in reserve/);
-  assert.match(lateralRaise.cues, /lower cardiovascular demand/i);
+  assert.match(lateralRaise.cues, /90-second minimum/);
+  assert.match(lateralRaise.cues, /cardiovascular fitness is currently low/i);
 
-  for (const exercise of day1RemovedExercises) {
+  for (const exercise of temporarilyExcludedPlanExercises) {
     assert.ok(
       !day1.exercises.some((item) => item.exerciseName.includes(exercise)),
-      `Day 1 should no longer include ${exercise}`
+      `Day 1 should not currently include ${exercise}`
     );
   }
 
@@ -130,6 +155,24 @@ test("day 1 upper a keeps the free-weight pair and low-cardio shoulder isolation
   ]) {
     assert.match(planSource, new RegExp(escapeRegExp(url)), `${url} should be stored with the plan cues`);
   }
+});
+
+test("overhead press variations are excluded now but left for a future progression", () => {
+  const exerciseNames = workoutPlan.DEFAULT_WORKOUT_PLAN
+    .flatMap((day) => day.exercises)
+    .map((exercise) => exercise.exerciseName);
+
+  for (const exercise of temporarilyExcludedPlanExercises) {
+    assert.ok(
+      !exerciseNames.some((name) => name.includes(exercise)),
+      `${exercise} should be absent from the current active plan`
+    );
+    assert.ok(!removedExercises.includes(exercise), `${exercise} should not be in the removed exercise list`);
+  }
+
+  assert.match(planSource, /Overhead pressing can return later as a progression/);
+  assert.match(planSource, /breathing, bracing, and shoulder tolerance improve/);
+  assert.doesNotMatch(planSource, /permanently/i);
 });
 
 test("day 4 upper b remains machine supported", () => {
@@ -147,6 +190,7 @@ test("day 4 upper b remains machine supported", () => {
   for (const day1OnlyExercise of [
     "Incline Dumbbell Press",
     "One-Arm Dumbbell Row",
+    "Neutral-Grip Lat Pulldown",
     "Plate Lateral Raise / Dumbbell Lateral Raise",
   ]) {
     assert.ok(
@@ -157,8 +201,40 @@ test("day 4 upper b remains machine supported", () => {
 });
 
 test("canonical workout plan does not restore removed or replaced exercises", () => {
-  for (const exercise of [...removedExercises, ...day1RemovedExercises]) {
+  for (const exercise of removedExercises) {
     assert.doesNotMatch(planSource, new RegExp(escapeRegExp(exercise)), `${exercise} should not return`);
+  }
+});
+
+test("lower body days preserve the recent lower a and machine-focused lower b structure", () => {
+  const day2 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 2);
+  const day5 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 5);
+  assert.ok(day2, "Day 2 should exist");
+  assert.ok(day5, "Day 5 should exist");
+
+  for (const expected of [
+    "Single-Leg Leg Press",
+    "Lunges / Walking Lunges",
+    "Leg Extension",
+    "Lying Leg Curl",
+  ]) {
+    assert.ok(day2.exercises.some((item) => item.exerciseName.includes(expected)), `Day 2 should include ${expected}`);
+  }
+
+  assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).sets, 2);
+
+  assert.equal(
+    day5.exercises.find((item) => item.exerciseType === "WORKING")?.exerciseName,
+    "A1 Leg Press"
+  );
+  assert.match(day5.exercises.find((item) => item.exerciseName.includes("Leg Press"))?.cues ?? "", /straight sets/i);
+  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Hyperextension / Back Extension Machine")));
+
+  for (const removedFromLowerB of ["Hip Adduction Machine", "Walking Lunges", "Hack Squat", "Squat Machine"]) {
+    assert.ok(
+      !day5.exercises.some((item) => item.exerciseName.includes(removedFromLowerB)),
+      `Day 5 should not include ${removedFromLowerB}`
+    );
   }
 });
 
@@ -197,7 +273,7 @@ test("workout data remains circuit based after the primer row", () => {
     assert.equal(primers.length, 1, `${day.sessionName} should have one at-home primer`);
 
     const workingExercises = day.exercises.filter((exercise) => exercise.exerciseType === "WORKING");
-    assert.ok(workingExercises.length >= 6, `${day.sessionName} should keep working sets`);
+    assert.ok(workingExercises.length >= 4, `${day.sessionName} should keep working sets`);
     assert.deepEqual(
       Array.from(new Set(workingExercises.map((exercise) => exercise.supersetGroup))).sort(),
       ["A", "B", "C"],
@@ -463,26 +539,36 @@ test("backup validation rejects invalid shapes and previews nutrition counts", (
   assert.equal(valid.preview.dateRange.end, "2026-06-21");
 });
 
-test("training-day mobility preserves optional later recovery", () => {
-  assert.equal(mobility.OPTIONAL_LATER_RECOVERY.title, "Optional later recovery");
-  assert.equal(mobility.OPTIONAL_LATER_RECOVERY.recoveryIntro, true);
-  assert.ok(mobility.OPTIONAL_LATER_RECOVERY.exercises.length >= 4);
+test("training-day mobility requires later recovery", () => {
+  assert.equal(mobility.REQUIRED_LATER_RECOVERY.title, "Required later recovery");
+  assert.equal(mobility.REQUIRED_LATER_RECOVERY.recoveryIntro, true);
+  assert.match(mobility.REQUIRED_LATER_RECOVERY.purpose, /Complete later the same day/);
+  assert.match(mobility.REQUIRED_LATER_RECOVERY.adaptationNote, /part of the training system, not extra work/);
+  assert.ok(mobility.REQUIRED_LATER_RECOVERY.exercises.length >= 4);
+
+  for (const exercise of mobility.REQUIRED_LATER_RECOVERY.exercises) {
+    assert.match(exercise.intensity.effort, /Effort: 1-3\/10/);
+    assert.match(exercise.intensity.pain, /Pain: 0-2\/10 maximum/);
+    assert.match(exercise.intensity.goal, /no fatigue/);
+  }
 });
 
-test("mobility optional later recovery supports standard and foot flare modes", () => {
-  const standardBlocks = mobility.getOptionalLaterRecoveryBlocks("standard", 1);
-  const footFlareBlocks = mobility.getOptionalLaterRecoveryBlocks("footFlare", 1);
+test("mobility required later recovery supports standard and foot flare modes", () => {
+  const standardBlocks = mobility.getRequiredLaterRecoveryBlocks("standard", 1);
+  const footFlareBlocks = mobility.getRequiredLaterRecoveryBlocks("footFlare", 1);
 
   assert.equal(standardBlocks.length, 1);
-  assert.equal(standardBlocks[0].title, "Optional later recovery");
-  assert.equal(mobility.OPTIONAL_LATER_RECOVERY_FOOT_FLARE_TITLE, "Optional later recovery - foot flare focus");
+  assert.equal(standardBlocks[0].title, "Required later recovery");
+  assert.equal(mobility.REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE, "Required foot-flare recovery");
   assert.ok(footFlareBlocks.length >= 3);
+  assert.equal(footFlareBlocks[0].title, "Required foot-flare recovery");
+  assert.match(footFlareBlocks[0].purpose, /required when your soles are irritated or recent step load is high/i);
   assert.equal(footFlareBlocks[0].recoveryIntroVariant, "footFlare");
 });
 
-test("foot flare focus includes foot, sole, shin, calf, and ankle recovery items", () => {
+test("foot flare recovery includes foot, sole, shin, calf, and ankle recovery items", () => {
   const exerciseNames = mobility
-    .getOptionalLaterRecoveryBlocks("footFlare", 2)
+    .getRequiredLaterRecoveryBlocks("footFlare", 2)
     .flatMap((block) => block.exercises)
     .map((exercise) => exercise.name);
 
@@ -495,6 +581,7 @@ test("foot flare focus includes foot, sole, shin, calf, and ankle recovery items
     "Wall ankle rocks",
     "Wall calf stretch, knee straight",
     "Wall calf stretch, knee bent",
+    "Supported breathing reset",
   ]) {
     assert.ok(exerciseNames.includes(expected), `${expected} should be in foot flare recovery`);
   }
@@ -504,10 +591,32 @@ test("rest-day foot flare recovery puts foot and lower-leg work first", () => {
   const wednesdayBlocks = mobility.getRecoverySessionBlocks(3, "footFlare");
   const sundayBlocks = mobility.getRecoverySessionBlocks(0, "footFlare");
 
-  assert.equal(wednesdayBlocks[0].title, "Foot and sole downshift");
+  assert.equal(wednesdayBlocks[0].title, "Required foot-flare recovery");
   assert.equal(wednesdayBlocks[1].title, "Shins, calves, ankles");
-  assert.equal(sundayBlocks[0].title, "Foot and sole downshift");
+  assert.equal(sundayBlocks[0].title, "Required foot-flare recovery");
   assert.equal(sundayBlocks[1].title, "Supported full-body downshift");
+});
+
+test("recovery copy no longer frames later recovery as optional", () => {
+  const recoveryCopySource = [
+    planSource,
+    mobilitySource,
+    mobilityPageSource,
+    workoutDayPreviewSource,
+    workoutPlanPageSource,
+    trainingPlanSource,
+  ].join("\n");
+
+  const oldLaterRecoveryTitle = ["Optional later", " recovery"].join("");
+  const oldPostWorkoutPhrase = ["optional post", "-workout"].join("");
+  assert.doesNotMatch(recoveryCopySource, new RegExp(escapeRegExp(oldLaterRecoveryTitle), "i"));
+  assert.doesNotMatch(recoveryCopySource, new RegExp(escapeRegExp(oldPostWorkoutPhrase), "i"));
+  assert.match(recoveryCopySource, /Required later recovery/);
+  assert.match(recoveryCopySource, /later the same day/);
+  assert.match(recoveryCopySource, /part of the training system, not extra work/);
+  assert.match(recoveryCopySource, /Required does not mean push through pain/);
+  assert.match(recoveryCopySource, /Required foot-flare recovery/);
+  assert.match(recoveryCopySource, /Effort 1-3\/10/);
 });
 
 function escapeRegExp(value) {
