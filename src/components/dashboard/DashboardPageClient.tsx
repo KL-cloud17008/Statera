@@ -29,20 +29,10 @@ type MobilitySummary = {
   footFlareLogged: boolean;
 };
 
-type NutritionSummary = {
-  entryCount: number;
-  totals: {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-  };
-};
-
 const WEEKLY_RHYTHM = [
   { day: "Mon", label: "Upper A", type: "Lift", dayOfWeek: 1 },
   { day: "Tue", label: "Lower A", type: "Lift", dayOfWeek: 2 },
-  { day: "Wed", label: "Mobility", type: "Recovery", dayOfWeek: 3 },
+  { day: "Wed", label: "Mobility + 10,000 steps", type: "Recovery", dayOfWeek: 3 },
   { day: "Thu", label: "Upper B", type: "Lift", dayOfWeek: 4 },
   { day: "Fri", label: "Lower B", type: "Lift", dayOfWeek: 5 },
   { day: "Sat", label: "Mobility", type: "Recovery", dayOfWeek: 6 },
@@ -53,7 +43,7 @@ const NEXT_BY_DAY = [
   "Complete rest",
   "Upper A",
   "Lower A",
-  "Mobility",
+  "Mobility + 10,000 steps",
   "Upper B",
   "Lower B",
   "Mobility",
@@ -65,7 +55,6 @@ export function DashboardPageClient({
   weightStats,
   workoutSummary,
   mobilitySummary,
-  nutritionSummary,
   latestWeightDate,
   timezone,
   trainingDayOfWeek,
@@ -75,7 +64,6 @@ export function DashboardPageClient({
   weightStats: WeightStats;
   workoutSummary: WorkoutSummary;
   mobilitySummary: MobilitySummary;
-  nutritionSummary: NutritionSummary;
   latestWeightDate: string | null;
   timezone?: string;
   trainingDayOfWeek: number;
@@ -100,7 +88,6 @@ export function DashboardPageClient({
     stepGoal: settings.stepGoal,
     workoutSummary,
     mobilitySummary,
-    nutritionSummary,
     latestWeightDate,
     trainingDayOfWeek,
   });
@@ -352,7 +339,6 @@ function buildDecision({
   stepGoal,
   workoutSummary,
   mobilitySummary,
-  nutritionSummary,
   latestWeightDate,
   trainingDayOfWeek,
 }: {
@@ -361,7 +347,6 @@ function buildDecision({
   stepGoal: number;
   workoutSummary: WorkoutSummary;
   mobilitySummary: MobilitySummary;
-  nutritionSummary: NutritionSummary;
   latestWeightDate: string | null;
   trainingDayOfWeek: number;
 }) {
@@ -381,9 +366,7 @@ function buildDecision({
   const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;
   const signals = [
     `${todaySteps.toLocaleString()} of ${stepGoal.toLocaleString()} steps logged today.`,
-    nutritionSummary.entryCount > 0
-      ? `${nutritionSummary.entryCount} nutrition ${nutritionSummary.entryCount === 1 ? "entry" : "entries"} logged today.`
-      : "Nutrition ledger has no entries today.",
+    "Nutrition is tracked externally in Cronometer.",
     mobilityDone ? "Expected mobility is logged." : "Expected mobility is still open.",
   ];
 
@@ -409,15 +392,6 @@ function buildDecision({
     };
   }
 
-  if (nutritionSummary.entryCount === 0) {
-    return {
-      title: "Log the first meal to start the nutrition ledger.",
-      description: "Calorie and macro adherence only becomes useful after the first food entry is in the day.",
-      href: "/nutrition",
-      signals,
-    };
-  }
-
   if (!mobilityDone) {
     return {
       title: isLiftDay ? "Complete the at-home mobility primer." : "Log recovery mobility.",
@@ -438,7 +412,7 @@ function buildDecision({
 
   return {
     title: "Execute the plan and keep the ledger current.",
-    description: "Training, nutrition, movement, and recovery all have enough signal today. Keep logging without adding noise.",
+    description: "Training, movement, and recovery all have enough signal today. Keep logging without adding noise.",
     href: "/steps",
     signals,
   };

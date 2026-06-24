@@ -1717,11 +1717,11 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   3: {
     dayOfWeek: 3,
     dayName: "Wednesday",
-    trainingRole: "Recovery mobility day",
-    sessionTitle: "Lower A recovery",
+    trainingRole: "Mobility + 10,000 steps",
+    sessionTitle: "Mobility + 10,000 steps",
     totalDuration: "20-30 min",
     todayPurpose:
-      "Recover from Tuesday Lower A with hips, adductors, hamstrings, calves, ankles, low back, and breathing.",
+      "Recover from Tuesday Lower A with hips, adductors, hamstrings, calves, ankles, low back, breathing, and a 10,000-step day-level target.",
     previousDayReason:
       "Tuesday leg press and machine lower-body work can leave the hips, adductors, calves, and trunk guarded.",
     adaptationNote:
@@ -1730,7 +1730,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     logType: "POST_WORKOUT",
     focus: [
       { label: "Recovery match", value: "Lower A relief", note: "Hips, adductors, hamstrings, calves, ankles, low back, and breathing." },
-      { label: "Previous day", value: "Leg fatigue", note: "Unwinds stiffness from Tuesday lower-body machine work." },
+      { label: "Day action", value: "10,000 steps", note: "Wednesday's specific movement target; keep the recovery work easy." },
       { label: "Feel target", value: "Restorative", note: "No fatigue. Leave the session calmer than you began." },
     ],
     blocks: [

@@ -31,7 +31,6 @@ export const TRAINING_DAY_LABELS: Record<number, string> = {
 export const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: "LayoutDashboard" as const },
   { label: "Workout", href: "/workout", icon: "Dumbbell" as const },
-  { label: "Nutrition", href: "/nutrition", icon: "Apple" as const },
   { label: "Weight", href: "/weight", icon: "Scale" as const },
   { label: "Settings", href: "/settings", icon: "Settings" as const },
 ] as const;

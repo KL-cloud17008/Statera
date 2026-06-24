@@ -1,17 +1,5 @@
-﻿import type { Metadata } from "next";
-import { NutritionPlaceholder } from "@/components/nutrition/NutritionPlaceholder";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Saved Foods | Athanor",
-  description: "Manage a personal food database for faster nutrition logging.",
-};
-
-export default function FoodsPage() {
-  return (
-    <NutritionPlaceholder
-      eyebrow="Nutrition"
-      title="Saved foods"
-      description="Create and manage frequently used foods for faster nutrition logging."
-    />
-  );
+export default function RemovedSavedFoodsPage() {
+  redirect("/");
 }

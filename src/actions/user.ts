@@ -210,7 +210,6 @@ function revalidateAllUserRoutes() {
   revalidatePath("/weight");
   revalidatePath("/workout");
   revalidatePath("/mobility");
-  revalidatePath("/nutrition");
   revalidatePath("/settings");
 }
 

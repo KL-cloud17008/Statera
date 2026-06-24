@@ -8,11 +8,11 @@ This is the documentation copy of the canonical training plan used by the app se
 | --- | --- |
 | Monday | Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit |
 | Tuesday | Lower A - Machine Lower Body Foundation |
-| Wednesday | Mobility / Recovery |
+| Wednesday | Mobility + 10,000 steps |
 | Thursday | Upper B - Machine Back/Shoulder Emphasis |
 | Friday | Lower B - Machine Posterior Chain |
-| Saturday | Mobility / Recovery |
-| Sunday | Complete Rest |
+| Saturday | Recovery mobility |
+| Sunday | Complete rest or very low-intensity recovery mobility |
 
 ## Training Style
 

@@ -4,9 +4,8 @@ import { getWeightEntries } from "@/actions/weight";
 import { getRecentSessions } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { getTodayDateString, getTrainingDate, getTrainingDayOfWeek, parseDate } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
 import { prisma } from "@/lib/db";
-import { calculateNutritionTotals } from "@/lib/nutrition";
 import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { computeWeightStats } from "@/lib/weight";
@@ -24,9 +23,8 @@ export default async function DashboardPage() {
 
   const trainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
-  const todayCalendarDate = parseDate(getTodayDateString(user.timezone));
 
-  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs, todayNutritionDay] = await Promise.all([
+  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs] = await Promise.all([
     getStepsEntries(user.id, 180, user.timezone),
     getTodaySteps(user.id, user.timezone),
     getWeightEntries(user.id),
@@ -34,10 +32,6 @@ export default async function DashboardPage() {
     prisma.mobilityLog.findMany({
       where: { userId: user.id, date: trainingDate },
       orderBy: { createdAt: "desc" },
-    }),
-    prisma.nutritionDay.findUnique({
-      where: { userId_date: { userId: user.id, date: todayCalendarDate } },
-      include: { entries: true },
     }),
   ]);
 
@@ -104,10 +98,6 @@ export default async function DashboardPage() {
           const version = log.version.toLowerCase();
           return version.includes("foot flare") || version.includes("foot-flare");
         }),
-      }}
-      nutritionSummary={{
-        entryCount: todayNutritionDay?.entries.length ?? 0,
-        totals: calculateNutritionTotals(todayNutritionDay?.entries ?? []),
       }}
       latestWeightDate={serializedWeights[0]?.date ?? null}
       timezone={user.timezone}

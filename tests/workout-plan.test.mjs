@@ -10,6 +10,18 @@ const mobilitySource = readFileSync("src/lib/mobility.ts", "utf8");
 const mobilityPageSource = readFileSync("src/components/mobility/MobilityPageClient.tsx", "utf8");
 const workoutDayPreviewSource = readFileSync("src/components/workout/WorkoutDayPreview.tsx", "utf8");
 const workoutPlanPageSource = readFileSync("src/app/(app)/workout/plan/page.tsx", "utf8");
+const navItemsSource = readFileSync("src/components/layout/nav-items.ts", "utf8");
+const desktopSidebarSource = readFileSync("src/components/layout/DesktopSidebar.tsx", "utf8");
+const mobileNavSource = readFileSync("src/components/layout/MobileNav.tsx", "utf8");
+const dashboardSource = readFileSync("src/components/dashboard/DashboardPageClient.tsx", "utf8");
+const dashboardPageSource = readFileSync("src/app/(app)/page.tsx", "utf8");
+const nutritionRouteSources = [
+  "src/app/(app)/nutrition/page.tsx",
+  "src/app/(app)/nutrition/foods/page.tsx",
+  "src/app/(app)/nutrition/meals/page.tsx",
+  "src/app/(app)/nutrition/summary/page.tsx",
+  "src/app/(app)/nutrition/import/page.tsx",
+].map((path) => readFileSync(path, "utf8"));
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
 const trainingPlanSource = readFileSync("training_plan.md", "utf8");
 const weightChartSource = readFileSync("src/components/weight/WeightChart.tsx", "utf8");
@@ -87,15 +99,56 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
     "Monday: Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit",
     "Tuesday: Lower A - Machine Lower Body Foundation",
-    "Wednesday: Mobility / Recovery",
+    "Wednesday: Mobility + 10,000 steps",
     "Thursday: Upper B - Machine Back/Shoulder Emphasis",
     "Friday: Lower B - Machine Posterior Chain",
-    "Saturday: Mobility / Recovery",
-    "Sunday: Complete Rest",
+    "Saturday: Recovery mobility",
+    "Sunday: Complete rest or very low-intensity recovery mobility",
   ]);
   assert.match(planSource, /optional 2-round mode/i);
   assert.match(planSource, /RPE 6-7/);
   assert.match(planSource, /2-4 reps in reserve/);
+});
+
+test("nutrition page access is removed from primary and mobile navigation", () => {
+  assert.doesNotMatch(navItemsSource, /Nutrition/);
+  assert.doesNotMatch(navItemsSource, /\/nutrition/);
+  assert.match(navItemsSource, /Mobility/);
+  assert.match(navItemsSource, /Steps/);
+  assert.match(desktopSidebarSource, /NAV_ITEMS\.map/);
+  assert.match(mobileNavSource, /NAV_ITEMS\.map/);
+  assert.doesNotMatch(desktopSidebarSource, /\/nutrition|Nutrition/);
+  assert.doesNotMatch(mobileNavSource, /\/nutrition|Nutrition/);
+});
+
+test("nutrition routes redirect without active tracker UI", () => {
+  for (const source of nutritionRouteSources) {
+    assert.match(source, /redirect\("\/"\)/);
+    assert.doesNotMatch(source, /NutritionPageClient|NutritionPlaceholder|prisma\.nutritionDay/);
+    assert.doesNotMatch(source, /calorie|macro/i);
+  }
+
+  const dashboardCopies = [dashboardSource, dashboardPageSource].join("\n");
+  assert.doesNotMatch(dashboardCopies, /href: "\/nutrition"|href="\/nutrition"|nutritionSummary|nutrition ledger|Log the first meal/i);
+  assert.match(dashboardSource, /Nutrition is tracked externally in Cronometer/);
+});
+
+test("wednesday displays mobility plus a 10000-step day target", () => {
+  const wednesday = mobility.getMobilityProgram(3);
+  assert.equal(wednesday.trainingRole, "Mobility + 10,000 steps");
+  assert.equal(wednesday.sessionTitle, "Mobility + 10,000 steps");
+  assert.equal(wednesday.logType, "POST_WORKOUT");
+  assert.ok(wednesday.blocks.length >= 3);
+
+  assert.match(planSource, /Wednesday: Mobility \+ 10,000 steps/);
+  assert.match(workoutPlanPageSource, /Mobility \+ 10,000 steps/);
+  assert.match(dashboardSource, /Mobility \+ 10,000 steps/);
+  assert.match(trainingPlanSource, /\| Wednesday \| Mobility \+ 10,000 steps \|/);
+  assert.match(mobilitySource, /value: "10,000 steps"/);
+  assert.equal(
+    appSettings.parseAppSettings(JSON.stringify({ stepGoal: 8000 })).stepGoal,
+    8000
+  );
 });
 
 test("day 1 upper a restores pulldown with a low-stress lateral raise circuit", () => {

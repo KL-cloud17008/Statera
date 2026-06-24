@@ -10,11 +10,11 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 const WEEK_STRUCTURE = [
   { day: "Monday", role: "Lift", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
   { day: "Tuesday", role: "Lift", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
-  { day: "Wednesday", role: "Mobility", note: "Required recovery mobility and optional desk reset." },
+  { day: "Wednesday", role: "Mobility + 10,000 steps", note: "Required recovery mobility plus a 10,000-step day-level target." },
   { day: "Thursday", role: "Lift", dayOfWeek: 4, note: "Back and shoulder emphasis." },
   { day: "Friday", role: "Lift", dayOfWeek: 5, note: "Hips, hinge pattern, and posterior chain." },
   { day: "Saturday", role: "Mobility", note: "Required recovery mobility and easy walking." },
-  { day: "Sunday", role: "Complete rest", note: "Full reset mobility; no programmed lifting." },
+  { day: "Sunday", role: "Complete rest", note: "Complete rest or very low-intensity recovery mobility." },
 ] as const;
 
 export const metadata: Metadata = {
@@ -55,8 +55,9 @@ export default async function WorkoutPlanPage() {
             <p className="data-number mt-3 text-4xl text-foreground">4/2/1</p>
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday and Saturday are
-            required mobility days. Sunday is complete rest with a full reset. On lift days, do the mobility primer at home,
+            Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday is mobility plus a
+            10,000-step target, and Saturday is required recovery mobility. Sunday is complete rest or very low-intensity
+            recovery mobility. On lift days, do the mobility primer at home,
             walk to the gym as the general warm-up, then do 1-2 easy ramp-up sets on the first
             programmed lift or machine before Block A. Required later recovery is completed separately later the same day.
           </p>
@@ -129,8 +130,10 @@ export default async function WorkoutPlanPage() {
                   </div>
                 ) : (
                   <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
-                    {day.role === "Mobility"
-                      ? "Use the mobility page for recovery mobility. Keep intensity easy and finish with calm breathing."
+                    {day.day === "Wednesday"
+                      ? "Use the mobility page for recovery mobility and log 10,000 steps as the day-level target. Keep intensity easy and finish with calm breathing."
+                      : day.role === "Mobility"
+                        ? "Use the mobility page for recovery mobility. Keep intensity easy and finish with calm breathing."
                       : "Use the mobility page for the full reset. Keep the day deliberately empty of lifting so the week has room to absorb."}
                   </div>
                 )}
