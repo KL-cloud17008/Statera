@@ -15,11 +15,14 @@ export type MobilityExercise = {
   dose: string;
   cues: string;
   goal: string;
+  setup?: string;
   howTo: string[];
+  breathingCue?: string;
   beginnerPointers: string[];
   commonMistakes: string[];
   scaleDown: string[];
   completionTarget: string;
+  painRule?: string;
   intensity: MobilityIntensity;
 };
 
@@ -110,94 +113,117 @@ const FOOT_FLARE_RECOVERY_RULES = [
 ] as const;
 
 const MOVEMENT_CATALOG = {
-  footCheckIn: {
-    id: "foot-check-in",
-    name: "Foot check-in",
-    dose: "30-45 sec/foot",
-    cues: "Map the heel, big toe, little toe, and midfoot without forcing pressure.",
-    goal: "Notice where the sole is irritated without forcing movement.",
+  ankleCircles: {
+    id: "ankle-circles",
+    name: "Ankle Circles",
+    dose: "1-2 sets of 5-10 slow circles each direction per ankle",
+    cues: "Move slowly and smoothly; stay in a comfortable range without forcing the ankle.",
+    goal: "Improve ankle awareness, gentle joint motion, and lower-leg circulation without loading the feet aggressively.",
+    setup: "Sit tall or stand with support so balance is easy, then let one ankle move freely while the rest of the body stays relaxed.",
     howTo: [
-      "Sit down.",
-      "Place both feet on the floor.",
-      "Slowly shift pressure between heel, big toe, little toe, and midfoot.",
-      "Notice whether the arch, heel, or forefoot feels irritated.",
-      "Keep pressure gentle.",
+      "Start seated, or stand holding a wall or sturdy support.",
+      "Lightly lift one foot or keep the heel grounded with the toes relaxed.",
+      "Draw a slow circle with the ankle through an easy range.",
+      "Complete the target reps in one direction.",
+      "Reverse direction with the same slow control.",
+      "Switch ankles and repeat.",
     ],
+    breathingCue: "Exhale softly as the ankle moves through the stiffest part of the circle.",
     beginnerPointers: [
-      "This is assessment, not stretching.",
-      "Stay below pain.",
-      "If one foot is more irritated, reduce pressure on that side.",
+      "Small circles are fine.",
+      "Keep the knee and hip quiet so the ankle does the work.",
+      "Move slowly enough that each part of the circle feels controlled.",
     ],
     commonMistakes: [
-      "Pressing hard to test the sore spot.",
-      "Holding the breath while checking the foot.",
-      "Trying to stretch the arch during the check-in.",
+      "Whipping through fast circles.",
+      "Forcing the end range.",
+      "Turning the whole leg instead of moving the ankle.",
+      "Holding the breath when the ankle feels stiff.",
     ],
     scaleDown: [
-      "Keep both feet relaxed and only breathe slowly.",
-      "Use less bodyweight through the irritated foot.",
+      "Do the circles seated with the leg supported.",
+      "Use fewer reps or a smaller range.",
+      "Pause and switch to seated ankle pumps if circles feel irritating.",
     ],
-    completionTarget: "Spend 30-45 seconds per foot with gentle pressure only.",
+    completionTarget: "Complete 5-10 slow circles each direction per ankle while pain stays 0-2/10.",
+    painRule:
+      "Keep pain 0-2/10. Stop if sharp pain, numbness, tingling, swelling, warmth, or limping appears.",
     intensity: DEFAULT_INTENSITY,
   },
-  plantarSoleStretch: {
-    id: "gentle-plantar-fascia-sole-stretch",
-    name: "Gentle plantar fascia / sole stretch",
-    dose: "20-30 sec/side, 1-2 rounds",
-    cues: "Lightly pull the toes back only until the sole begins to stretch.",
-    goal: "Gently lengthen the sole and arch without yanking on irritated tissue.",
+  plantarflexionStretch: {
+    id: "plantarflexion-stretch",
+    name: "Plantarflexion Stretch",
+    dose: "1-2 rounds of 15-30 sec/side",
+    cues: "Use gentle pressure only and open the front of the ankle without cranking the joint.",
+    goal: "Gently open the front of the ankle/top of foot and restore ankle range without aggressive loading.",
+    setup: "Sit or kneel in a supported position where the top of the foot can lengthen without taking hard pressure.",
     howTo: [
-      "Sit on a chair.",
-      "Cross one ankle over the opposite knee if comfortable.",
-      "Gently pull the toes back toward the shin until the sole lightly stretches.",
-      "Hold 20-30 seconds.",
+      "Start seated or in a supported half-kneeling position.",
+      "Place the top of one foot lightly against the floor or your hand.",
+      "Gently point the toes away until the front of the ankle or top of foot feels mild tension.",
+      "Hold the easy position for 15-30 seconds.",
+      "Relax fully before another round.",
       "Switch sides.",
     ],
+    breathingCue: "Breathe slowly through the hold and soften the pressure on each exhale.",
     beginnerPointers: [
-      "Mild stretch only.",
-      "Do not force the toes back.",
-      "No sharp heel or arch pain.",
+      "Pressure should feel light and easy to leave.",
+      "Keep the rest of the leg relaxed.",
+      "Seated is the default if kneeling feels awkward.",
     ],
     commonMistakes: [
-      "Pulling the toes back hard.",
-      "Digging into the heel while stretching.",
-      "Holding through sharp arch pain.",
+      "Cranking the ankle into a hard point.",
+      "Letting the foot twist sideways.",
+      "Holding through pinching or sharp pain.",
+      "Turning it into a deep quad or kneeling stretch.",
     ],
     scaleDown: [
-      "Keep the foot on the floor and only lift the toes slightly.",
-      "Use one short 10-15 second hold per side.",
+      "Reduce pressure immediately.",
+      "Do the stretch seated.",
+      "Use one 10-15 second hold per side.",
     ],
-    completionTarget: "Hold 20-30 seconds per side for 1-2 easy rounds.",
+    completionTarget: "Hold 15-30 seconds per side for 1-2 gentle rounds without cranking the ankle.",
+    painRule:
+      "Pain stays 0-2/10 maximum. Scale down or stop for sharp pain, numbness, tingling, swelling, warmth, or limping.",
     intensity: FOOT_FLARE_RECOVERY_INTENSITY,
   },
-  softFootRoll: {
-    id: "soft-foot-roll",
-    name: "Soft foot roll",
-    dose: "60-90 sec/foot",
-    cues: "Use light pressure and roll slowly from heel to forefoot.",
-    goal: "Calm the sole and reduce guarding.",
+  bigToeLittleToeLift: {
+    id: "big-toe-lift-little-toe-lift",
+    name: "Big-toe lift / little-toe lift",
+    dose: "1-2 sets of 5-10 controlled reps each pattern",
+    cues: "Keep the foot tripod quiet, move the toes slowly, and avoid clawing.",
+    goal: "Improve intrinsic foot control, toe coordination, arch control, and foot stability.",
+    setup: "Sit or stand barefoot or in socks if safe, with the heel, big-toe base, and little-toe base resting quietly on the floor.",
     howTo: [
-      "Sit down.",
-      "Place a soft ball, massage ball, or rolled towel under the foot.",
-      "Roll slowly from heel to forefoot.",
-      "Pause on tight areas but do not dig hard.",
-      "Switch feet.",
+      "Part 1: Big-toe lift.",
+      "Keep the little toes down and lift only the big toe.",
+      "Lower the big toe slowly without gripping the floor.",
+      "Repeat for the target reps.",
+      "Part 2: Little-toe lift.",
+      "Keep the big toe down and lift the four little toes.",
+      "Lower the little toes slowly without clawing.",
+      "Switch feet or repeat both patterns on the same foot.",
     ],
+    breathingCue: "Exhale during the lift and keep the jaw, toes, and arch relaxed between reps.",
     beginnerPointers: [
-      "Use light pressure.",
-      "Avoid aggressive rolling during a flare.",
-      "This should feel relieving, not painful.",
+      "Barefoot or socks work best if the floor is safe.",
+      "The foot tripod should stay quiet.",
+      "Use fingers to help the toes learn the pattern.",
     ],
     commonMistakes: [
-      "Grinding hard into the sore area.",
-      "Using a hard object when the sole is irritated.",
-      "Rolling quickly and tensing the toes.",
+      "Clawing the toes into the floor.",
+      "Rolling the arch inward or outward.",
+      "Lifting the whole foot instead of the toes.",
+      "Rushing reps to fake the coordination.",
     ],
     scaleDown: [
-      "Use a rolled towel instead of a ball.",
-      "Shorten the roll to 30 seconds per foot.",
+      "Assist the toes with fingers.",
+      "Do fewer reps.",
+      "Practice seated before standing.",
     ],
-    completionTarget: "Roll 60-90 seconds per foot with pressure that stays easy.",
+    completionTarget: "Complete 5-10 controlled reps of each toe-lift pattern with no toe clawing.",
+    painRule:
+      "Keep pain 0-2/10. Stop or scale down if foot pain increases, the arch cramps hard, or sharp pain appears.",
     intensity: FOOT_FLARE_RECOVERY_INTENSITY,
   },
   toeSpreads: {
@@ -1338,15 +1364,18 @@ function dailyLowerLegBase(): MobilityBlock {
   return {
     id: "daily-lower-leg-base",
     title: "Daily lower-leg base",
-    duration: "5-6 min",
+    duration: "6-8 min",
     purpose:
-      "Wake up arches and foot control, move the ankles and lower legs, improve ankle dorsiflexion, and gently open the calf, soleus, and Achilles area.",
+      "Wake up arches and foot control, move the ankles and lower legs, improve ankle dorsiflexion, and gently open the calf, soleus, Achilles, and front-of-ankle area.",
     exercises: [
       movement("toeSpreads"),
       movement("anklePumps"),
+      movement("ankleCircles"),
       movement("ankleRocks"),
       movement("calfStretch"),
       movement("calfStretchBent"),
+      movement("plantarflexionStretch"),
+      movement("bigToeLittleToeLift"),
     ],
   };
 }
@@ -1401,21 +1430,22 @@ function footFlareFootBlock(idPrefix = "foot-flare"): MobilityBlock {
   return block({
     id: `${idPrefix}-foot-sole-downshift`,
     title: "Required foot-flare recovery",
-    duration: "4-6 min",
+    duration: "5-7 min",
     purpose:
       "Foot flare recovery is required when your soles are irritated or recent step load is high. Reduce guarding, restore easy motion, and protect tomorrow's training.",
     adaptationNote:
-      "Effort 1-3/10. Pain 0-2/10 maximum. Use light pressure only. No aggressive stretching, no digging hard into the sole, and no extra fatigue.",
+      "Effort 1-3/10. Pain 0-2/10 maximum. Prioritize easy ankle motion, toe control, and quiet feet. No aggressive stretching, no hard pressure, and no extra fatigue.",
     recoveryIntro: true,
     recoveryIntroVariant: "footFlare",
     exercises: [
-      footFlareMovement("footCheckIn", `${idPrefix}-foot-check-in`),
-      footFlareMovement("plantarSoleStretch", `${idPrefix}-sole-stretch`),
-      footFlareMovement("softFootRoll", `${idPrefix}-soft-foot-roll`),
+      footFlareMovement("ankleCircles", `${idPrefix}-ankle-circles`),
+      footFlareMovement("plantarflexionStretch", `${idPrefix}-plantarflexion-stretch`),
+      footFlareMovement("bigToeLittleToeLift", `${idPrefix}-big-toe-little-toe-lift`),
       footFlareMovement("toeSpreads", `${idPrefix}-toe-spreads-short-foot`, {
         dose: "5-8 gentle reps/foot",
         completionTarget: "Complete 5-8 gentle reps per foot with full relaxation between reps.",
       }),
+      footFlareMovement("anklePumps", `${idPrefix}-seated-ankle-pumps`),
     ],
   });
 }
@@ -1427,7 +1457,6 @@ function footFlareLowerLegBlock(idPrefix = "foot-flare"): MobilityBlock {
     duration: "4-6 min",
     purpose: "Move the ankle and lower leg without impact so the sole does not take more load.",
     exercises: [
-      footFlareMovement("anklePumps", `${idPrefix}-seated-ankle-pumps`),
       footFlareMovement("ankleRocks", `${idPrefix}-wall-ankle-rocks`, {
         name: "Wall ankle rocks",
         completionTarget: "Complete 8-10 controlled rocks per side and stop before foot pain.",
@@ -1566,10 +1595,6 @@ function sundayFootFlareResetBlock(): MobilityBlock {
     adaptationNote:
       "No aggressive stretching today. Keep every position supported and stop before anything feels worked.",
     exercises: [
-      footFlareMovement("anklePumps", "sunday-foot-flare-ankle-pumps", {
-        dose: "10-15 reps/side",
-        completionTarget: "Complete 10-15 smooth pumps per side with the heel supported.",
-      }),
       footFlareMovement("seatedHipRotations", "sunday-foot-flare-seated-hip-rotations"),
       footFlareMovement("seatedSpinalFlexionExtension", "sunday-foot-flare-seated-spine"),
       footFlareMovement("supportedBreathingReset", "sunday-foot-flare-supported-breathing-reset", {

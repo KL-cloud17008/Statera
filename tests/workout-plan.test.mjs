@@ -49,6 +49,7 @@ const requiredExercises = [
   "Leg Press Calf Press",
   "Glute Kickback Machine",
   "Hyperextension / Back Extension Machine",
+  "Wall Sit",
 ];
 
 const temporarilyExcludedPlanExercises = [
@@ -276,6 +277,21 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
 
   assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).sets, 2);
 
+  const wallSitOccurrences = workoutPlan.DEFAULT_WORKOUT_PLAN
+    .flatMap((day) => day.exercises.map((exercise) => ({ ...exercise, dayOfWeek: day.dayOfWeek })))
+    .filter((exercise) => exercise.exerciseName.includes("Wall Sit"));
+  assert.equal(wallSitOccurrences.length, 1, "Wall Sit should appear once weekly");
+  assert.equal(wallSitOccurrences[0].dayOfWeek, 2, "Wall Sit should be on Day 2 / Lower A");
+  assert.equal(wallSitOccurrences[0].exerciseType, "ACCESSORY");
+  assert.equal(wallSitOccurrences[0].sets, 1);
+  assert.match(wallSitOccurrences[0].reps, /10-30 sec/);
+  assert.equal(wallSitOccurrences[0].targetRPE, "4-6");
+  assert.equal(wallSitOccurrences[0].restSeconds, 180);
+  assert.match(wallSitOccurrences[0].cues, /high wall-sit angle/i);
+  assert.match(wallSitOccurrences[0].cues, /pain 0-2\/10 maximum/i);
+  assert.match(wallSitOccurrences[0].cues, /not conditioning/i);
+  assert.doesNotMatch(wallSitOccurrences[0].cues, /loaded wall sit|max wall sit test|failure hold|HIIT|squat challenge/i);
+
   assert.equal(
     day5.exercises.find((item) => item.exerciseType === "WORKING")?.exerciseName,
     "A1 Leg Press"
@@ -289,6 +305,10 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
       `Day 5 should not include ${removedFromLowerB}`
     );
   }
+  assert.ok(
+    !day5.exercises.some((item) => item.exerciseName.includes("Wall Sit")),
+    "Day 5 should not include Wall Sit"
+  );
 });
 
 test("canonical workout plan replaces cardio warm-up prescriptions with at-home primers", () => {
@@ -361,12 +381,17 @@ test("every mobility day includes the daily lower-leg base", () => {
     assert.match(base.purpose, /ankle dorsiflexion/i);
     assert.match(base.purpose, /soleus/i);
 
-    const baseNames = base.exercises.map((exercise) => exercise.name);
-    assert.ok(baseNames.includes("Toe spreads / short-foot drill"));
-    assert.ok(baseNames.includes("Seated ankle pumps"));
-    assert.ok(baseNames.includes("Wall ankle rocks"));
-    assert.ok(baseNames.includes("Wall calf stretch, knee straight"));
-    assert.ok(baseNames.includes("Wall calf stretch, knee bent"));
+    const baseNames = Array.from(base.exercises, (exercise) => exercise.name);
+    assert.deepEqual(baseNames, [
+      "Toe spreads / short-foot drill",
+      "Seated ankle pumps",
+      "Ankle Circles",
+      "Wall ankle rocks",
+      "Wall calf stretch, knee straight",
+      "Wall calf stretch, knee bent",
+      "Plantarflexion Stretch",
+      "Big-toe lift / little-toe lift",
+    ]);
   }
 });
 
@@ -375,9 +400,12 @@ test("training-day mobility primers use the requested at-home sequences", () => 
     [1, [
       "Toe spreads / short-foot drill",
       "Seated ankle pumps",
+      "Ankle Circles",
       "Wall ankle rocks",
       "Wall calf stretch, knee straight",
       "Wall calf stretch, knee bent",
+      "Plantarflexion Stretch",
+      "Big-toe lift / little-toe lift",
       "Wall thoracic rotations",
       "Wall slides",
       "Doorway pec stretch",
@@ -387,9 +415,12 @@ test("training-day mobility primers use the requested at-home sequences", () => 
     [2, [
       "Toe spreads / short-foot drill",
       "Seated ankle pumps",
+      "Ankle Circles",
       "Wall ankle rocks",
       "Wall calf stretch, knee straight",
       "Wall calf stretch, knee bent",
+      "Plantarflexion Stretch",
+      "Big-toe lift / little-toe lift",
       "90/90 hip switches",
       "Half-kneeling or standing hip flexor stretch",
       "Adductor rock-backs",
@@ -399,9 +430,12 @@ test("training-day mobility primers use the requested at-home sequences", () => 
     [4, [
       "Toe spreads / short-foot drill",
       "Seated ankle pumps",
+      "Ankle Circles",
       "Wall ankle rocks",
       "Wall calf stretch, knee straight",
       "Wall calf stretch, knee bent",
+      "Plantarflexion Stretch",
+      "Big-toe lift / little-toe lift",
       "Wall thoracic rotations",
       "Wall angels or wall slides",
       "Scapular circles",
@@ -412,9 +446,12 @@ test("training-day mobility primers use the requested at-home sequences", () => 
     [5, [
       "Toe spreads / short-foot drill",
       "Seated ankle pumps",
+      "Ankle Circles",
       "Wall ankle rocks",
       "Wall calf stretch, knee straight",
       "Wall calf stretch, knee bent",
+      "Plantarflexion Stretch",
+      "Big-toe lift / little-toe lift",
       "Hip hinge patterning against wall",
       "Hamstring floss, seated or standing",
       "90/90 hip switches",
@@ -606,6 +643,27 @@ test("training-day mobility requires later recovery", () => {
   }
 });
 
+test("replacement foot mobility drills include setup, breathing, and pain-rule coaching", () => {
+  const exercises = mobility
+    .getAllMobilityPrograms()
+    .flatMap((program) => program.blocks)
+    .flatMap((block) => block.exercises);
+  const byName = new Map(exercises.map((exercise) => [exercise.name, exercise]));
+
+  for (const expected of [
+    "Ankle Circles",
+    "Plantarflexion Stretch",
+    "Big-toe lift / little-toe lift",
+  ]) {
+    const exercise = byName.get(expected);
+    assert.ok(exercise, `${expected} should be in daily mobility`);
+    assert.ok(exercise.setup.length > 20, `${expected} should include setup`);
+    assert.ok(exercise.breathingCue.length > 20, `${expected} should include a breathing cue`);
+    assert.ok(exercise.painRule.length > 20, `${expected} should include a pain rule`);
+    assert.match(exercise.painRule, /0-2\/10/);
+  }
+});
+
 test("mobility required later recovery supports standard and foot flare modes", () => {
   const standardBlocks = mobility.getRequiredLaterRecoveryBlocks("standard", 1);
   const footFlareBlocks = mobility.getRequiredLaterRecoveryBlocks("footFlare", 1);
@@ -619,24 +677,47 @@ test("mobility required later recovery supports standard and foot flare modes", 
   assert.equal(footFlareBlocks[0].recoveryIntroVariant, "footFlare");
 });
 
-test("foot flare recovery includes foot, sole, shin, calf, and ankle recovery items", () => {
-  const exerciseNames = mobility
-    .getRequiredLaterRecoveryBlocks("footFlare", 2)
-    .flatMap((block) => block.exercises)
-    .map((exercise) => exercise.name);
+test("foot flare recovery includes replacement foot, toe, calf, and ankle recovery items", () => {
+  const exerciseNames = Array.from(
+    mobility
+      .getRequiredLaterRecoveryBlocks("footFlare", 2)
+      .flatMap((block) => block.exercises),
+    (exercise) => exercise.name
+  );
+  const mobilityRecoveryCopy = [
+    planSource,
+    mobilitySource,
+    mobilityPageSource,
+    trainingPlanSource,
+  ].join("\n");
 
-  for (const expected of [
-    "Foot check-in",
-    "Gentle plantar fascia / sole stretch",
-    "Soft foot roll",
+  assert.deepEqual(Array.from(exerciseNames.slice(0, 8)), [
+    "Ankle Circles",
+    "Plantarflexion Stretch",
+    "Big-toe lift / little-toe lift",
     "Toe spreads / short-foot drill",
     "Seated ankle pumps",
     "Wall ankle rocks",
     "Wall calf stretch, knee straight",
     "Wall calf stretch, knee bent",
+  ]);
+
+  for (const expected of [
     "Supported breathing reset",
   ]) {
     assert.ok(exerciseNames.includes(expected), `${expected} should be in foot flare recovery`);
+  }
+
+  for (const removed of [
+    ["Foot ", "check-in"].join(""),
+    ["Gentle plantar ", "fascia / ", "sole ", "stretch"].join(""),
+    ["Soft foot ", "roll"].join(""),
+    ["gentle ", "sole ", "stretch"].join(""),
+    ["plantar ", "fascia ", "stretch"].join(""),
+    ["sole recovery ", "stretch"].join(""),
+  ]) {
+    assert.ok(!exerciseNames.includes(removed), `${removed} should not be in foot flare recovery`);
+    assert.doesNotMatch(mobilityRecoveryCopy, new RegExp(escapeRegExp(removed), "i"));
   }
 });
 

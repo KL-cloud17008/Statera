@@ -83,8 +83,11 @@ Upper A form sources and key cues:
 | B1 | Lunges / Walking Lunges | 2 | 8-12 steps per leg | controlled pace | after set or block: 90 sec | 6-7 |
 | C1 | Leg Extension | 2 | 10-15 | 2-1-2 | after C2: 120 sec | 6-7 |
 | C2 | Lying Leg Curl | 2 | 10-15 | 2-1-2 | after C2: 120 sec | 6-7 |
+| D1 | Wall Sit | 1 | 10-30 sec hold; optional second set only if pain-free | steady hold | 90-180 sec before optional second hold | 4-6 |
 
 Lunges / Walking Lunges beginner note: use bodyweight first; hold dumbbells only when stable and pain-free.
+
+Wall Sit beginner note: back supported against the wall, feet flat, knees tracking over the middle toes, and use a high wall-sit angle at first rather than a deep position. Breathe steadily, stop before leg shaking becomes excessive, keep pain 0-2/10 maximum, and skip if knees, feet, or lower back are irritated that day. This is not conditioning and not a max hold.
 
 Lower A at-home primer: daily lower-leg base; 90/90 hip switches, 6-8 slow reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; adductor rock-backs, 6-8 reps per side; bodyweight glute bridge, 8-10 controlled reps; seated bracing breaths, 5 slow breaths.
 

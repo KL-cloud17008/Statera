@@ -159,6 +159,9 @@ function getExerciseLabel(exercise: PlanExercise) {
   if (exercise.exerciseType === "WARMUP") {
     return "At-home primer";
   }
+  if (exercise.exerciseType === "ACCESSORY") {
+    return "Low-dose accessory";
+  }
   if (exercise.exerciseType === "FINISHER") {
     return "Finisher";
   }

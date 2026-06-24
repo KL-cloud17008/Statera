@@ -115,6 +115,7 @@ export default async function WorkoutPlanPage() {
                             <p className="font-medium text-foreground">{exercise.exerciseName}</p>
                             {exercise.supersetGroup ? <Badge variant="outline">Circuit {exercise.supersetGroup}</Badge> : null}
                             {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">At-home primer</Badge> : null}
+                            {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
                             {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
                           </div>
                           {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p> : null}

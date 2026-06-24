@@ -10,4 +10,4 @@ export type MobilityType = "PRE_WORKOUT" | "POST_WORKOUT";
 
 export type MobilityVersion = "A" | "B";
 
-export type ExerciseType = "WORKING" | "WARMUP" | "FINISHER";
+export type ExerciseType = "WORKING" | "WARMUP" | "ACCESSORY" | "FINISHER";

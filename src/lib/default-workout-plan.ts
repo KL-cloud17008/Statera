@@ -16,7 +16,7 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-circuit-free-upper-a-v6";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-beginner-circuit-free-upper-a-v7";
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Beginner restart block for a 315 lb sedentary male returning to training.",
@@ -200,6 +200,17 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         cues: `${PLAN_CUE_PREFIX}Keep hips heavy on the pad, curl smoothly, pause gently, and return slowly before resting after the circuit.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "D1 Wall Sit",
+        sets: 1,
+        reps: "10-30 sec hold; optional second set only if pain-free",
+        tempo: "steady hold",
+        restSeconds: 180,
+        targetRPE: "4-6",
+        cues: "Low-dose leg tolerance accessory, not conditioning and not a max hold. Back supported against the wall, feet flat, knees tracking over the middle toes, and start with a high wall-sit angle instead of a deep position. Breathe steadily, stop before leg shaking becomes excessive, keep pain 0-2/10 maximum, and rest 90-180 seconds before any optional second hold. Scale down with a higher wall-sit angle, a shorter hold, one set only, or skip if knees, feet, or lower back are irritated that day.",
+        supersetGroup: null,
+        exerciseType: "ACCESSORY",
       },
     ],
   },

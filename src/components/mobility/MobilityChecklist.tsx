@@ -106,11 +106,14 @@ export function MobilityChecklist({
                   const isExpanded = expanded.has(key);
                   const hasDetails = Boolean(
                     exercise.goal ||
+                      exercise.setup ||
                       exercise.howTo?.length ||
+                      exercise.breathingCue ||
                       exercise.beginnerPointers?.length ||
                       exercise.commonMistakes?.length ||
                       exercise.scaleDown?.length ||
                       exercise.completionTarget ||
+                      exercise.painRule ||
                       exercise.intensity
                   );
 
@@ -264,8 +267,11 @@ function MovementDetails({
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
         <div className="space-y-4">
           <DetailCopy label="Goal" value={exercise.goal} />
+          {exercise.setup ? <DetailCopy label="Setup" value={exercise.setup} /> : null}
+          {exercise.breathingCue ? <DetailCopy label="Breathing cue" value={exercise.breathingCue} /> : null}
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
             <DetailCopy label="Completion target" value={exercise.completionTarget} />
+            {exercise.painRule ? <DetailCopy label="Pain rule" value={exercise.painRule} /> : null}
             <IntensityBox exercise={exercise} />
           </div>
         </div>

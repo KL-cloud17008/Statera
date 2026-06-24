@@ -43,6 +43,9 @@ export function WorkoutDayPreview({
   const workingExercises = plan.exercises.filter(
     (exercise) => exercise.exerciseType === "WORKING"
   );
+  const accessoryExercises = plan.exercises.filter(
+    (exercise) => exercise.exerciseType === "ACCESSORY"
+  );
   const totalWorkingSets = workingExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
   const blockOrder = ["A", "B", "C"] as const;
 
@@ -171,6 +174,29 @@ export function WorkoutDayPreview({
           );
         })}
       </div>
+
+      {accessoryExercises.length > 0 ? (
+        <div>
+          <p className="eyebrow">Low-dose accessory</p>
+          <div className="mt-4 divide-y divide-border border-y border-border">
+            {accessoryExercises.map((exercise) => (
+              <div key={exercise.id} className="interactive-row grid gap-4 px-2 py-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,auto)] md:items-start">
+                <div>
+                  <h3 className="text-[1.2rem] leading-snug">{exercise.exerciseName}</h3>
+                  {exercise.cues ? (
+                    <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p>
+                  ) : null}
+                </div>
+                <p className="text-sm text-muted-foreground md:text-right">
+                  {exercise.sets} {exercise.sets === 1 ? "set" : "sets"}, {exercise.reps}
+                  {exercise.targetRPE ? `, RPE ${exercise.targetRPE}` : ""}
+                  {exercise.restSeconds ? `, rest ${exercise.restSeconds}s` : ""}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
