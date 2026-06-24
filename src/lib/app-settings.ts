@@ -21,7 +21,7 @@ export type AppSettings = {
 export const APP_SETTINGS_STORAGE_KEY = "fittrack.app-settings.v1";
 
 export const DEFAULT_APP_SETTINGS: AppSettings = {
-  stepGoal: 10000,
+  stepGoal: 8000,
   weightUnit: "lb",
   distanceUnit: "mi",
   weightGoalTargetDate: null,

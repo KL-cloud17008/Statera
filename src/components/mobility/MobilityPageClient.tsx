@@ -111,7 +111,7 @@ export function MobilityPageClient({
           title={program.sessionTitle}
           summary={
             program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-              ? "Required foot-flare recovery puts ankle circles, gentle plantarflexion, toe-control drills, lower-leg motion, and supported breathing first."
+              ? "Required foot-flare recovery puts seated ankle motion, calf mobility, supported balance, quiet foot pressure, and supported breathing first."
               : program.adaptationNote
           }
           completed={sessionCompleted}

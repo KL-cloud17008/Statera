@@ -15,6 +15,7 @@ const desktopSidebarSource = readFileSync("src/components/layout/DesktopSidebar.
 const mobileNavSource = readFileSync("src/components/layout/MobileNav.tsx", "utf8");
 const dashboardSource = readFileSync("src/components/dashboard/DashboardPageClient.tsx", "utf8");
 const dashboardPageSource = readFileSync("src/app/(app)/page.tsx", "utf8");
+const exerciseLibrarySource = readFileSync("src/lib/exercise-library.ts", "utf8");
 const nutritionRouteSources = [
   "src/app/(app)/nutrition/page.tsx",
   "src/app/(app)/nutrition/foods/page.tsx",
@@ -46,9 +47,10 @@ const requiredExercises = [
   "Leg Extension",
   "Lying Leg Curl",
   "Leg Press",
-  "Leg Press Calf Press",
+  "Leg Press Calf Press / Seated Calf Raise",
   "Glute Kickback Machine",
   "Hyperextension / Back Extension Machine",
+  "Hip Abduction Machine",
   "Wall Sit",
 ];
 
@@ -102,7 +104,7 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
     "Tuesday: Lower A - Machine Lower Body Foundation",
     "Wednesday: Mobility + 10,000 steps",
     "Thursday: Upper B - Machine Back/Shoulder Emphasis",
-    "Friday: Lower B - Machine Posterior Chain",
+    "Friday: Lower B - Machine Posterior Chain + Hip Stability",
     "Saturday: Recovery mobility",
     "Sunday: Complete rest or very low-intensity recovery mobility",
   ]);
@@ -150,6 +152,7 @@ test("wednesday displays mobility plus a 10000-step day target", () => {
     appSettings.parseAppSettings(JSON.stringify({ stepGoal: 8000 })).stepGoal,
     8000
   );
+  assert.equal(appSettings.DEFAULT_APP_SETTINGS.stepGoal, 8000);
 });
 
 test("day 1 upper a restores pulldown with a low-stress lateral raise circuit", () => {
@@ -194,7 +197,7 @@ test("day 1 upper a restores pulldown with a low-stress lateral raise circuit", 
   assert.match(lateralRaise.cues, /2-2\.5 kg per hand/);
   assert.match(lateralRaise.cues, /3-4 reps in reserve/);
   assert.match(lateralRaise.cues, /90-second minimum/);
-  assert.match(lateralRaise.cues, /cardiovascular fitness is currently low/i);
+  assert.match(lateralRaise.cues, /work capacity is currently low/i);
 
   for (const exercise of temporarilyExcludedPlanExercises) {
     assert.ok(
@@ -260,6 +263,31 @@ test("canonical workout plan does not restore removed or replaced exercises", ()
   }
 });
 
+test("current phase does not expose prohibited strength defaults", () => {
+  const activeProgramCopy = [
+    planSource,
+    exerciseLibrarySource,
+    trainingPlanSource,
+  ].join("\n");
+  const prohibitedStrengthTerms = [
+    ["Conventional ", "Deadlift"].join(""),
+    ["Back ", "Squat"].join(""),
+    ["Barbell ", "Squat"].join(""),
+    ["Hack ", "Squat Machine"].join(""),
+    ["Barbell ", "Bench Press"].join(""),
+    ["Hip ", "Adduction Machine"].join(""),
+  ];
+
+  for (const term of prohibitedStrengthTerms) {
+    assert.doesNotMatch(activeProgramCopy, new RegExp(escapeRegExp(term), "i"), `${term} should not appear`);
+  }
+
+  assert.match(exerciseLibrarySource, /Machine Chest Press/);
+  assert.match(exerciseLibrarySource, /Chest-Supported Row/);
+  assert.match(exerciseLibrarySource, /Single-Leg Leg Press/);
+  assert.match(exerciseLibrarySource, /Back Extension Machine/);
+});
+
 test("lower body days preserve the recent lower a and machine-focused lower b structure", () => {
   const day2 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 2);
   const day5 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 5);
@@ -276,6 +304,10 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   }
 
   assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).sets, 2);
+  assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).reps, "6-10 steps per leg");
+  assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).targetRPE, "5-6");
+  assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).restSeconds, 300);
+  assert.match(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).cues, /not conditioning/i);
 
   const wallSitOccurrences = workoutPlan.DEFAULT_WORKOUT_PLAN
     .flatMap((day) => day.exercises.map((exercise) => ({ ...exercise, dayOfWeek: day.dayOfWeek })))
@@ -298,6 +330,9 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   );
   assert.match(day5.exercises.find((item) => item.exerciseName.includes("Leg Press"))?.cues ?? "", /straight sets/i);
   assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Hyperextension / Back Extension Machine")));
+  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Glute Kickback Machine")));
+  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Hip Abduction Machine")));
+  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Leg Press Calf Press / Seated Calf Raise")));
 
   for (const removedFromLowerB of ["Hip Adduction Machine", "Walking Lunges", "Hack Squat", "Squat Machine"]) {
     assert.ok(
@@ -308,6 +343,10 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   assert.ok(
     !day5.exercises.some((item) => item.exerciseName.includes("Wall Sit")),
     "Day 5 should not include Wall Sit"
+  );
+  assert.ok(
+    !day5.exercises.some((item) => /squat|squatting/i.test(`${item.exerciseName} ${item.cues}`)),
+    "Day 5 should not include squat language"
   );
 });
 
@@ -329,6 +368,7 @@ test("canonical workout plan replaces cardio warm-up prescriptions with at-home 
   assert.match(planSource, /Walking to the gym is the general warm-up/);
   assert.match(planSource, /Do the mobility primer at home before leaving/);
   assert.match(planSource, /1-2 easy ramp-up sets/);
+  assert.match(planSource, /Walking to and from the gym is the only planned cardio/);
 
   for (const primer of [
     "At home - Upper A Mobility Primer",
@@ -337,6 +377,32 @@ test("canonical workout plan replaces cardio warm-up prescriptions with at-home 
     "At home - Lower B Mobility Primer",
   ]) {
     assert.match(planSource, new RegExp(escapeRegExp(primer)), `${primer} should be in the plan`);
+  }
+});
+
+test("program content does not prescribe excluded cardio or conditioning", () => {
+  const programCopy = [
+    planSource,
+    mobilitySource,
+    mobilityPageSource,
+    workoutDayPreviewSource,
+    workoutPlanPageSource,
+    dashboardSource,
+    trainingPlanSource,
+  ].join("\n");
+  const excludedCardioTerms = [
+    "HI" + "IT",
+    ["tread", "mill"].join(""),
+    ["bike ", "intervals"].join(""),
+    ["stair", "master"].join(""),
+    ["run", "ning"].join(""),
+    ["finisher ", "cardio"].join(""),
+    ["Norwegian ", "4x4"].join(""),
+    ["arm ", "bike"].join(""),
+  ];
+
+  for (const term of excludedCardioTerms) {
+    assert.doesNotMatch(programCopy, new RegExp(escapeRegExp(term), "i"), `${term} should not appear in program content`);
   }
 });
 
@@ -368,7 +434,7 @@ test("mobility program has adaptive content for all 7 days", () => {
     assert.ok(program.previousDayReason.length > 24, `${program.dayName} should explain previous-day recovery`);
     assert.ok(program.adaptationNote.length > 24, `${program.dayName} should explain adaptation`);
     assert.ok(program.completionSummary.length > 24, `${program.dayName} should explain completion`);
-    assert.ok(program.blocks.length >= 3, `${program.dayName} should include base, main block, and finisher`);
+    assert.ok(program.blocks.length >= 3, `${program.dayName} should include base, main block, and breathing close`);
   }
 });
 
@@ -377,35 +443,67 @@ test("every mobility day includes the daily lower-leg base", () => {
     const base = program.blocks.find((block) => block.id === "daily-lower-leg-base");
     assert.ok(base, `${program.dayName} should include Daily lower-leg base`);
     assert.equal(base.title, "Daily lower-leg base");
-    assert.match(base.purpose, /foot control/i);
+    assert.match(base.purpose, /foot and ankle control/i);
     assert.match(base.purpose, /ankle dorsiflexion/i);
     assert.match(base.purpose, /soleus/i);
+    assert.match(base.purpose, /supported balance/i);
 
     const baseNames = Array.from(base.exercises, (exercise) => exercise.name);
     assert.deepEqual(baseNames, [
-      "Toe spreads / short-foot drill",
-      "Seated ankle pumps",
+      "Seated Ankle Pumps",
       "Ankle Circles",
-      "Wall ankle rocks",
-      "Wall calf stretch, knee straight",
-      "Wall calf stretch, knee bent",
-      "Plantarflexion Stretch",
-      "Big-toe lift / little-toe lift",
+      "Wall Ankle Rocks",
+      "Wall Calf Stretch - Knee Straight",
+      "Wall Calf Stretch - Knee Bent",
+      "Supported Tandem Balance Hold",
+      "Supported Single-Leg Balance with Toe-Touch Kickstand",
     ]);
+  }
+});
+
+test("removed lower-leg drills are replaced by supported balance drills", () => {
+  const runtimeCopy = [
+    planSource,
+    mobilitySource,
+    mobilityPageSource,
+    workoutPlanPageSource,
+    trainingPlanSource,
+  ].join("\n");
+  const removedMobilityNames = [
+    ["Plantar", "flexion Stretch"].join(""),
+    ["Big-toe lift", " / little-toe lift"].join(""),
+  ];
+  const addedBalanceNames = [
+    "Supported Tandem Balance Hold",
+    "Supported Single-Leg Balance with Toe-Touch Kickstand",
+  ];
+  const generatedNames = mobility
+    .getAllMobilityPrograms()
+    .flatMap((program) => program.blocks)
+    .flatMap((block) => block.exercises)
+    .map((exercise) => exercise.name);
+
+  for (const removedName of removedMobilityNames) {
+    assert.doesNotMatch(runtimeCopy, new RegExp(escapeRegExp(removedName), "i"));
+    assert.ok(!generatedNames.includes(removedName), `${removedName} should not be generated`);
+  }
+
+  for (const addedName of addedBalanceNames) {
+    assert.match(runtimeCopy, new RegExp(escapeRegExp(addedName)));
+    assert.ok(generatedNames.includes(addedName), `${addedName} should be generated`);
   }
 });
 
 test("training-day mobility primers use the requested at-home sequences", () => {
   const expectedByDay = new Map([
     [1, [
-      "Toe spreads / short-foot drill",
-      "Seated ankle pumps",
+      "Seated Ankle Pumps",
       "Ankle Circles",
-      "Wall ankle rocks",
-      "Wall calf stretch, knee straight",
-      "Wall calf stretch, knee bent",
-      "Plantarflexion Stretch",
-      "Big-toe lift / little-toe lift",
+      "Wall Ankle Rocks",
+      "Wall Calf Stretch - Knee Straight",
+      "Wall Calf Stretch - Knee Bent",
+      "Supported Tandem Balance Hold",
+      "Supported Single-Leg Balance with Toe-Touch Kickstand",
       "Wall thoracic rotations",
       "Wall slides",
       "Doorway pec stretch",
@@ -413,14 +511,13 @@ test("training-day mobility primers use the requested at-home sequences", () => 
       "Seated bracing breaths",
     ]],
     [2, [
-      "Toe spreads / short-foot drill",
-      "Seated ankle pumps",
+      "Seated Ankle Pumps",
       "Ankle Circles",
-      "Wall ankle rocks",
-      "Wall calf stretch, knee straight",
-      "Wall calf stretch, knee bent",
-      "Plantarflexion Stretch",
-      "Big-toe lift / little-toe lift",
+      "Wall Ankle Rocks",
+      "Wall Calf Stretch - Knee Straight",
+      "Wall Calf Stretch - Knee Bent",
+      "Supported Tandem Balance Hold",
+      "Supported Single-Leg Balance with Toe-Touch Kickstand",
       "90/90 hip switches",
       "Half-kneeling or standing hip flexor stretch",
       "Adductor rock-backs",
@@ -428,14 +525,13 @@ test("training-day mobility primers use the requested at-home sequences", () => 
       "Seated bracing breaths",
     ]],
     [4, [
-      "Toe spreads / short-foot drill",
-      "Seated ankle pumps",
+      "Seated Ankle Pumps",
       "Ankle Circles",
-      "Wall ankle rocks",
-      "Wall calf stretch, knee straight",
-      "Wall calf stretch, knee bent",
-      "Plantarflexion Stretch",
-      "Big-toe lift / little-toe lift",
+      "Wall Ankle Rocks",
+      "Wall Calf Stretch - Knee Straight",
+      "Wall Calf Stretch - Knee Bent",
+      "Supported Tandem Balance Hold",
+      "Supported Single-Leg Balance with Toe-Touch Kickstand",
       "Wall thoracic rotations",
       "Wall angels or wall slides",
       "Scapular circles",
@@ -444,14 +540,13 @@ test("training-day mobility primers use the requested at-home sequences", () => 
       "Seated bracing breaths",
     ]],
     [5, [
-      "Toe spreads / short-foot drill",
-      "Seated ankle pumps",
+      "Seated Ankle Pumps",
       "Ankle Circles",
-      "Wall ankle rocks",
-      "Wall calf stretch, knee straight",
-      "Wall calf stretch, knee bent",
-      "Plantarflexion Stretch",
-      "Big-toe lift / little-toe lift",
+      "Wall Ankle Rocks",
+      "Wall Calf Stretch - Knee Straight",
+      "Wall Calf Stretch - Knee Bent",
+      "Supported Tandem Balance Hold",
+      "Supported Single-Leg Balance with Toe-Touch Kickstand",
       "Hip hinge patterning against wall",
       "Hamstring floss, seated or standing",
       "90/90 hip switches",
@@ -464,7 +559,7 @@ test("training-day mobility primers use the requested at-home sequences", () => 
   for (const [dayOfWeek, expectedNames] of expectedByDay) {
     const program = mobility.getMobilityProgram(dayOfWeek);
     assert.equal(program.logType, "PRE_WORKOUT");
-    assert.equal(program.totalDuration, "8-12 min");
+    assert.equal(program.totalDuration, "6-10 min");
 
     const actualNames = Array.from(program.blocks.flatMap((block) => block.exercises.map((exercise) => exercise.name)));
     assert.deepEqual(actualNames, expectedNames, `${program.dayName} should match the set primer sequence`);
@@ -525,6 +620,7 @@ test("bodyweight conversion formatting includes lb, kg, and stone", () => {
 });
 
 test("daily step goal settings accept 8000 and reject unsafe values", () => {
+  assert.equal(appSettings.DEFAULT_APP_SETTINGS.stepGoal, 8000);
   assert.equal(
     appSettings.parseAppSettings(JSON.stringify({ stepGoal: 8000 })).stepGoal,
     8000
@@ -643,7 +739,7 @@ test("training-day mobility requires later recovery", () => {
   }
 });
 
-test("replacement foot mobility drills include setup, breathing, and pain-rule coaching", () => {
+test("supported balance drills include setup, coaching, regressions, progressions, and pain rules", () => {
   const exercises = mobility
     .getAllMobilityPrograms()
     .flatMap((program) => program.blocks)
@@ -652,14 +748,19 @@ test("replacement foot mobility drills include setup, breathing, and pain-rule c
 
   for (const expected of [
     "Ankle Circles",
-    "Plantarflexion Stretch",
-    "Big-toe lift / little-toe lift",
+    "Supported Tandem Balance Hold",
+    "Supported Single-Leg Balance with Toe-Touch Kickstand",
   ]) {
     const exercise = byName.get(expected);
     assert.ok(exercise, `${expected} should be in daily mobility`);
+    if (expected !== "Ankle Circles") {
+      assert.match(exercise.category, /Balance/);
+      assert.ok(exercise.progression.length >= 3, `${expected} should include progression options`);
+      assert.match(exercise.cues, /support|tripod|Quiet feet|Do not chase instability/i);
+    }
     assert.ok(exercise.setup.length > 20, `${expected} should include setup`);
     assert.ok(exercise.breathingCue.length > 20, `${expected} should include a breathing cue`);
-    assert.ok(exercise.painRule.length > 20, `${expected} should include a pain rule`);
+    assert.ok(exercise.painRule.length > 8, `${expected} should include a pain rule`);
     assert.match(exercise.painRule, /0-2\/10/);
   }
 });
@@ -677,7 +778,7 @@ test("mobility required later recovery supports standard and foot flare modes", 
   assert.equal(footFlareBlocks[0].recoveryIntroVariant, "footFlare");
 });
 
-test("foot flare recovery includes replacement foot, toe, calf, and ankle recovery items", () => {
+test("foot flare recovery includes the supported foot, calf, ankle, and balance base", () => {
   const exerciseNames = Array.from(
     mobility
       .getRequiredLaterRecoveryBlocks("footFlare", 2)
@@ -691,15 +792,14 @@ test("foot flare recovery includes replacement foot, toe, calf, and ankle recove
     trainingPlanSource,
   ].join("\n");
 
-  assert.deepEqual(Array.from(exerciseNames.slice(0, 8)), [
+  assert.deepEqual(Array.from(exerciseNames.slice(0, 7)), [
+    "Seated Ankle Pumps",
     "Ankle Circles",
-    "Plantarflexion Stretch",
-    "Big-toe lift / little-toe lift",
-    "Toe spreads / short-foot drill",
-    "Seated ankle pumps",
-    "Wall ankle rocks",
-    "Wall calf stretch, knee straight",
-    "Wall calf stretch, knee bent",
+    "Wall Ankle Rocks",
+    "Wall Calf Stretch - Knee Straight",
+    "Wall Calf Stretch - Knee Bent",
+    "Supported Tandem Balance Hold",
+    "Supported Single-Leg Balance with Toe-Touch Kickstand",
   ]);
 
   for (const expected of [
@@ -726,7 +826,7 @@ test("rest-day foot flare recovery puts foot and lower-leg work first", () => {
   const sundayBlocks = mobility.getRecoverySessionBlocks(0, "footFlare");
 
   assert.equal(wednesdayBlocks[0].title, "Required foot-flare recovery");
-  assert.equal(wednesdayBlocks[1].title, "Shins, calves, ankles");
+  assert.equal(wednesdayBlocks[1].title, "Lower A recovery block");
   assert.equal(sundayBlocks[0].title, "Required foot-flare recovery");
   assert.equal(sundayBlocks[1].title, "Supported full-body downshift");
 });

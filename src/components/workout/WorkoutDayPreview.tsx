@@ -72,7 +72,7 @@ export function WorkoutDayPreview({
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               Run the session as a sequence: at-home mobility primer, walk to the gym as the
               general warm-up, easy ramp-up sets on the first programmed lift or machine, then paired circuit blocks.
-              Required later recovery can happen later in the day and is tracked separately.
+              Walking home is the low-intensity recovery walk; do not add machine cardio. Required later recovery can happen later in the day and is tracked separately.
             </p>
           </div>
 
@@ -94,11 +94,12 @@ export function WorkoutDayPreview({
       ) : null}
 
       <div className="command-panel grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
           <ProtocolMeta label="At home" value="Mobility primer" note={primers[0]?.reps ?? "8-12 min before leaving"} />
           <ProtocolMeta label="Walk to gym" value="General warm-up" note="Keep breathing conversational." />
           <ProtocolMeta label="At gym" value="Ramp-up sets" note="First Block A lift or machine, RPE 3-5." />
-          <ProtocolMeta label="Later" value="Required recovery" note="Complete the same day; it does not block the lift." />
+          <ProtocolMeta label="Progress" value="Double progression" note="Add load only after clean top-range sets at target RPE." />
+          <ProtocolMeta label="Later" value="Required recovery" note="Complete the same day; walking home is enough cardio." />
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 

@@ -12,6 +12,7 @@ export type RecoveryIntroVariant = "standard" | "footFlare";
 export type MobilityExercise = {
   id: string;
   name: string;
+  category?: string;
   dose: string;
   cues: string;
   goal: string;
@@ -21,6 +22,7 @@ export type MobilityExercise = {
   beginnerPointers: string[];
   commonMistakes: string[];
   scaleDown: string[];
+  progression?: string[];
   completionTarget: string;
   painRule?: string;
   intensity: MobilityIntensity;
@@ -93,6 +95,13 @@ const FOOT_FLARE_RECOVERY_INTENSITY: MobilityIntensity = {
   goal: "Goal: feet feel less guarded; body feels calmer; no extra fatigue",
 };
 
+const BALANCE_INTENSITY: MobilityIntensity = {
+  effort: "Effort: 1-3/10",
+  pain: "Pain: 0-2/10 maximum",
+  breathing: "Breathing: slow, steady, and controlled",
+  goal: "Goal: improve control without creating risk",
+};
+
 const RECOVERY_INTRO =
   "Required does not mean intense. This is low-intensity recovery mobility, not a workout. The goal is to restore feet, ankles, calves, hips, spine, shoulders, and breathing without adding fatigue.";
 
@@ -150,81 +159,104 @@ const MOVEMENT_CATALOG = {
       "Keep pain 0-2/10. Stop if sharp pain, numbness, tingling, swelling, warmth, or limping appears.",
     intensity: DEFAULT_INTENSITY,
   },
-  plantarflexionStretch: {
-    id: "plantarflexion-stretch",
-    name: "Plantarflexion Stretch",
-    dose: "1-2 rounds of 15-30 sec/side",
-    cues: "Use gentle pressure only and open the front of the ankle without cranking the joint.",
-    goal: "Gently open the front of the ankle/top of foot and restore ankle range without aggressive loading.",
-    setup: "Sit or kneel in a supported position where the top of the foot can lengthen without taking hard pressure.",
+  supportedTandemBalance: {
+    id: "supported-tandem-balance-hold",
+    name: "Supported Tandem Balance Hold",
+    category: "Balance / Foot-Ankle Control",
+    dose: "2 rounds x 20-40 seconds each stance",
+    cues: "Quiet feet. Tall posture. Light hand support. Breathe slowly. Knee tracks over middle toes.",
+    goal:
+      "Build balance, ankle control, foot tripod awareness, knee tracking, and hip stability with low joint stress.",
+    setup:
+      "Stand near a wall, rack, rail, or stable surface. Place one foot in front of the other in a narrow split stance. Use hand support as needed.",
     howTo: [
-      "Start seated or in a supported half-kneeling position.",
-      "Place the top of one foot lightly against the floor or your hand.",
-      "Gently point the toes away until the front of the ankle or top of foot feels mild tension.",
-      "Hold the easy position for 15-30 seconds.",
-      "Relax fully before another round.",
+      "Stand tall with ribs down.",
+      "Keep both feet quiet and flat.",
+      "Lightly hold support.",
+      "Keep knees soft, not locked.",
+      "Hold position without gripping the floor aggressively.",
+      "Switch which foot is forward.",
+    ],
+    breathingCue: "Breathe slowly through the hold and keep the jaw relaxed.",
+    beginnerPointers: [
+      "Quiet feet.",
+      "Tall posture.",
+      "Light hand support.",
+      "Breathe slowly.",
+      "Knee tracks over middle toes.",
+    ],
+    commonMistakes: [
+      "Holding breath.",
+      "Clawing toes.",
+      "Collapsing the arch.",
+      "Locking knees.",
+      "Leaning into support.",
+    ],
+    scaleDown: [
+      "Use a wider stance.",
+      "Use both hands supported.",
+      "Use 10-20 second holds.",
+    ],
+    progression: [
+      "Use fingertip support only.",
+      "Use a narrower stance.",
+      "Use longer holds.",
+      "Add slow head turns.",
+    ],
+    completionTarget:
+      "Complete both stances without pain increase, arch collapse, or excessive wobbling.",
+    painRule: "0-2/10 maximum.",
+    intensity: BALANCE_INTENSITY,
+  },
+  supportedSingleLegBalanceKickstand: {
+    id: "supported-single-leg-balance-toe-touch-kickstand",
+    name: "Supported Single-Leg Balance with Toe-Touch Kickstand",
+    category: "Balance / Foot Strength / Ankle Stability",
+    dose: "2 rounds x 10-30 seconds per side",
+    cues: "Foot tripod. Soft knee. Tall posture. Light support. Do not chase instability.",
+    goal:
+      "Improve single-leg control, intrinsic foot strength, ankle stiffness, knee alignment, hip stability, and plantar-fascia resilience.",
+    setup:
+      "Stand near a wall, rack, rail, or stable surface. Shift most weight onto one foot. Keep the opposite toes lightly touching the floor as a kickstand.",
+    howTo: [
+      "Set the working foot flat.",
+      "Keep heel, big-toe base, and little-toe base connected to the floor.",
+      "Lightly touch the opposite toes to the floor.",
+      "Hold support with one or both hands.",
+      "Keep knee tracking over middle toes.",
+      "Hold without arch collapse or toe clawing.",
       "Switch sides.",
     ],
-    breathingCue: "Breathe slowly through the hold and soften the pressure on each exhale.",
+    breathingCue: "Breathe steadily and keep the support hand light.",
     beginnerPointers: [
-      "Pressure should feel light and easy to leave.",
-      "Keep the rest of the leg relaxed.",
-      "Seated is the default if kneeling feels awkward.",
+      "Foot tripod.",
+      "Soft knee.",
+      "Tall posture.",
+      "Light support.",
+      "Do not chase instability.",
     ],
     commonMistakes: [
-      "Cranking the ankle into a hard point.",
-      "Letting the foot twist sideways.",
-      "Holding through pinching or sharp pain.",
-      "Turning it into a deep quad or kneeling stretch.",
+      "Letting the arch collapse.",
+      "Gripping toes.",
+      "Twisting hips.",
+      "Locking the knee.",
+      "Holding breath.",
     ],
     scaleDown: [
-      "Reduce pressure immediately.",
-      "Do the stretch seated.",
-      "Use one 10-15 second hold per side.",
+      "Use both hands supported.",
+      "Use more toe pressure from the kickstand foot.",
+      "Use shorter 10-second holds.",
     ],
-    completionTarget: "Hold 15-30 seconds per side for 1-2 gentle rounds without cranking the ankle.",
-    painRule:
-      "Pain stays 0-2/10 maximum. Scale down or stop for sharp pain, numbness, tingling, swelling, warmth, or limping.",
-    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
-  },
-  bigToeLittleToeLift: {
-    id: "big-toe-lift-little-toe-lift",
-    name: "Big-toe lift / little-toe lift",
-    dose: "1-2 sets of 5-10 controlled reps each pattern",
-    cues: "Keep the foot tripod quiet, move the toes slowly, and avoid clawing.",
-    goal: "Improve intrinsic foot control, toe coordination, arch control, and foot stability.",
-    setup: "Sit or stand barefoot or in socks if safe, with the heel, big-toe base, and little-toe base resting quietly on the floor.",
-    howTo: [
-      "Part 1: Big-toe lift.",
-      "Keep the little toes down and lift only the big toe.",
-      "Lower the big toe slowly without gripping the floor.",
-      "Repeat for the target reps.",
-      "Part 2: Little-toe lift.",
-      "Keep the big toe down and lift the four little toes.",
-      "Lower the little toes slowly without clawing.",
-      "Switch feet or repeat both patterns on the same foot.",
+    progression: [
+      "Use lighter support.",
+      "Use longer holds.",
+      "Use less kickstand pressure.",
+      "Use a slow free-foot reach.",
     ],
-    breathingCue: "Exhale during the lift and keep the jaw, toes, and arch relaxed between reps.",
-    beginnerPointers: [
-      "Barefoot or socks work best if the floor is safe.",
-      "The foot tripod should stay quiet.",
-      "Use fingers to help the toes learn the pattern.",
-    ],
-    commonMistakes: [
-      "Clawing the toes into the floor.",
-      "Rolling the arch inward or outward.",
-      "Lifting the whole foot instead of the toes.",
-      "Rushing reps to fake the coordination.",
-    ],
-    scaleDown: [
-      "Assist the toes with fingers.",
-      "Do fewer reps.",
-      "Practice seated before standing.",
-    ],
-    completionTarget: "Complete 5-10 controlled reps of each toe-lift pattern with no toe clawing.",
-    painRule:
-      "Keep pain 0-2/10. Stop or scale down if foot pain increases, the arch cramps hard, or sharp pain appears.",
-    intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+    completionTarget:
+      "Hold with controlled foot pressure, steady breathing, and no increase in foot/knee pain.",
+    painRule: "0-2/10 maximum.",
+    intensity: BALANCE_INTENSITY,
   },
   toeSpreads: {
     id: "toe-spreads-short-foot",
@@ -261,7 +293,7 @@ const MOVEMENT_CATALOG = {
   },
   anklePumps: {
     id: "seated-ankle-pumps",
-    name: "Seated ankle pumps",
+    name: "Seated Ankle Pumps",
     dose: "15-20 reps/side",
     cues: "Move slowly between toes-up and toes-down without rushing.",
     goal: "Move the ankles and lower legs before walking or training.",
@@ -293,10 +325,10 @@ const MOVEMENT_CATALOG = {
   },
   ankleRocks: {
     id: "wall-ankle-rocks",
-    name: "Wall ankle rocks",
+    name: "Wall Ankle Rocks",
     dose: "8-10 reps/side",
     cues: "Heel stays down; knee tracks over the middle toes.",
-    goal: "Improve ankle dorsiflexion for walking, leg press, squatting machines, and stairs.",
+    goal: "Improve ankle dorsiflexion for walking, leg press setup, and stairs.",
     howTo: [
       "Stand facing a wall or hold a sturdy support.",
       "Place one foot a few inches from the wall.",
@@ -326,7 +358,7 @@ const MOVEMENT_CATALOG = {
   },
   calfStretch: {
     id: "wall-calf-stretch-knee-straight",
-    name: "Wall calf stretch, knee straight",
+    name: "Wall Calf Stretch - Knee Straight",
     dose: "20-30 sec/side",
     cues: "Point the foot straight ahead and keep the back heel down.",
     goal: "Improve calf length without forcing the ankle.",
@@ -359,7 +391,7 @@ const MOVEMENT_CATALOG = {
   },
   calfStretchBent: {
     id: "wall-calf-stretch-knee-bent",
-    name: "Wall calf stretch, knee bent",
+    name: "Wall Calf Stretch - Knee Bent",
     dose: "20-30 sec/side",
     cues: "Mild stretch only; slightly bend the back knee while the heel stays grounded.",
     goal: "Open the soleus and Achilles area gently.",
@@ -859,7 +891,7 @@ const MOVEMENT_CATALOG = {
     name: "Bodyweight glute bridge",
     dose: "8-10 easy reps",
     cues: "Squeeze the glutes without arching the lower back.",
-    goal: "Wake up the glutes before leg press, hack squat, or posterior-chain work.",
+    goal: "Wake up the glutes before leg press or supported posterior-chain work.",
     howTo: [
       "Lie on your back with knees bent and feet flat.",
       "Set the feet about hip-width apart.",
@@ -1366,16 +1398,15 @@ function dailyLowerLegBase(): MobilityBlock {
     title: "Daily lower-leg base",
     duration: "6-8 min",
     purpose:
-      "Wake up arches and foot control, move the ankles and lower legs, improve ankle dorsiflexion, and gently open the calf, soleus, Achilles, and front-of-ankle area.",
+      "Build foot and ankle control, ankle dorsiflexion, calf and soleus mobility, plantar-fascia resilience, knee tracking, and supported balance without adding fatigue.",
     exercises: [
-      movement("toeSpreads"),
       movement("anklePumps"),
       movement("ankleCircles"),
       movement("ankleRocks"),
       movement("calfStretch"),
       movement("calfStretchBent"),
-      movement("plantarflexionStretch"),
-      movement("bigToeLittleToeLift"),
+      movement("supportedTandemBalance"),
+      movement("supportedSingleLegBalanceKickstand"),
     ],
   };
 }
@@ -1404,7 +1435,7 @@ function block({
   };
 }
 
-function breathingFinisher(label = "Breathing/reset finisher"): MobilityBlock {
+function breathingFinisher(label = "Breathing/reset close"): MobilityBlock {
   return block({
     id: "breathing-reset-finisher",
     title: label,
@@ -1430,42 +1461,30 @@ function footFlareFootBlock(idPrefix = "foot-flare"): MobilityBlock {
   return block({
     id: `${idPrefix}-foot-sole-downshift`,
     title: "Required foot-flare recovery",
-    duration: "5-7 min",
+    duration: "6-8 min",
     purpose:
-      "Foot flare recovery is required when your soles are irritated or recent step load is high. Reduce guarding, restore easy motion, and protect tomorrow's training.",
+      "Foot flare recovery is required when your soles are irritated or recent step load is high. Restore ankle motion, calf mobility, supported balance, and quiet foot pressure before adding anything else.",
     adaptationNote:
-      "Effort 1-3/10. Pain 0-2/10 maximum. Prioritize easy ankle motion, toe control, and quiet feet. No aggressive stretching, no hard pressure, and no extra fatigue.",
+      "Effort 1-3/10. Pain 0-2/10 maximum. Prioritize easy ankle motion, supported balance, and quiet feet. No aggressive stretching, no unstable surfaces, no hard pressure, and no extra fatigue.",
     recoveryIntro: true,
     recoveryIntroVariant: "footFlare",
     exercises: [
-      footFlareMovement("ankleCircles", `${idPrefix}-ankle-circles`),
-      footFlareMovement("plantarflexionStretch", `${idPrefix}-plantarflexion-stretch`),
-      footFlareMovement("bigToeLittleToeLift", `${idPrefix}-big-toe-little-toe-lift`),
-      footFlareMovement("toeSpreads", `${idPrefix}-toe-spreads-short-foot`, {
-        dose: "5-8 gentle reps/foot",
-        completionTarget: "Complete 5-8 gentle reps per foot with full relaxation between reps.",
-      }),
       footFlareMovement("anklePumps", `${idPrefix}-seated-ankle-pumps`),
-    ],
-  });
-}
-
-function footFlareLowerLegBlock(idPrefix = "foot-flare"): MobilityBlock {
-  return block({
-    id: `${idPrefix}-shins-calves-ankles`,
-    title: "Shins, calves, ankles",
-    duration: "4-6 min",
-    purpose: "Move the ankle and lower leg without impact so the sole does not take more load.",
-    exercises: [
+      footFlareMovement("ankleCircles", `${idPrefix}-ankle-circles`),
       footFlareMovement("ankleRocks", `${idPrefix}-wall-ankle-rocks`, {
-        name: "Wall ankle rocks",
+        name: "Wall Ankle Rocks",
         completionTarget: "Complete 8-10 controlled rocks per side and stop before foot pain.",
       }),
       footFlareMovement("calfStretch", `${idPrefix}-calf-stretch-knee-straight`, {
-        name: "Wall calf stretch, knee straight",
+        name: "Wall Calf Stretch - Knee Straight",
         completionTarget: "Hold 30 seconds per side with a mild stretch and no bouncing.",
       }),
       footFlareMovement("calfStretchBent", `${idPrefix}-calf-stretch-knee-bent`),
+      footFlareMovement("supportedTandemBalance", `${idPrefix}-supported-tandem-balance`),
+      footFlareMovement(
+        "supportedSingleLegBalanceKickstand",
+        `${idPrefix}-supported-single-leg-kickstand`
+      ),
     ],
   });
 }
@@ -1611,7 +1630,7 @@ export const REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE =
 export const REQUIRED_LATER_RECOVERY: MobilityBlock = block({
   id: "required-later-recovery",
   title: "Required later recovery",
-  duration: "8-12 min",
+  duration: "6-12 min",
   purpose:
     "Complete later the same day after a lift. It does not have to be done immediately after training.",
   adaptationNote:
@@ -1654,8 +1673,8 @@ export function getRequiredLaterRecoveryBlocks(
     const idPrefix = `required-day-${dayOfWeek}-foot-flare`;
     return [
       footFlareFootBlock(idPrefix),
-      footFlareLowerLegBlock(idPrefix),
       footFlareFullBodyBlock(dayOfWeek, idPrefix),
+      breathingFinisher("Recovery close"),
     ];
   }
 
@@ -1670,13 +1689,13 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Monday",
     trainingRole: "Upper A training day",
     sessionTitle: "Upper A primer",
-    totalDuration: "8-12 min",
+    totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare shoulders, thoracic spine, chest, lats, elbows, wrists, and trunk before walking to the gym.",
+      "Prepare feet, ankles, supported balance, shoulders, thoracic spine, chest, lats, elbows, wrists, and trunk before walking to the gym.",
     previousDayReason:
       "Sunday was complete rest, so this gently restores general movement before the walk and upper-body circuits.",
     adaptationNote:
-      "Keep shoulders down. Do not shrug. Move slowly. This is preparation, not a workout.",
+      "Keep shoulders down. Use supported balance only. Move slowly. This is preparation, not a workout.",
     completionSummary: "Done means your shoulders feel mobile, your chest and lats feel less tight, and your breathing is calm.",
     logType: "PRE_WORKOUT",
     focus: [
@@ -1707,13 +1726,13 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Tuesday",
     trainingRole: "Lower A training day",
     sessionTitle: "Lower A primer",
-    totalDuration: "8-12 min",
+    totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, knees, hips, adductors, glutes, and trunk before lower-body circuits.",
+      "Prepare feet, ankles, supported balance, knees, hips, adductors, glutes, and trunk before lower-body strength work.",
     previousDayReason:
       "Monday upper-body work was separate, so today stays focused on lower-body positions without adding fatigue.",
     adaptationNote:
-      "Use hands for support. Keep range comfortable. Do not force knees or hips. If floor work is hard, use chair-supported versions where possible.",
+      "Use hands for support. Keep range comfortable. Do not force knees, hips, arches, or balance. If floor work is hard, use chair-supported versions where possible.",
     completionSummary: "Done means hips feel easier to position, ankles feel awake, and the trunk feels steady.",
     logType: "PRE_WORKOUT",
     focus: [
@@ -1744,18 +1763,18 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Wednesday",
     trainingRole: "Mobility + 10,000 steps",
     sessionTitle: "Mobility + 10,000 steps",
-    totalDuration: "20-30 min",
+    totalDuration: "12-20 min",
     todayPurpose:
-      "Recover from Tuesday Lower A with hips, adductors, hamstrings, calves, ankles, low back, breathing, and a 10,000-step day-level target.",
+      "Recover from Tuesday Lower A with feet, ankles, calves, hips, hamstrings, low back, breathing, supported balance, and a 10,000-step day-level target.",
     previousDayReason:
       "Tuesday leg press and machine lower-body work can leave the hips, adductors, calves, and trunk guarded.",
     adaptationNote:
-      "This is deliberately low-intensity and restorative so a beginner can recover without adding soreness.",
+      "This is deliberately low-intensity and restorative. Walking is the only planned cardio; do not add extra conditioning.",
     completionSummary: "Done means hips and calves feel less stiff, the back feels calmer, and breathing has slowed down.",
     logType: "POST_WORKOUT",
     focus: [
-      { label: "Recovery match", value: "Lower A relief", note: "Hips, adductors, hamstrings, calves, ankles, low back, and breathing." },
-      { label: "Day action", value: "10,000 steps", note: "Wednesday's specific movement target; keep the recovery work easy." },
+      { label: "Recovery match", value: "Lower A relief", note: "Feet, ankles, calves, hips, hamstrings, low back, balance, and breathing." },
+      { label: "Day action", value: "10,000 steps", note: "Wednesday's specific movement target; keep walking easy and split it up if soles flare." },
       { label: "Feel target", value: "Restorative", note: "No fatigue. Leave the session calmer than you began." },
     ],
     blocks: [
@@ -1763,7 +1782,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
       block({
         id: "wednesday-lower-a-recovery",
         title: "Lower A recovery block",
-        duration: "12-18 min",
+        duration: "8-12 min",
         purpose: "Reduce hip, adductor, hamstring, calf, and low-back stiffness after Lower A.",
         adaptationNote: RECOVERY_STOP_NOTE,
         recoveryIntro: true,
@@ -1782,7 +1801,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
           movement("childPoseBreathing"),
         ],
       }),
-      breathingFinisher("Down-regulation finisher"),
+      breathingFinisher("Down-regulation close"),
     ],
   },
   4: {
@@ -1790,13 +1809,13 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Thursday",
     trainingRole: "Upper B training day",
     sessionTitle: "Upper B primer",
-    totalDuration: "8-12 min",
+    totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare upper back, lats, rear delts, shoulders, scapulae, elbows, and trunk.",
+      "Prepare feet, ankles, supported balance, upper back, lats, rear delts, shoulders, scapulae, elbows, and trunk.",
     previousDayReason:
       "Tuesday and Wednesday lower-body work can leave hips and ankles stiff, so the daily lower-leg base keeps them moving without adding fatigue.",
     adaptationNote:
-      "Do not force overhead range. Keep ribs down. Stop before shoulder pinch. The goal is shoulder position and upper-back control.",
+      "Do not force overhead range. Keep ribs down. Use supported balance only. Stop before shoulder pinch. The goal is shoulder position and upper-back control.",
     completionSummary: "Done means lats and pecs feel open, shoulder blades feel controllable, and hips/ankles still feel easy.",
     logType: "PRE_WORKOUT",
     focus: [
@@ -1828,13 +1847,13 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Friday",
     trainingRole: "Lower B training day",
     sessionTitle: "Lower B primer",
-    totalDuration: "8-12 min",
+    totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare hips, posterior chain, hamstrings, glutes, calves, ankles, and trunk for lower-body and posterior-chain work.",
+      "Prepare feet, ankles, supported balance, hips, posterior chain, hamstrings, glutes, calves, and trunk for machine lower-body work.",
     previousDayReason:
       "Thursday upper-body work was separate, so today stays focused on posterior-chain setup without adding fatigue.",
     adaptationNote:
-      "Hinge by pushing hips back, not rounding lower back. Keep hamstring work gentle. No aggressive stretching before lifting. If soles are flaring, keep foot pressure light.",
+      "Hinge by pushing hips back, not rounding lower back. Keep hamstring work gentle. No aggressive stretching before lifting. If soles are flaring, keep foot pressure light and supported.",
     completionSummary: "Done means the hinge pattern feels clear, hamstrings feel gently awake, and the upper body feels less tight.",
     logType: "PRE_WORKOUT",
     focus: [
@@ -1866,17 +1885,17 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Saturday",
     trainingRole: "Recovery mobility day",
     sessionTitle: "Lower B recovery",
-    totalDuration: "20-30 min",
+    totalDuration: "12-20 min",
     todayPurpose:
-      "Recover from Friday Lower B with posterior chain, hips, adductors, calves, back/trunk, and down-regulation.",
+      "Recover from Friday Lower B with feet, ankles, calves, posterior chain, hips, back/trunk, supported balance, and down-regulation.",
     previousDayReason:
       "Friday posterior-chain work can leave hamstrings, glutes, calves, and low back feeling worked and guarded.",
     adaptationNote:
-      "This is longer and calmer than a training-day primer so recovery can actually lead the day.",
+      "This is longer and calmer than a training-day primer so recovery can lead the day. Do not add conditioning.",
     completionSummary: "Done means the posterior chain feels less guarded and your breathing feels quieter.",
     logType: "POST_WORKOUT",
     focus: [
-      { label: "Recovery match", value: "Lower B relief", note: "Posterior chain, hips, adductors, calves, back/trunk, and breath." },
+      { label: "Recovery match", value: "Lower B relief", note: "Feet, ankles, calves, posterior chain, hips, back/trunk, balance, and breath." },
       { label: "Previous day", value: "Hinge recovery", note: "Unloads hamstrings, glutes, calves, and low back after Friday." },
       { label: "Feel target", value: "Long and calm", note: "More restorative than a primer, still easy enough to avoid fatigue." },
     ],
@@ -1885,7 +1904,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
       block({
         id: "saturday-lower-b-recovery",
         title: "Lower B recovery block",
-        duration: "14-20 min",
+        duration: "8-12 min",
         purpose: "Recover hips, hamstrings, glutes, calves, and low back after Lower B.",
         adaptationNote: RECOVERY_STOP_NOTE,
         recoveryIntro: true,
@@ -1905,7 +1924,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
           movement("childPoseBreathing"),
         ],
       }),
-      breathingFinisher("Down-regulation finisher"),
+      breathingFinisher("Down-regulation close"),
     ],
   },
   0: {
@@ -1913,13 +1932,13 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Sunday",
     trainingRole: "Complete rest / full reset",
     sessionTitle: "Complete rest full-body reset",
-    totalDuration: "12-20 min",
+    totalDuration: "0-12 min if needed",
     todayPurpose:
-      "Very gentle full-body reset with no fatigue, focused on breathing, spine, hips, feet, ankles, and general relaxation.",
+      "Complete rest first. Use only very gentle recovery mobility if needed, with no fatigue and no target to hit.",
     previousDayReason:
       "Saturday recovery work may have already reduced lower-body stiffness, so Sunday stays gentler and more relaxing.",
     adaptationNote:
-      "This should feel like recovery, not training. Finish calmer than you started.",
+      "This should feel like recovery, not training. Skip it entirely if rest feels better.",
     completionSummary: "Done means nothing feels worked, your breathing is quieter, and movement feels a little easier.",
     logType: "POST_WORKOUT",
     focus: [
@@ -1993,7 +2012,6 @@ export function getRecoverySessionBlocks(
   const idPrefix = `day-${program.dayOfWeek}-foot-flare`;
   return [
     footFlareFootBlock(idPrefix),
-    footFlareLowerLegBlock(idPrefix),
     ...program.blocks.filter((block) => block.id !== "daily-lower-leg-base"),
   ];
 }

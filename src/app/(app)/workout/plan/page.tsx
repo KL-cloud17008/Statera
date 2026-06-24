@@ -10,11 +10,11 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 const WEEK_STRUCTURE = [
   { day: "Monday", role: "Lift", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
   { day: "Tuesday", role: "Lift", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
-  { day: "Wednesday", role: "Mobility + 10,000 steps", note: "Required recovery mobility plus a 10,000-step day-level target." },
+  { day: "Wednesday", role: "Mobility + 10,000 steps", note: "Recovery mobility plus the 10,000-step day-level target; no added cardio." },
   { day: "Thursday", role: "Lift", dayOfWeek: 4, note: "Back and shoulder emphasis." },
-  { day: "Friday", role: "Lift", dayOfWeek: 5, note: "Hips, hinge pattern, and posterior chain." },
-  { day: "Saturday", role: "Mobility", note: "Required recovery mobility and easy walking." },
-  { day: "Sunday", role: "Complete rest", note: "Complete rest or very low-intensity recovery mobility." },
+  { day: "Friday", role: "Lift", dayOfWeek: 5, note: "Machine posterior chain, hip stability, and calf work." },
+  { day: "Saturday", role: "Mobility", note: "12-20 minute recovery mobility and balance reset; no extra conditioning." },
+  { day: "Sunday", role: "Complete rest", note: "Complete rest or very low-intensity recovery mobility only if needed." },
 ] as const;
 
 export const metadata: Metadata = {
@@ -35,8 +35,8 @@ export default async function WorkoutPlanPage() {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Training split"
-        title="A weekly protocol for four lift days, two recovery days, and one full rest day."
-        description="The plan is organized as a structured document: at-home mobility primer, walk to gym, gym ramp-up sets, circuit blocks, and required later recovery."
+        title="A scaled five-pillar protocol for four lift days, two recovery days, and one full rest day."
+        description="Strength, low-intensity walking only, mobility/flexibility, supported balance, and recovery are organized as at-home primer, walk to gym, gym ramp-up sets, strength blocks, and required later recovery."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -57,9 +57,9 @@ export default async function WorkoutPlanPage() {
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday is mobility plus a
             10,000-step target, and Saturday is required recovery mobility. Sunday is complete rest or very low-intensity
-            recovery mobility. On lift days, do the mobility primer at home,
+            recovery mobility only if needed. Walking to and from the gym is the only planned cardio. On lift days, do the mobility primer at home,
             walk to the gym as the general warm-up, then do 1-2 easy ramp-up sets on the first
-            programmed lift or machine before Block A. Required later recovery is completed separately later the same day.
+            programmed lift or machine before Block A. Use double progression only when all sets reach the top of the rep range at target RPE with clean form. Required later recovery is completed separately later the same day.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
             <Badge variant="secondary">4 lift days</Badge>
@@ -132,10 +132,10 @@ export default async function WorkoutPlanPage() {
                 ) : (
                   <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
                     {day.day === "Wednesday"
-                      ? "Use the mobility page for recovery mobility and log 10,000 steps as the day-level target. Keep intensity easy and finish with calm breathing."
+                      ? "Use the mobility page for recovery mobility and log 10,000 steps as the day-level target. Keep intensity easy, use supported balance only, and do not add cardio."
                       : day.role === "Mobility"
-                        ? "Use the mobility page for recovery mobility. Keep intensity easy and finish with calm breathing."
-                      : "Use the mobility page for the full reset. Keep the day deliberately empty of lifting so the week has room to absorb."}
+                        ? "Use the mobility page for 12-20 minutes of recovery mobility, flexibility, and supported balance. Do not add conditioning."
+                      : "Keep the day deliberately empty. Use only gentle recovery mobility if needed."}
                   </div>
                 )}
               </section>

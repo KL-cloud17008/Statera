@@ -43,18 +43,18 @@ export type FreeWorkoutSessionDraft = {
 };
 
 export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
-  { id: "bench-press", name: "Bench Press", muscleGroup: "Chest", defaultSets: 4, defaultReps: "5-8", defaultRestSeconds: 120, source: "builtin" },
+  { id: "machine-chest-press", name: "Machine Chest Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "incline-dumbbell-press", name: "Incline Dumbbell Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "chest-fly", name: "Chest Fly", muscleGroup: "Chest", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 60, source: "builtin" },
-  { id: "barbell-row", name: "Barbell Row", muscleGroup: "Back", defaultSets: 4, defaultReps: "6-10", defaultRestSeconds: 120, source: "builtin" },
+  { id: "chest-supported-row", name: "Chest-Supported Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "lat-pulldown", name: "Lat Pulldown", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "seated-cable-row", name: "Seated Cable Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
-  { id: "back-squat", name: "Back Squat", muscleGroup: "Legs", defaultSets: 4, defaultReps: "5-8", defaultRestSeconds: 150, source: "builtin" },
+  { id: "single-leg-leg-press", name: "Single-Leg Leg Press", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12 per side", defaultRestSeconds: 120, source: "builtin" },
   { id: "leg-press", name: "Leg Press", muscleGroup: "Legs", defaultSets: 4, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
-  { id: "romanian-deadlift", name: "Romanian Deadlift", muscleGroup: "Legs", defaultSets: 3, defaultReps: "6-10", defaultRestSeconds: 120, source: "builtin" },
+  { id: "back-extension-machine", name: "Back Extension Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "10-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "leg-curl", name: "Leg Curl", muscleGroup: "Legs", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 75, source: "builtin" },
   { id: "standing-calf-raise", name: "Standing Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 60, source: "builtin" },
-  { id: "overhead-press", name: "Overhead Press", muscleGroup: "Shoulders", defaultSets: 4, defaultReps: "5-8", defaultRestSeconds: 120, source: "builtin" },
+  { id: "machine-lateral-raise", name: "Machine Lateral Raise", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-15", defaultRestSeconds: 90, source: "builtin" },
   { id: "lateral-raise", name: "Lateral Raise", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-15", defaultRestSeconds: 60, source: "builtin" },
   { id: "rear-delt-fly", name: "Rear Delt Fly", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-15", defaultRestSeconds: 60, source: "builtin" },
   { id: "barbell-curl", name: "Barbell Curl", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
