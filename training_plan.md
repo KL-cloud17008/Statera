@@ -10,11 +10,11 @@ User context for this phase: male, early 20s, 5 ft 9 in, about 312 lb (141.5 kg,
 | --- | --- |
 | Monday | Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit |
 | Tuesday | Lower A - Machine Lower Body Foundation |
-| Wednesday | Mobility + 10,000 steps |
+| Wednesday | Mobility, Flexibility & Balance |
 | Thursday | Upper B - Machine Back/Shoulder Emphasis |
 | Friday | Lower B - Machine Posterior Chain + Hip Stability |
-| Saturday | Recovery mobility |
-| Sunday | Complete rest or very low-intensity recovery mobility |
+| Saturday | Mobility, Flexibility & Balance |
+| Sunday | Complete rest |
 
 ## Five Scaled Pillars
 
@@ -27,7 +27,7 @@ User context for this phase: male, early 20s, 5 ft 9 in, about 312 lb (141.5 kg,
 ## Global Rules
 
 - Global Daily Step Goal remains 8,000.
-- Wednesday stays Mobility + 10,000 steps.
+- Wednesday stays Mobility, Flexibility & Balance with a 10,000-step target.
 - If foot pain rises above 3/10, reduce next-day walking intensity or split steps into smaller chunks.
 - Do not add machine-cardio warm-ups, interval conditioning, impact work, finishers, or extra conditioning circuits.
 - No unstable surfaces and no eyes-closed balance drills in this phase.
@@ -157,9 +157,10 @@ Wall Sit beginner note: back supported against the wall, feet flat, knees tracki
 
 Lower A mobility-page prep content: daily lower-leg and balance base; 90/90 hip switches, 6-8 slow reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; adductor rock-backs, 6-8 reps per side; bodyweight glute bridge, 8-10 controlled reps; seated bracing breaths, 5 slow breaths.
 
-## Wednesday - Mobility + 10,000 steps
+## Wednesday - Mobility, Flexibility & Balance
 
 - No gym strength.
+- Step target: 10,000.
 - No added cardio beyond walking.
 - Emphasis: feet, ankles, calves, hips, thoracic spine, balance, and recovery.
 - Mobility duration: 12-20 minutes.
@@ -206,13 +207,13 @@ Upper B mobility-page prep content: daily lower-leg and balance base; wall thora
 
 Lower B mobility-page prep content: daily lower-leg and balance base; hip hinge patterning against wall, 8 reps; hamstring floss seated or standing, 8 reps per side; 90/90 hip switches, 6-8 reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; bodyweight glute bridge, 8-10 reps; seated bracing breaths, 5 slow breaths.
 
-## Saturday - Recovery Mobility
+## Saturday - Mobility, Flexibility & Balance
 
 - 12-20 minute mobility, flexibility, and supported balance reset.
 - No extra conditioning.
 - Emphasis: feet, ankles, calves, hips, posterior chain, thoracic spine, breathing, and recovery.
 
-## Sunday - Complete Rest or Very Low-Intensity Recovery Mobility
+## Sunday - Complete Rest
 
 - No target.
 - Complete rest is acceptable.

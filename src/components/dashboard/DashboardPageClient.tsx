@@ -30,23 +30,23 @@ type MobilitySummary = {
 };
 
 const WEEKLY_RHYTHM = [
-  { day: "Mon", label: "Upper A", type: "Lift", dayOfWeek: 1 },
-  { day: "Tue", label: "Lower A", type: "Lift", dayOfWeek: 2 },
-  { day: "Wed", label: "Mobility + 10,000 steps", type: "Recovery", dayOfWeek: 3 },
-  { day: "Thu", label: "Upper B", type: "Lift", dayOfWeek: 4 },
-  { day: "Fri", label: "Lower B", type: "Lift", dayOfWeek: 5 },
-  { day: "Sat", label: "Mobility", type: "Recovery", dayOfWeek: 6 },
-  { day: "Sun", label: "Complete rest", type: "Off", dayOfWeek: 0 },
+  { day: "MON", label: "Upper A", protocol: "Strength Protocol", dayOfWeek: 1 },
+  { day: "TUE", label: "Lower A", protocol: "Strength Protocol", dayOfWeek: 2 },
+  { day: "WED", label: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", meta: "10,000 steps", dayOfWeek: 3 },
+  { day: "THU", label: "Upper B", protocol: "Strength Protocol", dayOfWeek: 4 },
+  { day: "FRI", label: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5 },
+  { day: "SAT", label: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", dayOfWeek: 6 },
+  { day: "SUN", label: "Complete rest", protocol: "Full Rest", dayOfWeek: 0 },
 ];
 
 const NEXT_BY_DAY = [
   "Complete rest",
   "Upper A",
   "Lower A",
-  "Mobility + 10,000 steps",
+  "Mobility, Flexibility & Balance",
   "Upper B",
   "Lower B",
-  "Mobility",
+  "Mobility, Flexibility & Balance",
 ];
 
 export function DashboardPageClient({
@@ -105,10 +105,9 @@ export function DashboardPageClient({
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-end">
           <div className="max-w-5xl">
             <p className="eyebrow">{greeting}</p>
-            <h1 className="mt-5 max-w-5xl">Today, training rhythm, and recovery status in one command ledger.</h1>
+            <h1 className="mt-5 max-w-5xl">Today&apos;s command ledger.</h1>
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground">
-              A focused operating view for movement, training, bodyweight, and mobility without
-              turning the day into a grid of competing widgets.
+              Training, steps, bodyweight, and recovery status.
             </p>
           </div>
 
@@ -116,7 +115,7 @@ export function DashboardPageClient({
             <p className="eyebrow">Next protocol</p>
             <p className="mt-3 text-3xl font-semibold text-foreground">{nextProtocol}</p>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {workoutSummary.weeklySessions} lift sessions logged this week.
+              {workoutSummary.weeklySessions} strength sessions logged this week.
             </p>
             <div className="copper-rule mt-5" />
             <Link href="/workout" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-foreground transition-colors hover:text-[#9fb7ff]">
@@ -201,7 +200,7 @@ export function DashboardPageClient({
             <div>
               <p className="eyebrow">Weekly rhythm</p>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Lift four days, recover twice, leave Sunday fully clear.
+                Strength four days. Recovery Wednesday and Saturday. Sunday full rest.
               </p>
             </div>
             <Link href="/workout/plan" className="text-link inline-flex items-center gap-2 text-sm font-medium">
@@ -217,16 +216,25 @@ export function DashboardPageClient({
                 <div
                   key={item.day}
                   className={cn(
-                    "interactive-row grid gap-3 px-2 py-3 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_8rem] sm:items-center",
-                    isToday && "completed-row -mx-2 rounded-[var(--radius-card)] px-4"
+                    "interactive-row grid gap-2 px-2 py-2.5 text-sm sm:grid-cols-[3.5rem_minmax(0,1fr)_minmax(7.75rem,auto)] sm:items-center",
+                    isToday && "-mx-2 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--electric-blue)_34%,var(--border)_66%)] bg-[color-mix(in_srgb,var(--electric-blue)_7%,var(--background)_93%)] px-3"
                   )}
                 >
                   <p className="eyebrow text-[10px]">{item.day}</p>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium text-foreground">{item.label}</p>
-                    {isToday ? <span className="warm-pill rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em]">Today</span> : null}
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-medium leading-snug text-foreground">{item.label}</p>
+                      {isToday ? (
+                        <span className="rounded-full border border-[color-mix(in_srgb,var(--electric-blue)_36%,var(--border)_64%)] bg-[color-mix(in_srgb,var(--electric-blue)_8%,transparent)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[color-mix(in_srgb,var(--electric-blue)_54%,var(--foreground)_46%)]">
+                          Today
+                        </span>
+                      ) : null}
+                    </div>
+                    {item.meta ? <p className="mt-1 text-xs text-muted-foreground">{item.meta}</p> : null}
                   </div>
-                  <p className="text-muted-foreground sm:text-right">{item.type}</p>
+                  <p className="justify-self-start whitespace-nowrap rounded-full border border-border/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:justify-self-end sm:text-right">
+                    {item.protocol}
+                  </p>
                 </div>
               );
             })}
@@ -360,8 +368,8 @@ function buildDecision({
   const highStepLoad =
     (recentStepEntries.length >= 3 && recentStepAverage >= stepGoal * 1.15) ||
     todaySteps >= stepGoal * 1.35;
-  const isLiftDay = [1, 2, 4, 5].includes(trainingDayOfWeek);
-  const expectedMobilityType = isLiftDay ? "PRE_WORKOUT" : "POST_WORKOUT";
+  const isStrengthDay = [1, 2, 4, 5].includes(trainingDayOfWeek);
+  const expectedMobilityType = isStrengthDay ? "PRE_WORKOUT" : "POST_WORKOUT";
   const mobilityDone = mobilitySummary.completedTypes.includes(expectedMobilityType);
   const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;
   const signals = [
@@ -383,10 +391,10 @@ function buildDecision({
     };
   }
 
-  if (isLiftDay && !workoutSummary.hasCompletedWorkoutToday) {
+  if (isStrengthDay && !workoutSummary.hasCompletedWorkoutToday) {
     return {
       title: "Start today's programmed session.",
-      description: "No completed lift is logged for the current training date. Run the programmed session before adding extra work.",
+      description: "No completed strength session is logged for the current training date. Run the programmed session before adding extra work.",
       href: "/workout",
       signals,
     };
@@ -394,7 +402,7 @@ function buildDecision({
 
   if (!mobilityDone) {
     return {
-      title: isLiftDay ? "Complete the expected mobility prep." : "Log recovery mobility.",
+      title: isStrengthDay ? "Complete the expected mobility prep." : "Log recovery mobility.",
       description: "The day is missing its expected mobility check-in. Keep it short, easy, and specific to the program.",
       href: "/mobility",
       signals,

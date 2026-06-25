@@ -1761,8 +1761,8 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   3: {
     dayOfWeek: 3,
     dayName: "Wednesday",
-    trainingRole: "Mobility + 10,000 steps",
-    sessionTitle: "Mobility + 10,000 steps",
+    trainingRole: "Mobility, Flexibility & Balance",
+    sessionTitle: "Lower A recovery",
     totalDuration: "12-20 min",
     todayPurpose:
       "Recover from Tuesday Lower A with feet, ankles, calves, hips, hamstrings, low back, breathing, supported balance, and a 10,000-step day-level target.",
@@ -1883,7 +1883,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   6: {
     dayOfWeek: 6,
     dayName: "Saturday",
-    trainingRole: "Recovery mobility day",
+    trainingRole: "Mobility, Flexibility & Balance",
     sessionTitle: "Lower B recovery",
     totalDuration: "12-20 min",
     todayPurpose:

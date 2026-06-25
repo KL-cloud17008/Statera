@@ -114,11 +114,11 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
     "Monday: Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit",
     "Tuesday: Lower A - Machine Lower Body Foundation",
-    "Wednesday: Mobility + 10,000 steps",
+    "Wednesday: Mobility, Flexibility & Balance - 10,000 steps",
     "Thursday: Upper B - Machine Back/Shoulder Emphasis",
     "Friday: Lower B - Machine Posterior Chain + Hip Stability",
-    "Saturday: Recovery mobility",
-    "Sunday: Complete rest or very low-intensity recovery mobility",
+    "Saturday: Mobility, Flexibility & Balance",
+    "Sunday: Complete rest",
   ]);
   assert.match(planSource, /optional 2-round mode/i);
   assert.match(planSource, /RPE 6-7/);
@@ -172,21 +172,79 @@ test("nutrition routes redirect without active tracker UI", () => {
 
 test("wednesday displays mobility plus a 10000-step day target", () => {
   const wednesday = mobility.getMobilityProgram(3);
-  assert.equal(wednesday.trainingRole, "Mobility + 10,000 steps");
-  assert.equal(wednesday.sessionTitle, "Mobility + 10,000 steps");
+  assert.equal(wednesday.trainingRole, "Mobility, Flexibility & Balance");
+  assert.equal(wednesday.sessionTitle, "Lower A recovery");
   assert.equal(wednesday.logType, "POST_WORKOUT");
   assert.ok(wednesday.blocks.length >= 3);
 
-  assert.match(planSource, /Wednesday: Mobility \+ 10,000 steps/);
-  assert.match(workoutPlanPageSource, /Mobility \+ 10,000 steps/);
-  assert.match(dashboardSource, /Mobility \+ 10,000 steps/);
-  assert.match(trainingPlanSource, /\| Wednesday \| Mobility \+ 10,000 steps \|/);
+  assert.match(planSource, /Wednesday: Mobility, Flexibility & Balance - 10,000 steps/);
+  assert.match(workoutPlanPageSource, /title: "Mobility, Flexibility & Balance"/);
+  assert.match(dashboardSource, /label: "Mobility, Flexibility & Balance"/);
+  assert.match(dashboardSource, /meta: "10,000 steps"/);
+  assert.match(trainingPlanSource, /\| Wednesday \| Mobility, Flexibility & Balance \|/);
+  assert.match(trainingPlanSource, /Step target: 10,000/);
   assert.match(mobilitySource, /value: "10,000 steps"/);
   assert.equal(
     appSettings.parseAppSettings(JSON.stringify({ stepGoal: 8000 })).stepGoal,
     8000
   );
   assert.equal(appSettings.DEFAULT_APP_SETTINGS.stepGoal, 8000);
+});
+
+test("weekly rhythm uses professional protocol labels", () => {
+  const dashboardProtocols = Array.from(
+    dashboardSource.matchAll(/protocol: "([^"]+)"/g),
+    (match) => match[1]
+  );
+  assert.deepEqual(dashboardProtocols, [
+    "Strength Protocol",
+    "Strength Protocol",
+    "Recovery Protocol",
+    "Strength Protocol",
+    "Strength Protocol",
+    "Recovery Protocol",
+    "Full Rest",
+  ]);
+
+  assert.match(dashboardSource, /day: "MON"/);
+  assert.match(dashboardSource, /day: "TUE"/);
+  assert.match(dashboardSource, /day: "WED"[\s\S]*label: "Mobility, Flexibility & Balance"[\s\S]*protocol: "Recovery Protocol"[\s\S]*meta: "10,000 steps"/);
+  assert.match(dashboardSource, /day: "SAT"[\s\S]*label: "Mobility, Flexibility & Balance"[\s\S]*protocol: "Recovery Protocol"/);
+  assert.match(dashboardSource, /day: "SUN"[\s\S]*label: "Complete rest"[\s\S]*protocol: "Full Rest"/);
+  assert.match(workoutPlanPageSource, /protocol: "Strength Protocol"/);
+  assert.match(workoutPlanPageSource, /protocol: "Recovery Protocol"/);
+  assert.match(workoutPlanPageSource, /protocol: "Full Rest"/);
+  assert.doesNotMatch(dashboardSource, /type: "Lift"|type: "Recovery"|type: "Off"/);
+  assert.doesNotMatch(workoutPlanPageSource, /role: "Lift"|role: "Recovery"|role: "Off"/);
+});
+
+test("training copy stays compact and removes filler explanations", () => {
+  const trainingUiCopy = [
+    dashboardSource,
+    workoutPageClientSource,
+    sessionLoggerSource,
+    workoutPlanPageSource,
+  ].join("\n");
+
+  for (const removedPhrase of [
+    "wall of cards",
+    "session reads like one continuous ledger",
+    "Your session is already live",
+    "Your session is live",
+    "Log sets as you go. Previous numbers stay nearby",
+    "stack of components",
+    "grid of competing widgets",
+  ]) {
+    assert.doesNotMatch(trainingUiCopy, new RegExp(escapeRegExp(removedPhrase), "i"));
+  }
+
+  assert.match(workoutPageClientSource, /Session in progress/);
+  assert.match(workoutPageClientSource, /Today's protocol/);
+  assert.match(workoutPageClientSource, /Log working sets only/);
+  assert.match(sessionLoggerSource, /Live session/);
+  assert.match(sessionLoggerSource, /Ramp-up sets stay outside the ledger/);
+  assert.match(workoutPlanPageSource, /Current phase/);
+  assert.match(workoutPlanPageSource, /Required later recovery remains separate/);
 });
 
 test("day 1 upper a restores pulldown with a low-stress lateral raise circuit", () => {
@@ -405,7 +463,8 @@ test("canonical workout plan uses non-loggable session prep instead of cardio wa
   assert.match(planSource, /Walking to and from the gym is the only planned cardio/);
   assert.match(trainingSessionSource, /SESSION_PREP_ITEMS/);
   assert.match(trainingSessionSource, /Walk to gym/);
-  assert.match(trainingSessionSource, /Required later recovery remains tracked separately/);
+  assert.match(trainingSessionSource, /label: "Required later recovery"/);
+  assert.match(trainingSessionSource, /detail: "Separate block"/);
   assert.doesNotMatch(planSource, /At home - .*Mobility Primer/);
 });
 
@@ -473,7 +532,7 @@ test("training sessions keep session prep non-loggable", () => {
   assert.match(workoutDayPreviewSource, /SessionPrepStrip/);
   assert.match(sessionLoggerSource, /SessionPrepStrip/);
   assert.match(trainingSessionSource, /SESSION_PREP_ITEMS/);
-  assert.match(sessionLoggerSource, /no Weight\/Reps\/RPE rows are created here/);
+  assert.match(sessionLoggerSource, /No Weight\/Reps\/RPE rows/);
   assert.match(setInputSource, /placeholder=.*Weight/);
   assert.match(setInputSource, /placeholder="Reps"/);
   assert.match(setInputSource, /placeholder="RPE"/);

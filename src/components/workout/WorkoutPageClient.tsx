@@ -70,14 +70,14 @@ export function WorkoutPageClient({
           activeSession
             ? activeSession.sessionName
             : todayPlan
-              ? "Training that reads like a private command ledger."
+              ? "Today's protocol"
               : "Build the session you actually need."
         }
         description={
           activeSession
-            ? "Your session is live. The page shifts into a logging ledger so previous numbers, set rows, and rest timing stay close without becoming a wall of cards."
+            ? "Log working sets only. Ramp-up sets stay outside the ledger."
             : todayPlan
-              ? "Today's programmed work is the primary sequence. Session prep stays compact and non-loggable; the first logged row is real training work."
+              ? "Session prep is non-loggable. The first logged row is working strength."
               : "No scheduled day is in the way, so the builder and saved templates take over the page."
         }
         action={

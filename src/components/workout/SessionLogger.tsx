@@ -212,8 +212,7 @@ export function SessionLogger({
             <p className="eyebrow">Live session</p>
             <h2 className="mt-3">{sessionName}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Log sets as you go. Previous numbers stay nearby, rest timing stays quiet, and the
-              session reads like one continuous ledger instead of a stack of components.
+              Log working sets only. Ramp-up sets stay outside the ledger.
             </p>
             {isStale ? (
               <div className="status-note mt-5 flex max-w-2xl items-start gap-3 px-4 py-3 text-sm leading-relaxed">
@@ -331,7 +330,7 @@ function SessionPrepStrip() {
       <div>
         <p className="eyebrow">Session prep</p>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Arrival protocol only; no Weight/Reps/RPE rows are created here.
+          Arrival protocol only. No Weight/Reps/RPE rows.
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-4">

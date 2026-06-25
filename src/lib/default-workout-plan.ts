@@ -348,9 +348,9 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
 export const DEFAULT_WEEKLY_RHYTHM = [
   "Monday: Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit",
   "Tuesday: Lower A - Machine Lower Body Foundation",
-  "Wednesday: Mobility + 10,000 steps",
+  "Wednesday: Mobility, Flexibility & Balance - 10,000 steps",
   "Thursday: Upper B - Machine Back/Shoulder Emphasis",
   "Friday: Lower B - Machine Posterior Chain + Hip Stability",
-  "Saturday: Recovery mobility",
-  "Sunday: Complete rest or very low-intensity recovery mobility",
+  "Saturday: Mobility, Flexibility & Balance",
+  "Sunday: Complete rest",
 ];

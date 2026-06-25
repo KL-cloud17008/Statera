@@ -12,8 +12,8 @@ export const SESSION_PREP_ITEMS = [
     detail: "RPE 5-7",
   },
   {
-    label: "Recovery",
-    detail: "Required later recovery remains tracked separately",
+    label: "Required later recovery",
+    detail: "Separate block",
   },
 ] as const;
 

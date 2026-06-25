@@ -9,18 +9,18 @@ import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 const WEEK_STRUCTURE = [
-  { day: "Monday", role: "Lift", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
-  { day: "Tuesday", role: "Lift", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
-  { day: "Wednesday", role: "Mobility + 10,000 steps", note: "Recovery mobility plus the 10,000-step day-level target; no added cardio." },
-  { day: "Thursday", role: "Lift", dayOfWeek: 4, note: "Back and shoulder emphasis." },
-  { day: "Friday", role: "Lift", dayOfWeek: 5, note: "Machine posterior chain, hip stability, and calf work." },
-  { day: "Saturday", role: "Mobility", note: "12-20 minute recovery mobility and balance reset; no extra conditioning." },
-  { day: "Sunday", role: "Complete rest", note: "Complete rest or very low-intensity recovery mobility only if needed." },
+  { day: "Monday", title: "Upper A", protocol: "Strength Protocol", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
+  { day: "Tuesday", title: "Lower A", protocol: "Strength Protocol", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
+  { day: "Wednesday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", meta: "10,000 steps", note: "Recovery mobility, flexibility, supported balance, and Wednesday's 10,000-step target." },
+  { day: "Thursday", title: "Upper B", protocol: "Strength Protocol", dayOfWeek: 4, note: "Back and shoulder emphasis." },
+  { day: "Friday", title: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5, note: "Machine posterior chain, hip stability, and calf work." },
+  { day: "Saturday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", note: "12-20 minutes of recovery mobility, flexibility, and supported balance." },
+  { day: "Sunday", title: "Complete rest", protocol: "Full Rest", note: "Complete rest. Gentle recovery mobility only if needed." },
 ] as const;
 
 export const metadata: Metadata = {
   title: "Training Plan | Athanor",
-  description: "Review the scheduled training split, exercise order, session prep, circuit blocks, and rest guidance.",
+  description: "Review the current training phase, weekly protocol rhythm, exercise order, and rest guidance.",
 };
 
 export default async function WorkoutPlanPage() {
@@ -36,8 +36,8 @@ export default async function WorkoutPlanPage() {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Training Protocol"
-        title="A scaled five-pillar protocol for four lift days, two recovery days, and one full rest day."
-        description="Strength, low-intensity walking only, mobility/flexibility, supported balance, and recovery are organized as non-loggable session prep, gym ramp-up sets, strength blocks, and required later recovery."
+        title="Current phase"
+        description="Four strength protocols, two recovery protocols, one full rest day. Walking to and from the gym remains the only planned cardio."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -56,16 +56,15 @@ export default async function WorkoutPlanPage() {
             <p className="data-number mt-3 text-4xl text-foreground">4/2/1</p>
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-            Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday is mobility plus a
-            10,000-step target, and Saturday is required recovery mobility. Sunday is complete rest or very low-intensity
-            recovery mobility only if needed. Walking to and from the gym is the only planned cardio. On lift days,
-            walk to the gym as the general warm-up, then do 1-2 easy ramp-up sets on the first
-            programmed lift or machine before Block A. Use double progression only when all sets reach the top of the rep range at target RPE with clean form. Required later recovery is completed separately later the same day.
+            Strength protocols run Monday, Tuesday, Thursday, and Friday. Wednesday carries the
+            10,000-step target. Saturday is recovery protocol. Sunday is full rest. Ramp-up sets
+            stay outside the ledger. Progress only after clean top-range sets at target RPE.
+            Required later recovery remains separate.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
-            <Badge variant="secondary">4 lift days</Badge>
-            <Badge variant="outline">2 mobility</Badge>
-            <Badge variant="outline">1 rest</Badge>
+            <Badge variant="secondary">4 strength</Badge>
+            <Badge variant="outline">2 recovery</Badge>
+            <Badge variant="outline">1 full rest</Badge>
           </div>
         </div>
 
@@ -73,7 +72,7 @@ export default async function WorkoutPlanPage() {
           <div>
             <p className="eyebrow">Session prep</p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Non-loggable arrival guidance. It stays outside the exercise list and never creates set rows.
+              Non-loggable arrival guidance. No set rows.
             </p>
           </div>
           <div className="grid gap-3 md:grid-cols-4">
@@ -104,8 +103,9 @@ export default async function WorkoutPlanPage() {
 
                   <div>
                     <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="text-3xl">{plan?.sessionName ?? day.role}</h2>
-                      <Badge variant={day.role === "Lift" ? "default" : "outline"}>{day.role}</Badge>
+                      <h2 className="text-3xl">{plan?.sessionName ?? day.title}</h2>
+                      <Badge variant={day.protocol === "Strength Protocol" ? "default" : "outline"}>{day.protocol}</Badge>
+                      {"meta" in day ? <Badge variant="secondary">{day.meta}</Badge> : null}
                     </div>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{day.note}</p>
                   </div>
@@ -149,10 +149,10 @@ export default async function WorkoutPlanPage() {
                 ) : (
                   <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
                     {day.day === "Wednesday"
-                      ? "Use the mobility page for recovery mobility and log 10,000 steps as the day-level target. Keep intensity easy, use supported balance only, and do not add cardio."
-                      : day.role === "Mobility"
+                      ? "Use the mobility page for recovery mobility. Step target: 10,000. Keep intensity easy, use supported balance only, and do not add conditioning."
+                      : day.protocol === "Recovery Protocol"
                         ? "Use the mobility page for 12-20 minutes of recovery mobility, flexibility, and supported balance. Do not add conditioning."
-                      : "Keep the day deliberately empty. Use only gentle recovery mobility if needed."}
+                        : "Keep the day deliberately empty. Use only gentle recovery mobility if needed."}
                   </div>
                 )}
               </section>
