@@ -1,4 +1,11 @@
-import { addDaysToDateString, diffDays, getTodayDateString, parseDate } from "@/lib/dates";
+import {
+  addDaysToDateString,
+  diffDays,
+  formatDate,
+  getTodayDateString,
+  isValidISODateString,
+  parseDate,
+} from "@/lib/dates";
 
 export type SerializedStepsEntry = {
   id: string;
@@ -6,8 +13,81 @@ export type SerializedStepsEntry = {
   steps: number | null;
 };
 
+export type NormalizedStepEntry = {
+  id: string;
+  date: string;
+  steps: number;
+};
+
+type StepStatsOptions = {
+  todayLocalDate?: string;
+  timezone?: string;
+  recentLimit?: number;
+};
+
+type StepStatsOptionsInput = string | StepStatsOptions;
+
+function normalizeStatsOptions(options?: StepStatsOptionsInput): Required<Pick<StepStatsOptions, "recentLimit">> &
+  Omit<StepStatsOptions, "recentLimit"> {
+  if (typeof options === "string") {
+    return {
+      todayLocalDate: options,
+      recentLimit: 14,
+    };
+  }
+
+  return {
+    ...options,
+    recentLimit: options?.recentLimit ?? 14,
+  };
+}
+
+function normalizeStepDate(date: string) {
+  const dateOnly = date.match(/^(\d{4}-\d{2}-\d{2})(?:T|$)/)?.[1];
+  if (dateOnly && isValidISODateString(dateOnly)) {
+    return dateOnly;
+  }
+
+  if (isValidISODateString(date)) {
+    return date;
+  }
+
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return formatDate(parsed);
+}
+
+function buildStepsByDate(entries: SerializedStepsEntry[]) {
+  const byDate = new Map<string, number>();
+
+  for (const entry of entries) {
+    const date = normalizeStepDate(entry.date);
+    if (!date) {
+      continue;
+    }
+
+    // DailyLog is unique by day, but imports/tests may contain duplicates; totals intentionally sum.
+    byDate.set(date, (byDate.get(date) ?? 0) + (entry.steps ?? 0));
+  }
+
+  return byDate;
+}
+
+function getNormalizedStepEntries(entries: SerializedStepsEntry[]) {
+  return Array.from(buildStepsByDate(entries).entries())
+    .map(([date, steps]) => ({
+      id: date,
+      date,
+      steps,
+    }))
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
 export function sortStepsAscending(entries: SerializedStepsEntry[]) {
-  return [...entries].sort((a, b) => a.date.localeCompare(b.date));
+  return getNormalizedStepEntries(entries).sort((a, b) => a.date.localeCompare(b.date));
 }
 
 export function buildDailyStepsData(
@@ -15,8 +95,15 @@ export function buildDailyStepsData(
   days = 7,
   timezone?: string
 ) {
-  const byDate = new Map(entries.map((entry) => [entry.date, entry.steps ?? 0]));
-  const today = getTodayDateString(timezone);
+  return buildDailyStepsDataFromToday(entries, days, getTodayDateString(timezone));
+}
+
+function buildDailyStepsDataFromToday(
+  entries: SerializedStepsEntry[],
+  days: number,
+  today: string
+) {
+  const byDate = buildStepsByDate(entries);
 
   const points = [] as { date: string; label: string; steps: number; isToday: boolean }[];
   for (let offset = days - 1; offset >= 0; offset -= 1) {
@@ -42,8 +129,8 @@ export function buildWeeklyAggregateData(entries: SerializedStepsEntry[], weeks 
     const weekStart = new Date(date);
     const day = weekStart.getDay();
     weekStart.setDate(weekStart.getDate() - day);
-    const key = weekStart.toISOString().split("T")[0];
-    buckets.set(key, (buckets.get(key) ?? 0) + (entry.steps ?? 0));
+    const key = formatDate(weekStart);
+    buckets.set(key, (buckets.get(key) ?? 0) + entry.steps);
   }
 
   return Array.from(buckets.entries())
@@ -63,7 +150,7 @@ export function buildMonthlyAggregateData(entries: SerializedStepsEntry[], month
   for (const entry of sorted) {
     const date = parseDate(entry.date);
     const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    buckets.set(key, (buckets.get(key) ?? 0) + (entry.steps ?? 0));
+    buckets.set(key, (buckets.get(key) ?? 0) + entry.steps);
   }
 
   return Array.from(buckets.entries())
@@ -83,8 +170,22 @@ export function buildMonthlyAggregateData(entries: SerializedStepsEntry[], month
 }
 
 export function computeStepStreak(entries: SerializedStepsEntry[], goal: number, timezone?: string) {
-  const byDate = new Map(entries.map((entry) => [entry.date, entry.steps ?? 0]));
-  let cursor = getTodayDateString(timezone);
+  return calculateStepStats(entries, goal, { timezone }).currentStreak;
+}
+
+export function calculateStepStats(
+  entries: SerializedStepsEntry[],
+  dailyStepGoal: number,
+  options?: StepStatsOptionsInput
+) {
+  const { todayLocalDate, timezone, recentLimit } = normalizeStatsOptions(options);
+  const today = todayLocalDate ?? getTodayDateString(timezone);
+  const goal = Math.max(1, dailyStepGoal);
+  const byDate = buildStepsByDate(entries);
+  const daily = buildDailyStepsDataFromToday(entries, 7, today);
+  const todaySteps = byDate.get(today) ?? 0;
+  const goalReachedToday = todaySteps >= goal;
+  let cursor = goalReachedToday ? today : addDaysToDateString(today, -1);
   let streak = 0;
 
   while ((byDate.get(cursor) ?? 0) >= goal) {
@@ -92,45 +193,57 @@ export function computeStepStreak(entries: SerializedStepsEntry[], goal: number,
     cursor = addDaysToDateString(cursor, -1);
   }
 
-  return streak;
-}
-
-export function computeStepStats(entries: SerializedStepsEntry[], goal: number, timezone?: string) {
-  const daily = buildDailyStepsData(entries, 7, timezone);
-  const todaySteps = daily[daily.length - 1]?.steps ?? 0;
-  const average =
-    daily.length > 0
-      ? Math.round(daily.reduce((sum, point) => sum + point.steps, 0) / daily.length)
-      : 0;
-  const streak = computeStepStreak(entries, goal, timezone);
-  const goalMetCount = entries.filter((entry) => (entry.steps ?? 0) >= goal).length;
-  const bestDay = entries.reduce<SerializedStepsEntry | null>((best, entry) => {
-    if (!best || (entry.steps ?? 0) > (best.steps ?? 0)) {
+  const recentEntries = getNormalizedStepEntries(entries);
+  const goalDaysTotal = recentEntries.filter((entry) => entry.steps >= goal).length;
+  const latestCompletedGoalDate =
+    recentEntries.find((entry) => entry.date <= today && entry.steps >= goal)?.date ?? null;
+  const bestDay = recentEntries.reduce<NormalizedStepEntry | null>((best, entry) => {
+    if (!best || entry.steps > best.steps) {
       return entry;
     }
 
     return best;
   }, null);
+  const sevenDayAverage =
+    daily.length > 0
+      ? Math.round(daily.reduce((sum, point) => sum + point.steps, 0) / daily.length)
+      : 0;
+
+  const stats = {
+    todaySteps,
+    todayPercent: Math.min(100, Math.round((todaySteps / goal) * 100)),
+    goalDaysTotal,
+    currentStreak: streak,
+    bestDay,
+    sevenDayAverage,
+    recentEntries: recentEntries.slice(0, recentLimit),
+    goalReachedToday,
+    latestCompletedGoalDate,
+    completionRate:
+      recentEntries.length > 0 ? Math.round((goalDaysTotal / recentEntries.length) * 100) : 0,
+  };
 
   return {
-    todaySteps,
-    average,
-    streak,
-    goalMetCount,
-    completionRate: entries.length > 0 ? Math.round((goalMetCount / entries.length) * 100) : 0,
-    bestDay,
+    ...stats,
+    average: stats.sevenDayAverage,
+    streak: stats.currentStreak,
+    goalMetCount: stats.goalDaysTotal,
   };
+}
+
+export function computeStepStats(entries: SerializedStepsEntry[], goal: number, timezone?: string) {
+  return calculateStepStats(entries, goal, { timezone });
 }
 
 export function buildMonthlyHeatmap(entries: SerializedStepsEntry[], monthDate = new Date()) {
   const year = monthDate.getFullYear();
   const month = monthDate.getMonth();
-  const byDate = new Map(entries.map((entry) => [entry.date, entry.steps ?? 0]));
+  const byDate = buildStepsByDate(entries);
   const lastDay = new Date(year, month + 1, 0).getDate();
 
   return Array.from({ length: lastDay }, (_, index) => {
     const day = index + 1;
-    const date = new Date(year, month, day).toISOString().split("T")[0];
+    const date = formatDate(new Date(year, month, day));
     return {
       date,
       day,
@@ -142,7 +255,7 @@ export function buildMonthlyHeatmap(entries: SerializedStepsEntry[], monthDate =
 export function getWeeklyStepChange(entries: SerializedStepsEntry[], timezone?: string) {
   const today = getTodayDateString(timezone);
   const weekAgo = addDaysToDateString(today, -7);
-  const byDate = new Map(entries.map((entry) => [entry.date, entry.steps ?? 0]));
+  const byDate = buildStepsByDate(entries);
   return (byDate.get(today) ?? 0) - (byDate.get(weekAgo) ?? 0);
 }
 

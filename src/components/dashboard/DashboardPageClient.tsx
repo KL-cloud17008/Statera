@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle2 } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { computeStepStats, type SerializedStepsEntry } from "@/lib/steps";
+import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
@@ -69,7 +69,7 @@ export function DashboardPageClient({
   trainingDayOfWeek: number;
 }) {
   const { settings } = useAppSettings();
-  const stepStats = computeStepStats(stepsEntries, settings.stepGoal, timezone);
+  const stepStats = calculateStepStats(stepsEntries, settings.stepGoal, { timezone });
   const greeting = getGreeting();
   const stepCompletion = settings.stepGoal > 0
     ? Math.min(100, Math.round((todaySteps / settings.stepGoal) * 100))
@@ -155,11 +155,11 @@ export function DashboardPageClient({
             <p className="eyebrow">Consistency</p>
             <div className="mt-5 grid grid-cols-2 gap-6">
               <div>
-                <p className="data-number text-3xl text-foreground">{stepStats.streak}</p>
+                <p className="data-number text-3xl text-foreground">{stepStats.currentStreak}</p>
                 <p className="mt-1 text-sm text-muted-foreground">day streak</p>
               </div>
               <div>
-                <p className="data-number text-3xl text-foreground">{stepStats.goalMetCount}</p>
+                <p className="data-number text-3xl text-foreground">{stepStats.goalDaysTotal}</p>
                 <p className="mt-1 text-sm text-muted-foreground">goal days</p>
               </div>
             </div>

@@ -24,6 +24,8 @@ const mobileNavSource = readFileSync("src/components/layout/MobileNav.tsx", "utf
 const mobileHeaderSource = readFileSync("src/components/layout/MobileHeader.tsx", "utf8");
 const dashboardSource = readFileSync("src/components/dashboard/DashboardPageClient.tsx", "utf8");
 const dashboardPageSource = readFileSync("src/app/(app)/page.tsx", "utf8");
+const stepsPageClientSource = readFileSync("src/components/steps/StepsPageClient.tsx", "utf8");
+const stepsActionsSource = readFileSync("src/actions/steps.ts", "utf8");
 const exerciseLibrarySource = readFileSync("src/lib/exercise-library.ts", "utf8");
 const nutritionRouteSources = [
   "src/app/(app)/nutrition/page.tsx",
@@ -46,6 +48,7 @@ const appSettings = loadTypescriptModule("src/lib/app-settings.ts");
 const backup = loadTypescriptModule("src/lib/backup.ts");
 const mobility = loadTypescriptModule("src/lib/mobility.ts");
 const nutrition = loadTypescriptModule("src/lib/nutrition.ts");
+const steps = loadTypescriptModule("src/lib/steps.ts");
 const weight = loadTypescriptModule("src/lib/weight.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
 
@@ -777,6 +780,105 @@ test("daily step goal settings accept 8000 and reject unsafe values", () => {
   );
 });
 
+test("step streak ignores an incomplete today and counts consecutive completed goal days", () => {
+  const stats = steps.calculateStepStats([
+    stepEntry("2026-06-21", 10691),
+    stepEntry("2026-06-22", 10611),
+    stepEntry("2026-06-23", 11171),
+    stepEntry("2026-06-24", 9751),
+  ], 8000, "2026-06-25");
+
+  assert.equal(stats.currentStreak, 4);
+  assert.equal(stats.goalDaysTotal, 4);
+  assert.equal(stats.todaySteps, 0);
+  assert.equal(stats.goalReachedToday, false);
+});
+
+test("step streak includes today when today reaches the step goal", () => {
+  const stats = steps.calculateStepStats([
+    stepEntry("2026-06-21", 10691),
+    stepEntry("2026-06-22", 10611),
+    stepEntry("2026-06-23", 11171),
+    stepEntry("2026-06-24", 9751),
+    stepEntry("2026-06-25", 8500),
+  ], 8000, "2026-06-25");
+
+  assert.equal(stats.currentStreak, 5);
+  assert.equal(stats.goalDaysTotal, 5);
+  assert.equal(stats.todaySteps, 8500);
+  assert.equal(stats.goalReachedToday, true);
+});
+
+test("missing step days break the current streak", () => {
+  const stats = steps.calculateStepStats([
+    stepEntry("2026-06-21", 10000),
+    stepEntry("2026-06-22", 10000),
+    stepEntry("2026-06-24", 10000),
+  ], 8000, "2026-06-25");
+
+  assert.equal(stats.currentStreak, 1);
+  assert.equal(stats.goalDaysTotal, 3);
+});
+
+test("below-goal step days break the current streak", () => {
+  const stats = steps.calculateStepStats([
+    stepEntry("2026-06-22", 10000),
+    stepEntry("2026-06-23", 7500),
+    stepEntry("2026-06-24", 10000),
+  ], 8000, "2026-06-25");
+
+  assert.equal(stats.currentStreak, 1);
+  assert.equal(stats.goalDaysTotal, 2);
+});
+
+test("dashboard and steps page use the same step stats model", () => {
+  const entries = [
+    stepEntry("2026-06-21", 10691),
+    stepEntry("2026-06-22", 10611),
+    stepEntry("2026-06-23", 11171),
+    stepEntry("2026-06-24", 9751),
+  ];
+  const stepsPageStats = steps.calculateStepStats(entries, 8000, "2026-06-25");
+  const dashboardStats = steps.calculateStepStats(entries, 8000, "2026-06-25");
+
+  assert.equal(stepsPageStats.currentStreak, dashboardStats.currentStreak);
+  assert.equal(stepsPageStats.goalDaysTotal, dashboardStats.goalDaysTotal);
+  assert.match(stepsPageClientSource, /calculateStepStats\(entries, settings\.stepGoal/);
+  assert.match(dashboardSource, /calculateStepStats\(stepsEntries, settings\.stepGoal/);
+  assert.match(stepsPageClientSource, /stats\.currentStreak/);
+  assert.match(dashboardSource, /stepStats\.currentStreak/);
+});
+
+test("duplicate same-day step entries are summed before streak and goal-day calculations", () => {
+  const stats = steps.calculateStepStats([
+    stepEntry("2026-06-22", 10000),
+    stepEntry("2026-06-23", 4000),
+    stepEntry("2026-06-23", 4500),
+    stepEntry("2026-06-24", 9000),
+  ], 8000, "2026-06-25");
+
+  assert.equal(stats.currentStreak, 3);
+  assert.equal(stats.goalDaysTotal, 3);
+  assert.equal(stats.recentEntries.find((entry) => entry.date === "2026-06-23")?.steps, 8500);
+});
+
+test("step mutations revalidate dashboard and steps routes", () => {
+  assert.match(stepsActionsSource, /revalidatePath\("\/steps"\)/);
+  assert.match(stepsActionsSource, /revalidatePath\("\/"\)/);
+
+  for (const actionName of ["logSteps", "updateStepsEntry", "deleteStepsEntry"]) {
+    const actionStart = stepsActionsSource.indexOf(`export async function ${actionName}`);
+    assert.ok(actionStart >= 0, `${actionName} should exist`);
+    const nextActionStart = stepsActionsSource.indexOf("export async function", actionStart + 1);
+    const actionSource = stepsActionsSource.slice(
+      actionStart,
+      nextActionStart === -1 ? stepsActionsSource.length : nextActionStart
+    );
+    assert.match(actionSource, /revalidatePath\("\/steps"\)/, `${actionName} should revalidate /steps`);
+    assert.match(actionSource, /revalidatePath\("\/"\)/, `${actionName} should revalidate /`);
+  }
+});
+
 test("goal target date settings persist stable ISO dates and reject ambiguous dates", () => {
   const parsed = appSettings.parseAppSettings(JSON.stringify({
     weightGoalTargetDate: "2027-10-22",
@@ -997,6 +1099,14 @@ test("recovery copy no longer frames later recovery as optional", () => {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function stepEntry(date, value) {
+  return {
+    id: `${date}-${value}`,
+    date,
+    steps: value,
+  };
 }
 
 function loadTypescriptModule(path) {

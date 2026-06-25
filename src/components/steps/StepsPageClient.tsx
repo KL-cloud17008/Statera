@@ -10,7 +10,7 @@ import { StepsHistoryList } from "@/components/steps/StepsHistoryList";
 import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import {
-  computeStepStats,
+  calculateStepStats,
   getWeeklyStepChange,
   type SerializedStepsEntry,
 } from "@/lib/steps";
@@ -24,7 +24,7 @@ export function StepsPageClient({
   timezone?: string;
 }) {
   const { settings } = useAppSettings();
-  const stats = computeStepStats(entries, settings.stepGoal, timezone);
+  const stats = calculateStepStats(entries, settings.stepGoal, { timezone });
   const weeklyChange = getWeeklyStepChange(entries, timezone);
 
   return (
@@ -45,7 +45,7 @@ export function StepsPageClient({
           <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             <span className="warm-pill rounded-full px-3 py-1.5 text-primary">
-              {stats.goalMetCount} goal hits total
+              {stats.goalDaysTotal} goal days total
             </span>
             <span>{stats.completionRate}% completion rate</span>
           </div>
@@ -60,13 +60,13 @@ export function StepsPageClient({
           />
           <StatCard
             label="7-Day Average"
-            value={stats.average.toLocaleString()}
+            value={stats.sevenDayAverage.toLocaleString()}
             hint={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`}
             icon={<TrendingUp className="h-5 w-5" />}
           />
           <StatCard
             label="Streak"
-            value={`${stats.streak}`}
+            value={`${stats.currentStreak}`}
             hint="Consecutive goal days"
             icon={<Flame className="h-5 w-5" />}
           />
