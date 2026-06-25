@@ -21,11 +21,11 @@ export function MobileNav() {
               className={cn(
                 "flex min-h-[3rem] min-w-[5rem] flex-col items-center justify-center gap-1 rounded-full border px-3 text-center text-[10px] font-bold leading-[1.05] tracking-normal transition-[background-color,border-color,color] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_rgba(107,128,255,0.72),0_0_0_5px_rgba(107,128,255,0.22)] motion-reduce:transition-none",
                 isActive
-                  ? "border-[rgba(135,156,255,0.48)] bg-[rgba(88,108,255,0.22)] text-white"
+                  ? "border-[rgba(112,199,255,0.44)] bg-[rgba(112,199,255,0.12)] text-white shadow-[rgba(112,199,255,0.18)_0_0_18px]"
                   : "border-transparent text-white/58 hover:bg-white/8 hover:text-white"
               )}
             >
-              <item.icon className={cn("h-[1rem] w-[1rem]", isActive ? "text-[#aebcff]" : "text-white/48")} strokeWidth={isActive ? 2 : 1.75} />
+              <item.icon className={cn("h-[1rem] w-[1rem]", isActive ? "text-[#9fdbff]" : "text-white/48")} strokeWidth={isActive ? 2 : 1.75} />
               <span>{item.label}</span>
             </Link>
           );

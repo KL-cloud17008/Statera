@@ -8,10 +8,10 @@ import { buildMonthlyHeatmap, type SerializedStepsEntry } from "@/lib/steps";
 
 function getHeatLevel(steps: number, goal: number) {
   const ratio = goal > 0 ? steps / goal : 0;
-  if (ratio >= 1) return "bg-primary/90 text-primary-foreground border-primary/60";
-  if (ratio >= 0.75) return "bg-[color-mix(in_srgb,var(--electric-blue)_18%,var(--cream-paper)_82%)] text-foreground border-[color-mix(in_srgb,var(--electric-blue)_34%,var(--border)_66%)]";
-  if (ratio >= 0.5) return "bg-accent text-foreground border-border";
-  if (ratio > 0) return "bg-[color-mix(in_srgb,var(--bone)_78%,var(--cream-paper)_22%)] text-muted-foreground border-border";
+  if (ratio >= 1) return "bg-[linear-gradient(180deg,#15243a,#08111f)] text-primary-foreground border-[rgba(112,199,255,0.36)]";
+  if (ratio >= 0.75) return "bg-[color-mix(in_srgb,var(--electric-blue)_16%,white_84%)] text-foreground border-[color-mix(in_srgb,var(--electric-blue)_34%,var(--border)_66%)]";
+  if (ratio >= 0.5) return "bg-[rgba(255,255,255,0.72)] text-foreground border-[rgba(7,17,31,0.1)]";
+  if (ratio > 0) return "bg-[rgba(232,244,252,0.68)] text-muted-foreground border-[rgba(7,17,31,0.08)]";
   return "bg-transparent text-muted-foreground/60 border-border/60";
 }
 
@@ -31,7 +31,7 @@ export function StepsHeatmap({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <CardTitle>Monthly Heatmap</CardTitle>
+          <CardTitle>Monthly heatmap</CardTitle>
           <div className="flex items-center gap-2">
             <Button
               type="button"

@@ -58,7 +58,7 @@ export function MobilityChecklist({
 
   return (
     <div className="space-y-6">
-      <div className="warm-row rounded-[var(--radius-card)] p-5">
+      <div className="micro-panel rounded-[var(--radius-card)] p-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">{title}</p>
@@ -82,7 +82,7 @@ export function MobilityChecklist({
 
       <div className="space-y-6">
         {blocks.map((block, blockIndex) => (
-          <section key={block.title} className="grid gap-5 border-t border-border pt-6 first:border-t-0 first:pt-0 lg:grid-cols-[15rem_minmax(0,1fr)]">
+          <section key={block.title} className="grid gap-5 border-t border-border pt-6 first:border-t-0 first:pt-0 lg:grid-cols-[14rem_minmax(0,1fr)]">
             <div className="lg:sticky lg:top-28 lg:self-start">
               <p className="eyebrow text-[10px]">Block {blockIndex + 1}</p>
               <h3 className="mt-2 tracking-normal">{block.title}</h3>
@@ -124,7 +124,7 @@ export function MobilityChecklist({
                       key={key}
                       className={cn(
                         "interactive-row grid w-full gap-3 rounded-[var(--radius-card)] border px-4 py-4 text-left",
-                        isDone ? "completed-row" : "bg-[color-mix(in_srgb,var(--cream-paper)_58%,var(--bone)_42%)]"
+                        isDone ? "completed-row" : "bg-white/54"
                       )}
                     >
                       <div className="flex items-start gap-3">
@@ -149,7 +149,7 @@ export function MobilityChecklist({
                             </button>
 
                             <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:justify-end">
-                              <p className="rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,transparent)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                              <p className="rounded-full border border-border bg-white/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                                 {exercise.dose}
                               </p>
                               {hasDetails ? (
@@ -158,7 +158,7 @@ export function MobilityChecklist({
                                   aria-expanded={isExpanded}
                                   aria-controls={detailsId}
                                   onClick={() => toggleExpanded(key)}
-                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,var(--bone)_36%)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] hover:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none"
+                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-white/64 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] hover:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none"
                                 >
                                   <span>How to do it</span>
                                   <ChevronDown
@@ -205,7 +205,7 @@ function RecoveryIntro({
       ];
 
   return (
-    <div className="warm-row overflow-hidden rounded-[var(--radius-card)]">
+    <div className="micro-panel overflow-hidden rounded-[var(--radius-card)] p-0">
       <div className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.72fr)]">
         <div>
           <p className="eyebrow text-[10px]">Recovery intensity</p>
@@ -222,7 +222,7 @@ function RecoveryIntro({
           {rules.map((rule) => (
             <p
               key={rule}
-              className="rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--cream-paper)_58%,transparent)] px-3 py-2 text-xs font-semibold text-foreground"
+              className="rounded-[var(--radius-tight)] border border-border/70 bg-white/62 px-3 py-2 text-xs font-semibold text-foreground"
             >
               {rule}
             </p>
@@ -243,7 +243,7 @@ function BlockContext({
   block: MobilityBlock;
 }) {
   return (
-    <div className="grid gap-3 rounded-[var(--radius-card)] border border-border bg-[color-mix(in_srgb,var(--bone)_54%,var(--cream-paper)_46%)] p-5 shadow-[var(--shadow-soft)] md:grid-cols-2">
+    <div className="grid gap-3 rounded-[var(--radius-card)] border border-border bg-white/54 p-5 shadow-[var(--shadow-soft)] md:grid-cols-2">
       {block.previousDayReason ? (
         <DetailCopy label="Previous-day reset" value={block.previousDayReason} />
       ) : null}
@@ -264,7 +264,7 @@ function MovementDetails({
   return (
     <div
       id={detailsId}
-      className="mt-4 rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--bone)_42%,var(--cream-paper)_58%)] p-4"
+      className="mt-4 rounded-[var(--radius-tight)] border border-border/70 bg-white/62 p-4"
     >
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
         <div className="space-y-4">
@@ -307,7 +307,7 @@ function IntensityBox({
         ].map((item) => (
           <p
             key={item}
-            className="rounded-[var(--radius-tight)] border border-border/70 bg-[color-mix(in_srgb,var(--cream-paper)_60%,transparent)] px-3 py-2 text-xs font-semibold leading-relaxed text-foreground"
+            className="rounded-[var(--radius-tight)] border border-border/70 bg-white/62 px-3 py-2 text-xs font-semibold leading-relaxed text-foreground"
           >
             {item}
           </p>
@@ -380,7 +380,7 @@ function NumberedSteps({
 
           return (
             <div key={`${row.stepNumber}-${row.item}`} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
-              <span className="data-number mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_62%,transparent)] text-[11px] text-foreground">
+              <span className="data-number mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-white/62 text-[11px] text-foreground">
                 {row.stepNumber}
               </span>
               <p>{row.item}</p>

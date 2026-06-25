@@ -206,17 +206,17 @@ export function SessionLogger({
 
   return (
     <div className="space-y-8">
-      <section className="editorial-surface space-y-8">
+      <section className="command-deck space-y-8 p-6 sm:p-8" data-animated="true">
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] xl:items-end">
           <div>
             <p className="eyebrow">Live session</p>
-            <h2 className="mt-3">{sessionName}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <h2 className="mt-3 text-4xl">{sessionName}</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/68">
               Log working sets only. Ramp-up sets stay outside the ledger.
             </p>
             {isStale ? (
-              <div className="status-note mt-5 flex max-w-2xl items-start gap-3 px-4 py-3 text-sm leading-relaxed">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-foreground/70" />
+              <div className="black-glass mt-5 flex max-w-2xl items-start gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm leading-relaxed text-white/70">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-white/70" />
                 <p>
                   Resume previous open session from {formatSessionDate(trainingDate)}. Discard it to return to today&apos;s programmed session.
                 </p>
@@ -225,22 +225,22 @@ export function SessionLogger({
           </div>
 
           <div className="space-y-5 xl:text-right">
-            <div className="grid gap-4 text-sm text-muted-foreground sm:grid-cols-3 xl:grid-cols-3">
-              <div>
+            <div className="grid gap-3 text-sm text-white/64 sm:grid-cols-3 xl:grid-cols-3">
+              <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Elapsed</p>
-                <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground data-number">
+                <p className="mt-2 text-2xl font-semibold tracking-normal text-white data-number">
                   {elapsedMinutes}m
                 </p>
               </div>
-              <div>
+              <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Saved</p>
-                <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground data-number">
+                <p className="mt-2 text-2xl font-semibold tracking-normal text-white data-number">
                   {savedSetKeys.size}
                 </p>
               </div>
-              <div>
+              <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Complete</p>
-                <p className="mt-2 text-2xl font-semibold tracking-normal text-foreground data-number">
+                <p className="mt-2 text-2xl font-semibold tracking-normal text-white data-number">
                   {completedCount}/{totalExercises}
                 </p>
               </div>
@@ -255,7 +255,7 @@ export function SessionLogger({
               ) : null}
               <Button type="button" size="lg" onClick={handleComplete} disabled={isPending} className="gap-2">
                 {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                Complete Session
+                Complete session
               </Button>
             </div>
           </div>
@@ -264,11 +264,11 @@ export function SessionLogger({
         <SessionPrepStrip />
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center justify-between text-sm text-white/64">
             <span>{completedCount}/{totalExercises} exercises logged</span>
-            <span className="data-number text-foreground">{progressPercent}%</span>
+            <span className="data-number text-white">{progressPercent}%</span>
           </div>
-          <Progress value={progressPercent} />
+          <Progress value={progressPercent} className="border-white/12 bg-white/10" />
         </div>
       </section>
 
@@ -330,7 +330,7 @@ function SessionPrepStrip() {
       <div>
         <p className="eyebrow">Session prep</p>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Arrival protocol only. No Weight/Reps/RPE rows.
+          Arrival only. No Weight/Reps/RPE rows.
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-4">

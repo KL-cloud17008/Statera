@@ -42,11 +42,11 @@ export function WorkoutPlanResetButton() {
     >
       <RotateCcw className="h-4 w-4" />
       {isPending ? (
-        "Resetting plan..."
+        "Starting plan..."
       ) : (
         <>
           <span className="sm:hidden">Start new plan</span>
-          <span className="hidden sm:inline">Reset current training plan / Start new 4-day plan</span>
+          <span className="hidden sm:inline">Start new 4-day plan</span>
         </>
       )}
     </Button>

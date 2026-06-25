@@ -71,14 +71,14 @@ export function WorkoutPageClient({
             ? activeSession.sessionName
             : todayPlan
               ? "Today's protocol"
-              : "Build the session you actually need."
+              : "Custom training"
         }
         description={
           activeSession
             ? "Log working sets only. Ramp-up sets stay outside the ledger."
             : todayPlan
-              ? "Session prep is non-loggable. The first logged row is working strength."
-              : "No scheduled day is in the way, so the builder and saved templates take over the page."
+              ? "Session prep is non-loggable. Working sets start the ledger."
+              : "Build or reuse a focused session."
         }
         action={
           <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -113,8 +113,8 @@ export function WorkoutPageClient({
       ) : todayPlan ? (
         <div className="grid gap-8">
           <WorkoutDayPreview plan={todayPlan} />
-          <details className="group border-t border-border pt-6">
-            <summary className="warm-pill flex cursor-pointer list-none items-center justify-between gap-4 rounded-full px-5 py-3 text-sm font-medium text-foreground transition-colors hover:text-foreground">
+          <details className="group ledger-divider pt-6">
+            <summary className="warm-pill flex cursor-pointer list-none items-center justify-between gap-4 rounded-full px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:text-foreground">
               <span>Custom session builder</span>
               <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:hidden">Open</span>
               <span className="hidden text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:inline">Close</span>
@@ -131,15 +131,7 @@ export function WorkoutPageClient({
             <p className="text-3xl font-semibold tracking-normal">
               No programmed session is queued.
             </p>
-            <p className="subtle-copy">
-              Start from a template or build a session from scratch without switching views or
-              hunting through another tabbed state.
-            </p>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>Pull exercises from the library.</p>
-              <p>Save what works as a reusable template.</p>
-              <p>Start immediately when the session looks right.</p>
-            </div>
+            <p className="subtle-copy">Use templates or compose a working session.</p>
           </section>
 
           <CustomWorkoutBuilder hasActiveSession={false} />

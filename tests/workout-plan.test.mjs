@@ -35,6 +35,11 @@ const nutritionRouteSources = [
   "src/app/(app)/nutrition/import/page.tsx",
 ].map((path) => readFileSync(path, "utf8"));
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
+const mobilityPageRouteSource = readFileSync("src/app/(app)/mobility/page.tsx", "utf8");
+const flexibilityBalanceRouteSource = readFileSync("src/app/(app)/flexibility-balance/page.tsx", "utf8");
+const stepsPageRouteSource = readFileSync("src/app/(app)/steps/page.tsx", "utf8");
+const weightPageRouteSource = readFileSync("src/app/(app)/weight/page.tsx", "utf8");
+const settingsPageRouteSource = readFileSync("src/app/(app)/settings/page.tsx", "utf8");
 const trainingPlanSource = readFileSync("training_plan.md", "utf8");
 const weightChartSource = readFileSync("src/components/weight/WeightChart.tsx", "utf8");
 const designTokensSource = readFileSync("src/app/design-tokens.css", "utf8");
@@ -159,6 +164,23 @@ test("nutrition page access is removed from primary and mobile navigation", () =
   assert.match(mobileNavSource, /NAV_ITEMS\.map/);
   assert.doesNotMatch(desktopSidebarSource, /\/nutrition|Nutrition/);
   assert.doesNotMatch(mobileNavSource, /\/nutrition|Nutrition/);
+});
+
+test("primary app routes stay mounted at the required paths", () => {
+  assert.match(dashboardPageSource, /export default async function DashboardPage/);
+  assert.match(workoutPageSource, /export default async function WorkoutPage/);
+  assert.match(workoutPlanPageSource, /export default async function WorkoutPlanPage/);
+  assert.match(mobilityPageRouteSource, /export default async function MobilityPage/);
+  assert.match(flexibilityBalanceRouteSource, /export default function FlexibilityBalancePage/);
+  assert.match(stepsPageRouteSource, /export default async function StepsPage/);
+  assert.match(weightPageRouteSource, /export default async function WeightPage/);
+  assert.match(settingsPageRouteSource, /export default async function SettingsPage/);
+  assert.match(navItemsSource, /href: "\/workout"/);
+  assert.match(navItemsSource, /href: "\/mobility"/);
+  assert.match(navItemsSource, /href: "\/flexibility-balance"/);
+  assert.match(navItemsSource, /href: "\/steps"/);
+  assert.match(navItemsSource, /href: "\/weight"/);
+  assert.match(navItemsSource, /href: "\/settings"/);
 });
 
 test("nutrition routes redirect without active tracker UI", () => {
@@ -729,6 +751,7 @@ test("settings do not expose dark or system theme controls", () => {
 test("visual system uses cool paper inputs and reduced-motion-safe motion", () => {
   assert.match(designTokensSource, /--input-fill: #ffffff/);
   assert.match(designTokensSource, /--electric-blue:/);
+  assert.match(designTokensSource, /--glacier:/);
   assert.match(designTokensSource, /--atmosphere-background:/);
   assert.doesNotMatch(designTokensSource, /#eadbc8|#efe4d4|#f3eadc/i);
   assert.match(inputSource, /bg-input/);
@@ -736,7 +759,10 @@ test("visual system uses cool paper inputs and reduced-motion-safe motion", () =
   assert.match(globalsSource, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(globalsSource, /@media \(prefers-reduced-motion: no-preference\)/);
   assert.match(globalsSource, /ledger-enter/);
+  assert.match(globalsSource, /command-deck/);
   assert.match(globalsSource, /session-prep-strip/);
+  assert.match(settingsSource, /Obsidian command navigation/);
+  assert.doesNotMatch(settingsSource, /Warm cream canvas/);
 });
 
 test("bodyweight conversion helpers convert pounds to kilograms", () => {

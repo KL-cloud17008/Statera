@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <MobileHeader />
 
       <main className="relative pb-32 md:pb-16">
-        <div className="mx-auto flex min-h-screen w-full max-w-[104rem] flex-col px-5 py-7 sm:px-6 md:px-8 lg:px-10">
+        <div className="mx-auto flex min-h-screen w-full max-w-[112rem] flex-col px-4 py-6 sm:px-6 md:px-8 lg:px-10">
           {children}
         </div>
       </main>

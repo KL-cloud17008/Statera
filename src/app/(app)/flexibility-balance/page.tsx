@@ -36,8 +36,8 @@ export default function FlexibilityBalancePage() {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Flexibility & Balance"
-        title="Daily control work, recovery-day mobility, and foot resilience in one readable map."
-        description="This page pulls from the existing mobility protocol and organizes the pieces that are easiest to miss: the daily minimum, supported balance, recovery-day blocks, and foot/ankle resilience."
+        title="Movement quality map."
+        description="Daily lower-leg base, supported balance, recovery-day blocks, and foot/ankle resilience."
         action={
           <Link href="/mobility" className="text-link inline-flex items-center gap-2 text-sm font-semibold">
             Open Mobility logging
@@ -47,6 +47,13 @@ export default function FlexibilityBalancePage() {
       />
 
       <section className="document-panel">
+        <div className="command-deck grid gap-5 rounded-[var(--radius-panel)] p-6 md:grid-cols-4" data-animated="true">
+          <OverviewMetric label="Daily Minimum" value={dailyMinimum.duration} />
+          <OverviewMetric label="Balance" value={`${balanceDrills.length} drills`} />
+          <OverviewMetric label="Recovery" value="Wed / Sat" />
+          <OverviewMetric label="Foot Load" value={footAnkleBlock.duration} />
+        </div>
+
         <div className="grid gap-5 lg:grid-cols-2">
           <ProtocolBlock
             icon={CircleDot}
@@ -115,7 +122,7 @@ function ProtocolBlock({
   children: ReactNode;
 }) {
   return (
-    <article className="surface-card grid gap-5 rounded-[var(--radius-card)] p-5">
+    <article className="prime-panel grid gap-5 rounded-[var(--radius-card)] p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-3">
           <p className="eyebrow">{eyebrow}</p>
@@ -150,12 +157,21 @@ function MovementList({ exercises }: { exercises: MobilityExercise[] }) {
 
 function BlockSummary({ block }: { block: MobilityBlock }) {
   return (
-    <div className="warm-row rounded-[var(--radius-card)] p-4">
+    <div className="micro-panel rounded-[var(--radius-card)] p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="font-medium text-foreground">{block.title}</p>
         <Badge variant="secondary">{block.duration}</Badge>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{block.purpose}</p>
+    </div>
+  );
+}
+
+function OverviewMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="black-glass rounded-[var(--radius-card)] p-4">
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="mt-3 text-2xl font-semibold text-white">{value}</p>
     </div>
   );
 }

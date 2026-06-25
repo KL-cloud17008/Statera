@@ -20,7 +20,7 @@ export function StatCard({
   children?: ReactNode;
 }) {
   return (
-    <Card className={cn("interactive-row relative overflow-hidden", className)}>
+    <Card className={cn("relative overflow-hidden", className)}>
       <CardContent className="space-y-4">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-3">
@@ -29,7 +29,7 @@ export function StatCard({
               {value}
             </div>
           </div>
-          {icon ? <div className="mt-1 text-muted-foreground">{icon}</div> : null}
+          {icon ? <div className="duna-mark-surface mt-1 flex size-10 items-center justify-center rounded-full text-muted-foreground">{icon}</div> : null}
         </div>
         {hint ? <p className="text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
         {children}

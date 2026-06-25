@@ -71,9 +71,7 @@ export function WorkoutDayPreview({
             <p className="eyebrow">Today&apos;s programmed work</p>
             <h2 className="mt-3 max-w-3xl">{plan.sessionName}</h2>
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Run the session as a tight ledger: walk to the gym as the general warm-up,
-              take easy ramp-up sets on the first programmed lift or machine, then move through the circuit blocks.
-              Walking home is the low-intensity recovery walk; required later recovery is tracked separately.
+              Walking covers warm-up and recovery. Ramp-up sets stay outside the ledger.
             </p>
           </div>
 
@@ -94,8 +92,8 @@ export function WorkoutDayPreview({
         </div>
       ) : null}
 
-      <div className="command-panel grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <div className="command-deck grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end" data-animated="true">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <ProtocolMeta label="Walk to gym" value="General warm-up" note="Keep breathing conversational." />
           <ProtocolMeta label="At gym" value="Ramp-up sets" note="First Block A lift or machine, RPE 3-5." />
           <ProtocolMeta label="Progress" value="Double progression" note="Add load only after clean top-range sets at target RPE." />
@@ -103,7 +101,7 @@ export function WorkoutDayPreview({
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 
-        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#edf7ff] text-[#151119] hover:bg-white">
+        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#edf7ff] text-[#07111f] hover:bg-white">
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
           Start Session
         </Button>
@@ -121,7 +119,7 @@ export function WorkoutDayPreview({
 
           return (
             <article key={block} className="border-t border-border pt-7 first:border-t-0 first:pt-0">
-              <div className="warm-row rounded-[var(--radius-card)] p-5">
+              <div className="micro-panel rounded-[var(--radius-card)] p-5">
                 <div className="grid gap-4 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:items-end">
                 <div>
                   <p className="eyebrow">Circuit {block}</p>
@@ -188,7 +186,7 @@ function SessionPrepStrip() {
       <div>
         <p className="eyebrow">Session prep</p>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Non-loggable arrival protocol. Start the ledger with the first programmed exercise.
+          Non-loggable arrival protocol.
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-4">

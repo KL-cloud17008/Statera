@@ -145,7 +145,7 @@ export function WeightChart({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-foreground">Weight Trend</CardTitle>
+          <CardTitle className="text-foreground">Weight trend</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[var(--radius-card)]">
@@ -172,7 +172,7 @@ export function WeightChart({
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between gap-3">
-          <CardTitle className="text-foreground">Weight Trend</CardTitle>
+          <CardTitle className="text-foreground">Trend and goal line</CardTitle>
           <div className="flex gap-1">
             {(["1W", "1M", "3M", "ALL"] as const).map((range) => (
               <Button
@@ -190,6 +190,7 @@ export function WeightChart({
         </div>
       </CardHeader>
       <CardContent>
+        <div className="chart-frame">
         <ResponsiveContainer width="100%" height={280}>
           <ComposedChart
             data={chartData}
@@ -274,6 +275,7 @@ export function WeightChart({
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>
         <TargetDateNote summary={targetSummary} />
       </CardContent>
     </Card>

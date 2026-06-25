@@ -115,7 +115,7 @@ export function SetInput({
   }
 
   return (
-    <div className={cn("interactive-row grid gap-4 border-t border-border/70 px-2 py-4", completed && "completed-row opacity-85", className)}>
+    <div className={cn("interactive-row grid gap-4 rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.09)] bg-white/42 px-3 py-4", completed && "completed-row opacity-85", className)}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />

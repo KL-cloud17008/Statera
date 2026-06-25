@@ -8,6 +8,7 @@ import { WeightStatsCards } from "@/components/weight/WeightStatsCards";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { computeWeightStats } from "@/lib/weight";
+import { formatBodyweight, formatBodyweightConversion, formatBodyweightDelta } from "@/lib/units";
 
 export const metadata: Metadata = {
   title: "Weight | Athanor",
@@ -43,11 +44,37 @@ export default async function WeightPage() {
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow="Weight Tracker"
-        title="See trend, pace, and goal alignment"
-        description="Track raw weigh-ins alongside the 7-day moving average, BMI, goal marker, and projected trajectory."
+        eyebrow="Weight"
+        title="Body-composition ledger."
+        description="Pounds remain canonical, with kg and stone available at the point of entry."
         action={<WeightPageActions />}
       />
+
+      <section className="command-deck grid gap-8 p-6 sm:p-8 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.34fr)] xl:items-end" data-animated="true">
+        <div>
+          <p className="eyebrow">Current Bodyweight</p>
+          <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
+            <p className="data-number text-6xl font-semibold leading-none text-white sm:text-7xl">
+              {formatBodyweight(stats.currentWeight)}
+            </p>
+            <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/58">
+              Goal {formatBodyweight(stats.goalWeight)}
+            </p>
+          </div>
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/66">
+            {formatBodyweightConversion(stats.currentWeight) || "Log a weigh-in to unlock kg and stone conversion."}
+          </p>
+          <div className="mt-8 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="h-full rounded-full bg-[linear-gradient(90deg,var(--copper),var(--electric-blue),var(--sky-accent))]" style={{ width: `${getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight)}%` }} />
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+          <WeightHeroMetric label="Start" value={formatBodyweight(stats.startWeight)} detail="Baseline" />
+          <WeightHeroMetric label="Change" value={formatBodyweightDelta(stats.totalChange)} detail="From start weight" />
+          <WeightHeroMetric label="7-Day" value={formatBodyweight(stats.avg7Day)} detail="Smoothed trend" />
+        </div>
+      </section>
 
       <WeightStatsCards stats={stats} />
       <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
@@ -57,4 +84,31 @@ export default async function WeightPage() {
       </div>
     </div>
   );
+}
+
+function WeightHeroMetric({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="black-glass rounded-[var(--radius-card)] p-4">
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="data-number mt-3 text-2xl font-semibold text-white">{value}</p>
+      <p className="mt-1 text-xs text-white/58">{detail}</p>
+    </div>
+  );
+}
+
+function getWeightProgress(start: number | null, current: number | null, goal: number | null) {
+  if (start == null || current == null || goal == null || start === goal) {
+    return 0;
+  }
+
+  const progress = ((start - current) / (start - goal)) * 100;
+  return Math.min(100, Math.max(0, Math.round(progress)));
 }

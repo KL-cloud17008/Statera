@@ -70,7 +70,7 @@ export function ExerciseCard({
   }
 
   return (
-    <section className={cn("space-y-6", exerciseComplete && "opacity-75")}>
+    <section className={cn("surface-card space-y-6 rounded-[var(--radius-card)] p-5", exerciseComplete && "opacity-75")}>
       <div className="flex items-start gap-4">
         <Checkbox
           checked={exerciseComplete}
@@ -131,7 +131,7 @@ export function ExerciseCard({
             </div>
           ) : null}
 
-          <div className="space-y-0 border-t border-border/70">
+          <div className="space-y-2 border-t border-border/70 pt-3">
             {Array.from({ length: setCount }, (_, index) => {
               const setNum = index + 1;
               const logged = loggedSets.find((set) => set.setNumber === setNum);
@@ -150,7 +150,6 @@ export function ExerciseCard({
                   onSaved={onSetLogged}
                   completed={completedSetNumbers.has(setNum)}
                   onCompletedChange={(checked) => onSetCompleteChange(exercise.exerciseName, setNum, checked)}
-                  className={index === 0 ? "border-t-0 pt-0" : undefined}
                 />
               );
             })}

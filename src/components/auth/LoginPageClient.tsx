@@ -48,28 +48,28 @@ export function LoginPageClient() {
                 <div>
                   <p className="text-[1.05rem] font-medium text-primary-foreground">Athanor</p>
                   <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-white/48">
-                    Training ledger
+                    Prime ledger
                   </p>
                 </div>
               </div>
               <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-white/62">
-                Daily practice
+                Private OS
               </span>
             </div>
 
             <div className="max-w-3xl py-12 sm:py-16">
-              <p className="text-[0.75rem] font-bold uppercase tracking-[0.16em] text-white/58">A calm place to return</p>
-              <h1 className="mt-5 max-w-3xl text-primary-foreground">Movement, training, and bodyweight in one quiet view.</h1>
+              <p className="text-[0.75rem] font-bold uppercase tracking-[0.16em] text-white/58">Athanor Prime</p>
+              <h1 className="mt-5 max-w-3xl text-primary-foreground">Private performance operating system.</h1>
               <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/64">
-                Keep the day legible: the work you did, the recovery you kept, and the trend that matters next.
+                Training, steps, bodyweight, and recovery signal in one precise ledger.
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               {[
                 ["Steps", "Daily pace"],
-                ["Weight", "Trend line"],
-                ["Training", "Logged work"],
+                ["Weight", "Body trend"],
+                ["Training", "Output log"],
               ].map(([title, copy]) => (
                 <div key={title} className="rounded-[var(--radius-card)] border border-white/10 bg-white/7 px-4 py-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">{title}</p>
@@ -89,7 +89,7 @@ export function LoginPageClient() {
                   {isSignUp ? "Create your account" : "Welcome back"}
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {isSignUp ? "Begin with one readable place for training, movement, and bodyweight." : "Sign in to continue your daily ledger."}
+                  {isSignUp ? "Create access to your private ledger." : "Sign in to continue your command ledger."}
                 </p>
               </div>
 

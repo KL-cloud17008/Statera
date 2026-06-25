@@ -55,7 +55,7 @@ export function StepsChart({
       <EmptyState
         icon={BarChart3}
         title="No step trends yet"
-        description="Log a few days of movement and the weekly and monthly charts will populate automatically."
+        description="Log a few days and trend views will unlock."
       />
     );
   }
@@ -65,7 +65,7 @@ export function StepsChart({
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="eyebrow">Movement Trends</p>
-          <CardTitle className="mt-2">Daily, weekly, and monthly totals</CardTitle>
+          <CardTitle className="mt-2">Daily, weekly, monthly</CardTitle>
         </div>
         <PeriodToggle
           value={view}
@@ -78,7 +78,7 @@ export function StepsChart({
         />
       </CardHeader>
       <CardContent>
-        <div className="h-[320px]">
+        <div className="chart-frame h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={config.data} margin={{ top: 12, right: 10, left: -18, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.45} />

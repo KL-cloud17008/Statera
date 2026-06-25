@@ -37,7 +37,7 @@ export default async function WorkoutPlanPage() {
       <SectionHeader
         eyebrow="Training Protocol"
         title="Current phase"
-        description="Four strength protocols, two recovery protocols, one full rest day. Walking to and from the gym remains the only planned cardio."
+        description="Four strength protocols. Two recovery protocols. One full rest day."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -50,12 +50,12 @@ export default async function WorkoutPlanPage() {
       ) : null}
 
       <section className="document-panel">
-        <div className="command-panel grid gap-4 rounded-[var(--radius-panel)] p-6 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end">
+        <div className="command-deck grid gap-4 rounded-[var(--radius-panel)] p-6 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end" data-animated="true">
           <div>
             <p className="eyebrow">Week structure</p>
             <p className="data-number mt-3 text-4xl text-foreground">4/2/1</p>
           </div>
-          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          <p className="max-w-3xl text-sm leading-relaxed text-white/68">
             Strength protocols run Monday, Tuesday, Thursday, and Friday. Wednesday carries the
             10,000-step target. Saturday is recovery protocol. Sunday is full rest. Ramp-up sets
             stay outside the ledger. Progress only after clean top-range sets at target RPE.

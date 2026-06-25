@@ -189,7 +189,7 @@ function FocusCell({
   note: string;
 }) {
   return (
-    <div className="warm-row rounded-[var(--radius-card)] p-4">
+    <div className="micro-panel rounded-[var(--radius-card)] p-4">
       <p className="eyebrow text-[10px]">{label}</p>
       <p className="mt-2 text-2xl font-medium text-foreground">{value}</p>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{note}</p>
@@ -223,7 +223,7 @@ function RoutineSection({
   contextNote?: string;
 }) {
   return (
-    <section className="border-t border-border pt-9 first:border-t-0 first:pt-0">
+    <section className="prime-panel p-5 sm:p-6">
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
         <div className="space-y-3">
           <p className="eyebrow">{completed ? "Completed today" : "Ready protocol"}</p>
@@ -283,10 +283,10 @@ function RecoveryModeControl({
   ];
 
   return (
-    <div className="warm-row w-full min-w-0 rounded-[var(--radius-card)] p-3 sm:w-auto sm:min-w-[21rem]">
+    <div className="micro-panel w-full min-w-0 rounded-[var(--radius-card)] p-3 sm:w-auto sm:min-w-[21rem]">
       <p className="eyebrow text-[10px]">Recovery mode</p>
       <div
-        className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-border/80 bg-[color-mix(in_srgb,var(--bone)_60%,var(--cream-paper)_40%)] p-1"
+        className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-border/80 bg-white/60 p-1"
         aria-label="Recovery mode"
       >
         {options.map((option) => {

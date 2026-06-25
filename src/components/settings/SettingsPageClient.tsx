@@ -314,8 +314,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Settings"
-        title="Profile, preferences, and data safety"
-        description="Manage units, goals, backups, and the profile values that power BMI and goal projections."
+        title="Control panel."
+        description="Profile values, unit locks, goals, backup, and data safety."
       />
 
       <Card>
@@ -389,7 +389,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
-              Step goal, distance unit, templates, and custom exercise preferences are local device settings. JSON backup includes them so they can be restored intentionally.
+              Local preferences. JSON backup includes them.
             </div>
             <Field label="Daily Step Goal" htmlFor="stepGoal">
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
@@ -509,7 +509,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               Appearance is fixed to the Athanor ledger system for visual consistency.
             </p>
             <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
-              Warm cream canvas, ink navigation, copper accents, and quiet paper surfaces remain consistent across the app.
+              Obsidian command navigation, sky-mist surfaces, glacier accents, and restrained copper remain consistent across the app.
             </div>
           </CardContent>
         </Card>
@@ -517,7 +517,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Data Management</CardTitle>
+          <CardTitle>Data management</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-3">
@@ -548,7 +548,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </div>
 
           <div className="warm-row rounded-[var(--radius-card)] border-l-2 border-l-[color-mix(in_srgb,var(--ember)_52%,var(--border)_48%)] p-4 text-sm text-muted-foreground">
-            JSON backups include tracker data plus local app preferences. CSV exports produce separate weight, steps, and training session files for spreadsheet use.
+            JSON includes tracker data and local preferences. CSV exports split weight, steps, and training sessions.
           </div>
         </CardContent>
       </Card>
@@ -556,13 +556,13 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
         <Card>
           <CardHeader>
-            <CardTitle>About</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>Athanor is a fitness tracker for movement, bodyweight, training volume, and recovery in one place.</p>
-            <p>Backups include server-side tracker data and local presentation preferences so the app can be restored without rebuilding your setup.</p>
-          </CardContent>
-        </Card>
+          <CardTitle>About</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>Private performance ledger for movement, bodyweight, training volume, and recovery.</p>
+            <p>Backups preserve tracker data and local preferences.</p>
+        </CardContent>
+      </Card>
 
         <Card className="border-destructive/30 bg-[color-mix(in_srgb,var(--cream-paper)_82%,var(--destructive)_18%)]">
           <CardHeader>

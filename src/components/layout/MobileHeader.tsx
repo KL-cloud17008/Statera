@@ -27,12 +27,12 @@ export function MobileHeader() {
     <header className="sticky top-0 z-40 px-3 pb-2 pt-[max(env(safe-area-inset-top),0.75rem)] md:hidden">
       <div className="chrome-surface flex items-end justify-between gap-4 rounded-[var(--radius-panel)] border px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground">
+          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground shadow-[rgba(112,199,255,0.18)_0_0_24px]">
             <BrandMark className="h-5 w-5" />
           </span>
           <div>
             <p className="text-[0.64rem] font-bold uppercase tracking-[0.18em] text-white/52">{activeLabel}</p>
-            <p className="mt-1 text-[1rem] font-medium tracking-normal text-sidebar-foreground">Athanor</p>
+            <p className="mt-1 text-[1rem] font-semibold tracking-normal text-sidebar-foreground">Athanor</p>
           </div>
         </div>
         <div className="hidden min-[440px]:block">

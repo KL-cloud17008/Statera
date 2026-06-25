@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Athanor",
-  description: "Movement, training, and bodyweight in one calm view.",
+  description: "A private performance ledger for training, movement, recovery, and bodyweight.",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#EEE4D4",
+  themeColor: "#08111F",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

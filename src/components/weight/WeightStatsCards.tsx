@@ -40,7 +40,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
         icon={<Scale className="h-5 w-5" />}
       />
       <StatCard
-        label="This Week"
+        label="From Start"
         value={formatBodyweightDelta(stats.totalChange)}
         hint={`Rate ${weeklyRate}`}
         icon={trendIcon}

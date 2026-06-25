@@ -30,9 +30,9 @@ export function StepsPageClient({
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow="Step Counter"
-        title="Build daily movement momentum"
-        description="Track today's total, review your weekly and monthly trends, and keep your streak alive with a clear goal target."
+        eyebrow="Steps"
+        title="Foot load and daily movement."
+        description="Daily step signal, streak pressure, weekly rhythm, and monthly load."
       >
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <span className="warm-pill rounded-full px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
@@ -40,18 +40,31 @@ export function StepsPageClient({
         </div>
       </SectionHeader>
 
-      <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-        <div className="surface-elevated flex flex-col items-center justify-center rounded-[var(--radius-panel)] px-6 py-8">
+      <section className="command-deck grid gap-8 p-6 sm:p-8 xl:grid-cols-[minmax(18rem,0.38fr)_minmax(0,0.62fr)] xl:items-center" data-animated="true">
+        <div className="flex justify-center">
           <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-            <span className="warm-pill rounded-full px-3 py-1.5 text-primary">
-              {stats.goalDaysTotal} goal days total
-            </span>
-            <span>{stats.completionRate}% completion rate</span>
-          </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <p className="eyebrow">Today</p>
+          <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
+            <p className="data-number text-6xl font-semibold leading-none text-white sm:text-7xl">
+              {stats.todaySteps.toLocaleString()}
+            </p>
+            <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/58">
+              steps logged
+            </p>
+          </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <CommandMetric label="Goal Days" value={stats.goalDaysTotal.toLocaleString()} detail={`${stats.completionRate}% completion rate`} />
+            <CommandMetric label="Streak" value={stats.currentStreak.toLocaleString()} detail="Consecutive goal days" />
+            <CommandMetric label="7-Day Avg" value={stats.sevenDayAverage.toLocaleString()} detail={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`} />
+            <CommandMetric label="Distance" value={formatDistance(stats.todaySteps, settings.distanceUnit)} detail={`Goal ${settings.stepGoal.toLocaleString()}`} />
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             label="Today"
             value={stats.todaySteps.toLocaleString()}
@@ -76,7 +89,6 @@ export function StepsPageClient({
             hint={stats.bestDay?.date ?? "No data yet"}
             icon={<Target className="h-5 w-5" />}
           />
-        </div>
       </section>
 
       <StepsChart entries={entries} goal={settings.stepGoal} timezone={timezone} />
@@ -88,6 +100,24 @@ export function StepsPageClient({
         </div>
         <StepsHistoryList entries={entries} />
       </div>
+    </div>
+  );
+}
+
+function CommandMetric({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="black-glass rounded-[var(--radius-card)] p-4">
+      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="data-number mt-3 text-2xl font-semibold text-white">{value}</p>
+      <p className="mt-1 text-xs leading-relaxed text-white/58">{detail}</p>
     </div>
   );
 }

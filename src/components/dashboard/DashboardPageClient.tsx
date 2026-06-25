@@ -1,7 +1,18 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowDown, ArrowRight, ArrowUp, CheckCircle2 } from "lucide-react";
+import {
+  Activity,
+  ArrowDown,
+  ArrowRight,
+  ArrowUp,
+  CheckCircle2,
+  Dumbbell,
+  Footprints,
+  Scale,
+  ShieldCheck,
+} from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
@@ -98,212 +109,222 @@ export function DashboardPageClient({
       : weightStats.trend === "up"
         ? ArrowUp
         : ArrowRight;
+  const recoveryFlagActive =
+    mobilitySummary.footFlareLogged ||
+    /foot-flare|High step load/i.test(decision.title);
 
   return (
     <div className="page-shell">
-      <section className="page-hero">
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-end">
-          <div className="max-w-5xl">
-            <p className="eyebrow">{greeting}</p>
-            <h1 className="mt-5 max-w-5xl">Today&apos;s command ledger.</h1>
-            <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground">
-              Training, steps, bodyweight, and recovery status.
-            </p>
+      <section className="command-deck p-5 sm:p-7 lg:p-8" data-animated="true">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.35fr)] xl:items-stretch">
+          <div className="flex min-h-[28rem] flex-col justify-between gap-10">
+            <div>
+              <p className="eyebrow">{greeting}</p>
+              <h1 className="mt-5 max-w-5xl">Private performance command.</h1>
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/66">
+                Today&apos;s protocol, movement load, recovery flag, and bodyweight signal.
+              </p>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <SignalTile icon={<Footprints className="h-4 w-4" />} label="Today status" value={`${stepCompletion}%`} detail={`${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()}`} />
+              <SignalTile icon={<ShieldCheck className="h-4 w-4" />} label="Readiness flag" value={recoveryFlagActive ? "Recovery" : "Clear"} detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"} />
+              <SignalTile icon={<Dumbbell className="h-4 w-4" />} label="Current phase" value={nextProtocol} detail={`${workoutSummary.weeklySessions} sessions this week`} />
+              <SignalTile icon={<Scale className="h-4 w-4" />} label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={getTrendCopy(weightStats.trend)} />
+            </div>
           </div>
 
-          <div className="command-panel rounded-[var(--radius-panel)] p-6">
-            <p className="eyebrow">Next protocol</p>
-            <p className="mt-3 text-3xl font-semibold text-foreground">{nextProtocol}</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {workoutSummary.weeklySessions} strength sessions logged this week.
-            </p>
-            <div className="copper-rule mt-5" />
-            <Link href="/workout" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-foreground transition-colors hover:text-[#9fb7ff]">
-              Open training
+          <div className="black-glass flex flex-col justify-between gap-8 rounded-[var(--radius-panel)] p-5">
+            <div>
+              <p className="eyebrow">Today&apos;s Protocol</p>
+              <p className="mt-4 text-4xl font-semibold leading-tight text-white">{nextProtocol}</p>
+              <div className="copper-rule mt-5" />
+              <p className="mt-5 text-sm leading-relaxed text-white/66">
+                {decision.title}
+              </p>
+            </div>
+            <Link href={decision.href} className="inline-flex items-center justify-between gap-4 rounded-full border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white transition-colors hover:border-[#70c7ff]/50 hover:bg-white/12">
+              Open next action
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="document-panel">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.34fr)]">
-          <div>
-            <p className="eyebrow">Today</p>
-            <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="data-number text-6xl font-medium text-foreground">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,0.66fr)_minmax(22rem,0.34fr)]">
+        <div className="prime-panel p-6 sm:p-7">
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+            <div>
+              <p className="eyebrow">Step Progress</p>
+              <div className="mt-5 flex flex-wrap items-end gap-x-5 gap-y-3">
+                <p className="data-number text-6xl font-semibold leading-none text-foreground sm:text-7xl">
                   {todaySteps.toLocaleString()}
                 </p>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {stepCompletion}% of {settings.stepGoal.toLocaleString()} steps
+                <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  of {settings.stepGoal.toLocaleString()}
                 </p>
               </div>
-              <div className="min-w-56 space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Daily movement</span>
-                  <span className="data-number text-foreground">{stepCompletion}%</span>
-                </div>
-                <div className="h-px bg-border">
-                  <div className="h-px bg-foreground" style={{ width: `${stepCompletion}%` }} />
-                </div>
-              </div>
             </div>
-          </div>
-
-          <div className="border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-            <p className="eyebrow">Consistency</p>
-            <div className="mt-5 grid grid-cols-2 gap-6">
-              <div>
-                <p className="data-number text-3xl text-foreground">{stepStats.currentStreak}</p>
-                <p className="mt-1 text-sm text-muted-foreground">day streak</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Daily movement</span>
+                <span className="data-number font-semibold text-foreground">{stepCompletion}%</span>
               </div>
-              <div>
-                <p className="data-number text-3xl text-foreground">{stepStats.goalDaysTotal}</p>
-                <p className="mt-1 text-sm text-muted-foreground">goal days</p>
+              <div className="h-2 overflow-hidden rounded-full bg-[rgba(7,17,31,0.08)]">
+                <div className="h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="micro-panel">
+                  <p className="eyebrow text-[10px]">Streak</p>
+                  <p className="data-number mt-2 text-3xl font-semibold text-foreground">{stepStats.currentStreak}</p>
+                </div>
+                <div className="micro-panel">
+                  <p className="eyebrow text-[10px]">Goal Days</p>
+                  <p className="data-number mt-2 text-3xl font-semibold text-foreground">{stepStats.goalDaysTotal}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="quiet-rule" />
-
-        <div className="warm-row rounded-[var(--radius-card)] p-5">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <div>
-              <p className="eyebrow">Today&apos;s decision</p>
-              <h2 className="mt-2 text-3xl">{decision.title}</h2>
-              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                {decision.description}
-              </p>
-            </div>
-            <Link href={decision.href} className="text-link inline-flex items-center gap-2 text-sm font-semibold">
-              Open next action
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="mt-5 grid gap-2 md:grid-cols-3">
+        <div className="prime-panel p-6 sm:p-7">
+          <p className="eyebrow">Today&apos;s Decision</p>
+          <h2 className="mt-3 text-3xl">{decision.title}</h2>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{decision.description}</p>
+          <div className="mt-5 grid gap-2">
             {decision.signals.map((signal) => (
-              <p
-                key={signal}
-                className="status-note flex items-start gap-2 px-3 py-2 text-xs leading-relaxed"
-              >
+              <p key={signal} className="status-note flex items-start gap-2 px-3 py-2 text-xs leading-relaxed">
                 <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground/70" />
                 <span>{signal}</span>
               </p>
             ))}
           </div>
         </div>
+      </section>
 
-        <div>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow">Weekly rhythm</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Strength four days. Recovery Wednesday and Saturday. Sunday full rest.
-              </p>
-            </div>
-            <Link href="/workout/plan" className="text-link inline-flex items-center gap-2 text-sm font-medium">
-              Full plan
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+      <section className="document-panel">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="eyebrow">Weekly Rhythm</p>
+            <h2 className="mt-2 text-3xl">Strength, recovery, full rest.</h2>
           </div>
-
-          <div className="mt-5 divide-y divide-border border-y border-border">
-            {WEEKLY_RHYTHM.map((item) => {
-              const isToday = item.dayOfWeek === trainingDayOfWeek;
-              return (
-                <div
-                  key={item.day}
-                  className={cn(
-                    "interactive-row grid gap-2 px-2 py-2.5 text-sm sm:grid-cols-[3.5rem_minmax(0,1fr)_minmax(7.75rem,auto)] sm:items-center",
-                    isToday && "-mx-2 rounded-[var(--radius-card)] border border-[color-mix(in_srgb,var(--electric-blue)_34%,var(--border)_66%)] bg-[color-mix(in_srgb,var(--electric-blue)_7%,var(--background)_93%)] px-3"
-                  )}
-                >
-                  <p className="eyebrow text-[10px]">{item.day}</p>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-medium leading-snug text-foreground">{item.label}</p>
-                      {isToday ? (
-                        <span className="rounded-full border border-[color-mix(in_srgb,var(--electric-blue)_36%,var(--border)_64%)] bg-[color-mix(in_srgb,var(--electric-blue)_8%,transparent)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[color-mix(in_srgb,var(--electric-blue)_54%,var(--foreground)_46%)]">
-                          Today
-                        </span>
-                      ) : null}
-                    </div>
-                    {item.meta ? <p className="mt-1 text-xs text-muted-foreground">{item.meta}</p> : null}
-                  </div>
-                  <p className="justify-self-start whitespace-nowrap rounded-full border border-border/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground sm:justify-self-end sm:text-right">
-                    {item.protocol}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+          <Link href="/workout/plan" className="text-link inline-flex items-center gap-2 text-sm font-semibold">
+            Full plan
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        <div className="grid gap-0 border-y border-border lg:grid-cols-3 lg:divide-x lg:divide-border">
-          <Link href="/weight" className="interactive-row group block py-6 lg:px-6 lg:first:pl-0">
-            <p className="eyebrow">Bodyweight trend</p>
-            <div className="mt-4 flex items-end justify-between gap-4">
-              <p className="data-number text-4xl font-medium text-foreground">
-                {formatBodyweight(weightStats.currentWeight)}
-              </p>
+        <div className="mt-6 grid gap-2 lg:grid-cols-7">
+          {WEEKLY_RHYTHM.map((item) => {
+            const isToday = item.dayOfWeek === trainingDayOfWeek;
+            return (
+              <div
+                key={item.day}
+                className={cn(
+                  "interactive-row min-h-40 rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.1)] bg-white/42 p-4",
+                  isToday && "border-[rgba(79,124,255,0.36)] bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(224,239,255,0.78))] shadow-[var(--shadow-glow)]"
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="eyebrow text-[10px]">{item.day}</p>
+                  {isToday ? (
+                    <span className="rounded-full border border-[rgba(79,124,255,0.3)] bg-[rgba(79,124,255,0.08)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-foreground">
+                      Today
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-4 text-sm font-semibold leading-snug text-foreground">{item.label}</p>
+                {item.meta ? <p className="mt-2 text-xs text-muted-foreground">{item.meta}</p> : null}
+                <p className="mt-5 inline-flex rounded-full border border-[rgba(7,17,31,0.11)] bg-white/54 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                  {item.protocol}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="quiet-rule" />
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          <Link href="/weight" className="surface-card interactive-row block rounded-[var(--radius-card)] p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="eyebrow">Bodyweight Trend</p>
+                <p className="data-number mt-4 text-4xl font-semibold text-foreground">{formatBodyweight(weightStats.currentWeight)}</p>
+              </div>
               <TrendIcon className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {getTrendCopy(weightStats.trend)}
-            </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{getTrendCopy(weightStats.trend)}</p>
           </Link>
 
-          <Link href="/workout/history" className="interactive-row group block border-t border-border py-6 lg:border-t-0 lg:px-6">
-            <p className="eyebrow">Training output</p>
-            <p className="data-number mt-4 text-4xl font-medium text-foreground">
-              {weeklyVolume}
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Across {workoutSummary.weeklySessions} completed sessions this week.
-            </p>
+          <Link href="/workout/history" className="surface-card interactive-row block rounded-[var(--radius-card)] p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="eyebrow">Training Output</p>
+                <p className="data-number mt-4 text-4xl font-semibold text-foreground">{weeklyVolume}</p>
+              </div>
+              <Dumbbell className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{workoutSummary.weeklySessions} completed sessions this week.</p>
           </Link>
 
-          <Link href="/mobility" className="interactive-row group block border-t border-border py-6 lg:border-t-0 lg:px-6 lg:last:pr-0">
-            <p className="eyebrow">Mobility cadence</p>
-            <p className="mt-4 text-4xl font-medium text-foreground">2+2</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              Wednesday and Saturday recovery, plus short resets around lifting days.
-            </p>
+          <Link href="/mobility" className="surface-card interactive-row block rounded-[var(--radius-card)] p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="eyebrow">Movement Quality</p>
+                <p className="data-number mt-4 text-4xl font-semibold text-foreground">2+2</p>
+              </div>
+              <Activity className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Recovery days plus short resets around lifting days.</p>
           </Link>
         </div>
 
         <div className="ledger-row pt-0">
           <div>
-            <p className="eyebrow">Last session</p>
+            <p className="eyebrow">Last Session</p>
           </div>
           {workoutSummary.lastWorkout ? (
             <>
               <div>
-                <p className="text-2xl font-medium text-foreground">
-                  {workoutSummary.lastWorkout.label}
-                </p>
+                <p className="text-2xl font-semibold text-foreground">{workoutSummary.lastWorkout.label}</p>
                 <p className="mt-2 text-sm text-muted-foreground">{lastWorkoutDate}</p>
               </div>
               <div className="space-y-2 text-sm text-muted-foreground md:text-right">
-                <p>
-                  <span className="data-number text-foreground">{workoutSummary.lastWorkout.setCount}</span> sets logged
-                </p>
-                <p>
-                  <span className="data-number text-foreground">{lastWorkoutVolume}</span> moved
-                </p>
+                <p><span className="data-number text-foreground">{workoutSummary.lastWorkout.setCount}</span> sets logged</p>
+                <p><span className="data-number text-foreground">{lastWorkoutVolume}</span> moved</p>
               </div>
             </>
           ) : (
             <div className="md:col-span-2">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                No completed training sessions yet. Start with the programmed day, then let history build from there.
-              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">No completed training sessions yet.</p>
             </div>
           )}
         </div>
       </section>
+    </div>
+  );
+}
+
+function SignalTile({
+  icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="black-glass min-h-32 rounded-[var(--radius-card)] p-4">
+      <div className="flex items-center justify-between gap-3 text-white/68">
+        <p className="eyebrow text-[10px]">{label}</p>
+        {icon}
+      </div>
+      <p className="data-number mt-4 text-2xl font-semibold leading-tight text-white">{value}</p>
+      <p className="mt-2 text-xs leading-relaxed text-white/58">{detail}</p>
     </div>
   );
 }
