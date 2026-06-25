@@ -13,7 +13,7 @@ export function WorkoutPlanResetButton() {
 
   function handleReset() {
     const confirmed = window.confirm(
-      "Start a fresh copy of the current 4-day workout plan? Any open session will be closed."
+      "Start a fresh copy of the current 4-day training plan? Any open session will be closed."
     );
 
     if (!confirmed) {
@@ -46,7 +46,7 @@ export function WorkoutPlanResetButton() {
       ) : (
         <>
           <span className="sm:hidden">Start new plan</span>
-          <span className="hidden sm:inline">Reset current workout plan / Start new 4-day plan</span>
+          <span className="hidden sm:inline">Reset current training plan / Start new 4-day plan</span>
         </>
       )}
     </Button>

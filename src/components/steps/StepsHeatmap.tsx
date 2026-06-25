@@ -9,7 +9,7 @@ import { buildMonthlyHeatmap, type SerializedStepsEntry } from "@/lib/steps";
 function getHeatLevel(steps: number, goal: number) {
   const ratio = goal > 0 ? steps / goal : 0;
   if (ratio >= 1) return "bg-primary/90 text-primary-foreground border-primary/60";
-  if (ratio >= 0.75) return "bg-[color-mix(in_srgb,var(--ember)_28%,var(--cream-paper)_72%)] text-foreground border-[color-mix(in_srgb,var(--ember)_36%,var(--border)_64%)]";
+  if (ratio >= 0.75) return "bg-[color-mix(in_srgb,var(--electric-blue)_18%,var(--cream-paper)_82%)] text-foreground border-[color-mix(in_srgb,var(--electric-blue)_34%,var(--border)_66%)]";
   if (ratio >= 0.5) return "bg-accent text-foreground border-border";
   if (ratio > 0) return "bg-[color-mix(in_srgb,var(--bone)_78%,var(--cream-paper)_22%)] text-muted-foreground border-border";
   return "bg-transparent text-muted-foreground/60 border-border/60";

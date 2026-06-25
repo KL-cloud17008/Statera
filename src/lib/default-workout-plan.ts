@@ -16,7 +16,7 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-scaled-pillars-balance-v8";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-scaled-pillars-balance-v9";
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Scaled restart block for a 312 lb detrained male in week 2 after months away from training.",
@@ -29,7 +29,7 @@ export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "If RPE exceeds 7, form degrades, or joint pain appears, keep load the same or reduce.",
   "Weeks 1-2 may use optional 2-round mode: complete two rounds per block instead of all listed sets.",
   "Rest as listed after each pair, single-exercise block, or full circuit, not between paired exercises unless needed for safety.",
-  "Walking to the gym is the general warm-up. Do the mobility primer at home before leaving. When you arrive at the gym, start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.",
+  "Session prep is non-loggable: walking to the gym is the general warm-up, then start with 1-2 easy ramp-up sets on the first programmed lift or machine before the first working circuit.",
   "Overhead pressing can return later as a progression once breathing, bracing, and shoulder tolerance improve.",
 ];
 
@@ -39,15 +39,8 @@ const PLAN_CUE_PREFIX =
 const UPPER_A_CUE_PREFIX =
   "Supported upper-body strength block: move smoothly, stop 2-4 reps before failure, stay around RPE 5-7, and use optional 2-round mode in weeks 1-2. ";
 
-const REQUIRED_LATER_RECOVERY_NOTE =
-  "Required later recovery does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work. If feet/soles flare, choose required foot-flare recovery.";
-
 function formSource(label: string, url: string) {
   return `Form source: ${label} (${url}).`;
-}
-
-function gymArrivalCue(firstExercise: string) {
-  return `Gym arrival ramp-up: on ${firstExercise}, do 1-2 easy ramp-up sets before the first working circuit. Set 1: very easy x 8-10 reps at RPE 3-4. Set 2: easy/moderate x 5-8 reps at RPE 4-5 only if needed. Then begin the first working circuit.`;
 }
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
@@ -55,17 +48,6 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     dayOfWeek: 1,
     sessionName: "Upper A - Free-Weight Push/Pull + Low-Stress Shoulder Circuit",
     exercises: [
-      {
-        exerciseName: "At home - Upper A Mobility Primer",
-        sets: 1,
-        reps: "6-10 min before walking to gym",
-        tempo: "easy",
-        restSeconds: 0,
-        targetRPE: "2-4",
-        cues: `At home: daily lower-leg and balance base, wall thoracic rotations 6 per side, wall slides 8, doorway pec stretch 20-30 sec per side, wall lat stretch 20-30 sec per side, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Incline Dumbbell Press")} ${REQUIRED_LATER_RECOVERY_NOTE}`,
-        supersetGroup: null,
-        exerciseType: "WARMUP",
-      },
       {
         exerciseName: "A1 Incline Dumbbell Press",
         sets: 3,
@@ -150,17 +132,6 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: "Lower A - Machine Lower Body Foundation",
     exercises: [
       {
-        exerciseName: "At home - Lower A Mobility Primer",
-        sets: 1,
-        reps: "6-10 min before walking to gym",
-        tempo: "easy",
-        restSeconds: 0,
-        targetRPE: "2-4",
-        cues: `At home: daily lower-leg and balance base, 90/90 hip switches 6-8 slow reps, half-kneeling or standing hip flexor stretch 20-30 sec per side, adductor rock-backs 6-8 per side, bodyweight glute bridge 8-10 controlled reps, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Single-Leg Leg Press")} ${REQUIRED_LATER_RECOVERY_NOTE}`,
-        supersetGroup: null,
-        exerciseType: "WARMUP",
-      },
-      {
         exerciseName: "A1 Single-Leg Leg Press",
         sets: 3,
         reps: "8-12 per side",
@@ -221,17 +192,6 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     dayOfWeek: 4,
     sessionName: "Upper B - Machine Back/Shoulder Emphasis",
     exercises: [
-      {
-        exerciseName: "At home - Upper B Mobility Primer",
-        sets: 1,
-        reps: "6-10 min before walking to gym",
-        tempo: "easy",
-        restSeconds: 0,
-        targetRPE: "2-4",
-        cues: `At home: daily lower-leg and balance base, wall thoracic rotations 6 per side, wall angels or wall slides 6-8, scapular circles 8 each direction, doorway pec stretch 20-30 sec per side, wall lat stretch 20-30 sec per side, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Incline Machine Press")} ${REQUIRED_LATER_RECOVERY_NOTE}`,
-        supersetGroup: null,
-        exerciseType: "WARMUP",
-      },
       {
         exerciseName: "A1 Incline Machine Press",
         sets: 3,
@@ -315,17 +275,6 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     dayOfWeek: 5,
     sessionName: "Lower B - Machine Posterior Chain + Hip Stability",
     exercises: [
-      {
-        exerciseName: "At home - Lower B Mobility Primer",
-        sets: 1,
-        reps: "6-10 min before walking to gym",
-        tempo: "easy",
-        restSeconds: 0,
-        targetRPE: "2-4",
-        cues: `At home: daily lower-leg and balance base, hip hinge patterning against wall 8 reps, hamstring floss seated or standing 8 per side, 90/90 hip switches 6-8, half-kneeling or standing hip flexor stretch 20-30 sec per side, bodyweight glute bridge 8-10 reps, and seated bracing breaths for 5 slow breaths. Walking to the gym is the general warm-up. ${gymArrivalCue("Leg Press")} ${REQUIRED_LATER_RECOVERY_NOTE}`,
-        supersetGroup: null,
-        exerciseType: "WARMUP",
-      },
       {
         exerciseName: "A1 Leg Press",
         sets: 3,

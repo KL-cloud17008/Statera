@@ -19,13 +19,13 @@ export function MobileNav() {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={cn(
-                "flex min-h-[3rem] min-w-[4.25rem] flex-col items-center justify-center gap-1 rounded-full border px-3 text-[9px] font-bold uppercase tracking-[0.08em] transition-[background-color,border-color,color] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_rgba(191,110,72,0.72),0_0_0_5px_rgba(191,110,72,0.22)]",
+                "flex min-h-[3rem] min-w-[5rem] flex-col items-center justify-center gap-1 rounded-full border px-3 text-center text-[10px] font-bold leading-[1.05] tracking-normal transition-[background-color,border-color,color] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_rgba(107,128,255,0.72),0_0_0_5px_rgba(107,128,255,0.22)] motion-reduce:transition-none",
                 isActive
-                  ? "border-[rgba(191,110,72,0.5)] bg-[rgba(191,110,72,0.18)] text-[#fff6ec]"
-                  : "border-transparent text-white/52 hover:bg-white/8 hover:text-white"
+                  ? "border-[rgba(135,156,255,0.48)] bg-[rgba(88,108,255,0.22)] text-white"
+                  : "border-transparent text-white/58 hover:bg-white/8 hover:text-white"
               )}
             >
-              <item.icon className={cn("h-[1rem] w-[1rem]", isActive ? "text-[#e6a07d]" : "text-white/45")} strokeWidth={isActive ? 2 : 1.75} />
+              <item.icon className={cn("h-[1rem] w-[1rem]", isActive ? "text-[#aebcff]" : "text-white/48")} strokeWidth={isActive ? 2 : 1.75} />
               <span>{item.label}</span>
             </Link>
           );

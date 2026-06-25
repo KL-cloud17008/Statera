@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SetInput } from "./SetInput";
+import { isLoggableTrainingExercise } from "@/lib/training-session";
 import { formatWorkoutLoad } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
@@ -57,11 +58,16 @@ export function ExerciseCard({
   onSetCompleteChange: (exerciseName: string, setNumber: number, complete: boolean) => void;
 }) {
   const [showCues, setShowCues] = useState(false);
+  const isLoggable = isLoggableTrainingExercise(exercise);
   const isFinisher = exercise.exerciseType === "FINISHER";
   const setCount = isFinisher ? 1 : exercise.sets;
   const exercisePrevSets = previousSets.filter(
     (set) => set.exerciseName === exercise.exerciseName
   );
+
+  if (!isLoggable) {
+    return null;
+  }
 
   return (
     <section className={cn("space-y-6", exerciseComplete && "opacity-75")}>
@@ -107,7 +113,7 @@ export function ExerciseCard({
           </div>
 
           {showCues && exercise.cues ? (
-            <p className="max-w-2xl rounded-[var(--radius-tight)] border-l-2 border-[color-mix(in_srgb,var(--ember)_42%,var(--border)_58%)] bg-accent/45 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-2xl rounded-[var(--radius-tight)] border-l-2 border-[color-mix(in_srgb,var(--electric-blue)_42%,var(--border)_58%)] bg-accent/45 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
               {exercise.cues}
             </p>
           ) : null}
@@ -156,9 +162,6 @@ export function ExerciseCard({
 }
 
 function getExerciseLabel(exercise: PlanExercise) {
-  if (exercise.exerciseType === "WARMUP") {
-    return "At-home primer";
-  }
   if (exercise.exerciseType === "ACCESSORY") {
     return "Low-dose accessory";
   }

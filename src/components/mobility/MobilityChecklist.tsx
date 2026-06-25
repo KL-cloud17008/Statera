@@ -138,7 +138,7 @@ export function MobilityChecklist({
                             <button
                               type="button"
                               onClick={() => toggle(key)}
-                              className="w-full min-w-0 text-left focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] sm:flex-1"
+                              className="w-full min-w-0 text-left focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] sm:flex-1"
                             >
                               <p className={cn("text-sm font-semibold tracking-normal", isDone ? "text-muted-foreground line-through" : "text-foreground")}>
                                 {exercise.name}
@@ -158,7 +158,7 @@ export function MobilityChecklist({
                                   aria-expanded={isExpanded}
                                   aria-controls={detailsId}
                                   onClick={() => toggleExpanded(key)}
-                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,var(--bone)_36%)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:border-[color-mix(in_srgb,var(--ember)_32%,var(--border)_68%)] hover:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none"
+                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_64%,var(--bone)_36%)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] hover:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none"
                                 >
                                   <span>How to do it</span>
                                   <ChevronDown
@@ -409,7 +409,7 @@ function DetailList({
       <ul className="mt-2 space-y-2">
         {items.map((item) => (
           <li key={item} className="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
-            <span className="mt-[0.6em] h-1.5 w-1.5 rounded-full bg-[color-mix(in_srgb,var(--ember)_62%,var(--border)_38%)]" />
+            <span className="mt-[0.6em] h-1.5 w-1.5 rounded-full bg-[color-mix(in_srgb,var(--electric-blue)_62%,var(--border)_38%)]" />
             <span>{item}</span>
           </li>
         ))}

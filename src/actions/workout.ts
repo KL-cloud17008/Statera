@@ -11,6 +11,7 @@ import {
   type WorkoutSessionMeta,
 } from "@/lib/workout-session-meta";
 import { createDefaultWorkoutPlans, ensureDefaultWorkoutPlans } from "@/lib/workout-plan-seed";
+import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/training-session";
 import { WORKOUT_LOAD_UNIT, poundsToKg, workoutLoadToKg } from "@/lib/units";
 import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
 
@@ -27,13 +28,18 @@ type WorkoutMutationResult = {
 export async function getWorkoutPlans(userId: string) {
   await ensureDefaultWorkoutPlans(prisma, userId);
 
-  return prisma.workoutPlan.findMany({
+  const plans = await prisma.workoutPlan.findMany({
     where: { userId, isActive: true },
     include: {
       exercises: { orderBy: { sortOrder: "asc" } },
     },
     orderBy: { dayOfWeek: "asc" },
   });
+
+  return plans.map((plan) => ({
+    ...plan,
+    exercises: plan.exercises.filter(isLoggableTrainingExercise),
+  }));
 }
 
 export async function getTodaysPlan(userId: string, timezone?: string) {
@@ -42,16 +48,23 @@ export async function getTodaysPlan(userId: string, timezone?: string) {
     return null;
   }
 
-  return prisma.workoutPlan.findFirst({
+  const plan = await prisma.workoutPlan.findFirst({
     where: { userId, dayOfWeek: dayNum, isActive: true },
     include: {
       exercises: { orderBy: { sortOrder: "asc" } },
     },
   });
+
+  return plan
+    ? {
+        ...plan,
+        exercises: plan.exercises.filter(isLoggableTrainingExercise),
+      }
+    : null;
 }
 
 async function getOpenSession(userId: string) {
-  return prisma.workoutSession.findFirst({
+  const session = await prisma.workoutSession.findFirst({
     where: {
       userId,
       completed: false,
@@ -64,6 +77,16 @@ async function getOpenSession(userId: string) {
     },
     orderBy: { createdAt: "desc" },
   });
+
+  return session?.workoutPlan
+    ? {
+        ...session,
+        workoutPlan: {
+          ...session.workoutPlan,
+          exercises: session.workoutPlan.exercises.filter(isLoggableTrainingExercise),
+        },
+      }
+    : session;
 }
 
 export async function resetCurrentWorkoutPlan(): Promise<WorkoutMutationResult> {
@@ -238,6 +261,9 @@ export async function logSet(
 
   if (!exerciseName) {
     return { error: "Exercise name is required" };
+  }
+  if (isAtHomePrimerExerciseName(exerciseName)) {
+    return { error: "Session prep is not a loggable training exercise" };
   }
   if (Number.isNaN(setNumber) || setNumber < 1 || setNumber > 50) {
     return { error: "Set number must be between 1 and 50" };
@@ -459,12 +485,14 @@ export async function getPreviousSessionSets(
   }
 
   const loadUnit = getWorkoutSessionLoadUnit(prevSession.notes);
-  return prevSession.sets.map((set) => ({
-    exerciseName: set.exerciseName,
-    setNumber: set.setNumber,
-    weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
-    repsCompleted: set.repsCompleted,
-  }));
+  return prevSession.sets
+    .filter((set) => !isAtHomePrimerExerciseName(set.exerciseName))
+    .map((set) => ({
+      exerciseName: set.exerciseName,
+      setNumber: set.setNumber,
+      weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
+      repsCompleted: set.repsCompleted,
+    }));
 }
 
 export async function getExerciseHistory(userId: string, exerciseName: string) {

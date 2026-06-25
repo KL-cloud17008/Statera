@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 const WEEK_STRUCTURE = [
   { day: "Monday", role: "Lift", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
@@ -18,8 +19,8 @@ const WEEK_STRUCTURE = [
 ] as const;
 
 export const metadata: Metadata = {
-  title: "Workout Plan | Athanor",
-  description: "Review the scheduled training split, exercise order, at-home primers, circuit blocks, and rest guidance.",
+  title: "Training Plan | Athanor",
+  description: "Review the scheduled training split, exercise order, session prep, circuit blocks, and rest guidance.",
 };
 
 export default async function WorkoutPlanPage() {
@@ -34,17 +35,17 @@ export default async function WorkoutPlanPage() {
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow="Training split"
+        eyebrow="Training Protocol"
         title="A scaled five-pillar protocol for four lift days, two recovery days, and one full rest day."
-        description="Strength, low-intensity walking only, mobility/flexibility, supported balance, and recovery are organized as at-home primer, walk to gym, gym ramp-up sets, strength blocks, and required later recovery."
+        description="Strength, low-intensity walking only, mobility/flexibility, supported balance, and recovery are organized as non-loggable session prep, gym ramp-up sets, strength blocks, and required later recovery."
         action={<WorkoutPlanResetButton />}
       />
 
       {plans.length === 0 ? (
         <EmptyState
           icon={ClipboardList}
-          title="No saved workout plan"
-          description="Use the custom session builder on the workout page to start training immediately."
+          title="No saved training plan"
+          description="Use the custom session builder on the Training page to start immediately."
         />
       ) : null}
 
@@ -57,7 +58,7 @@ export default async function WorkoutPlanPage() {
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             Monday, Tuesday, Thursday, and Friday are lifting days. Wednesday is mobility plus a
             10,000-step target, and Saturday is required recovery mobility. Sunday is complete rest or very low-intensity
-            recovery mobility only if needed. Walking to and from the gym is the only planned cardio. On lift days, do the mobility primer at home,
+            recovery mobility only if needed. Walking to and from the gym is the only planned cardio. On lift days,
             walk to the gym as the general warm-up, then do 1-2 easy ramp-up sets on the first
             programmed lift or machine before Block A. Use double progression only when all sets reach the top of the rep range at target RPE with clean form. Required later recovery is completed separately later the same day.
           </p>
@@ -68,12 +69,29 @@ export default async function WorkoutPlanPage() {
           </div>
         </div>
 
+        <div className="session-prep-strip">
+          <div>
+            <p className="eyebrow">Session prep</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Non-loggable arrival guidance. It stays outside the exercise list and never creates set rows.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-4">
+            {SESSION_PREP_ITEMS.map((item) => (
+              <div key={item.label} className="border-t border-border/70 pt-3">
+                <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="divide-y divide-border">
           {WEEK_STRUCTURE.map((day, index) => {
             const plan = "dayOfWeek" in day ? plansByDay.get(day.dayOfWeek) : null;
-            const workingCount = plan?.exercises.filter((exercise) => exercise.exerciseType === "WORKING").length ?? 0;
-            const totalSets = plan?.exercises
-              .filter((exercise) => exercise.exerciseType === "WORKING")
+            const loggableExercises = plan?.exercises.filter(isLoggableTrainingExercise) ?? [];
+            const workingCount = loggableExercises.length;
+            const totalSets = loggableExercises
               .reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
 
             return (
@@ -108,13 +126,12 @@ export default async function WorkoutPlanPage() {
 
                 {plan ? (
                   <div className="mt-6 divide-y divide-border border-y border-border">
-                    {plan.exercises.map((exercise) => (
+                    {loggableExercises.map((exercise) => (
                       <article key={exercise.id} className="interactive-row grid gap-4 px-2 py-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,auto)] md:items-start">
                         <div>
                           <div className="flex flex-wrap items-center gap-2.5">
                             <p className="font-medium text-foreground">{exercise.exerciseName}</p>
                             {exercise.supersetGroup ? <Badge variant="outline">Circuit {exercise.supersetGroup}</Badge> : null}
-                            {exercise.exerciseType === "WARMUP" ? <Badge variant="secondary">At-home primer</Badge> : null}
                             {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
                             {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
                           </div>

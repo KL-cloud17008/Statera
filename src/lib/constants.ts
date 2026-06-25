@@ -30,7 +30,10 @@ export const TRAINING_DAY_LABELS: Record<number, string> = {
 // Navigation items
 export const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: "LayoutDashboard" as const },
-  { label: "Workout", href: "/workout", icon: "Dumbbell" as const },
+  { label: "Mobility", href: "/mobility", icon: "PersonStanding" as const },
+  { label: "Flexibility & Balance", href: "/flexibility-balance", icon: "Activity" as const },
+  { label: "Training", href: "/workout", icon: "Dumbbell" as const },
+  { label: "Steps", href: "/steps", icon: "Footprints" as const },
   { label: "Weight", href: "/weight", icon: "Scale" as const },
   { label: "Settings", href: "/settings", icon: "Settings" as const },
 ] as const;

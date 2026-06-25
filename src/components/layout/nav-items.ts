@@ -1,4 +1,5 @@
-﻿import {
+import {
+  Activity,
   Dumbbell,
   Footprints,
   LayoutDashboard,
@@ -14,9 +15,10 @@ export const NAV_ITEMS: Array<{
   icon: LucideIcon;
 }> = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
-  { label: "Workout", href: "/workout", icon: Dumbbell },
   { label: "Mobility", href: "/mobility", icon: PersonStanding },
-  { label: "Weight", href: "/weight", icon: Scale },
+  { label: "Flexibility & Balance", href: "/flexibility-balance", icon: Activity },
+  { label: "Training", href: "/workout", icon: Dumbbell },
   { label: "Steps", href: "/steps", icon: Footprints },
+  { label: "Weight", href: "/weight", icon: Scale },
   { label: "Settings", href: "/settings", icon: Settings },
 ];

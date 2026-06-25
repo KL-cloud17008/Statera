@@ -69,7 +69,7 @@ export function LoginPageClient() {
               {[
                 ["Steps", "Daily pace"],
                 ["Weight", "Trend line"],
-                ["Workout", "Logged work"],
+                ["Training", "Logged work"],
               ].map(([title, copy]) => (
                 <div key={title} className="rounded-[var(--radius-card)] border border-white/10 bg-white/7 px-4 py-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">{title}</p>

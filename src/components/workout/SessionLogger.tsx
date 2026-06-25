@@ -9,6 +9,7 @@ import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 type PlanExercise = {
   id: string;
@@ -71,6 +72,10 @@ export function SessionLogger({
   const [savedSetKeys, setSavedSetKeys] = useState<Set<string>>(() => buildSavedSetKeys(existingSets));
   const [completedSets, setCompletedSets] = useState<Set<string>>(() => buildSavedSetKeys(existingSets));
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
+  const loggableExercises = useMemo(
+    () => exercises.filter(isLoggableTrainingExercise),
+    [exercises]
+  );
 
   useEffect(() => {
     const start = new Date(startTime).getTime();
@@ -88,7 +93,7 @@ export function SessionLogger({
     let currentGroup: PlanExercise[] = [];
     let currentSupersetGroup: string | null = null;
 
-    for (const exercise of exercises) {
+    for (const exercise of loggableExercises) {
       if (exercise.supersetGroup && exercise.supersetGroup === currentSupersetGroup) {
         currentGroup.push(exercise);
       } else {
@@ -105,11 +110,11 @@ export function SessionLogger({
     }
 
     return groups;
-  }, [exercises]);
+  }, [loggableExercises]);
 
   const completedExercises = useMemo(() => {
     const completed = new Set<string>();
-    for (const exercise of exercises) {
+    for (const exercise of loggableExercises) {
       const totalSets = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
       const allSaved = Array.from({ length: totalSets }, (_, index) => `${exercise.exerciseName}:${index + 1}`).every((key) => completedSets.has(key));
       if (allSaved) {
@@ -117,9 +122,9 @@ export function SessionLogger({
       }
     }
     return completed;
-  }, [completedSets, exercises]);
+  }, [completedSets, loggableExercises]);
 
-  const totalExercises = exercises.length;
+  const totalExercises = loggableExercises.length;
   const completedCount = completedExercises.size;
   const progressPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
 
@@ -137,7 +142,7 @@ export function SessionLogger({
   }
 
   function handleExerciseCompleteChange(exerciseName: string, complete: boolean) {
-    const exercise = exercises.find((item) => item.exerciseName === exerciseName);
+    const exercise = loggableExercises.find((item) => item.exerciseName === exerciseName);
     if (!exercise) {
       return;
     }
@@ -257,6 +262,8 @@ export function SessionLogger({
           </div>
         </div>
 
+        <SessionPrepStrip />
+
         <div className="space-y-3">
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>{completedCount}/{totalExercises} exercises logged</span>
@@ -314,6 +321,27 @@ export function SessionLogger({
           );
         })}
       </section>
+    </div>
+  );
+}
+
+function SessionPrepStrip() {
+  return (
+    <div className="session-prep-strip">
+      <div>
+        <p className="eyebrow">Session prep</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Arrival protocol only; no Weight/Reps/RPE rows are created here.
+        </p>
+      </div>
+      <div className="grid gap-3 md:grid-cols-4">
+        {SESSION_PREP_ITEMS.map((item) => (
+          <div key={item.label} className="border-t border-border/70 pt-3">
+            <p className="text-sm font-semibold text-foreground">{item.label}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

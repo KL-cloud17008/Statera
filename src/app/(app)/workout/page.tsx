@@ -6,10 +6,11 @@ import { getWorkoutSessionLoadUnit, parseWorkoutSessionMeta } from "@/lib/workou
 import { workoutLoadToKg } from "@/lib/units";
 import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
+import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/training-session";
 
 export const metadata: Metadata = {
-  title: "Workout | Athanor",
-  description: "Run today’s programmed session, build custom workouts, save templates, and log every set.",
+  title: "Training | Athanor",
+  description: "Run today's programmed training session, build custom sessions, save templates, and log every set.",
 };
 
 export default async function WorkoutPage() {
@@ -43,18 +44,22 @@ export default async function WorkoutPage() {
   if (openSession) {
     const meta = parseWorkoutSessionMeta(openSession.notes);
     const loadUnit = getWorkoutSessionLoadUnit(openSession.notes);
-    const exercises = openSession.workoutPlan?.exercises ?? meta?.exercises?.map((exercise, index) => ({
-      id: `${exercise.exerciseId}-${index}`,
-      exerciseName: exercise.name,
-      sets: exercise.sets,
-      reps: exercise.reps,
-      tempo: null,
-      restSeconds: exercise.restSeconds,
-      targetRPE: null,
-      cues: exercise.notes ?? null,
-      supersetGroup: null,
-      exerciseType: "WORKING",
-    })) ?? [];
+    const exercises = (
+      openSession.workoutPlan?.exercises ??
+      meta?.exercises?.map((exercise, index) => ({
+        id: `${exercise.exerciseId}-${index}`,
+        exerciseName: exercise.name,
+        sets: exercise.sets,
+        reps: exercise.reps,
+        tempo: null,
+        restSeconds: exercise.restSeconds,
+        targetRPE: null,
+        cues: exercise.notes ?? null,
+        supersetGroup: null,
+        exerciseType: "WORKING",
+      })) ??
+      []
+    ).filter(isLoggableTrainingExercise);
 
     const previousSets = openSession.workoutPlanId
       ? await getPreviousSessionSets(user.id, openSession.workoutPlanId)
@@ -67,14 +72,16 @@ export default async function WorkoutPage() {
       trainingDate: openSession.trainingDate.toISOString().split("T")[0],
       isStale: openSession.trainingDate.getTime() !== currentTrainingDate.getTime(),
       exercises,
-      sets: openSession.sets.map((set) => ({
-        exerciseName: set.exerciseName,
-        setNumber: set.setNumber,
-        weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
-        repsCompleted: set.repsCompleted,
-        actualRPE: set.actualRPE,
-        notes: set.notes,
-      })),
+      sets: openSession.sets
+        .filter((set) => !isAtHomePrimerExerciseName(set.exerciseName))
+        .map((set) => ({
+          exerciseName: set.exerciseName,
+          setNumber: set.setNumber,
+          weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
+          repsCompleted: set.repsCompleted,
+          actualRPE: set.actualRPE,
+          notes: set.notes,
+        })),
       previousSets,
     };
   }
@@ -84,7 +91,7 @@ export default async function WorkoutPage() {
       todayPlan={todayPlan ? {
         id: todayPlan.id,
         sessionName: todayPlan.sessionName,
-        exercises: todayPlan.exercises,
+        exercises: todayPlan.exercises.filter(isLoggableTrainingExercise),
       } : null}
       activeSession={activeSession}
     />

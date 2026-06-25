@@ -33,16 +33,23 @@ User context for this phase: male, early 20s, 5 ft 9 in, about 312 lb (141.5 kg,
 - No unstable surfaces and no eyes-closed balance drills in this phase.
 - Use RPE 5-7 for most work with 2-4 reps in reserve.
 - No failure training, max holds, jumping, or high-impact drills.
-- Workout loads are logged in kg.
+- Training loads are logged in kg.
 - Bodyweight is tracked in lb with kg and stone conversion.
 
-## Workout Day Format
+## Training Day Format
 
-1. At home - mobility primer.
+1. Session prep - non-loggable arrival guidance.
 2. Walk to gym - general warm-up.
 3. At gym - 1-2 ramp-up sets on the first programmed lift or machine.
 4. Main strength blocks.
 5. Required later recovery - done later the same day, not necessarily immediately after training.
+
+Session prep:
+
+- Walk to gym = general warm-up.
+- First lift/machine: 1-2 ramp-up sets.
+- Main work stays RPE 5-7.
+- Required later recovery remains tracked separately.
 
 At the gym:
 
@@ -109,15 +116,14 @@ Mobility/flexibility:
 
 ## Monday - Upper A
 
-- At home: Mobility primer, 6-10 minutes.
+- Session prep is non-loggable.
 - Walk to gym: General warm-up.
 - At gym: 1-2 ramp-up sets on Incline Dumbbell Press.
-- Main workout: Upper A.
+- Main training: Upper A.
 - Required later recovery.
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
-| At home | Upper A Mobility Primer | 1 | 6-10 min before walking to gym | easy | - | 2-4 |
 | A1 | Incline Dumbbell Press | 3 | 8-12 | 3-1-1 | after A2: 90-120 sec | 6-7 |
 | A2 | One-Arm Dumbbell Row | 3 | 8-12 per side | 2-1-2 | after A2: 90-120 sec; longer if breathing is not recovered | 6-7 |
 | B1 | Neutral-Grip Lat Pulldown | 2 | 8-12 | 2-1-2 | after B2: 2-3 min if needed; minimum 90 sec | 5-6 initially |
@@ -126,20 +132,19 @@ Mobility/flexibility:
 | C2 | Cable Curl | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Face Pull | 2 | 12-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 
-Upper A at-home primer: daily lower-leg and balance base; wall thoracic rotations, 6 reps per side; wall slides, 8 reps; doorway pec stretch, 20-30 sec per side; wall lat stretch, 20-30 sec per side; seated bracing breaths, 5 slow breaths.
+Upper A mobility-page prep content: daily lower-leg and balance base; wall thoracic rotations, 6 reps per side; wall slides, 8 reps; doorway pec stretch, 20-30 sec per side; wall lat stretch, 20-30 sec per side; seated bracing breaths, 5 slow breaths.
 
 ## Tuesday - Lower A
 
-- At home: Mobility primer, 6-10 minutes.
+- Session prep is non-loggable.
 - Walk to gym: General warm-up.
 - At gym: 1-2 ramp-up sets on Single-Leg Leg Press.
-- Main workout: Lower A.
+- Main training: Lower A.
 - Wall Sit once weekly only.
 - Required later recovery.
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
-| At home | Lower A Mobility Primer | 1 | 6-10 min before walking to gym | easy | - | 2-4 |
 | A1 | Single-Leg Leg Press | 3 | 8-12 per side | 3-1-1 | after each set: 120 sec | 6-7 |
 | B1 | Lunges / Walking Lunges | 2 | 6-10 steps per leg | controlled steps | 3-5 min | 5-6 |
 | C1 | Leg Extension | 2 | 10-15 | 2-1-2 | after C2: 120 sec | 6-7 |
@@ -150,7 +155,7 @@ Lunges / Walking Lunges beginner note: use bodyweight first, rest 3-5 minutes, s
 
 Wall Sit beginner note: back supported against the wall, feet flat, knees tracking over the middle toes, and use a high wall-sit angle rather than a deep position. Breathe steadily, stop before leg shaking becomes excessive, keep pain 0-2/10 maximum, and skip if knees, feet, or lower back are irritated that day. This is not conditioning and not a max hold.
 
-Lower A at-home primer: daily lower-leg and balance base; 90/90 hip switches, 6-8 slow reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; adductor rock-backs, 6-8 reps per side; bodyweight glute bridge, 8-10 controlled reps; seated bracing breaths, 5 slow breaths.
+Lower A mobility-page prep content: daily lower-leg and balance base; 90/90 hip switches, 6-8 slow reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; adductor rock-backs, 6-8 reps per side; bodyweight glute bridge, 8-10 controlled reps; seated bracing breaths, 5 slow breaths.
 
 ## Wednesday - Mobility + 10,000 steps
 
@@ -162,15 +167,14 @@ Lower A at-home primer: daily lower-leg and balance base; 90/90 hip switches, 6-
 
 ## Thursday - Upper B
 
-- At home: Mobility primer, 6-10 minutes.
+- Session prep is non-loggable.
 - Walk to gym: General warm-up.
 - At gym: 1-2 ramp-up sets on Incline Machine Press.
-- Main workout: Upper B.
+- Main training: Upper B.
 - Required later recovery.
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
-| At home | Upper B Mobility Primer | 1 | 6-10 min before walking to gym | easy | - | 2-4 |
 | A1 | Incline Machine Press | 3 | 8-12 | 3-1-1 | after A2: 90 sec | 6-7 |
 | A2 | Seated Cable Row | 3 | 8-12 | 2-1-2 | after A2: 90 sec | 6-7 |
 | B1 | Lat Pulldown Variation | 3 | 8-12 | 2-1-2 | after B2: 90 sec | 6-7 |
@@ -179,21 +183,20 @@ Lower A at-home primer: daily lower-leg and balance base; 90/90 hip switches, 6-
 | C2 | Rope Triceps Pressdown | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Cable Curl | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 
-Upper B at-home primer: daily lower-leg and balance base; wall thoracic rotations, 6 reps per side; wall angels or wall slides, 6-8 reps; scapular circles, 8 each direction; doorway pec stretch, 20-30 sec per side; wall lat stretch, 20-30 sec per side; seated bracing breaths, 5 slow breaths.
+Upper B mobility-page prep content: daily lower-leg and balance base; wall thoracic rotations, 6 reps per side; wall angels or wall slides, 6-8 reps; scapular circles, 8 each direction; doorway pec stretch, 20-30 sec per side; wall lat stretch, 20-30 sec per side; seated bracing breaths, 5 slow breaths.
 
 ## Friday - Lower B
 
-- At home: Mobility primer, 6-10 minutes.
+- Session prep is non-loggable.
 - Walk to gym: General warm-up.
 - At gym: 1-2 ramp-up sets on Leg Press.
-- Main workout: Lower B.
+- Main training: Lower B.
 - Required later recovery.
 - No wall sit.
 - No lunges.
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
-| At home | Lower B Mobility Primer | 1 | 6-10 min before walking to gym | easy | - | 2-4 |
 | A1 | Leg Press | 3 | 8-12 | 3-1-1 | straight sets: 120 sec after each set | 6-7 |
 | B1 | Lying Hamstring Curl | 3 | 10-15 | 2-1-2 | after B2: 120 sec | 6-7 |
 | B2 | Hyperextension / Back Extension Machine | 2 | 10-12 | 2-1-2 | after B2: 120 sec | 6-7 |
@@ -201,7 +204,7 @@ Upper B at-home primer: daily lower-leg and balance base; wall thoracic rotation
 | C2 | Hip Abduction Machine | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
 | C3 | Leg Press Calf Press / Seated Calf Raise | 2 | 12-20 | 2-1-2 | after C3: 120 sec | 6-7 |
 
-Lower B at-home primer: daily lower-leg and balance base; hip hinge patterning against wall, 8 reps; hamstring floss seated or standing, 8 reps per side; 90/90 hip switches, 6-8 reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; bodyweight glute bridge, 8-10 reps; seated bracing breaths, 5 slow breaths.
+Lower B mobility-page prep content: daily lower-leg and balance base; hip hinge patterning against wall, 8 reps; hamstring floss seated or standing, 8 reps per side; 90/90 hip switches, 6-8 reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; bodyweight glute bridge, 8-10 reps; seated bracing breaths, 5 slow breaths.
 
 ## Saturday - Recovery Mobility
 

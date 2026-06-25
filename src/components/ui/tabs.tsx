@@ -41,7 +41,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex min-h-10 flex-1 items-center justify-center rounded-full border border-transparent px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:text-foreground data-[state=active]:border-[color-mix(in_srgb,var(--ember)_32%,var(--border)_68%)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[rgba(255,246,236,0.12)_0_1px_0_inset] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)]",
+        "inline-flex min-h-10 flex-1 items-center justify-center rounded-full border border-transparent px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:text-foreground data-[state=active]:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[rgba(238,246,255,0.12)_0_1px_0_inset] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)]",
         className
       )}
       {...props}

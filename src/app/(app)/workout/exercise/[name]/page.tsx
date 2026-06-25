@@ -21,7 +21,7 @@ export async function generateMetadata({
   const exerciseName = decodeURIComponent(name);
   return {
     title: `${exerciseName} | Athanor`,
-    description: `Review workout history, set performance, and best efforts for ${exerciseName}.`,
+    description: `Review training history, set performance, and best efforts for ${exerciseName}.`,
   };
 }
 

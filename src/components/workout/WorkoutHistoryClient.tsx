@@ -52,7 +52,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow="Workout History"
+        eyebrow="Training History"
         title="Review performance over time"
         description="Use the calendar to scan training frequency, then drill into sessions, volume, duration, and PR activity."
       />
@@ -61,7 +61,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
         <EmptyState
           icon={History}
           title="No completed sessions yet"
-          description="Finish a workout and the calendar, exercise links, and PR summaries will appear here."
+          description="Finish a training session and the calendar, exercise links, and PR summaries will appear here."
         />
       ) : (
         <>
@@ -105,7 +105,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                       type="button"
                       aria-pressed={isSelected}
                       onClick={() => setSelectedDate(isSelected ? null : day.date)}
-                      className={`interactive-row flex h-[4.5rem] flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[color-mix(in_srgb,var(--ember)_45%,var(--primary)_55%)] bg-[color-mix(in_srgb,var(--ember)_12%,var(--cream-paper)_88%)]" : "border-border bg-[color-mix(in_srgb,var(--mist)_64%,var(--bone)_36%)]"}`}
+                      className={`interactive-row flex h-[4.5rem] flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[color-mix(in_srgb,var(--electric-blue)_45%,var(--primary)_55%)] bg-[color-mix(in_srgb,var(--electric-blue)_10%,var(--cream-paper)_90%)]" : "border-border bg-[color-mix(in_srgb,var(--mist)_64%,var(--bone)_36%)]"}`}
                     >
                       <span className="text-sm font-semibold text-foreground data-number">{day.day}</span>
                       <div className="mt-auto flex flex-wrap gap-1">

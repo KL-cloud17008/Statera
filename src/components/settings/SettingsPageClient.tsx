@@ -469,7 +469,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               <Field label="Bodyweight Unit" htmlFor="bodyweightUnit">
                 <Input id="bodyweightUnit" value={`Pounds (${BODYWEIGHT_UNIT})`} readOnly className="h-12" />
               </Field>
-              <Field label="Workout Load Unit" htmlFor="workoutLoadUnit">
+              <Field label="Training Load Unit" htmlFor="workoutLoadUnit">
                 <Input id="workoutLoadUnit" value={`Kilograms (${WORKOUT_LOAD_UNIT})`} readOnly className="h-12" />
               </Field>
               <Field label="Distance Unit" htmlFor="distanceUnit">
@@ -548,7 +548,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </div>
 
           <div className="warm-row rounded-[var(--radius-card)] border-l-2 border-l-[color-mix(in_srgb,var(--ember)_52%,var(--border)_48%)] p-4 text-sm text-muted-foreground">
-            JSON backups include tracker data plus local app preferences. CSV exports produce separate weight, steps, and workout files for spreadsheet use.
+            JSON backups include tracker data plus local app preferences. CSV exports produce separate weight, steps, and training session files for spreadsheet use.
           </div>
         </CardContent>
       </Card>
@@ -605,7 +605,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
                 <ImportCount label="Weight" value={pendingImport.preview.counts.weightEntries} />
                 <ImportCount label="Steps" value={pendingImport.preview.counts.dailyLogs} />
-                <ImportCount label="Workouts" value={pendingImport.preview.counts.workoutSessions} />
+                <ImportCount label="Training sessions" value={pendingImport.preview.counts.workoutSessions} />
                 <ImportCount label="Mobility" value={pendingImport.preview.counts.mobilityLogs} />
                 <ImportCount label="Nutrition" value={pendingImport.preview.counts.nutritionDays} />
                 <ImportCount label="Saved foods" value={pendingImport.preview.counts.savedFoods} />
@@ -614,7 +614,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               <div className="status-note status-note-error px-4 py-3 text-sm leading-relaxed">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                  <p>This import replaces steps, weight entries, workouts, mobility logs, nutrition records, saved foods, saved meals, and progress photos.</p>
+                  <p>This import replaces steps, weight entries, training sessions, mobility logs, nutrition records, saved foods, saved meals, and progress photos.</p>
                 </div>
               </div>
 
@@ -646,7 +646,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           <DialogHeader>
             <DialogTitle>Clear all data?</DialogTitle>
             <DialogDescription>
-              This deletes steps, weight entries, workouts, mobility logs, nutrition records, and saved items. Your account stays intact.
+              This deletes steps, weight entries, training sessions, mobility logs, nutrition records, and saved items. Your account stays intact.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

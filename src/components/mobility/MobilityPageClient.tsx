@@ -298,9 +298,9 @@ function RecoveryModeControl({
               aria-pressed={isActive}
               onClick={() => onChange(option.value)}
               className={cn(
-                "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--ember)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none",
+                "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-[rgba(255,246,236,0.12)_0_1px_0_inset]"
+                  ? "bg-primary text-primary-foreground shadow-[rgba(238,246,255,0.12)_0_1px_0_inset]"
                   : "text-muted-foreground hover:bg-[color-mix(in_srgb,var(--cream-paper)_72%,transparent)] hover:text-foreground"
               )}
             >

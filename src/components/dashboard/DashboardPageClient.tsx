@@ -119,8 +119,8 @@ export function DashboardPageClient({
               {workoutSummary.weeklySessions} lift sessions logged this week.
             </p>
             <div className="copper-rule mt-5" />
-            <Link href="/workout" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-foreground transition-colors hover:text-[#e6a07d]">
-              Open workout
+            <Link href="/workout" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-foreground transition-colors hover:text-[#9fb7ff]">
+              Open training
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -290,7 +290,7 @@ export function DashboardPageClient({
           ) : (
             <div className="md:col-span-2">
               <p className="text-sm leading-relaxed text-muted-foreground">
-                No completed workouts yet. Start with the programmed day, then let history build from there.
+                No completed training sessions yet. Start with the programmed day, then let history build from there.
               </p>
             </div>
           )}
@@ -394,7 +394,7 @@ function buildDecision({
 
   if (!mobilityDone) {
     return {
-      title: isLiftDay ? "Complete the at-home mobility primer." : "Log recovery mobility.",
+      title: isLiftDay ? "Complete the expected mobility prep." : "Log recovery mobility.",
       description: "The day is missing its expected mobility check-in. Keep it short, easy, and specific to the program.",
       href: "/mobility",
       signals,

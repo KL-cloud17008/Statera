@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { startWorkoutSession } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
 // data shape only; do not alter workout payloads
@@ -39,14 +40,14 @@ export function WorkoutDayPreview({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const primers = plan.exercises.filter((exercise) => exercise.exerciseType === "WARMUP");
+  const loggableExercises = plan.exercises.filter(isLoggableTrainingExercise);
   const workingExercises = plan.exercises.filter(
-    (exercise) => exercise.exerciseType === "WORKING"
+    (exercise) => isLoggableTrainingExercise(exercise) && exercise.exerciseType === "WORKING"
   );
   const accessoryExercises = plan.exercises.filter(
-    (exercise) => exercise.exerciseType === "ACCESSORY"
+    (exercise) => isLoggableTrainingExercise(exercise) && exercise.exerciseType === "ACCESSORY"
   );
-  const totalWorkingSets = workingExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+  const totalLoggableSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
   const blockOrder = ["A", "B", "C"] as const;
 
   function handleStart() {
@@ -57,7 +58,7 @@ export function WorkoutDayPreview({
         return;
       }
 
-      toast.success(result.warning ?? "Workout started");
+      toast.success(result.warning ?? "Training session started");
       router.refresh();
     });
   }
@@ -70,9 +71,9 @@ export function WorkoutDayPreview({
             <p className="eyebrow">Today&apos;s programmed work</p>
             <h2 className="mt-3 max-w-3xl">{plan.sessionName}</h2>
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Run the session as a sequence: at-home mobility primer, walk to the gym as the
-              general warm-up, easy ramp-up sets on the first programmed lift or machine, then paired circuit blocks.
-              Walking home is the low-intensity recovery walk; do not add machine cardio. Required later recovery can happen later in the day and is tracked separately.
+              Run the session as a tight ledger: walk to the gym as the general warm-up,
+              take easy ramp-up sets on the first programmed lift or machine, then move through the circuit blocks.
+              Walking home is the low-intensity recovery walk; required later recovery is tracked separately.
             </p>
           </div>
 
@@ -83,11 +84,11 @@ export function WorkoutDayPreview({
             </div>
             <div>
               <p className="eyebrow text-[10px]">Exercises</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{workingExercises.length}</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{loggableExercises.length}</p>
             </div>
             <div>
               <p className="eyebrow text-[10px]">Sets</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{totalWorkingSets}</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{totalLoggableSets}</p>
             </div>
           </div>
         </div>
@@ -95,7 +96,6 @@ export function WorkoutDayPreview({
 
       <div className="command-panel grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-          <ProtocolMeta label="At home" value="Mobility primer" note={primers[0]?.reps ?? "8-12 min before leaving"} />
           <ProtocolMeta label="Walk to gym" value="General warm-up" note="Keep breathing conversational." />
           <ProtocolMeta label="At gym" value="Ramp-up sets" note="First Block A lift or machine, RPE 3-5." />
           <ProtocolMeta label="Progress" value="Double progression" note="Add load only after clean top-range sets at target RPE." />
@@ -103,33 +103,13 @@ export function WorkoutDayPreview({
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 
-        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#f7efe3] text-primary hover:bg-white">
+        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#edf7ff] text-[#151119] hover:bg-white">
           {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
           Start Session
         </Button>
       </div>
 
-      {primers.length > 0 ? (
-        <div>
-          <p className="eyebrow">Workout day sequence</p>
-          <div className="mt-4 divide-y divide-border border-y border-border">
-            {primers.map((exercise) => (
-              <div key={exercise.id} className="interactive-row grid gap-4 px-2 py-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,auto)] md:items-start">
-                <div>
-                  <p className="font-medium text-foreground">{exercise.exerciseName}</p>
-                  {exercise.cues ? (
-                    <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p>
-                  ) : null}
-                </div>
-                <p className="text-sm text-muted-foreground md:text-right">
-                  {exercise.reps}
-                  {exercise.restSeconds ? `, rest ${exercise.restSeconds}s` : ""}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
+      <SessionPrepStrip />
 
       <div className="protocol-grid">
         {blockOrder.map((block) => {
@@ -199,6 +179,27 @@ export function WorkoutDayPreview({
         </div>
       ) : null}
     </section>
+  );
+}
+
+function SessionPrepStrip() {
+  return (
+    <div className="session-prep-strip">
+      <div>
+        <p className="eyebrow">Session prep</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Non-loggable arrival protocol. Start the ledger with the first programmed exercise.
+        </p>
+      </div>
+      <div className="grid gap-3 md:grid-cols-4">
+        {SESSION_PREP_ITEMS.map((item) => (
+          <div key={item.label} className="border-t border-border/70 pt-3">
+            <p className="text-sm font-semibold text-foreground">{item.label}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

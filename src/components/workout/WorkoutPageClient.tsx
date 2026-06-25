@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ClipboardList, History } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
+import { Button } from "@/components/ui/button";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
 import { CustomWorkoutBuilder } from "./CustomWorkoutBuilder";
@@ -64,32 +65,36 @@ export function WorkoutPageClient({
   return (
     <div className="page-shell">
       <SectionHeader
-        eyebrow={activeSession ? "Session in progress" : "Workout"}
+        eyebrow={activeSession ? "Session in progress" : "Training Ledger"}
         title={
           activeSession
             ? activeSession.sessionName
             : todayPlan
-              ? "Train with more focus, less interface."
+              ? "Training that reads like a private command ledger."
               : "Build the session you actually need."
         }
         description={
           activeSession
-            ? "Your session is already live. The page shifts into a logging ledger so previous numbers and rest timing stay close without turning into a wall of cards."
+            ? "Your session is live. The page shifts into a logging ledger so previous numbers, set rows, and rest timing stay close without becoming a wall of cards."
             : todayPlan
-              ? "Today's programmed work is the primary sequence. Custom work stays available as a quieter secondary module below the protocol."
+              ? "Today's programmed work is the primary sequence. Session prep stays compact and non-loggable; the first logged row is real training work."
               : "No scheduled day is in the way, so the builder and saved templates take over the page."
         }
         action={
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <WorkoutPlanResetButton />
-            <Link href="/workout/history" className="text-link inline-flex items-center gap-2">
-              History
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/workout/plan" className="text-link inline-flex items-center gap-2">
-              Full plan
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <Button asChild variant="secondary">
+              <Link href="/workout/history">
+                <History className="h-4 w-4" />
+                History
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/workout/plan">
+                <ClipboardList className="h-4 w-4" />
+                Full plan
+              </Link>
+            </Button>
           </div>
         }
       />

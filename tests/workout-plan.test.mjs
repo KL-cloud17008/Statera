@@ -10,9 +10,18 @@ const mobilitySource = readFileSync("src/lib/mobility.ts", "utf8");
 const mobilityPageSource = readFileSync("src/components/mobility/MobilityPageClient.tsx", "utf8");
 const workoutDayPreviewSource = readFileSync("src/components/workout/WorkoutDayPreview.tsx", "utf8");
 const workoutPlanPageSource = readFileSync("src/app/(app)/workout/plan/page.tsx", "utf8");
+const workoutPageSource = readFileSync("src/app/(app)/workout/page.tsx", "utf8");
+const workoutPageClientSource = readFileSync("src/components/workout/WorkoutPageClient.tsx", "utf8");
+const sessionLoggerSource = readFileSync("src/components/workout/SessionLogger.tsx", "utf8");
+const exerciseCardSource = readFileSync("src/components/workout/ExerciseCard.tsx", "utf8");
+const setInputSource = readFileSync("src/components/workout/SetInput.tsx", "utf8");
+const workoutActionsSource = readFileSync("src/actions/workout.ts", "utf8");
+const trainingSessionSource = readFileSync("src/lib/training-session.ts", "utf8");
+const flexibilityBalancePageSource = readFileSync("src/app/(app)/flexibility-balance/page.tsx", "utf8");
 const navItemsSource = readFileSync("src/components/layout/nav-items.ts", "utf8");
 const desktopSidebarSource = readFileSync("src/components/layout/DesktopSidebar.tsx", "utf8");
 const mobileNavSource = readFileSync("src/components/layout/MobileNav.tsx", "utf8");
+const mobileHeaderSource = readFileSync("src/components/layout/MobileHeader.tsx", "utf8");
 const dashboardSource = readFileSync("src/components/dashboard/DashboardPageClient.tsx", "utf8");
 const dashboardPageSource = readFileSync("src/app/(app)/page.tsx", "utf8");
 const exerciseLibrarySource = readFileSync("src/lib/exercise-library.ts", "utf8");
@@ -26,6 +35,9 @@ const nutritionRouteSources = [
 const settingsSource = readFileSync("src/components/settings/SettingsPageClient.tsx", "utf8");
 const trainingPlanSource = readFileSync("training_plan.md", "utf8");
 const weightChartSource = readFileSync("src/components/weight/WeightChart.tsx", "utf8");
+const designTokensSource = readFileSync("src/app/design-tokens.css", "utf8");
+const globalsSource = readFileSync("src/app/globals.css", "utf8");
+const inputSource = readFileSync("src/components/ui/input.tsx", "utf8");
 const require = createRequire(import.meta.url);
 const ts = require("typescript");
 const moduleCache = new Map();
@@ -111,6 +123,28 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
   assert.match(planSource, /optional 2-round mode/i);
   assert.match(planSource, /RPE 6-7/);
   assert.match(planSource, /2-4 reps in reserve/);
+});
+
+test("primary navigation uses the updated training order and labels", () => {
+  const navLabels = Array.from(navItemsSource.matchAll(/label: "([^"]+)"/g), (match) => match[1]);
+  assert.deepEqual(navLabels, [
+    "Dashboard",
+    "Mobility",
+    "Flexibility & Balance",
+    "Training",
+    "Steps",
+    "Weight",
+    "Settings",
+  ]);
+  assert.doesNotMatch(navItemsSource, /label: "Workout"/);
+  assert.match(navItemsSource, /label: "Training"/);
+  assert.match(navItemsSource, /Flexibility & Balance/);
+  assert.doesNotMatch(navItemsSource, /Flexbility/);
+  assert.match(navItemsSource, /href: "\/workout"/);
+  assert.match(navItemsSource, /href: "\/flexibility-balance"/);
+  assert.match(desktopSidebarSource, /NAV_ITEMS\.map/);
+  assert.match(mobileNavSource, /NAV_ITEMS\.map/);
+  assert.match(mobileHeaderSource, /NAV_ITEMS\.find/);
 });
 
 test("nutrition page access is removed from primary and mobile navigation", () => {
@@ -350,7 +384,7 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   );
 });
 
-test("canonical workout plan replaces cardio warm-up prescriptions with at-home primers", () => {
+test("canonical workout plan uses non-loggable session prep instead of cardio warm-ups", () => {
   const removedCopy = [
     ["Ramp-Up: ", "Tread", "mill Walk"].join(""),
     ["Ramp-Up: Recumbent ", "Bike"].join(""),
@@ -365,19 +399,14 @@ test("canonical workout plan replaces cardio warm-up prescriptions with at-home 
     assert.doesNotMatch(planSource, new RegExp(escapeRegExp(oldPhrase), "i"), `${oldPhrase} should not remain`);
   }
 
-  assert.match(planSource, /Walking to the gym is the general warm-up/);
-  assert.match(planSource, /Do the mobility primer at home before leaving/);
+  assert.match(planSource, /walking to the gym is the general warm-up/i);
+  assert.match(planSource, /Session prep is non-loggable/);
   assert.match(planSource, /1-2 easy ramp-up sets/);
   assert.match(planSource, /Walking to and from the gym is the only planned cardio/);
-
-  for (const primer of [
-    "At home - Upper A Mobility Primer",
-    "At home - Lower A Mobility Primer",
-    "At home - Upper B Mobility Primer",
-    "At home - Lower B Mobility Primer",
-  ]) {
-    assert.match(planSource, new RegExp(escapeRegExp(primer)), `${primer} should be in the plan`);
-  }
+  assert.match(trainingSessionSource, /SESSION_PREP_ITEMS/);
+  assert.match(trainingSessionSource, /Walk to gym/);
+  assert.match(trainingSessionSource, /Required later recovery remains tracked separately/);
+  assert.doesNotMatch(planSource, /At home - .*Mobility Primer/);
 });
 
 test("program content does not prescribe excluded cardio or conditioning", () => {
@@ -406,10 +435,14 @@ test("program content does not prescribe excluded cardio or conditioning", () =>
   }
 });
 
-test("workout data remains circuit based after the primer row", () => {
+test("workout data remains circuit based without loggable primer rows", () => {
   for (const day of workoutPlan.DEFAULT_WORKOUT_PLAN) {
     const primers = day.exercises.filter((exercise) => exercise.exerciseType === "WARMUP");
-    assert.equal(primers.length, 1, `${day.sessionName} should have one at-home primer`);
+    assert.equal(primers.length, 0, `${day.sessionName} should not include warmup primer exercises`);
+    assert.ok(
+      !day.exercises.some((exercise) => /At home|Mobility Primer/i.test(exercise.exerciseName)),
+      `${day.sessionName} should not include at-home primer exercise names`
+    );
 
     const workingExercises = day.exercises.filter((exercise) => exercise.exerciseType === "WORKING");
     assert.ok(workingExercises.length >= 4, `${day.sessionName} should keep working sets`);
@@ -419,6 +452,43 @@ test("workout data remains circuit based after the primer row", () => {
       `${day.sessionName} should keep A/B/C circuit blocks`
     );
   }
+});
+
+test("training sessions keep session prep non-loggable", () => {
+  const activeWorkoutSources = [
+    workoutPageSource,
+    workoutDayPreviewSource,
+    workoutPageClientSource,
+    sessionLoggerSource,
+    exerciseCardSource,
+    workoutActionsSource,
+  ].join("\n");
+
+  assert.doesNotMatch(planSource, /At home - .*Mobility Primer/);
+  assert.doesNotMatch(workoutDayPreviewSource, /Workout day sequence/);
+  assert.doesNotMatch(sessionLoggerSource, /At-home primer/);
+  assert.doesNotMatch(exerciseCardSource, /At-home primer/);
+  assert.match(activeWorkoutSources, /isLoggableTrainingExercise/);
+  assert.match(workoutActionsSource, /isAtHomePrimerExerciseName/);
+  assert.match(workoutDayPreviewSource, /SessionPrepStrip/);
+  assert.match(sessionLoggerSource, /SessionPrepStrip/);
+  assert.match(trainingSessionSource, /SESSION_PREP_ITEMS/);
+  assert.match(sessionLoggerSource, /no Weight\/Reps\/RPE rows are created here/);
+  assert.match(setInputSource, /placeholder=.*Weight/);
+  assert.match(setInputSource, /placeholder="Reps"/);
+  assert.match(setInputSource, /placeholder="RPE"/);
+});
+
+test("flexibility and balance route surfaces existing mobility content", () => {
+  assert.match(navItemsSource, /Flexibility & Balance/);
+  assert.match(flexibilityBalancePageSource, /Daily minimum block/);
+  assert.match(flexibilityBalancePageSource, /Balance drills/);
+  assert.match(flexibilityBalancePageSource, /Recovery-day block/);
+  assert.match(flexibilityBalancePageSource, /Foot\/ankle resilience/);
+  assert.match(flexibilityBalancePageSource, /getAllMobilityPrograms/);
+  assert.match(flexibilityBalancePageSource, /getRecoverySessionBlocks/);
+  assert.match(flexibilityBalancePageSource, /getRequiredLaterRecoveryBlocks/);
+  assert.doesNotMatch(flexibilityBalancePageSource, /placeholder|Coming soon|TODO/i);
 });
 
 test("mobility program has adaptive content for all 7 days", () => {
@@ -592,6 +662,19 @@ test("settings do not expose dark or system theme controls", () => {
   assert.doesNotMatch(settingsSource, /<SelectItem[^>]+value=["']system["']/);
   assert.doesNotMatch(settingsSource, />\s*Dark\s*</);
   assert.doesNotMatch(settingsSource, />\s*System\s*</);
+});
+
+test("visual system uses cool paper inputs and reduced-motion-safe motion", () => {
+  assert.match(designTokensSource, /--input-fill: #ffffff/);
+  assert.match(designTokensSource, /--electric-blue:/);
+  assert.match(designTokensSource, /--atmosphere-background:/);
+  assert.doesNotMatch(designTokensSource, /#eadbc8|#efe4d4|#f3eadc/i);
+  assert.match(inputSource, /bg-input/);
+  assert.doesNotMatch(inputSource, /var\(--cream-paper\)_16/);
+  assert.match(globalsSource, /@media \(prefers-reduced-motion: reduce\)/);
+  assert.match(globalsSource, /@media \(prefers-reduced-motion: no-preference\)/);
+  assert.match(globalsSource, /ledger-enter/);
+  assert.match(globalsSource, /session-prep-strip/);
 });
 
 test("bodyweight conversion helpers convert pounds to kilograms", () => {

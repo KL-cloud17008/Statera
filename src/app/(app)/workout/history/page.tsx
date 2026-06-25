@@ -7,8 +7,8 @@ import { calculateSessionVolume, calculateSetVolume, getSessionLabel } from "@/l
 import { workoutLoadToKg } from "@/lib/units";
 
 export const metadata: Metadata = {
-  title: "Workout History | Athanor",
-  description: "Review your completed sessions with a workout calendar, volume totals, and PR counts.",
+  title: "Training History | Athanor",
+  description: "Review your completed sessions with a training calendar, volume totals, and PR counts.",
 };
 
 export default async function WorkoutHistoryPage() {
