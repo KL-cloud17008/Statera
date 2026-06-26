@@ -67,7 +67,6 @@ const requiredExercises = [
   "Leg Extension",
   "Lying Leg Curl",
   "Leg Press",
-  "Leg Press Calf Press / Seated Calf Raise",
   "Glute Kickback Machine",
   "Hyperextension / Back Extension Machine",
   "Hip Abduction Machine",
@@ -426,6 +425,14 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   assert.equal(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).restSeconds, 300);
   assert.match(day2.exercises.find((item) => item.exerciseName.includes("Lunges / Walking Lunges")).cues, /not conditioning/i);
 
+  const day2LegExtension = day2.exercises.find((item) => item.exerciseName === "C1 Leg Extension");
+  assert.ok(day2LegExtension, "Tuesday / Lower A should keep its existing Leg Extension");
+  assert.equal(day2LegExtension.sets, 2);
+  assert.equal(day2LegExtension.reps, "10-15");
+  assert.equal(day2LegExtension.targetRPE, "6-7");
+  assert.equal(day2LegExtension.restSeconds, 120);
+  assert.equal(day2LegExtension.supersetGroup, "C");
+
   const wallSitOccurrences = workoutPlan.DEFAULT_WORKOUT_PLAN
     .flatMap((day) => day.exercises.map((exercise) => ({ ...exercise, dayOfWeek: day.dayOfWeek })))
     .filter((exercise) => exercise.exerciseName.includes("Wall Sit"));
@@ -445,18 +452,75 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
     day5.exercises.find((item) => item.exerciseType === "WORKING")?.exerciseName,
     "A1 Leg Press"
   );
-  assert.match(day5.exercises.find((item) => item.exerciseName.includes("Leg Press"))?.cues ?? "", /straight sets/i);
-  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Hyperextension / Back Extension Machine")));
-  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Glute Kickback Machine")));
-  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Hip Abduction Machine")));
-  assert.ok(day5.exercises.some((item) => item.exerciseName.includes("Leg Press Calf Press / Seated Calf Raise")));
+  assert.deepEqual(Array.from(day5.exercises, (item) => item.exerciseName), [
+    "A1 Leg Press",
+    "B1 Lying Hamstring Curl",
+    "B2 Hyperextension / Back Extension Machine",
+    "C1 Glute Kickback Machine",
+    "C2 Hip Abduction Machine",
+    "C3 Leg Extension",
+  ]);
+  assert.match(day5.exercises.find((item) => item.exerciseName === "A1 Leg Press")?.cues ?? "", /straight sets/i);
 
-  for (const removedFromLowerB of ["Hip Adduction Machine", "Walking Lunges", "Hack Squat", "Squat Machine"]) {
+  const day5LegExtension = day5.exercises.find((item) => item.exerciseName === "C3 Leg Extension");
+  assert.ok(day5LegExtension, "Friday / Day 5 / Lower B should include C3 Leg Extension");
+  assert.equal(day5LegExtension.supersetGroup, "C");
+  assert.equal(day5LegExtension.sets, 2);
+  assert.ok(day5LegExtension.sets >= 1 && day5LegExtension.sets <= 2, "Lower B C3 Leg Extension should stay low-volume");
+  assert.equal(day5LegExtension.reps, "10-15");
+  assert.equal(day5LegExtension.targetRPE, "5-6");
+  assert.equal(day5LegExtension.restSeconds, 120);
+  assert.match(day5LegExtension.cues, /Low-dose knee-extension accessory work/i);
+  assert.match(day5LegExtension.cues, /without adding direct calf load on the final training day/i);
+  assert.match(day5LegExtension.cues, /Standard dose is 1-2 sets of 10-15 reps at RPE 5-6/i);
+  assert.match(day5LegExtension.cues, /Low-readiness dose is 1 set of 10-12 reps at RPE 5/i);
+  assert.match(day5LegExtension.cues, /skip if knees feel irritated or fatigue is high/i);
+  assert.match(day5LegExtension.cues, /walking already provides enough calf loading/i);
+
+  const day5TotalSets = day5.exercises.reduce((sum, item) => sum + item.sets, 0);
+  assert.equal(day5TotalSets, 13);
+  assert.ok(day5TotalSets >= 10 && day5TotalSets <= 13);
+  assert.notEqual(day5TotalSets, 15, "Lower B should not hard-default to 15 sets");
+  assert.match(trainingPlanSource, /Standard Lower B: 10-13 working sets/);
+  assert.match(trainingPlanSource, /Low-readiness Lower B: 8-10 working sets/);
+  assert.match(workoutPlanPageSource, /knee-support accessory work/);
+  assert.doesNotMatch(workoutPlanPageSource, /calf work/i);
+
+  const c3LegExtensionDays = Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN)
+    .filter((day) => day.exercises.some((item) => item.exerciseName === "C3 Leg Extension"))
+    .map((day) => day.dayOfWeek);
+  assert.deepEqual(c3LegExtensionDays, [5], "The C3 Leg Extension replacement should apply only to Friday / Day 5");
+
+  const lowerBText = day5.exercises
+    .map((item) => `${item.exerciseName} ${item.cues ?? ""}`)
+    .join("\n");
+  for (const removedFromLowerB of [
+    "Leg Press Calf Press",
+    "Seated Calf Raise",
+    "Standing Calf Raise",
+    "Donkey Calf Raise",
+    "Hip Adduction Machine",
+    "Walking Lunges",
+    "Barbell Squat",
+    "Hack Squat",
+    "Goblet Squat",
+    "Conventional Deadlift",
+    "Squat Machine",
+    "Treadmill",
+    "Bike",
+    "HIIT",
+    "Running",
+    "Stairmaster",
+    "Finisher Cardio",
+    "Failure Training",
+    "Max Holds",
+  ]) {
     assert.ok(
-      !day5.exercises.some((item) => item.exerciseName.includes(removedFromLowerB)),
+      !new RegExp(escapeRegExp(removedFromLowerB), "i").test(lowerBText),
       `Day 5 should not include ${removedFromLowerB}`
     );
   }
+  assert.doesNotMatch(lowerBText, /calf\s+(?:press|raise)|calf\s+raises/i);
   assert.ok(
     !day5.exercises.some((item) => item.exerciseName.includes("Wall Sit")),
     "Day 5 should not include Wall Sit"

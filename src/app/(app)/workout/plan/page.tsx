@@ -13,7 +13,7 @@ const WEEK_STRUCTURE = [
   { day: "Tuesday", title: "Lower A", protocol: "Strength Protocol", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
   { day: "Wednesday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", meta: "10,000 steps", note: "Recovery mobility, flexibility, supported balance, and Wednesday's 10,000-step target." },
   { day: "Thursday", title: "Upper B", protocol: "Strength Protocol", dayOfWeek: 4, note: "Back and shoulder emphasis." },
-  { day: "Friday", title: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5, note: "Machine posterior chain, hip stability, and calf work." },
+  { day: "Friday", title: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5, note: "Machine posterior chain, hip stability, and knee-support accessory work." },
   { day: "Saturday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", note: "12-20 minutes of recovery mobility, flexibility, and supported balance." },
   { day: "Sunday", title: "Complete rest", protocol: "Full Rest", note: "Complete rest. Gentle recovery mobility only if needed." },
 ] as const;

@@ -195,15 +195,20 @@ Upper B mobility-page prep content: daily lower-leg and balance base; wall thora
 - Required later recovery.
 - No wall sit.
 - No lunges.
+- No direct calf raises.
+- Standard Lower B: 10-13 working sets.
+- Low-readiness Lower B: 8-10 working sets.
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
 | A1 | Leg Press | 3 | 8-12 | 3-1-1 | straight sets: 120 sec after each set | 6-7 |
-| B1 | Lying Hamstring Curl | 3 | 10-15 | 2-1-2 | after B2: 120 sec | 6-7 |
+| B1 | Lying Hamstring Curl | 2 | 10-15 | 2-1-2 | after B2: 120 sec | 6-7 |
 | B2 | Hyperextension / Back Extension Machine | 2 | 10-12 | 2-1-2 | after B2: 120 sec | 6-7 |
-| C1 | Glute Kickback Machine | 3 | 8-12/side | 2-1-2 | after C3: 120 sec | 6-7 |
+| C1 | Glute Kickback Machine | 2 | 8-12/side | 2-1-2 | after C3: 120 sec | 6-7 |
 | C2 | Hip Abduction Machine | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
-| C3 | Leg Press Calf Press / Seated Calf Raise | 2 | 12-20 | 2-1-2 | after C3: 120 sec | 6-7 |
+| C3 | Leg Extension | 1-2 | 10-15 | 2-1-2 | after C3: 90-120 sec | 5-6 |
+
+C3 Leg Extension purpose: low-dose knee-extension accessory work to support quad strength, knee tracking, and lower-body resilience without adding direct calf load on the final training day. Standard dose: 1-2 sets, 10-15 reps, RPE 5-6. Low-readiness dose: 1 set, 10-12 reps, RPE 5; skip if knees feel irritated or if fatigue is high. Coaching cues: smooth reps, no knee snapping, pause briefly near the top without locking aggressively, lower slowly, keep hips heavy on the pad, use a controlled comfortable range, and stop 2-4 reps before failure. Joint-safety notes: keep pain 0-2/10, reduce load or range if the front of the knee feels irritated, do not chase a pump, do not turn this into conditioning, and skip if knee pain rises above 3/10. Programming note: Lower B already includes Leg Press, so Leg Extension should stay low-dose on this day. It is replacing calf work because direct calf training is currently unnecessary and poorly tolerated. Walking already provides enough calf loading for this phase.
 
 Lower B mobility-page prep content: daily lower-leg and balance base; hip hinge patterning against wall, 8 reps; hamstring floss seated or standing, 8 reps per side; 90/90 hip switches, 6-8 reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; bodyweight glute bridge, 8-10 reps; seated bracing breaths, 5 slow breaths.
 
