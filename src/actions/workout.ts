@@ -4,6 +4,15 @@ import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { DEFAULT_WORKOUT_PLAN_VERSION } from "@/lib/default-workout-plan";
+import {
+  getWorkoutPlanContentHash,
+  isCurrentWorkoutPlanContent,
+} from "@/lib/workout-plan-version";
+import {
+  getStaleOpenPlanSessionIds,
+  isCurrentPlanBackedWorkoutSession,
+} from "@/lib/workout-session-state";
 import {
   getWorkoutSessionLoadUnit,
   parseWorkoutSessionMeta,
@@ -25,6 +34,64 @@ type WorkoutMutationResult = {
   error?: string;
 };
 
+export type WorkoutPlanDaySessionStatus = {
+  planId: string;
+  dayOfWeek: number;
+  status: "start" | "resume" | "view";
+  sessionId?: string;
+};
+
+const WORKOUT_RESET_REVALIDATION_PATHS = [
+  "/",
+  "/workout",
+  "/workout/plan",
+  "/workout/history",
+  "/mobility",
+  "/flexibility-balance",
+  "/steps",
+] as const;
+
+function revalidateWorkoutResetPaths() {
+  for (const path of WORKOUT_RESET_REVALIDATION_PATHS) {
+    revalidatePath(path);
+  }
+}
+
+function revalidateWorkoutSessionPaths() {
+  revalidatePath("/");
+  revalidatePath("/workout");
+  revalidatePath("/workout/plan");
+  revalidatePath("/workout/history");
+}
+
+async function findOpenSessionsWithPlans(userId: string) {
+  return prisma.workoutSession.findMany({
+    where: {
+      userId,
+      completed: false,
+    },
+    include: {
+      workoutPlan: {
+        include: { exercises: { orderBy: { sortOrder: "asc" } } },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+async function deleteStaleOpenPlanSessions(userId: string) {
+  const openSessions = await findOpenSessionsWithPlans(userId);
+  const staleSessionIds = getStaleOpenPlanSessionIds(openSessions);
+
+  if (staleSessionIds.length > 0) {
+    await prisma.workoutSession.deleteMany({
+      where: { id: { in: staleSessionIds } },
+    });
+  }
+
+  return openSessions.filter((session) => !staleSessionIds.includes(session.id));
+}
+
 export async function getWorkoutPlans(userId: string) {
   await ensureDefaultWorkoutPlans(prisma, userId);
 
@@ -40,6 +107,81 @@ export async function getWorkoutPlans(userId: string) {
     ...plan,
     exercises: plan.exercises.filter(isLoggableTrainingExercise),
   }));
+}
+
+export async function getWorkoutPlanDayStatuses(
+  userId: string,
+  timezone?: string
+): Promise<WorkoutPlanDaySessionStatus[]> {
+  await ensureDefaultWorkoutPlans(prisma, userId);
+
+  const plans = await prisma.workoutPlan.findMany({
+    where: { userId, isActive: true },
+    include: {
+      exercises: { orderBy: { sortOrder: "asc" } },
+    },
+    orderBy: { dayOfWeek: "asc" },
+  });
+  const planIds = plans.map((plan) => plan.id);
+  if (planIds.length === 0) {
+    return [];
+  }
+
+  const currentTrainingDate = getTrainingDate(new Date(), timezone);
+  const startOfWeek = new Date(currentTrainingDate);
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const [openSessions, completedSessions] = await Promise.all([
+    prisma.workoutSession.findMany({
+      where: {
+        userId,
+        workoutPlanId: { in: planIds },
+        completed: false,
+      },
+      include: {
+        workoutPlan: {
+          include: { exercises: { orderBy: { sortOrder: "asc" } } },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.workoutSession.findMany({
+      where: {
+        userId,
+        workoutPlanId: { in: planIds },
+        completed: true,
+        trainingDate: { gte: startOfWeek },
+      },
+      orderBy: { trainingDate: "desc" },
+    }),
+  ]);
+
+  return plans.map((plan) => {
+    const openSession = openSessions.find(
+      (session) =>
+        session.workoutPlanId === plan.id &&
+        isCurrentPlanBackedWorkoutSession(session)
+    );
+    if (openSession) {
+      return {
+        planId: plan.id,
+        dayOfWeek: plan.dayOfWeek,
+        status: "resume" as const,
+        sessionId: openSession.id,
+      };
+    }
+
+    const completedSession = completedSessions.find(
+      (session) => session.workoutPlanId === plan.id
+    );
+    return {
+      planId: plan.id,
+      dayOfWeek: plan.dayOfWeek,
+      status: completedSession ? "view" as const : "start" as const,
+      sessionId: completedSession?.id,
+    };
+  });
 }
 
 export async function getTodaysPlan(userId: string, timezone?: string) {
@@ -64,6 +206,8 @@ export async function getTodaysPlan(userId: string, timezone?: string) {
 }
 
 async function getOpenSession(userId: string) {
+  await deleteStaleOpenPlanSessions(userId);
+
   const session = await prisma.workoutSession.findFirst({
     where: {
       userId,
@@ -96,12 +240,8 @@ export async function resetCurrentWorkoutPlan(): Promise<WorkoutMutationResult> 
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.workoutSession.updateMany({
+    await tx.workoutSession.deleteMany({
       where: { userId: user.id, completed: false },
-      data: {
-        completed: true,
-        endTime: new Date(),
-      },
     });
 
     await tx.workoutPlan.updateMany({
@@ -112,10 +252,7 @@ export async function resetCurrentWorkoutPlan(): Promise<WorkoutMutationResult> 
     await createDefaultWorkoutPlans(tx, user.id);
   });
 
-  revalidatePath("/workout");
-  revalidatePath("/workout/plan");
-  revalidatePath("/workout/history");
-  revalidatePath("/");
+  revalidateWorkoutResetPaths();
   return {};
 }
 
@@ -127,29 +264,27 @@ export async function startWorkoutSession(
     return { error: "Not authenticated" };
   }
 
-  const existingOpen = await getOpenSession(user.id);
-  if (existingOpen) {
-    return { sessionId: existingOpen.id, warning: "Resumed existing session" };
-  }
-
   const plan = await prisma.workoutPlan.findFirst({
-    where: { id: planId, userId: user.id },
+    where: { id: planId, userId: user.id, isActive: true },
+    include: {
+      exercises: { orderBy: { sortOrder: "asc" } },
+    },
   });
   if (!plan) {
     return { error: "Plan not found" };
   }
+  if (!isCurrentWorkoutPlanContent(plan)) {
+    return { error: "This saved plan is out of date. Start a new 4-day plan first." };
+  }
 
   const now = new Date();
   const trainingDate = getTrainingDate(now, user.timezone);
-
-  const existing = await prisma.workoutSession.findFirst({
-    where: {
-      userId: user.id,
-      workoutPlanId: planId,
-      trainingDate,
-      completed: false,
-    },
-  });
+  const openSessions = await deleteStaleOpenPlanSessions(user.id);
+  const existing = openSessions.find(
+    (session) =>
+      session.workoutPlanId === plan.id &&
+      isCurrentPlanBackedWorkoutSession(session)
+  );
 
   if (existing) {
     return { sessionId: existing.id, warning: "Resumed existing session" };
@@ -167,12 +302,16 @@ export async function startWorkoutSession(
         label: plan.sessionName,
         source: "plan",
         loadUnit: WORKOUT_LOAD_UNIT,
+        planTemplateVersion: DEFAULT_WORKOUT_PLAN_VERSION,
+        planContentHash: getWorkoutPlanContentHash(plan),
+        generatedAt: now.toISOString(),
+        dayOfWeek: plan.dayOfWeek,
+        workoutPlanId: plan.id,
       }),
     },
   });
 
-  revalidatePath("/workout");
-  revalidatePath("/");
+  revalidateWorkoutSessionPaths();
   return { sessionId: session.id };
 }
 
@@ -235,8 +374,7 @@ export async function startCustomWorkoutSession(
     },
   });
 
-  revalidatePath("/workout");
-  revalidatePath("/");
+  revalidateWorkoutSessionPaths();
   return { sessionId: session.id };
 }
 
@@ -374,9 +512,7 @@ export async function logSet(
     });
   }
 
-  revalidatePath("/workout");
-  revalidatePath("/workout/history");
-  revalidatePath("/");
+  revalidateWorkoutSessionPaths();
   return {};
 }
 
@@ -404,9 +540,7 @@ export async function completeSession(
     data: { completed: true, endTime: new Date() },
   });
 
-  revalidatePath("/workout");
-  revalidatePath("/workout/history");
-  revalidatePath("/");
+  revalidateWorkoutSessionPaths();
   return {};
 }
 
@@ -427,9 +561,7 @@ export async function discardWorkoutSession(
 
   await prisma.workoutSession.delete({ where: { id: sessionId } });
 
-  revalidatePath("/workout");
-  revalidatePath("/workout/history");
-  revalidatePath("/");
+  revalidateWorkoutSessionPaths();
   return {};
 }
 

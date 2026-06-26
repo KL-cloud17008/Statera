@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
+import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,13 @@ type WorkoutSummary = {
 type MobilitySummary = {
   completedTypes: string[];
   footFlareLogged: boolean;
+};
+
+type WorkoutDayStatus = {
+  planId: string;
+  dayOfWeek: number;
+  status: "start" | "resume" | "view";
+  sessionId?: string;
 };
 
 const WEEKLY_RHYTHM = [
@@ -65,6 +73,7 @@ export function DashboardPageClient({
   todaySteps,
   weightStats,
   workoutSummary,
+  workoutDayStatuses,
   mobilitySummary,
   latestWeightDate,
   timezone,
@@ -74,6 +83,7 @@ export function DashboardPageClient({
   todaySteps: number;
   weightStats: WeightStats;
   workoutSummary: WorkoutSummary;
+  workoutDayStatuses: WorkoutDayStatus[];
   mobilitySummary: MobilitySummary;
   latestWeightDate: string | null;
   timezone?: string;
@@ -102,6 +112,9 @@ export function DashboardPageClient({
     latestWeightDate,
     trainingDayOfWeek,
   });
+  const workoutStatusByDay = new Map(
+    workoutDayStatuses.map((status) => [status.dayOfWeek, status])
+  );
 
   const TrendIcon =
     weightStats.trend === "down"
@@ -221,7 +234,7 @@ export function DashboardPageClient({
               <div
                 key={item.day}
                 className={cn(
-                  "interactive-row min-h-40 rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.1)] bg-white/42 p-4",
+                  "interactive-row flex min-h-48 flex-col rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.1)] bg-white/42 p-4",
                   isToday && "border-[rgba(79,124,255,0.36)] bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(224,239,255,0.78))] shadow-[var(--shadow-glow)]"
                 )}
               >
@@ -238,6 +251,16 @@ export function DashboardPageClient({
                 <p className="mt-5 inline-flex rounded-full border border-[rgba(7,17,31,0.11)] bg-white/54 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                   {item.protocol}
                 </p>
+                {item.protocol === "Strength Protocol" ? (
+                  <div className="mt-auto pt-5">
+                    <WorkoutSessionActionButton
+                      planId={workoutStatusByDay.get(item.dayOfWeek)?.planId}
+                      status={workoutStatusByDay.get(item.dayOfWeek)?.status ?? "start"}
+                      prominent={isToday}
+                      fullWidth
+                    />
+                  </div>
+                ) : null}
               </div>
             );
           })}

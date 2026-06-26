@@ -1,7 +1,7 @@
 ﻿import type { Metadata } from "next";
 import { getStepsEntries, getTodaySteps } from "@/actions/steps";
 import { getWeightEntries } from "@/actions/weight";
-import { getRecentSessions } from "@/actions/workout";
+import { getRecentSessions, getWorkoutPlanDayStatuses } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   const trainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
 
-  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs] = await Promise.all([
+  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs, workoutDayStatuses] = await Promise.all([
     getStepsEntries(user.id, 180, user.timezone),
     getTodaySteps(user.id, user.timezone),
     getWeightEntries(user.id),
@@ -33,6 +33,7 @@ export default async function DashboardPage() {
       where: { userId: user.id, date: trainingDate },
       orderBy: { createdAt: "desc" },
     }),
+    getWorkoutPlanDayStatuses(user.id, user.timezone),
   ]);
 
   const serializedSteps = stepsEntries.map((entry) => ({
@@ -92,6 +93,7 @@ export default async function DashboardPage() {
         hasCompletedWorkoutToday,
         lastWorkout,
       }}
+      workoutDayStatuses={workoutDayStatuses}
       mobilitySummary={{
         completedTypes: todayMobilityLogs.map((log) => log.type),
         footFlareLogged: todayMobilityLogs.some((log) => {

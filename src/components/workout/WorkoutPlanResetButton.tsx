@@ -13,7 +13,7 @@ export function WorkoutPlanResetButton() {
 
   function handleReset() {
     const confirmed = window.confirm(
-      "Start a fresh copy of the current 4-day training plan? Any open session will be closed."
+      "Start a fresh copy of the current 4-day training plan? Any open session snapshot will be cleared."
     );
 
     if (!confirmed) {
@@ -44,10 +44,7 @@ export function WorkoutPlanResetButton() {
       {isPending ? (
         "Starting plan..."
       ) : (
-        <>
-          <span className="sm:hidden">Start new plan</span>
-          <span className="hidden sm:inline">Start new 4-day plan</span>
-        </>
+        "Start new 4-day plan"
       )}
     </Button>
   );

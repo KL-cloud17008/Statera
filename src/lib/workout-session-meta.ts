@@ -6,6 +6,11 @@ export type WorkoutSessionMeta = {
   source: "plan" | "template" | "free";
   exercises?: WorkoutTemplateExercise[];
   loadUnit?: WorkoutLoadUnit;
+  planTemplateVersion?: string;
+  planContentHash?: string;
+  generatedAt?: string;
+  dayOfWeek?: number;
+  workoutPlanId?: string;
 };
 
 export function serializeWorkoutSessionMeta(meta: WorkoutSessionMeta) {
@@ -26,6 +31,13 @@ export function parseWorkoutSessionMeta(notes: string | null | undefined): Worko
     return {
       ...parsed,
       loadUnit: parsed.loadUnit === WORKOUT_LOAD_UNIT ? WORKOUT_LOAD_UNIT : parsed.loadUnit === "lb" ? "lb" : undefined,
+      planTemplateVersion:
+        typeof parsed.planTemplateVersion === "string" ? parsed.planTemplateVersion : undefined,
+      planContentHash:
+        typeof parsed.planContentHash === "string" ? parsed.planContentHash : undefined,
+      generatedAt: typeof parsed.generatedAt === "string" ? parsed.generatedAt : undefined,
+      dayOfWeek: typeof parsed.dayOfWeek === "number" ? parsed.dayOfWeek : undefined,
+      workoutPlanId: typeof parsed.workoutPlanId === "string" ? parsed.workoutPlanId : undefined,
     };
   } catch {
     return null;

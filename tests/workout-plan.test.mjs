@@ -9,6 +9,7 @@ const planSource = readFileSync("src/lib/default-workout-plan.ts", "utf8");
 const mobilitySource = readFileSync("src/lib/mobility.ts", "utf8");
 const mobilityPageSource = readFileSync("src/components/mobility/MobilityPageClient.tsx", "utf8");
 const workoutDayPreviewSource = readFileSync("src/components/workout/WorkoutDayPreview.tsx", "utf8");
+const workoutSessionActionButtonSource = readFileSync("src/components/workout/WorkoutSessionActionButton.tsx", "utf8");
 const workoutPlanPageSource = readFileSync("src/app/(app)/workout/plan/page.tsx", "utf8");
 const workoutPageSource = readFileSync("src/app/(app)/workout/page.tsx", "utf8");
 const workoutPageClientSource = readFileSync("src/components/workout/WorkoutPageClient.tsx", "utf8");
@@ -16,6 +17,8 @@ const sessionLoggerSource = readFileSync("src/components/workout/SessionLogger.t
 const exerciseCardSource = readFileSync("src/components/workout/ExerciseCard.tsx", "utf8");
 const setInputSource = readFileSync("src/components/workout/SetInput.tsx", "utf8");
 const workoutActionsSource = readFileSync("src/actions/workout.ts", "utf8");
+const workoutPlanVersionSource = readFileSync("src/lib/workout-plan-version.ts", "utf8");
+const workoutSessionStateSource = readFileSync("src/lib/workout-session-state.ts", "utf8");
 const trainingSessionSource = readFileSync("src/lib/training-session.ts", "utf8");
 const flexibilityBalancePageSource = readFileSync("src/app/(app)/flexibility-balance/page.tsx", "utf8");
 const navItemsSource = readFileSync("src/components/layout/nav-items.ts", "utf8");
@@ -56,6 +59,7 @@ const nutrition = loadTypescriptModule("src/lib/nutrition.ts");
 const steps = loadTypescriptModule("src/lib/steps.ts");
 const weight = loadTypescriptModule("src/lib/weight.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
+const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts");
 
 const requiredExercises = [
   "Incline Dumbbell Press",
@@ -529,6 +533,103 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
     !day5.exercises.some((item) => /squat|squatting/i.test(`${item.exerciseName} ${item.cues}`)),
     "Day 5 should not include squat language"
   );
+});
+
+test("workout plan hashes detect stale Lower B session content", () => {
+  const day5 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 5);
+  assert.ok(day5, "Lower B should exist in the canonical plan");
+
+  const currentHash = workoutPlanVersion.getWorkoutPlanContentHash(day5);
+  assert.equal(
+    currentHash,
+    workoutPlanVersion.getCanonicalWorkoutPlanContentHash(5),
+    "Canonical Lower B should hash to the active template"
+  );
+
+  const staleLowerB = {
+    ...day5,
+    exercises: day5.exercises.map((exercise) =>
+      exercise.exerciseName === "C3 Leg Extension"
+        ? {
+            ...exercise,
+            exerciseName: "C3 Leg Press Calf Press",
+            cues: "Old direct calf raise slot.",
+          }
+        : exercise
+    ),
+  };
+
+  assert.notEqual(
+    workoutPlanVersion.getWorkoutPlanContentHash(staleLowerB),
+    currentHash,
+    "Old Lower B calf-press snapshots should not match the current template hash"
+  );
+  assert.match(workoutPlanVersionSource, /DEFAULT_WORKOUT_PLAN/);
+});
+
+test("reset and start actions retire stale active sessions before rendering current plans", () => {
+  const resetSource = getFunctionSource(workoutActionsSource, "resetCurrentWorkoutPlan");
+  const startSource = getFunctionSource(workoutActionsSource, "startWorkoutSession");
+
+  assert.match(resetSource, /workoutSession\.deleteMany/);
+  assert.match(resetSource, /completed:\s*false/);
+  assert.match(resetSource, /workoutPlan\.updateMany/);
+  assert.match(resetSource, /isActive:\s*false/);
+  assert.match(resetSource, /createDefaultWorkoutPlans\(tx,\s*user\.id\)/);
+  assert.match(resetSource, /revalidateWorkoutResetPaths\(\)/);
+  assert.doesNotMatch(resetSource, /completed:\s*true/);
+
+  for (const path of [
+    "/",
+    "/workout",
+    "/workout/plan",
+    "/workout/history",
+    "/mobility",
+    "/flexibility-balance",
+    "/steps",
+  ]) {
+    assert.match(workoutActionsSource, new RegExp(`"${escapeRegExp(path)}"`), `Reset should revalidate ${path}`);
+  }
+
+  assert.match(startSource, /isActive:\s*true/);
+  assert.match(startSource, /isCurrentWorkoutPlanContent\(plan\)/);
+  assert.match(startSource, /deleteStaleOpenPlanSessions\(user\.id\)/);
+  assert.match(startSource, /isCurrentPlanBackedWorkoutSession\(session\)/);
+  assert.match(startSource, /planTemplateVersion:\s*DEFAULT_WORKOUT_PLAN_VERSION/);
+  assert.match(startSource, /planContentHash:\s*getWorkoutPlanContentHash\(plan\)/);
+  assert.match(startSource, /generatedAt:\s*now\.toISOString\(\)/);
+  assert.match(workoutActionsSource, /revalidateWorkoutSessionPaths/);
+  assert.match(workoutActionsSource, /revalidatePath\("\/workout\/plan"\)/);
+  assert.doesNotMatch(startSource, /const existingOpen = await getOpenSession/);
+});
+
+test("active workout page ignores old plan-backed open sessions", () => {
+  assert.match(workoutPageSource, /workoutSession\.findMany/);
+  assert.match(workoutPageSource, /openSessions\.find\(isCurrentPlanBackedWorkoutSession\)/);
+  assert.match(workoutSessionStateSource, /!plan\?\.isActive/);
+  assert.match(workoutSessionStateSource, /isCurrentWorkoutPlanContent\(plan\)/);
+  assert.match(workoutSessionStateSource, /DEFAULT_WORKOUT_PLAN_VERSION/);
+  assert.match(workoutSessionStateSource, /planContentHash/);
+});
+
+test("strength days expose clear Start Resume View session actions", () => {
+  for (const label of ["Start Session", "Resume Session", "View Session"]) {
+    assert.match(workoutSessionActionButtonSource, new RegExp(label));
+  }
+
+  assert.match(workoutSessionActionButtonSource, /router\.push\("\/workout"\)/);
+  assert.match(workoutSessionActionButtonSource, /router\.refresh\(\)/);
+  assert.match(workoutSessionActionButtonSource, /min-h-11/);
+  assert.match(workoutSessionActionButtonSource, /fullWidth/);
+  assert.match(workoutDayPreviewSource, /WorkoutSessionActionButton[\s\S]*status="start"[\s\S]*onDark[\s\S]*fullWidth/);
+  assert.match(workoutPlanPageSource, /getWorkoutPlanDayStatuses/);
+  assert.match(workoutPlanPageSource, /WorkoutSessionActionButton/);
+  assert.match(workoutPlanPageSource, /prominent=\{plan\.dayOfWeek === trainingDayOfWeek\}/);
+  assert.match(dashboardPageSource, /getWorkoutPlanDayStatuses/);
+  assert.match(dashboardSource, /WorkoutSessionActionButton/);
+  assert.match(dashboardSource, /item\.protocol === "Strength Protocol"/);
+  assert.match(dashboardSource, /flex min-h-48 flex-col/);
+  assert.doesNotMatch(workoutSessionActionButtonSource, /aria-label=.*Start/i);
 });
 
 test("canonical workout plan uses non-loggable session prep instead of cardio warm-ups", () => {
@@ -1189,6 +1290,16 @@ test("recovery copy no longer frames later recovery as optional", () => {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getFunctionSource(source, functionName) {
+  const functionStart = source.indexOf(`export async function ${functionName}`);
+  assert.ok(functionStart >= 0, `${functionName} should exist`);
+  const nextFunctionStart = source.indexOf("export async function", functionStart + 1);
+  return source.slice(
+    functionStart,
+    nextFunctionStart === -1 ? source.length : nextFunctionStart
+  );
 }
 
 function stepEntry(date, value) {

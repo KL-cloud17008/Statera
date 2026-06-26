@@ -1,12 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { Loader2, Play } from "lucide-react";
-import { toast } from "sonner";
-import { startWorkoutSession } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
@@ -37,9 +32,6 @@ export function WorkoutDayPreview({
   plan: Plan;
   hideHeader?: boolean;
 }) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-
   const loggableExercises = plan.exercises.filter(isLoggableTrainingExercise);
   const workingExercises = plan.exercises.filter(
     (exercise) => isLoggableTrainingExercise(exercise) && exercise.exerciseType === "WORKING"
@@ -49,19 +41,6 @@ export function WorkoutDayPreview({
   );
   const totalLoggableSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
   const blockOrder = ["A", "B", "C"] as const;
-
-  function handleStart() {
-    startTransition(async () => {
-      const result = await startWorkoutSession(plan.id);
-      if (result.error) {
-        toast.error(result.error);
-        return;
-      }
-
-      toast.success(result.warning ?? "Training session started");
-      router.refresh();
-    });
-  }
 
   return (
     <section className="document-panel">
@@ -101,10 +80,7 @@ export function WorkoutDayPreview({
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 
-        <Button size="lg" type="button" onClick={handleStart} disabled={isPending} className="w-full gap-2 border-white/20 bg-[#edf7ff] text-[#07111f] hover:bg-white">
-          {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-          Start Session
-        </Button>
+        <WorkoutSessionActionButton planId={plan.id} status="start" prominent onDark fullWidth />
       </div>
 
       <SessionPrepStrip />

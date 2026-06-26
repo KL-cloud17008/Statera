@@ -6,6 +6,7 @@ import { getWorkoutSessionLoadUnit, parseWorkoutSessionMeta } from "@/lib/workou
 import { workoutLoadToKg } from "@/lib/units";
 import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
+import { isCurrentPlanBackedWorkoutSession } from "@/lib/workout-session-state";
 import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/training-session";
 
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default async function WorkoutPage() {
   const trainingDayNum = getTrainingDayNumber(new Date(), user.timezone);
   const todayPlan = trainingDayNum ? plans.find((plan) => plan.dayOfWeek === trainingDayNum) ?? null : null;
 
-  const openSession = await prisma.workoutSession.findFirst({
+  const openSessions = await prisma.workoutSession.findMany({
     where: {
       userId: user.id,
       completed: false,
@@ -39,6 +40,7 @@ export default async function WorkoutPage() {
     },
     orderBy: { createdAt: "desc" },
   });
+  const openSession = openSessions.find(isCurrentPlanBackedWorkoutSession) ?? null;
 
   let activeSession = null;
   if (openSession) {

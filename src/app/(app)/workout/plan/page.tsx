@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ClipboardList } from "lucide-react";
-import { getWorkoutPlans } from "@/actions/workout";
+import { getWorkoutPlanDayStatuses, getWorkoutPlans } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { getTrainingDayOfWeek } from "@/lib/dates";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 const WEEK_STRUCTURE = [
@@ -29,8 +31,13 @@ export default async function WorkoutPlanPage() {
     return null;
   }
 
-  const plans = await getWorkoutPlans(user.id);
+  const [plans, dayStatuses] = await Promise.all([
+    getWorkoutPlans(user.id),
+    getWorkoutPlanDayStatuses(user.id, user.timezone),
+  ]);
   const plansByDay = new Map(plans.map((plan) => [plan.dayOfWeek, plan]));
+  const statusByPlanId = new Map(dayStatuses.map((status) => [status.planId, status]));
+  const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
 
   return (
     <div className="page-shell">
@@ -111,14 +118,23 @@ export default async function WorkoutPlanPage() {
                   </div>
 
                   {plan ? (
-                    <div className="grid grid-cols-2 gap-4 text-sm lg:text-right">
-                      <div>
-                        <p className="eyebrow text-[10px]">Exercises</p>
-                        <p className="data-number mt-2 text-2xl text-foreground">{workingCount}</p>
-                      </div>
-                      <div>
-                        <p className="eyebrow text-[10px]">Sets</p>
-                        <p className="data-number mt-2 text-2xl text-foreground">{totalSets}</p>
+                    <div className="grid gap-4 text-sm lg:justify-items-end lg:text-right">
+                      <WorkoutSessionActionButton
+                        planId={plan.id}
+                        status={statusByPlanId.get(plan.id)?.status ?? "start"}
+                        prominent={plan.dayOfWeek === trainingDayOfWeek}
+                        fullWidth
+                        className="sm:w-auto sm:min-w-40"
+                      />
+                      <div className="grid w-full grid-cols-2 gap-4">
+                        <div>
+                          <p className="eyebrow text-[10px]">Exercises</p>
+                          <p className="data-number mt-2 text-2xl text-foreground">{workingCount}</p>
+                        </div>
+                        <div>
+                          <p className="eyebrow text-[10px]">Sets</p>
+                          <p className="data-number mt-2 text-2xl text-foreground">{totalSets}</p>
+                        </div>
                       </div>
                     </div>
                   ) : null}
