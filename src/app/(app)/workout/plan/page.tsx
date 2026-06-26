@@ -8,6 +8,7 @@ import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetBut
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getTrainingDayOfWeek } from "@/lib/dates";
+import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 const WEEK_STRUCTURE = [
@@ -15,7 +16,7 @@ const WEEK_STRUCTURE = [
   { day: "Tuesday", title: "Lower A", protocol: "Strength Protocol", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
   { day: "Wednesday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", meta: "10,000 steps", note: "Recovery mobility, flexibility, supported balance, and Wednesday's 10,000-step target." },
   { day: "Thursday", title: "Upper B", protocol: "Strength Protocol", dayOfWeek: 4, note: "Back and shoulder emphasis." },
-  { day: "Friday", title: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5, note: "Machine posterior chain, hip stability, and knee-support accessory work." },
+  { day: "Friday", title: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5, note: "Back-safe machine lower body. Required same-day lower-back relief block." },
   { day: "Saturday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", note: "12-20 minutes of recovery mobility, flexibility, and supported balance." },
   { day: "Sunday", title: "Complete rest", protocol: "Full Rest", note: "Complete rest. Gentle recovery mobility only if needed." },
 ] as const;
@@ -99,6 +100,7 @@ export default async function WorkoutPlanPage() {
             const workingCount = loggableExercises.length;
             const totalSets = loggableExercises
               .reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
+            const showLowerBReadiness = plan?.dayOfWeek === 5 && plan.sessionName === LOWER_B_BACK_SAFE_TITLE;
 
             return (
               <section key={day.day} className="py-8 first:pt-0 last:pb-0">
@@ -115,6 +117,11 @@ export default async function WorkoutPlanPage() {
                       {"meta" in day ? <Badge variant="secondary">{day.meta}</Badge> : null}
                     </div>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{day.note}</p>
+                    {showLowerBReadiness ? (
+                      <p className="status-note mt-3 inline-flex px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
+                        {LOWER_B_BACK_PAIN_READINESS_NOTE}
+                      </p>
+                    ) : null}
                   </div>
 
                   {plan ? (

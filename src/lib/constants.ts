@@ -24,7 +24,7 @@ export const TRAINING_DAY_LABELS: Record<number, string> = {
   1: "Monday • Upper A — Push/Pull Foundation",
   2: "Tuesday • Lower A — Stable Lower Body",
   4: "Thursday • Upper B — Back/Shoulder Emphasis",
-  5: "Friday • Lower B — Hips/Posterior Chain",
+  5: "Friday • Lower B — Back-Safe Machine Lower Body",
 };
 
 // Navigation items

@@ -16,7 +16,12 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-scaled-pillars-balance-v9";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "4-day-scaled-pillars-balance-v10";
+
+export const LOWER_B_BACK_SAFE_TITLE = "Lower B — Back-Safe Machine Lower Body";
+
+export const LOWER_B_BACK_PAIN_READINESS_NOTE =
+  "Back-pain rule: use the reduced set plan if lower-back pain is present. Skip heavy work if pain increases.";
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Scaled restart block for a 312 lb detrained male in week 2 after months away from training.",
@@ -273,71 +278,49 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   },
   {
     dayOfWeek: 5,
-    sessionName: "Lower B - Machine Posterior Chain + Hip Stability",
+    sessionName: LOWER_B_BACK_SAFE_TITLE,
     exercises: [
       {
         exerciseName: "A1 Leg Press",
         sets: 3,
-        reps: "8-12",
+        reps: "8-10",
         tempo: "3-1-1",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Leg Press comes first as straight sets. Keep the back on the pad, use a controlled comfortable range, drive through the whole foot, and rest 120 seconds after each set before starting Block B.`,
+        restSeconds: 180,
+        targetRPE: "5-6",
+        cues: `${PLAN_CUE_PREFIX}Block A primary lower-body strength. Standard: 3 sets of 8-10 reps at RPE 5-6 with 2-3 minutes rest. Low-readiness/back-pain: 2 sets of 8-10 at RPE 5. Start lighter than expected, keep the full foot on the platform, knees track over middle toes, hips and lower back stay stable against the pad, control the lowering, and do not chase deep range if hips tuck or lower back rounds. Stop 2-4 reps before failure. Do not use as conditioning. Pain 0-2/10 is acceptable if stable; if back, hip, or knee pain rises above 3/10, reduce range/load or stop.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B1 Lying Hamstring Curl",
-        sets: 2,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Keep hips heavy on the pad, curl smoothly, pause gently, and return slowly before moving to B2.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B2 Hyperextension / Back Extension Machine",
-        sets: 2,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Move through the hips with a neutral spine, stop before low-back strain, shorten the range or skip if back pain appears, and rest 120 seconds after B2.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C1 Glute Kickback Machine",
-        sets: 2,
-        reps: "8-12/side",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Set the pad so the hip drives straight back, pause without arching the low back, use an easy setup load, and move to C2 without rushing.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C2 Hip Abduction Machine",
-        sets: 2,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${PLAN_CUE_PREFIX}Use a controlled range, keep the pelvis still against the pad, pause gently without jerking, and move to C3 without rushing.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C3 Leg Extension",
-        sets: 2,
+        exerciseName: "B1 Seated Hamstring Curl",
+        sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${PLAN_CUE_PREFIX}Low-dose knee-extension accessory work to support quad strength, knee tracking, and lower-body resilience without adding direct calf load on the final training day. Smooth reps with no knee snapping, pause briefly near the top without locking aggressively, lower slowly, keep hips heavy on the pad, use a controlled comfortable range, and stop 2-4 reps before failure. Standard dose is 1-2 sets of 10-15 reps at RPE 5-6. Low-readiness dose is 1 set of 10-12 reps at RPE 5; skip if knees feel irritated or fatigue is high. Keep pain 0-2/10, reduce load or range if the front of the knee feels irritated, do not chase a pump, do not turn this into conditioning, and skip if knee pain rises above 3/10. Lower B already includes Leg Press, so Leg Extension stays low-dose. It replaces calf work because direct calf training is currently unnecessary and poorly tolerated; walking already provides enough calf loading for this phase. Rest 90-120 seconds after C3.`,
+        cues: `${PLAN_CUE_PREFIX}Block B knee and hamstring support. Standard: 3 sets of 10-15 reps at RPE 5-6 with 90-120 seconds rest. Low-readiness/back-pain: 2 sets of 10-12 at RPE 5. Seated Hamstring Curl is machine-supported, simple to set up, and avoids prone positioning that may be uncomfortable with lower-back pain. Keep hips heavy against the pad, curl smoothly, pause gently, return slowly, no jerking, and no lower-back arching. Stop if hamstring cramping, back pain, or nerve-like symptoms appear.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B2 Leg Extension",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${PLAN_CUE_PREFIX}Block B knee and hamstring support. Standard: 3 sets of 10-15 reps at RPE 5-6 with 90-120 seconds rest after B2. Low-readiness/back-pain: 2 sets of 10-12 at RPE 5. Use smooth reps with no knee snapping, pause briefly near the top without aggressive lockout, lower slowly, keep hips heavy on the pad, use a controlled comfortable range, and stop 2-4 reps before failure. Reduce load or range if front-of-knee irritation appears. Stop if knee pain rises above 3/10.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "C1 Hip Abduction Machine",
+        sets: 2,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${PLAN_CUE_PREFIX}Block C hip stability. Standard: 2 sets of 12-20 reps at RPE 5-6 with 90-120 seconds rest. Low-readiness/back-pain: 1-2 sets of 12-15 at RPE 5. Focus outer hip/glute medius, keep the pelvis still, do not rock the torso, control out and back, no jerking, and do not chase load. Stop if hip, lower-back, or knee pain increases.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
@@ -350,7 +333,7 @@ export const DEFAULT_WEEKLY_RHYTHM = [
   "Tuesday: Lower A - Machine Lower Body Foundation",
   "Wednesday: Mobility, Flexibility & Balance - 10,000 steps",
   "Thursday: Upper B - Machine Back/Shoulder Emphasis",
-  "Friday: Lower B - Machine Posterior Chain + Hip Stability",
+  "Friday: Lower B - Back-Safe Machine Lower Body",
   "Saturday: Mobility, Flexibility & Balance",
   "Sunday: Complete rest",
 ];

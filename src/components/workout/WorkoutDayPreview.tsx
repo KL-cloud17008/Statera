@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
+import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
@@ -41,6 +42,7 @@ export function WorkoutDayPreview({
   );
   const totalLoggableSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
   const blockOrder = ["A", "B", "C"] as const;
+  const showLowerBReadiness = plan.sessionName === LOWER_B_BACK_SAFE_TITLE;
 
   return (
     <section className="document-panel">
@@ -52,6 +54,11 @@ export function WorkoutDayPreview({
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               Walking covers warm-up and recovery. Ramp-up sets stay outside the ledger.
             </p>
+            {showLowerBReadiness ? (
+              <p className="status-note mt-4 inline-flex px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
+                {LOWER_B_BACK_PAIN_READINESS_NOTE}
+              </p>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-3 gap-3 text-sm xl:text-right">

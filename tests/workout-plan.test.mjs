@@ -71,8 +71,7 @@ const requiredExercises = [
   "Leg Extension",
   "Lying Leg Curl",
   "Leg Press",
-  "Glute Kickback Machine",
-  "Hyperextension / Back Extension Machine",
+  "Seated Hamstring Curl",
   "Hip Abduction Machine",
   "Wall Sit",
 ];
@@ -127,7 +126,7 @@ test("canonical workout plan keeps the four-day circuit rhythm", () => {
     "Tuesday: Lower A - Machine Lower Body Foundation",
     "Wednesday: Mobility, Flexibility & Balance - 10,000 steps",
     "Thursday: Upper B - Machine Back/Shoulder Emphasis",
-    "Friday: Lower B - Machine Posterior Chain + Hip Stability",
+    "Friday: Lower B - Back-Safe Machine Lower Body",
     "Saturday: Mobility, Flexibility & Balance",
     "Sunday: Complete rest",
   ]);
@@ -413,6 +412,7 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   const day5 = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 5);
   assert.ok(day2, "Day 2 should exist");
   assert.ok(day5, "Day 5 should exist");
+  assert.equal(day5.sessionName, "Lower B — Back-Safe Machine Lower Body");
 
   for (const expected of [
     "Single-Leg Leg Press",
@@ -458,51 +458,65 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
   );
   assert.deepEqual(Array.from(day5.exercises, (item) => item.exerciseName), [
     "A1 Leg Press",
-    "B1 Lying Hamstring Curl",
-    "B2 Hyperextension / Back Extension Machine",
-    "C1 Glute Kickback Machine",
-    "C2 Hip Abduction Machine",
-    "C3 Leg Extension",
+    "B1 Seated Hamstring Curl",
+    "B2 Leg Extension",
+    "C1 Hip Abduction Machine",
   ]);
-  assert.match(day5.exercises.find((item) => item.exerciseName === "A1 Leg Press")?.cues ?? "", /straight sets/i);
+  assert.match(day5.exercises.find((item) => item.exerciseName === "A1 Leg Press")?.cues ?? "", /Start lighter than expected/i);
+  assert.match(day5.exercises.find((item) => item.exerciseName === "A1 Leg Press")?.cues ?? "", /Low-readiness\/back-pain: 2 sets/i);
+  assert.match(day5.exercises.find((item) => item.exerciseName === "A1 Leg Press")?.cues ?? "", /Do not use as conditioning/i);
 
-  const day5LegExtension = day5.exercises.find((item) => item.exerciseName === "C3 Leg Extension");
-  assert.ok(day5LegExtension, "Friday / Day 5 / Lower B should include C3 Leg Extension");
-  assert.equal(day5LegExtension.supersetGroup, "C");
-  assert.equal(day5LegExtension.sets, 2);
-  assert.ok(day5LegExtension.sets >= 1 && day5LegExtension.sets <= 2, "Lower B C3 Leg Extension should stay low-volume");
+  const day5HamstringCurl = day5.exercises.find((item) => item.exerciseName === "B1 Seated Hamstring Curl");
+  assert.ok(day5HamstringCurl, "Friday / Day 5 / Lower B should include Seated Hamstring Curl");
+  assert.equal(day5HamstringCurl.sets, 3);
+  assert.equal(day5HamstringCurl.reps, "10-15");
+  assert.equal(day5HamstringCurl.targetRPE, "5-6");
+  assert.match(day5HamstringCurl.cues, /avoids prone positioning/i);
+  assert.match(day5HamstringCurl.cues, /Low-readiness\/back-pain: 2 sets of 10-12/i);
+
+  const day5LegExtension = day5.exercises.find((item) => item.exerciseName === "B2 Leg Extension");
+  assert.ok(day5LegExtension, "Friday / Day 5 / Lower B should include Leg Extension");
+  assert.equal(day5LegExtension.supersetGroup, "B");
+  assert.equal(day5LegExtension.sets, 3);
   assert.equal(day5LegExtension.reps, "10-15");
   assert.equal(day5LegExtension.targetRPE, "5-6");
   assert.equal(day5LegExtension.restSeconds, 120);
-  assert.match(day5LegExtension.cues, /Low-dose knee-extension accessory work/i);
-  assert.match(day5LegExtension.cues, /without adding direct calf load on the final training day/i);
-  assert.match(day5LegExtension.cues, /Standard dose is 1-2 sets of 10-15 reps at RPE 5-6/i);
-  assert.match(day5LegExtension.cues, /Low-readiness dose is 1 set of 10-12 reps at RPE 5/i);
-  assert.match(day5LegExtension.cues, /skip if knees feel irritated or fatigue is high/i);
-  assert.match(day5LegExtension.cues, /walking already provides enough calf loading/i);
+  assert.match(day5LegExtension.cues, /Low-readiness\/back-pain: 2 sets of 10-12/i);
+  assert.match(day5LegExtension.cues, /Stop if knee pain rises above 3\/10/i);
+
+  const day5HipAbduction = day5.exercises.find((item) => item.exerciseName === "C1 Hip Abduction Machine");
+  assert.ok(day5HipAbduction, "Friday / Day 5 / Lower B should include Hip Abduction Machine");
+  assert.equal(day5HipAbduction.sets, 2);
+  assert.equal(day5HipAbduction.reps, "12-20");
+  assert.equal(day5HipAbduction.targetRPE, "5-6");
+  assert.match(day5HipAbduction.cues, /Low-readiness\/back-pain: 1-2 sets/i);
+  assert.match(day5HipAbduction.cues, /Stop if hip, lower-back, or knee pain increases/i);
 
   const day5TotalSets = day5.exercises.reduce((sum, item) => sum + item.sets, 0);
-  assert.equal(day5TotalSets, 13);
-  assert.ok(day5TotalSets >= 10 && day5TotalSets <= 13);
+  assert.equal(day5TotalSets, 11);
   assert.notEqual(day5TotalSets, 15, "Lower B should not hard-default to 15 sets");
-  assert.match(trainingPlanSource, /Standard Lower B: 10-13 working sets/);
-  assert.match(trainingPlanSource, /Low-readiness Lower B: 8-10 working sets/);
-  assert.match(workoutPlanPageSource, /knee-support accessory work/);
+  assert.match(trainingPlanSource, /Standard Lower B: 11 working sets/);
+  assert.match(trainingPlanSource, /Low-readiness\/back-pain Lower B: 7-8 working sets/);
+  assert.match(workoutPlanPageSource, /Back-safe machine lower body/);
   assert.doesNotMatch(workoutPlanPageSource, /calf work/i);
 
-  const c3LegExtensionDays = Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN)
-    .filter((day) => day.exercises.some((item) => item.exerciseName === "C3 Leg Extension"))
+  const lowerBLegExtensionDays = Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN)
+    .filter((day) => day.exercises.some((item) => item.exerciseName === "B2 Leg Extension"))
     .map((day) => day.dayOfWeek);
-  assert.deepEqual(c3LegExtensionDays, [5], "The C3 Leg Extension replacement should apply only to Friday / Day 5");
+  assert.deepEqual(lowerBLegExtensionDays, [5], "The Lower B Leg Extension slot should apply only to Friday / Day 5");
 
   const lowerBText = day5.exercises
     .map((item) => `${item.exerciseName} ${item.cues ?? ""}`)
     .join("\n");
   for (const removedFromLowerB of [
+    "Lying Hamstring Curl",
+    "Hyperextension / Back Extension Machine",
+    "Glute Kickback Machine",
     "Leg Press Calf Press",
     "Seated Calf Raise",
     "Standing Calf Raise",
     "Donkey Calf Raise",
+    "Calf Raises",
     "Hip Adduction Machine",
     "Walking Lunges",
     "Barbell Squat",
@@ -510,6 +524,7 @@ test("lower body days preserve the recent lower a and machine-focused lower b st
     "Goblet Squat",
     "Conventional Deadlift",
     "Squat Machine",
+    "Squatting",
     "Treadmill",
     "Bike",
     "HIIT",
@@ -549,7 +564,7 @@ test("workout plan hashes detect stale Lower B session content", () => {
   const staleLowerB = {
     ...day5,
     exercises: day5.exercises.map((exercise) =>
-      exercise.exerciseName === "C3 Leg Extension"
+      exercise.exerciseName === "C1 Hip Abduction Machine"
         ? {
             ...exercise,
             exerciseName: "C3 Leg Press Calf Press",
@@ -1172,6 +1187,51 @@ test("training-day mobility requires later recovery", () => {
     assert.match(exercise.intensity.pain, /Pain: 0-2\/10 maximum/);
     assert.match(exercise.intensity.goal, /no fatigue/);
   }
+});
+
+test("friday lower b includes same-day lower-back relief mobility", () => {
+  const title = "Lower Back Relief — Mobility & Flexibility";
+  const lowerBackBlocks = mobility.getRequiredLaterRecoveryBlocks("standard", 5);
+  assert.equal(mobility.getRequiredLaterRecoveryTitle("standard", 5), title);
+  assert.equal(lowerBackBlocks.length, 1);
+  assert.equal(lowerBackBlocks[0].title, title);
+  assert.equal(lowerBackBlocks[0].duration, "8-12 min");
+  assert.match(lowerBackBlocks[0].purpose, /Reduce lower-back irritation/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /Same day as Lower B/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /Effort 1-3\/10/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /Pain 0-2\/10 maximum/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /Pain 3-4\/10: reduce range, load, stance, or duration/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /Pain 5\/10 or higher/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /pain shooting down the leg/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /bowel\/bladder changes/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /If lower-back pain worsens during Leg Press/i);
+  assert.match(lowerBackBlocks[0].adaptationNote, /No loaded spinal flexion, heavy bracing, back extension machine, max effort, failure training, or fatigue/i);
+
+  assert.deepEqual(Array.from(lowerBackBlocks[0].exercises, (exercise) => exercise.name), [
+    "Supported Breathing Reset",
+    "Pelvic Tilts",
+    "Cat-Cow",
+    "Supported Hip-Hinge Rock-Back",
+    "Open Book Thoracic Rotation",
+    "Supported Hip Flexor Stretch",
+  ]);
+
+  for (const exercise of lowerBackBlocks[0].exercises) {
+    assert.match(exercise.intensity.effort, /Effort: 1-3\/10/);
+    assert.match(exercise.intensity.pain, /Pain: 0-2\/10 maximum/);
+    assert.match(exercise.intensity.goal, /no more painful/);
+  }
+
+  const footFlareFridayBlocks = mobility.getRequiredLaterRecoveryBlocks("footFlare", 5);
+  assert.equal(footFlareFridayBlocks[0].title, "Required foot-flare recovery");
+  assert.equal(footFlareFridayBlocks[1].title, title);
+  assert.match(mobilityPageSource, /getRequiredLaterRecoveryTitle/);
+  assert.match(mobilityPageSource, /Same day as Lower B/);
+  assert.match(workoutDayPreviewSource, /LOWER_B_BACK_PAIN_READINESS_NOTE/);
+  assert.match(workoutPlanPageSource, /LOWER_B_BACK_PAIN_READINESS_NOTE/);
+  assert.match(sessionLoggerSource, /LOWER_B_BACK_PAIN_READINESS_NOTE/);
+  assert.match(planSource, /Back-pain rule: use the reduced set plan if lower-back pain is present/);
+  assert.match(trainingPlanSource, /Lower Back Relief — Mobility & Flexibility/);
 });
 
 test("supported balance drills include setup, coaching, regressions, progressions, and pain rules", () => {

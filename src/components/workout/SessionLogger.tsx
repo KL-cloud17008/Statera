@@ -9,6 +9,7 @@ import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 type PlanExercise = {
@@ -127,6 +128,7 @@ export function SessionLogger({
   const totalExercises = loggableExercises.length;
   const completedCount = completedExercises.size;
   const progressPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
+  const showLowerBReadiness = sessionName === LOWER_B_BACK_SAFE_TITLE;
 
   function handleSetCompleteChange(exerciseName: string, setNumber: number, complete: boolean) {
     setCompletedSets((current) => {
@@ -214,6 +216,11 @@ export function SessionLogger({
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/68">
               Log working sets only. Ramp-up sets stay outside the ledger.
             </p>
+            {showLowerBReadiness ? (
+              <p className="black-glass mt-4 inline-flex max-w-2xl px-4 py-3 text-sm font-semibold leading-relaxed text-white/78">
+                {LOWER_B_BACK_PAIN_READINESS_NOTE}
+              </p>
+            ) : null}
             {isStale ? (
               <div className="black-glass mt-5 flex max-w-2xl items-start gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm leading-relaxed text-white/70">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-white/70" />

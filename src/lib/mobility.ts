@@ -88,6 +88,13 @@ const BREATHING_INTENSITY: MobilityIntensity = {
   goal: "Goal: finish calmer than you started",
 };
 
+const BACK_PAIN_RELIEF_INTENSITY: MobilityIntensity = {
+  effort: "Effort: 1-3/10",
+  pain: "Pain: 0-2/10 maximum",
+  breathing: "Breathing: slow, steady, and relaxed",
+  goal: "Goal: finish looser, calmer, and no more painful than when you started",
+};
+
 const FOOT_FLARE_RECOVERY_INTENSITY: MobilityIntensity = {
   effort: "Effort: 1-3/10",
   pain: "Pain: 0-2/10 maximum",
@@ -1052,6 +1059,36 @@ const MOVEMENT_CATALOG = {
     completionTarget: "Complete 6-8 slow reps with steady breathing.",
     intensity: RECOVERY_INTENSITY,
   },
+  pelvicTilts: {
+    id: "pelvic-tilts",
+    name: "Pelvic Tilts",
+    dose: "1-2 sets x 8-12 slow reps",
+    cues: "Small range. No forcing. Move with breath.",
+    goal: "Restore gentle pelvis and lower-back motion without loading the spine.",
+    howTo: [
+      "Lie on your back with knees bent.",
+      "Gently flatten the lower back toward the floor.",
+      "Gently release back to neutral.",
+      "Use a small controlled motion.",
+    ],
+    beginnerPointers: [
+      "Keep the movement small.",
+      "Breathe slowly as the pelvis moves.",
+      "Stop before the motion turns into bracing.",
+    ],
+    commonMistakes: [
+      "Forcing the lower back flat.",
+      "Using a large fast range.",
+      "Holding the breath.",
+    ],
+    scaleDown: [
+      "Do fewer reps.",
+      "Do seated pelvic tilts if floor work is uncomfortable.",
+    ],
+    completionTarget: "Complete 8-12 slow reps with pain staying 0-2/10.",
+    painRule: "Stop if lower-back pain increases or nerve-like symptoms appear.",
+    intensity: BACK_PAIN_RELIEF_INTENSITY,
+  },
   childPoseBreathing: {
     id: "childs-pose-breathing",
     name: "Child's pose breathing or seated forward breathing",
@@ -1115,6 +1152,37 @@ const MOVEMENT_CATALOG = {
     ],
     completionTarget: "Breathe calmly for 60-90 seconds and finish less guarded.",
     intensity: FOOT_FLARE_RECOVERY_INTENSITY,
+  },
+  supportedHipHingeRockBack: {
+    id: "supported-hip-hinge-rock-back",
+    name: "Supported Hip-Hinge Rock-Back",
+    dose: "1-2 sets x 6-10 reps",
+    cues: "Long spine. Gentle range. No hamstring strain. No lower-back pinch.",
+    goal: "Restore a gentle hip-hinge pattern without loading the spine.",
+    howTo: [
+      "Hold a bench, rack, counter, or wall.",
+      "Push the hips back gently.",
+      "Keep the spine long.",
+      "Return to standing.",
+      "Treat this as mobility, not a loaded hinge.",
+    ],
+    beginnerPointers: [
+      "Use a small range.",
+      "Let the support take pressure off the back.",
+      "Stop before hamstrings or lower back feel strained.",
+    ],
+    commonMistakes: [
+      "Turning it into a loaded hinge.",
+      "Rounding the lower back.",
+      "Chasing a big hamstring stretch.",
+    ],
+    scaleDown: [
+      "Use a smaller range.",
+      "Do seated forward rock-backs if needed.",
+    ],
+    completionTarget: "Complete 6-10 gentle reps without lower-back pinching.",
+    painRule: "Stop if lower-back, hip, or nerve-like symptoms increase.",
+    intensity: BACK_PAIN_RELIEF_INTENSITY,
   },
   latStretch: {
     id: "lat-stretch",
@@ -1665,12 +1733,122 @@ export const REQUIRED_LATER_RECOVERY: MobilityBlock = block({
   ],
 });
 
+export const LOWER_BACK_RELIEF_TITLE = "Lower Back Relief — Mobility & Flexibility";
+
+export const LOWER_BACK_RELIEF_SAFETY_NOTE =
+  "Same day as Lower B. Use before training if stiff; complete after training or later that day if back pain is present. Effort 1-3/10. Pain 0-2/10 maximum. Pain 3-4/10: reduce range, load, stance, or duration. Pain 5/10 or higher, sharp pain, pain shooting down the leg, numbness, tingling, weakness, limping, bowel/bladder changes, fever, or trauma-related pain: stop and seek medical evaluation. If lower-back pain worsens during Leg Press, stop the session and do this block only. No loaded spinal flexion, heavy bracing, back extension machine, max effort, failure training, or fatigue.";
+
+export const LOWER_BACK_RELIEF: MobilityBlock = block({
+  id: "lower-back-relief-mobility-flexibility",
+  title: LOWER_BACK_RELIEF_TITLE,
+  duration: "8-12 min",
+  purpose:
+    "Reduce lower-back irritation, restore gentle spine/hip motion, and downshift tension without loading the spine heavily.",
+  adaptationNote: LOWER_BACK_RELIEF_SAFETY_NOTE,
+  exercises: [
+    movement("supportedBreathingReset", {
+      id: "lower-back-relief-supported-breathing-reset",
+      name: "Supported Breathing Reset",
+      dose: "2 minutes",
+      cues: "Slow exhale. No bracing hard. Calm the system.",
+      howTo: [
+        "Lie on your back with knees bent, or sit supported if lying down is uncomfortable.",
+        "Breathe slowly through the nose.",
+        "Let the ribs drop down.",
+        "Keep jaw, shoulders, and hips relaxed.",
+      ],
+      beginnerPointers: [
+        "Let the exhale be slow.",
+        "Keep the shoulders and jaw easy.",
+        "This should feel calming, not effortful.",
+      ],
+      commonMistakes: [
+        "Bracing hard.",
+        "Trying to take huge breaths.",
+        "Rushing the exhale.",
+      ],
+      scaleDown: [
+        "Sit supported if floor work is uncomfortable.",
+        "Breathe normally and make the exhale slightly slower.",
+      ],
+      completionTarget: "Breathe for 2 easy minutes and finish calmer.",
+      painRule: "Stop if lying down increases symptoms.",
+      intensity: BACK_PAIN_RELIEF_INTENSITY,
+    }),
+    movement("pelvicTilts"),
+    movement("catCow", {
+      id: "lower-back-relief-cat-cow",
+      name: "Cat-Cow",
+      dose: "1 set x 6-10 slow reps",
+      cues: "Smooth motion. Do not force end range. Breathe steadily.",
+      howTo: [
+        "Start on hands and knees.",
+        "Slowly round the upper and lower back.",
+        "Slowly return through neutral into gentle extension.",
+        "Keep the movement pain-free.",
+      ],
+      scaleDown: [
+        "Do standing cat-cow with hands on a bench or wall.",
+        "Use a smaller range.",
+      ],
+      completionTarget: "Complete 6-10 slow reps with pain-free motion.",
+      painRule: "Stop if lower-back pain increases.",
+      intensity: BACK_PAIN_RELIEF_INTENSITY,
+    }),
+    movement("supportedHipHingeRockBack"),
+    movement("thoracicOpenBooks", {
+      id: "lower-back-relief-open-book-thoracic-rotation",
+      name: "Open Book Thoracic Rotation",
+      dose: "1 set x 5-8 reps per side",
+      cues: "Rotate through upper back, not lower back. Stay pain-free. Exhale into the turn.",
+      howTo: [
+        "Lie on your side with knees bent, or use a seated version if floor work is uncomfortable.",
+        "Rotate the upper back gently.",
+        "Keep the hips quiet.",
+        "Move slowly.",
+      ],
+      scaleDown: [
+        "Do seated thoracic rotation with arms crossed.",
+        "Use a smaller range.",
+      ],
+      completionTarget: "Complete 5-8 easy reps per side without lower-back twisting.",
+      painRule: "Stop if lower-back, hip, or shoulder pain increases.",
+      intensity: BACK_PAIN_RELIEF_INTENSITY,
+    }),
+    movement("hipFlexorStretch", {
+      id: "lower-back-relief-supported-hip-flexor-stretch",
+      name: "Supported Hip Flexor Stretch",
+      dose: "1-2 rounds x 20-30 seconds per side",
+      cues: "Glute lightly on the back leg. Ribs down. No back arching.",
+      howTo: [
+        "Use a supported half-kneeling or standing split stance.",
+        "Gently tuck the pelvis.",
+        "Shift forward slightly.",
+        "Feel the front of the hip, not lower-back compression.",
+      ],
+      scaleDown: [
+        "Use the standing version only.",
+        "Use a shorter hold.",
+      ],
+      completionTarget: "Hold 20-30 seconds per side and finish no more painful than when started.",
+      painRule: "Stop if hip pinching or lower-back compression appears.",
+      intensity: BACK_PAIN_RELIEF_INTENSITY,
+    }),
+  ],
+});
+
 export function getRequiredLaterRecoveryBlocks(
   mode: RecoveryMode = "standard",
   dayOfWeek = 1
 ): MobilityBlock[] {
   if (mode === "footFlare") {
     const idPrefix = `required-day-${dayOfWeek}-foot-flare`;
+    if (dayOfWeek === 5) {
+      return [
+        footFlareFootBlock(idPrefix),
+        LOWER_BACK_RELIEF,
+      ];
+    }
     return [
       footFlareFootBlock(idPrefix),
       footFlareFullBodyBlock(dayOfWeek, idPrefix),
@@ -1678,7 +1856,22 @@ export function getRequiredLaterRecoveryBlocks(
     ];
   }
 
+  if (dayOfWeek === 5) {
+    return [LOWER_BACK_RELIEF];
+  }
+
   return [REQUIRED_LATER_RECOVERY];
+}
+
+export function getRequiredLaterRecoveryTitle(
+  mode: RecoveryMode = "standard",
+  dayOfWeek = 1
+) {
+  if (mode === "footFlare") {
+    return REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE;
+  }
+
+  return dayOfWeek === 5 ? LOWER_BACK_RELIEF_TITLE : REQUIRED_LATER_RECOVERY.title;
 }
 
 export const REQUIRED_LATER_RECOVERY_FOOT_FLARE = getRequiredLaterRecoveryBlocks("footFlare", 1);

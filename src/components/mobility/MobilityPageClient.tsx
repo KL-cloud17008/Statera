@@ -9,10 +9,9 @@ import { logMobility } from "@/actions/mobility";
 import { MobilityChecklist } from "./MobilityChecklist";
 import {
   getRequiredLaterRecoveryBlocks,
+  getRequiredLaterRecoveryTitle,
   getMobilityProgram,
   getRecoverySessionBlocks,
-  REQUIRED_LATER_RECOVERY,
-  REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE,
   UNDO_SITTING,
   type RecoveryMode,
 } from "@/lib/mobility";
@@ -47,10 +46,8 @@ export function MobilityPageClient({
       ? getRecoverySessionBlocks(dayOfWeek, recoveryMode)
       : program.blocks;
   const laterRecoveryBlocks = getRequiredLaterRecoveryBlocks(recoveryMode, dayOfWeek);
-  const laterRecoveryTitle =
-    recoveryMode === "footFlare"
-      ? REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE
-      : REQUIRED_LATER_RECOVERY.title;
+  const laterRecoveryTitle = getRequiredLaterRecoveryTitle(recoveryMode, dayOfWeek);
+  const isLowerBackRelief = recoveryMode === "standard" && dayOfWeek === 5;
   const highStepLoadNote = highStepLoad
     ? `High step load detected${
         recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
@@ -143,6 +140,8 @@ export function MobilityPageClient({
             summary={
               recoveryMode === "footFlare"
                 ? "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout."
+                : isLowerBackRelief
+                  ? "Same day as Lower B. Use before training if stiff; complete after training or later if back pain is present."
                 : "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work."
             }
             completed={laterRecoveryCompleted}
@@ -154,6 +153,8 @@ export function MobilityPageClient({
             meta={
               recoveryMode === "footFlare"
                 ? "Effort 1-3/10. Pain 0-2/10 maximum. No aggressive stretching, no digging hard into the sole, and no extra fatigue."
+                : isLowerBackRelief
+                  ? "Effort 1-3/10. Pain 0-2/10 maximum. Finish looser, calmer, and no more painful."
                 : "Required means consistently completed, not intense. Effort 1-3/10, pain 0-2/10 maximum, no fatigue."
             }
             contextNote={highStepLoadNote}

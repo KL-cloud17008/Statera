@@ -12,7 +12,7 @@ User context for this phase: male, early 20s, 5 ft 9 in, about 312 lb (141.5 kg,
 | Tuesday | Lower A - Machine Lower Body Foundation |
 | Wednesday | Mobility, Flexibility & Balance |
 | Thursday | Upper B - Machine Back/Shoulder Emphasis |
-| Friday | Lower B - Machine Posterior Chain + Hip Stability |
+| Friday | Lower B - Back-Safe Machine Lower Body |
 | Saturday | Mobility, Flexibility & Balance |
 | Sunday | Complete rest |
 
@@ -191,24 +191,52 @@ Upper B mobility-page prep content: daily lower-leg and balance base; wall thora
 - Session prep is non-loggable.
 - Walk to gym: General warm-up.
 - At gym: 1-2 ramp-up sets on Leg Press.
-- Main training: Lower B.
-- Required later recovery.
+- Main training: Lower B — Back-Safe Machine Lower Body.
+- Required same-day lower-back relief block.
+- Back-pain rule: use the reduced set plan if lower-back pain is present. Skip heavy work if pain increases.
 - No wall sit.
 - No lunges.
-- No direct calf raises.
-- Standard Lower B: 10-13 working sets.
-- Low-readiness Lower B: 8-10 working sets.
+- No direct calf work.
+- Standard Lower B: 11 working sets.
+- Low-readiness/back-pain Lower B: 7-8 working sets.
 
 | Block | Exercise | Sets | Reps | Tempo | Rest | RPE |
 | --- | --- | ---: | --- | --- | --- | --- |
-| A1 | Leg Press | 3 | 8-12 | 3-1-1 | straight sets: 120 sec after each set | 6-7 |
-| B1 | Lying Hamstring Curl | 2 | 10-15 | 2-1-2 | after B2: 120 sec | 6-7 |
-| B2 | Hyperextension / Back Extension Machine | 2 | 10-12 | 2-1-2 | after B2: 120 sec | 6-7 |
-| C1 | Glute Kickback Machine | 2 | 8-12/side | 2-1-2 | after C3: 120 sec | 6-7 |
-| C2 | Hip Abduction Machine | 2 | 10-15 | 2-1-2 | after C3: 120 sec | 6-7 |
-| C3 | Leg Extension | 1-2 | 10-15 | 2-1-2 | after C3: 90-120 sec | 5-6 |
+| A1 | Leg Press | 3 | 8-10 | 3-1-1 | straight sets: 2-3 min | 5-6 |
+| B1 | Seated Hamstring Curl | 3 | 10-15 | 2-1-2 | 90-120 sec | 5-6 |
+| B2 | Leg Extension | 3 | 10-15 | 2-1-2 | after B2: 90-120 sec | 5-6 |
+| C1 | Hip Abduction Machine | 2 | 12-20 | 2-1-2 | 90-120 sec | 5-6 |
 
-C3 Leg Extension purpose: low-dose knee-extension accessory work to support quad strength, knee tracking, and lower-body resilience without adding direct calf load on the final training day. Standard dose: 1-2 sets, 10-15 reps, RPE 5-6. Low-readiness dose: 1 set, 10-12 reps, RPE 5; skip if knees feel irritated or if fatigue is high. Coaching cues: smooth reps, no knee snapping, pause briefly near the top without locking aggressively, lower slowly, keep hips heavy on the pad, use a controlled comfortable range, and stop 2-4 reps before failure. Joint-safety notes: keep pain 0-2/10, reduce load or range if the front of the knee feels irritated, do not chase a pump, do not turn this into conditioning, and skip if knee pain rises above 3/10. Programming note: Lower B already includes Leg Press, so Leg Extension should stay low-dose on this day. It is replacing calf work because direct calf training is currently unnecessary and poorly tolerated. Walking already provides enough calf loading for this phase.
+A1 Leg Press: standard dose 3 sets x 8-10, RPE 5-6. Low-readiness/back-pain dose 2 sets x 8-10, RPE 5. Start lighter than expected, full foot on platform, knees track over middle toes, hips and lower back stable against the pad, control the lowering, do not chase deep range if hips tuck or lower back rounds, stop 2-4 reps before failure, and do not use as conditioning. Pain 0-2/10 acceptable if stable; if back, hip, or knee pain rises above 3/10, reduce range/load or stop.
+
+B1 Seated Hamstring Curl: standard dose 3 sets x 10-15, RPE 5-6. Low-readiness/back-pain dose 2 sets x 10-12, RPE 5. Hips stay heavy against the pad, curl smoothly, pause gently, return slowly, no jerking, and no lower-back arching. Stop if hamstring cramping, back pain, or nerve-like symptoms appear.
+
+B2 Leg Extension: standard dose 3 sets x 10-15, RPE 5-6. Low-readiness/back-pain dose 2 sets x 10-12, RPE 5. Smooth reps, no knee snapping, brief pause near the top without aggressive lockout, lower slowly, hips stay heavy on the pad, controlled comfortable range, and stop 2-4 reps before failure. Reduce load or range if front-of-knee irritation appears. Stop if knee pain rises above 3/10.
+
+C1 Hip Abduction Machine: standard dose 2 sets x 12-20, RPE 5-6. Low-readiness/back-pain dose 1-2 sets x 12-15, RPE 5. Outer hip/glute medius focus, pelvis still, do not rock torso, control out and back, no jerking, and do not chase load. Stop if hip, lower-back, or knee pain increases.
+
+### Lower Back Relief — Mobility & Flexibility
+
+- Same day as Lower B.
+- Can be done before training if back feels stiff.
+- Must be done after training or later that day if back pain is present.
+- Effort 1-3/10.
+- Pain 0-2/10 maximum.
+- No fatigue.
+- Duration: 8-12 minutes.
+
+Purpose: reduce lower-back irritation, restore gentle spine/hip motion, and downshift tension without loading the spine heavily.
+
+| Exercise | Dose |
+| --- | --- |
+| Supported Breathing Reset | 2 minutes |
+| Pelvic Tilts | 1-2 sets x 8-12 slow reps |
+| Cat-Cow | 1 set x 6-10 slow reps |
+| Supported Hip-Hinge Rock-Back | 1-2 sets x 6-10 reps |
+| Open Book Thoracic Rotation | 1 set x 5-8 reps per side |
+| Supported Hip Flexor Stretch | 1-2 rounds x 20-30 sec per side |
+
+Back-pain safety rules: pain 0-2/10 acceptable if stable; pain 3-4/10 means reduce range, load, stance, or duration; pain 5/10 or higher means stop. Stop immediately for sharp pain. Stop lower-body loading for pain shooting down the leg. Stop training and seek medical evaluation for numbness, tingling, weakness, limping, bowel/bladder changes, fever, or trauma-related pain. If lower-back pain worsens during Leg Press, stop the session and switch to Lower Back Relief only. No loaded spinal flexion, heavy bracing, back extension machine, max effort, failure training, or fatigue.
 
 Lower B mobility-page prep content: daily lower-leg and balance base; hip hinge patterning against wall, 8 reps; hamstring floss seated or standing, 8 reps per side; 90/90 hip switches, 6-8 reps; half-kneeling or standing hip flexor stretch, 20-30 sec per side; bodyweight glute bridge, 8-10 reps; seated bracing breaths, 5 slow breaths.
 
