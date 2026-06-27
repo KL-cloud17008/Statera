@@ -49,6 +49,8 @@ const WORKOUT_RESET_REVALIDATION_PATHS = [
   "/mobility",
   "/flexibility-balance",
   "/steps",
+  "/weight",
+  "/settings",
 ] as const;
 
 function revalidateWorkoutResetPaths() {
@@ -274,7 +276,7 @@ export async function startWorkoutSession(
     return { error: "Plan not found" };
   }
   if (!isCurrentWorkoutPlanContent(plan)) {
-    return { error: "This saved plan is out of date. Start a new 4-day plan first." };
+    return { error: "This saved plan is out of date. Start a new 5-day taper plan first." };
   }
 
   const now = new Date();

@@ -1,5 +1,6 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { DEFAULT_WORKOUT_PLAN } from "@/lib/default-workout-plan";
+import { isCurrentWorkoutPlanContent } from "@/lib/workout-plan-version";
 
 type WorkoutPlanClient = PrismaClient | Prisma.TransactionClient;
 
@@ -32,14 +33,46 @@ export async function createDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
 }
 
 export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userId: string) {
-  const activePlanCount = await prisma.workoutPlan.count({
+  const activePlans = await prisma.workoutPlan.findMany({
     where: { userId, isActive: true },
+    include: { exercises: { orderBy: { sortOrder: "asc" } } },
   });
 
-  if (activePlanCount > 0) {
+  const hasCurrentActivePlan =
+    activePlans.length === DEFAULT_WORKOUT_PLAN.length &&
+    activePlans.every((plan) => isCurrentWorkoutPlanContent(plan));
+
+  if (hasCurrentActivePlan) {
     return false;
   }
 
-  await createDefaultWorkoutPlans(prisma, userId);
+  if (activePlans.length === 0) {
+    await createDefaultWorkoutPlans(prisma, userId);
+    return true;
+  }
+
+  const rotatePlans = async (tx: WorkoutPlanClient) => {
+    await tx.workoutSession.deleteMany({
+      where: {
+        userId,
+        completed: false,
+        workoutPlanId: { not: null },
+      },
+    });
+
+    await tx.workoutPlan.updateMany({
+      where: { userId, isActive: true },
+      data: { isActive: false },
+    });
+
+    await createDefaultWorkoutPlans(tx, userId);
+  };
+
+  if ("$transaction" in prisma) {
+    await prisma.$transaction(rotatePlans);
+  } else {
+    await rotatePlans(prisma);
+  }
+
   return true;
 }

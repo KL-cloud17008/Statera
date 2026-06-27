@@ -47,7 +47,7 @@ export function MobilityPageClient({
       : program.blocks;
   const laterRecoveryBlocks = getRequiredLaterRecoveryBlocks(recoveryMode, dayOfWeek);
   const laterRecoveryTitle = getRequiredLaterRecoveryTitle(recoveryMode, dayOfWeek);
-  const isLowerBackRelief = recoveryMode === "standard" && dayOfWeek === 5;
+  const isLowerBackRelief = recoveryMode === "standard" && dayOfWeek === 3;
   const highStepLoadNote = highStepLoad
     ? `High step load detected${
         recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
@@ -141,7 +141,7 @@ export function MobilityPageClient({
               recoveryMode === "footFlare"
                 ? "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout."
                 : isLowerBackRelief
-                  ? "Same day as Lower B. Use before training if stiff; complete after training or later if back pain is present."
+                  ? "Use Lower Back Relief if Leg Press or Back Hyperextension irritates the lower back."
                 : "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work."
             }
             completed={laterRecoveryCompleted}

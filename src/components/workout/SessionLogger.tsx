@@ -128,7 +128,7 @@ export function SessionLogger({
   const totalExercises = loggableExercises.length;
   const completedCount = completedExercises.size;
   const progressPercent = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0;
-  const showLowerBReadiness = sessionName === LOWER_B_BACK_SAFE_TITLE;
+  const showLowerBReadiness = sessionName === LOWER_B_BACK_SAFE_TITLE || /Lower A|Posterior Chain/.test(sessionName);
 
   function handleSetCompleteChange(exerciseName: string, setNumber: number, complete: boolean) {
     setCompletedSets((current) => {

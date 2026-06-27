@@ -8,17 +8,71 @@ import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetBut
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getTrainingDayOfWeek } from "@/lib/dates";
-import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
+import {
+  BACK_PAIN_RULES,
+  FOOT_LOAD_RULES,
+  LOWER_B_BACK_PAIN_READINESS_NOTE,
+  NEXT_WEEK_TAPER_TITLE,
+  WEEKLY_SET_SUMMARY,
+} from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
 const WEEK_STRUCTURE = [
-  { day: "Monday", title: "Upper A", protocol: "Strength Protocol", dayOfWeek: 1, note: "Upper-body push and pull foundation." },
-  { day: "Tuesday", title: "Lower A", protocol: "Strength Protocol", dayOfWeek: 2, note: "Stable lower-body strength and trunk control." },
-  { day: "Wednesday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", meta: "10,000 steps", note: "Recovery mobility, flexibility, supported balance, and Wednesday's 10,000-step target." },
-  { day: "Thursday", title: "Upper B", protocol: "Strength Protocol", dayOfWeek: 4, note: "Back and shoulder emphasis." },
-  { day: "Friday", title: "Lower B", protocol: "Strength Protocol", dayOfWeek: 5, note: "Back-safe machine lower body. Required same-day lower-back relief block." },
-  { day: "Saturday", title: "Mobility, Flexibility & Balance", protocol: "Recovery Protocol", note: "12-20 minutes of recovery mobility, flexibility, and supported balance." },
-  { day: "Sunday", title: "Complete rest", protocol: "Full Rest", note: "Complete rest. Gentle recovery mobility only if needed." },
+  {
+    day: "Monday",
+    title: "Lower A — Leg Strength Peak / Machine-Supported",
+    protocol: "Strength Protocol",
+    dayOfWeek: 1,
+    note: "Heaviest lower-body day of the week. Controlled machine and lunge work. Strength stimulus, not conditioning.",
+    laterRecovery: "Lower Body Downshift + Foot-Flare Care, 10-14 minutes.",
+  },
+  {
+    day: "Tuesday",
+    title: "Upper A — Push/Pull Strength",
+    protocol: "Strength Protocol",
+    dayOfWeek: 2,
+    note: "Main upper-body session after the heavy lower-body day. Strong work, controlled fatigue.",
+    laterRecovery: "Post-Leg Fatigue + Shoulder Reset, 8-12 minutes.",
+  },
+  {
+    day: "Wednesday",
+    title: "Posterior Chain + Upper Recovery Strength",
+    protocol: "Strength Protocol",
+    dayOfWeek: 3,
+    note: "Low-to-moderate recovery-strength day. Upper-back, arms, and very low-dose back-extension pattern. No grinding.",
+    laterRecovery: "Foot Load Control + Lower Back Relief, 10-14 minutes.",
+    setLabel: "9-10",
+  },
+  {
+    day: "Thursday",
+    title: "Lower B — Low-Dose Legs + Hip Stability",
+    protocol: "Strength Protocol",
+    dayOfWeek: 4,
+    note: "Reduced lower-body session. Maintain leg pattern, add hip stability, avoid excessive foot and back stress.",
+    laterRecovery: "Lower-Body Flush + Sole Care, 10-12 minutes.",
+  },
+  {
+    day: "Friday",
+    title: "Training Reset — Machine Upper + Arms",
+    protocol: "Strength Protocol",
+    dayOfWeek: 5,
+    note: "Lowest-dose training day. Machine-supported upper body and arms. Leave fresher than you arrived.",
+    laterRecovery: "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.",
+  },
+  {
+    day: "Saturday",
+    title: "Mobility, Flexibility & Balance — Recovery Protocol",
+    protocol: "Recovery Protocol",
+    note: "Dedicated recovery day. Restore soles, ankles, hips, lower back, and breathing. No conditioning.",
+    laterRecovery: "15-20 minutes. Effort 1-3/10. Pain 0-2/10 maximum.",
+  },
+  {
+    day: "Sunday",
+    title: "Complete Rest",
+    protocol: "Full Rest",
+    note: "Keep the day deliberately empty. Gentle recovery mobility only if needed.",
+    laterRecovery: "If stiff, use 5-8 minutes of ankle pumps, gentle ankle circles, and supported breathing. No training.",
+  },
 ] as const;
 
 export const metadata: Metadata = {
@@ -44,8 +98,8 @@ export default async function WorkoutPlanPage() {
     <div className="page-shell">
       <SectionHeader
         eyebrow="Training Protocol"
-        title="Current phase"
-        description="Four strength protocols. Two recovery protocols. One full rest day."
+        title={NEXT_WEEK_TAPER_TITLE}
+        description="Next week uses a 5-day taper. Day 1 is the highest lower-body stress. Day 2 is upper-body strength. Days 3-5 progressively reduce volume, joint stress, and systemic fatigue. Work steps count as primary load. Foot pain controls walking volume."
         action={<WorkoutPlanResetButton />}
       />
 
@@ -61,18 +115,36 @@ export default async function WorkoutPlanPage() {
         <div className="command-deck grid gap-4 rounded-[var(--radius-panel)] p-6 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end" data-animated="true">
           <div>
             <p className="eyebrow">Week structure</p>
-            <p className="data-number mt-3 text-4xl text-foreground">4/2/1</p>
+            <p className="data-number mt-3 text-4xl text-foreground">5/1/1</p>
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-white/68">
-            Strength protocols run Monday, Tuesday, Thursday, and Friday. Wednesday carries the
-            10,000-step target. Saturday is recovery protocol. Sunday is full rest. Ramp-up sets
-            stay outside the ledger. Progress only after clean top-range sets at target RPE.
-            Required later recovery remains separate.
+            Five strength protocols run Monday through Friday. Saturday is the dedicated
+            Mobility, Flexibility & Balance recovery protocol. Sunday is full rest. Ramp-up sets
+            stay outside the ledger. Required later recovery remains separate.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
-            <Badge variant="secondary">4 strength</Badge>
-            <Badge variant="outline">2 recovery</Badge>
+            <Badge variant="secondary">5 Strength</Badge>
+            <Badge variant="outline">1 Recovery</Badge>
             <Badge variant="outline">1 full rest</Badge>
+          </div>
+        </div>
+
+        <div className="grid gap-4 border-b border-border pb-7 lg:grid-cols-2">
+          <div>
+            <p className="eyebrow">Foot-load rules</p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+              {FOOT_LOAD_RULES.map((rule) => (
+                <li key={rule}>{rule}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="eyebrow">Back-pain rules</p>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+              {BACK_PAIN_RULES.map((rule) => (
+                <li key={rule}>{rule}</li>
+              ))}
+            </ul>
           </div>
         </div>
 
@@ -100,7 +172,7 @@ export default async function WorkoutPlanPage() {
             const workingCount = loggableExercises.length;
             const totalSets = loggableExercises
               .reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
-            const showLowerBReadiness = plan?.dayOfWeek === 5 && plan.sessionName === LOWER_B_BACK_SAFE_TITLE;
+            const showBackReadiness = plan?.dayOfWeek === 1 || plan?.dayOfWeek === 3 || plan?.dayOfWeek === 4;
 
             return (
               <section key={day.day} className="py-8 first:pt-0 last:pb-0">
@@ -114,10 +186,12 @@ export default async function WorkoutPlanPage() {
                     <div className="flex flex-wrap items-center gap-3">
                       <h2 className="text-3xl">{plan?.sessionName ?? day.title}</h2>
                       <Badge variant={day.protocol === "Strength Protocol" ? "default" : "outline"}>{day.protocol}</Badge>
-                      {"meta" in day ? <Badge variant="secondary">{day.meta}</Badge> : null}
                     </div>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{day.note}</p>
-                    {showLowerBReadiness ? (
+                    <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                      <span className="font-semibold text-foreground">Required later recovery:</span> {day.laterRecovery}
+                    </p>
+                    {showBackReadiness ? (
                       <p className="status-note mt-3 inline-flex px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
                         {LOWER_B_BACK_PAIN_READINESS_NOTE}
                       </p>
@@ -140,7 +214,9 @@ export default async function WorkoutPlanPage() {
                         </div>
                         <div>
                           <p className="eyebrow text-[10px]">Sets</p>
-                          <p className="data-number mt-2 text-2xl text-foreground">{totalSets}</p>
+                          <p className="data-number mt-2 text-2xl text-foreground">
+                            {"setLabel" in day && typeof day.setLabel === "string" ? day.setLabel : totalSets}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -154,8 +230,9 @@ export default async function WorkoutPlanPage() {
                         <div>
                           <div className="flex flex-wrap items-center gap-2.5">
                             <p className="font-medium text-foreground">{exercise.exerciseName}</p>
-                            {exercise.supersetGroup ? <Badge variant="outline">Circuit {exercise.supersetGroup}</Badge> : null}
-                            {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
+                            {exercise.supersetGroup ? <Badge variant="outline">Block {exercise.supersetGroup}</Badge> : null}
+                          {exercise.exerciseName.includes("Back Hyperextension") ? <Badge variant="outline">If tolerated</Badge> : null}
+                          {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
                             {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
                           </div>
                           {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p> : null}
@@ -171,16 +248,23 @@ export default async function WorkoutPlanPage() {
                   </div>
                 ) : (
                   <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
-                    {day.day === "Wednesday"
-                      ? "Use the mobility page for recovery mobility. Step target: 10,000. Keep intensity easy, use supported balance only, and do not add conditioning."
-                      : day.protocol === "Recovery Protocol"
-                        ? "Use the mobility page for 12-20 minutes of recovery mobility, flexibility, and supported balance. Do not add conditioning."
+                    {day.protocol === "Recovery Protocol"
+                        ? "Use the mobility page for 15-20 minutes of recovery mobility, flexibility, and supported balance. Do not add conditioning."
                         : "Keep the day deliberately empty. Use only gentle recovery mobility if needed."}
                   </div>
                 )}
               </section>
             );
           })}
+        </div>
+
+        <div className="border-t border-border pt-7">
+          <p className="eyebrow">Weekly set summary</p>
+          <div className="mt-4 grid gap-2 text-sm leading-relaxed text-muted-foreground md:grid-cols-2">
+            {WEEKLY_SET_SUMMARY.map((item) => (
+              <p key={item}>{item}</p>
+            ))}
+          </div>
         </div>
       </section>
     </div>

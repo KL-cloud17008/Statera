@@ -13,7 +13,7 @@ export function WorkoutPlanResetButton() {
 
   function handleReset() {
     const confirmed = window.confirm(
-      "Start a fresh copy of the current 4-day training plan? Any open session snapshot will be cleared."
+      "Start a fresh copy of the next-week 5-day taper plan? Any open session snapshot will be cleared."
     );
 
     if (!confirmed) {
@@ -27,7 +27,7 @@ export function WorkoutPlanResetButton() {
         return;
       }
 
-      toast.success("Started new 4-day plan");
+      toast.success("Started new 5-day taper plan");
       router.refresh();
     });
   }
@@ -44,7 +44,7 @@ export function WorkoutPlanResetButton() {
       {isPending ? (
         "Starting plan..."
       ) : (
-        "Start new 4-day plan"
+        "Start new taper plan"
       )}
     </Button>
   );
