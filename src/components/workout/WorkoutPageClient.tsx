@@ -190,16 +190,16 @@ function getDayGuidance(dayOfWeek: number): DayGuidance | null {
   if (dayOfWeek === 2) {
     return {
       eyebrow: "Recovery Protocol",
-      title: "Recovery Override — No Gym",
+      title: "Off Day — Recovery Reset",
       description:
-        "Unplanned recovery day. Do not make up missed volume. Use foot and ankle recovery only.",
+        "Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only.",
       actionHref: "/mobility",
       actionLabel: "View Recovery",
       details: [
-        "No step chasing. Work steps count as load. If soles are irritated, recovery only.",
+        "No step chasing. Recovery preserves the next three training days.",
         "Seated Ankle Pumps — 1-2 minutes, smooth rhythm, no aggressive range.",
         "Ankle Circles — 1 set x 8-12 each direction per side, slow and controlled.",
-        "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; heel stays down and pain does not rise.",
+        "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down.",
         "Wall Calf Stretch, Knee Straight and Knee Bent — 20-30 seconds per side each, gentle only.",
         "Supported Breathing Reset — 2 minutes with jaw, shoulders, and hips relaxed.",
       ],
@@ -209,11 +209,11 @@ function getDayGuidance(dayOfWeek: number): DayGuidance | null {
   if (dayOfWeek === 6) {
     return {
       eyebrow: "Full Rest",
-      title: "Complete Rest",
-      description: "Full rest. No gym. Gentle recovery mobility only if needed.",
+      title: "Recovery Rest",
+      description: "Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
       details: [
-        "If soles, ankles, or lower back feel stiff, use 5-8 minutes of ankle pumps, gentle ankle circles, and supported breathing.",
-        "No training.",
+        "Optional if stiff: supported breathing, ankle pumps, ankle circles, wall ankle rocks, gentle calf stretches, pelvic tilts, and open book rotations.",
+        "No gym. No make-up sets. No step chasing.",
       ],
     };
   }

@@ -50,22 +50,22 @@ type WorkoutDayStatus = {
 
 const WEEKLY_RHYTHM = [
   { day: "MON", label: "Lower A", protocol: "Strength Protocol", dayOfWeek: 1 },
-  { day: "TUE", label: "Recovery Override", protocol: "Recovery Protocol", dayOfWeek: 2, href: "/mobility" },
+  { day: "TUE", label: "Off Day / Recovery Reset", protocol: "Recovery Protocol", dayOfWeek: 2, href: "/mobility" },
   { day: "WED", label: "Upper A", protocol: "Strength Protocol", dayOfWeek: 3 },
   { day: "THU", label: "Lower B", protocol: "Strength Protocol", dayOfWeek: 4 },
-  { day: "FRI", label: "Upper B", protocol: "Strength Protocol", dayOfWeek: 5 },
-  { day: "SAT", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 6 },
+  { day: "FRI", label: "Full-Body Machine Circuit + Arms", protocol: "Strength Protocol", dayOfWeek: 5 },
+  { day: "SAT", label: "Recovery Rest", protocol: "Full Rest", dayOfWeek: 6 },
   { day: "SUN", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 0 },
 ];
 
 const NEXT_BY_DAY = [
   "Complete Rest",
   "Lower A",
-  "Recovery Override — No Gym",
-  "Upper A — Push/Pull Strength",
-  "Lower B",
-  "Upper B — Machine Upper + Arms / Training Reset",
-  "Complete Rest",
+  "Off Day — Recovery Reset",
+  "Upper A — Progressive Push/Pull Circuit Strength",
+  "Lower B — Progressive Lower Body + Hip Stability",
+  "Full-Body Machine Circuit + Arms",
+  "Recovery Rest",
 ];
 
 export function DashboardPageClient({

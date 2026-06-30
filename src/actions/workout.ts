@@ -103,6 +103,9 @@ function getSessionFamily(label: string | null | undefined) {
   if (normalized.includes("lower b")) {
     return "lower-b";
   }
+  if (normalized.includes("full-body") || normalized.includes("machine circuit")) {
+    return "full-body-circuit";
+  }
   if (normalized.includes("upper b") || normalized.includes("training reset")) {
     return "upper-b";
   }
@@ -346,7 +349,7 @@ export async function startWorkoutSession(
     return { error: "Plan not found" };
   }
   if (!isCurrentWorkoutPlanContent(plan)) {
-    return { error: "This saved plan is out of date. Start a new adjusted taper plan first." };
+    return { error: "This saved plan is out of date. Start a new adjusted current-week plan first." };
   }
 
   const now = new Date();

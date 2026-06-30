@@ -19,7 +19,14 @@ export const metadata: Metadata = {
 
 export default function FlexibilityBalancePage() {
   const programs = getAllMobilityPrograms();
-  const dailyMinimum = programs[0].blocks.find((block) => block.id === "daily-lower-leg-base") ?? programs[0].blocks[0];
+  const allBlocks = programs.flatMap((program) => program.blocks);
+  const dailyMinimum =
+    allBlocks.find((block) => block.id === "daily-lower-leg-base") ??
+    allBlocks[0];
+
+  if (!dailyMinimum) {
+    return null;
+  }
   const balanceDrills = uniqueExercises(
     programs
       .flatMap((program) => program.blocks)
@@ -78,9 +85,9 @@ export default function FlexibilityBalancePage() {
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
           <ProtocolBlock
             icon={RotateCcw}
-            eyebrow="Recovery override"
-            title="Tuesday recovery override"
-            summary="Tuesday is no gym and no make-up volume. Use foot and ankle recovery only."
+            eyebrow="Recovery reset"
+            title="Tuesday recovery reset"
+            summary="Tuesday is off and has no make-up volume. Use foot and ankle recovery only."
             badge="8-12 min"
           >
             <div className="grid gap-3">

@@ -16,6 +16,7 @@ import {
   FOOT_LOAD_RULES,
   LOWER_B_BACK_PAIN_READINESS_NOTE,
   NEXT_WEEK_TAPER_TITLE,
+  PROGRESSIVE_OVERLOAD_RULES,
   WEEKLY_SET_SUMMARY,
 } from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
@@ -26,58 +27,85 @@ const WEEK_STRUCTURE = [
     title: "Lower A — Leg Strength Peak / Machine-Supported",
     protocol: "Strength Protocol",
     dayOfWeek: 1,
-    note: "Completed. Heaviest lower-body day of the week.",
+    note: "Completed. Heaviest lower-body session of the week.",
     laterRecovery: "Completed Monday session data stays intact.",
     statusNote: "Completed / View Session",
   },
   {
     day: "Tuesday",
-    title: "Recovery Override — No Gym",
+    title: "Off Day — Recovery Reset",
     protocol: "Recovery Protocol",
-    note: "Unplanned recovery day. Do not make up missed volume. Use foot and ankle recovery only.",
-    laterRecovery: "No step chasing. Work steps count as load. If soles are irritated, recovery only.",
+    note: "Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only.",
+    laterRecovery: "No step chasing. Recovery preserves the next three training days.",
     details: [
       "Seated Ankle Pumps — 1-2 minutes; smooth rhythm; no aggressive range.",
       "Ankle Circles — 1 set x 8-12 each direction per side; slow, controlled circles.",
-      "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down; stop before pain rises.",
+      "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down.",
       "Wall Calf Stretch, Knee Straight — 1 round x 20-30 seconds per side; gentle stretch only.",
       "Wall Calf Stretch, Knee Bent — 1 round x 20-30 seconds per side; gentle stretch only.",
-      "Supported Breathing Reset — 2 minutes; jaw, shoulders, and hips relaxed.",
+      "Supported Breathing Reset — 2 minutes; downshift breathing; jaw, shoulders, and hips relaxed.",
     ],
     actionHref: "/mobility",
     actionLabel: "View Recovery",
   },
   {
     day: "Wednesday",
-    title: "Upper A — Push/Pull Strength",
+    title: "Upper A — Progressive Push/Pull Circuit Strength",
     protocol: "Strength Protocol",
     dayOfWeek: 3,
-    note: "Main upper-body session moved from Tuesday. Strong work, controlled fatigue.",
-    laterRecovery: "Post-Leg Fatigue + Shoulder Reset, 8-12 minutes.",
+    note: "Higher-volume upper-body day. Controlled strength circuits, more total work, no failure.",
+    laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
+    details: [
+      "Use paired circuits for efficiency. Rest after each pair, not after every single exercise unless needed.",
+      "Wednesday total working sets: 23.",
+      "Overload target: add reps first. If every set hits the upper target with clean form and target RPE, increase next time by the smallest kg jump.",
+    ],
   },
   {
     day: "Thursday",
-    title: "Lower B — Low-Dose Legs + Hip Stability",
+    title: "Lower B — Progressive Lower Body + Hip Stability",
     protocol: "Strength Protocol",
     dayOfWeek: 4,
-    note: "Reduced lower-body session. Maintain leg pattern, add hip stability, avoid excessive foot and back stress.",
-    laterRecovery: "Lower-Body Flush + Sole Care, 10-12 minutes.",
+    note: "Moderate lower-body overload after Monday legs. More work than the taper, but still controlled for feet and lower back.",
+    laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
+    details: [
+      "Single-Leg Leg Press stays straight sets. Accessories can be paired.",
+      "Thursday total working sets: 14.",
+      "Keep lunges conservative. Overload leg press, leg curl, leg extension, and hip abduction by reps first.",
+    ],
   },
   {
     day: "Friday",
-    title: "Upper B — Machine Upper + Arms / Training Reset",
+    title: "Full-Body Machine Circuit + Arms",
     protocol: "Strength Protocol",
     dayOfWeek: 5,
-    note: "Final training day of the week. Machine-supported upper body and arms. Leave fresher than you arrived.",
+    note: "Highest-density day of the week. Machine-supported full-body circuits with controlled rests. No HIIT, no failure, no reckless conditioning.",
     laterRecovery: "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.",
-    setLabel: "10 standard / 12 optional",
+    details: [
+      "Block A: 3 rounds. Incline Machine Press, Seated Cable Row, Leg Extension. Rest 2 minutes after A3.",
+      "Block B: 3 rounds. Lat Pulldown Variation, Reverse Pec Deck or Face Pull, Seated Hamstring Curl. Rest 2 minutes after B3.",
+      "Block C: 3 rounds. Bicep Curl Machine, Rope Triceps Pressdown, Machine or Dumbbell Lateral Raise. Rest 90-120 seconds after C3.",
+      "Friday total working sets: 27.",
+      "Circuit safety: strength density only. Do not chase breathlessness. Stop for dizziness, sharp pain, limping, chest pain, unusual shortness of breath, numbness, tingling, or worsening symptoms.",
+      "Overload target: conservative loads, add reps before load, keep every rep clean.",
+    ],
   },
   {
     day: "Saturday",
-    title: "Complete Rest",
+    title: "Recovery Rest",
     protocol: "Full Rest",
-    note: "Full rest. No gym. Gentle recovery mobility only if needed.",
-    laterRecovery: "If soles, ankles, or lower back feel stiff, use 5-8 minutes of ankle pumps, gentle ankle circles, and supported breathing. No training.",
+    note: "Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
+    laterRecovery: "No gym. No make-up sets. No step chasing.",
+    details: [
+      "Optional if stiff: Supported Breathing Reset — 2 minutes.",
+      "Seated Ankle Pumps — 1-2 minutes.",
+      "Ankle Circles — 1 set x 8-12 each direction.",
+      "Wall Ankle Rocks — 1 set x 8-12 slow reps.",
+      "Wall Calf Stretch, Knee Straight — 20-30 seconds per side.",
+      "Wall Calf Stretch, Knee Bent — 20-30 seconds per side.",
+      "Pelvic Tilts — 1 set x 8-12 slow reps.",
+      "Open Book Thoracic Rotation — 1 set x 5 reps per side.",
+    ],
   },
   {
     day: "Sunday",
@@ -131,9 +159,10 @@ export default async function WorkoutPlanPage() {
             <p className="data-number mt-3 text-4xl text-foreground">4 / 1 / 2</p>
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-white/68">
-            Monday lower body is completed. Tuesday is recovery-only with no gym. Wednesday through
-            Friday carry the remaining strength work. Saturday and Sunday are full rest. Ramp-up
-            sets stay outside the ledger. Required later recovery remains separate.
+            Monday lower body was completed. Tuesday was taken off. Wednesday through Friday now
+            use controlled progressive overload because food intake and home recovery are available.
+            Saturday and Sunday are reserved for recovery. Ramp-up sets stay outside the ledger.
+            Required later recovery remains separate.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
             <Badge variant="secondary">4 Strength</Badge>
@@ -158,6 +187,15 @@ export default async function WorkoutPlanPage() {
                 <li key={rule}>{rule}</li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        <div className="border-b border-border pb-7">
+          <p className="eyebrow">Progressive overload</p>
+          <div className="mt-4 grid gap-2 text-sm leading-relaxed text-muted-foreground md:grid-cols-2">
+            {PROGRESSIVE_OVERLOAD_RULES.map((rule) => (
+              <p key={rule}>{rule}</p>
+            ))}
           </div>
         </div>
 

@@ -41,8 +41,10 @@ export function WorkoutDayPreview({
     (exercise) => isLoggableTrainingExercise(exercise) && exercise.exerciseType === "ACCESSORY"
   );
   const totalLoggableSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
-  const setCountLabel = /Upper B/.test(plan.sessionName) ? "10 / 12" : String(totalLoggableSets);
   const blockOrder = ["A", "B", "C", "D"] as const;
+  const blockCount = blockOrder.filter((block) =>
+    workingExercises.some((exercise) => exercise.supersetGroup === block)
+  ).length;
   const showLowerBReadiness = plan.sessionName === LOWER_B_BACK_SAFE_TITLE || /Lower A/.test(plan.sessionName);
 
   return (
@@ -65,7 +67,7 @@ export function WorkoutDayPreview({
           <div className="grid grid-cols-3 gap-3 text-sm xl:text-right">
             <div>
               <p className="eyebrow text-[10px]">Blocks</p>
-              <p className="data-number mt-2 text-2xl text-foreground">3</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{blockCount}</p>
             </div>
             <div>
               <p className="eyebrow text-[10px]">Exercises</p>
@@ -73,7 +75,7 @@ export function WorkoutDayPreview({
             </div>
             <div>
               <p className="eyebrow text-[10px]">Sets</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{setCountLabel}</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{totalLoggableSets}</p>
             </div>
           </div>
         </div>
@@ -114,7 +116,7 @@ export function WorkoutDayPreview({
                 </div>
                 <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
                   {isPairedBlock
-                    ? "Move through the pair or sequence cleanly, then take the programmed rest."
+                    ? "Move through the pair or circuit cleanly, then take the programmed rest."
                     : "Use straight sets with the programmed rest. Do not rush."}
                 </p>
                 <Badge variant="outline">{restNote}s rest</Badge>

@@ -1632,7 +1632,7 @@ function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): Mob
       id: `${idPrefix}-weekly-reset-downshift`,
       title: "Weekly downshift reset",
       duration: "4-6 min",
-      purpose: "After Friday Upper B, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
+      purpose: "After Friday Full-Body Machine Circuit + Arms, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
       exercises: [
         footFlareMovement("supportedSingleLegBalanceKickstand", `${idPrefix}-single-leg-kickstand`, {
           dose: "10-20 seconds per side",
@@ -1850,10 +1850,10 @@ export const LOWER_BACK_RELIEF: MobilityBlock = block({
 
 const DAY_2_LATER_RECOVERY: MobilityBlock = block({
   id: "day-2-recovery-override-no-gym",
-  title: "Recovery Override — No Gym",
+  title: "Off Day — Recovery Reset",
   duration: "8-12 min",
   purpose:
-    "Unplanned recovery day. Do not make up missed volume. Use foot and ankle recovery only. No step chasing; work steps count as load.",
+    "Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only. No step chasing.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -1891,11 +1891,11 @@ const DAY_2_LATER_RECOVERY: MobilityBlock = block({
 });
 
 const DAY_3_LATER_RECOVERY: MobilityBlock = block({
-  id: "day-3-post-leg-fatigue-shoulder-reset",
-  title: "Post-Leg Fatigue + Shoulder Reset",
+  id: "day-3-upper-body-downshift-foot-ankle-base",
+  title: "Upper-Body Downshift + Foot/Ankle Base",
   duration: "8-12 min",
   purpose:
-    "Complete later the same day after Wednesday Upper A. Keep the lower legs calm and restore upper-back rotation and breathing.",
+    "Complete later the same day after Wednesday Upper A. Keep foot and ankle work easy, then restore upper-back rotation and breathing.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -1915,10 +1915,6 @@ const DAY_3_LATER_RECOVERY: MobilityBlock = block({
       dose: "20-30 seconds per side",
       completionTarget: "Hold 20-30 easy seconds per side.",
     }),
-    recoveryMovement("supportedTandemBalance", "day-3-supported-tandem-balance", {
-      dose: "1 round x 20-30 seconds each stance",
-      completionTarget: "Hold each stance for 20-30 supported seconds.",
-    }),
     recoveryMovement("thoracicOpenBooks", "day-3-open-book-thoracic-rotation", {
       name: "Open Book Thoracic Rotation",
       dose: "1 set x 5-8 reps per side",
@@ -1934,7 +1930,7 @@ const DAY_3_LATER_RECOVERY: MobilityBlock = block({
 const DAY_4_LATER_RECOVERY: MobilityBlock = block({
   id: "day-4-lower-body-flush-sole-care",
   title: "Lower-Body Flush + Sole Care",
-  duration: "10-12 min",
+  duration: "10-14 min",
   purpose:
     "Complete later the same day after Thursday Lower B. Keep lower-body recovery easy and foot-focused.",
   adaptationNote: RECOVERY_STOP_NOTE,
@@ -1949,7 +1945,7 @@ const DAY_4_LATER_RECOVERY: MobilityBlock = block({
       completionTarget: "Complete 8-12 slow circles each direction per side.",
     }),
     recoveryMovement("ankleRocks", "day-4-wall-ankle-rocks", {
-      dose: "1 set x 8-12 slow reps",
+      dose: "1-2 sets x 8-12 slow reps",
       completionTarget: "Complete 8-12 slow rocks while heel stays down.",
     }),
     recoveryMovement("calfStretch", "day-4-wall-calf-stretch-knee-straight", {
@@ -1960,17 +1956,17 @@ const DAY_4_LATER_RECOVERY: MobilityBlock = block({
       dose: "20-30 seconds per side",
       completionTarget: "Hold 20-30 easy seconds per side.",
     }),
-    recoveryMovement("supportedBreathingReset", "day-4-supported-breathing-reset", {
-      dose: "2 minutes",
-      completionTarget: "Breathe for 2 easy minutes and finish calmer.",
+    recoveryMovement("supportedTandemBalance", "day-4-supported-tandem-balance", {
+      dose: "1 round x 20-30 seconds each stance",
+      completionTarget: "Hold each stance for 20-30 supported seconds.",
     }),
     recoveryMovement("pelvicTilts", "day-4-pelvic-tilts", {
       dose: "1 set x 8-12 slow reps",
       completionTarget: "Complete 8-12 slow pelvic tilts.",
     }),
-    recoveryMovement("supportedTandemBalance", "day-4-supported-tandem-balance", {
-      dose: "1 round x 20-30 seconds each stance",
-      completionTarget: "Hold each stance for 20-30 supported seconds.",
+    recoveryMovement("supportedBreathingReset", "day-4-supported-breathing-reset", {
+      dose: "2 minutes",
+      completionTarget: "Breathe for 2 easy minutes and finish calmer.",
     }),
   ],
 });
@@ -1980,7 +1976,7 @@ const DAY_5_LATER_RECOVERY: MobilityBlock = block({
   title: "Weekly Downshift / Foot-Flare Recovery",
   duration: "12-16 min",
   purpose:
-    "Complete later the same day after Friday Upper B. End the taper week with easy foot, ankle, balance, spine, and breathing work.",
+    "Complete later the same day after Friday Full-Body Machine Circuit + Arms. End the week with easy foot, ankle, balance, spine, and breathing work.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -2073,7 +2069,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Lower A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, knees, hips, hamstrings, glutes, trunk, and breathing before the heaviest lower-body taper day.",
+      "Prepare feet, ankles, knees, hips, hamstrings, glutes, trunk, and breathing before the heaviest lower-body day.",
     previousDayReason:
       "Sunday was full rest, so this restores easy motion before leg press and lunge work.",
     adaptationNote:
@@ -2106,11 +2102,11 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   2: {
     dayOfWeek: 2,
     dayName: "Tuesday",
-    trainingRole: "Recovery Override / No Gym",
-    sessionTitle: "Recovery Override — No Gym",
+    trainingRole: "Off Day / Recovery Reset",
+    sessionTitle: "Off Day — Recovery Reset",
     totalDuration: "8-12 min",
     todayPurpose:
-      "Unplanned recovery day. Do not make up missed volume. Use foot and ankle recovery only.",
+      "Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only.",
     previousDayReason:
       "Monday lower body was completed, and Tuesday gym work is intentionally removed.",
     adaptationNote:
@@ -2119,7 +2115,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     logType: "POST_WORKOUT",
     focus: [
       { label: "Recovery match", value: "No gym", note: "Foot and ankle recovery only." },
-      { label: "Load rule", value: "No step chasing", note: "Work steps count as load." },
+      { label: "Load rule", value: "No step chasing", note: "Recovery preserves the next three training days." },
       { label: "Feel target", value: "Calmer", note: "No aggressive range and no fatigue." },
     ],
     blocks: [DAY_2_LATER_RECOVERY],
@@ -2131,7 +2127,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, wrists, and trunk for push/pull strength.",
+      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, wrists, and trunk for progressive push/pull circuit strength.",
     previousDayReason:
       "Tuesday was recovery-only after Monday Lower A, so prep stays calm before the moved Upper A session.",
     adaptationNote:
@@ -2140,7 +2136,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     logType: "PRE_WORKOUT",
     focus: [
       { label: "Training match", value: "Push/pull setup", note: "Upper back, chest, scapulae, elbows, wrists, and trunk." },
-      { label: "Previous day", value: "Recovery override", note: "Foot and ankle work stays low-dose after Monday." },
+      { label: "Previous day", value: "Recovery reset", note: "Foot and ankle work stays low-dose after Monday." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
     blocks: [
@@ -2168,7 +2164,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Lower B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, knees, hips, hamstrings, hip stability, trunk, and breathing for low-dose legs.",
+      "Prepare feet, ankles, knees, hips, hamstrings, hip stability, trunk, and breathing for progressive lower-body work.",
     previousDayReason:
       "Wednesday was Upper A, so this keeps lower-body prep short and supported.",
     adaptationNote:
@@ -2201,29 +2197,29 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   5: {
     dayOfWeek: 5,
     dayName: "Friday",
-    trainingRole: "Upper B training reset day",
-    sessionTitle: "Upper B primer",
+    trainingRole: "Full-body machine circuit day",
+    sessionTitle: "Full-body circuit primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, rear delts, lats, chest, arms, and breathing for the lowest-dose strength day.",
+      "Prepare feet, ankles, upper back, rear delts, lats, chest, arms, hamstrings, quads, and breathing for controlled full-body machine circuits.",
     previousDayReason:
       "Thursday lower-body work can leave the feet and hips loaded, so Friday keeps prep simple and supported.",
     adaptationNote:
-      "Leave fresher than you arrived. Keep shoulder and foot work easy.",
+      "Keep prep easy. Friday is dense strength work, not conditioning.",
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Machine upper", note: "Pulldown, incline press, row, rear delts, arms, and optional triceps." },
-      { label: "Taper rule", value: "Lowest dose", note: "No grinding, no finishers, no extra fatigue." },
+      { label: "Training match", value: "Machine circuit", note: "Press, row, leg extension, pulldown, rear delts, hamstring curl, arms, and side delts." },
+      { label: "Circuit rule", value: "Strength density", note: "No HIIT, no breathless chasing, no finishers." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
       dailyLowerLegBase(),
       block({
-        id: "friday-upper-b-prep",
-        title: "Upper B prep block",
+        id: "friday-full-body-circuit-prep",
+        title: "Full-body circuit prep block",
         duration: "3-5 min",
-        purpose: "Prepare upper back, lats, rear delts, shoulders, elbows, and trunk.",
+        purpose: "Prepare upper back, lats, rear delts, shoulders, elbows, and trunk before controlled machine circuits.",
         adaptationNote: "Do not force shoulder range. Stop before pinch.",
         exercises: [
           movement("wallThoracicRotations"),
@@ -2238,31 +2234,36 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   6: {
     dayOfWeek: 6,
     dayName: "Saturday",
-    trainingRole: "Complete rest",
-    sessionTitle: "Complete Rest",
-    totalDuration: "0-8 min if needed",
+    trainingRole: "Recovery Rest",
+    sessionTitle: "Recovery Rest",
+    totalDuration: "0-12 min if stiff",
     todayPurpose:
-      "Full rest. No gym. Gentle recovery mobility only if needed.",
+      "Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
     previousDayReason:
-      "Friday closed the training week, so Saturday stays deliberately empty.",
+      "Friday closed the training week with the highest-density strength day, so Saturday stays home-based.",
     adaptationNote:
-      "If soles, ankles, or lower back feel stiff, use 5-8 minutes of ankle pumps, gentle ankle circles, and supported breathing. No training.",
+      "Optional but recommended if stiff. No gym, no make-up sets, and no step chasing.",
     completionSummary: "Done means you stayed rested and did not turn mobility into training.",
     logType: "POST_WORKOUT",
     focus: [
-      { label: "Rest match", value: "Full rest", note: "No gym and no make-up training." },
-      { label: "Optional reset", value: "5-8 min", note: "Only if soles, ankles, or lower back feel stiff." },
+      { label: "Rest match", value: "Recovery rest", note: "No gym and no make-up training." },
+      { label: "Optional reset", value: "If stiff", note: "Use only if it improves foot, ankle, hip, or lower-back comfort." },
       { label: "Foot rule", value: "No step chasing", note: "Work steps count as load; irritated soles control walking." },
     ],
     blocks: [
       block({
-        id: "saturday-complete-rest-optional-reset",
-        title: "Complete Rest Optional Reset",
-        duration: "5-8 min if needed",
-        purpose: "Use only if soles, ankles, or lower back feel stiff. Keep it gentle and do not train.",
+        id: "saturday-recovery-rest-optional-reset",
+        title: "Recovery Rest Optional Reset",
+        duration: "8-12 min if stiff",
+        purpose: "Use only if it improves foot, ankle, hip, or lower-back comfort. Keep it gentle and do not train.",
         adaptationNote: RECOVERY_STOP_NOTE,
         recoveryIntro: true,
         exercises: [
+          recoveryMovement("supportedBreathingReset", "saturday-supported-breathing-reset", {
+            name: "Supported Breathing Reset",
+            dose: "2 minutes",
+            completionTarget: "Breathe for 2 easy minutes and finish calmer.",
+          }),
           recoveryMovement("anklePumps", "saturday-seated-ankle-pumps", {
             dose: "1-2 minutes",
             completionTarget: "Complete 1-2 minutes of smooth ankle pumps.",
@@ -2271,10 +2272,26 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
             dose: "1 set x 8-12 gentle circles each direction per side",
             completionTarget: "Complete 8-12 slow circles each direction per side.",
           }),
-          recoveryMovement("supportedBreathingReset", "saturday-supported-breathing-reset", {
-            name: "Supported Breathing Reset",
-            dose: "2 minutes",
-            completionTarget: "Breathe for 2 easy minutes and finish calmer.",
+          recoveryMovement("ankleRocks", "saturday-wall-ankle-rocks", {
+            dose: "1 set x 8-12 slow reps",
+            completionTarget: "Complete 8-12 slow rocks while heel stays down.",
+          }),
+          recoveryMovement("calfStretch", "saturday-wall-calf-stretch-knee-straight", {
+            dose: "20-30 seconds per side",
+            completionTarget: "Hold 20-30 easy seconds per side.",
+          }),
+          recoveryMovement("calfStretchBent", "saturday-wall-calf-stretch-knee-bent", {
+            dose: "20-30 seconds per side",
+            completionTarget: "Hold 20-30 easy seconds per side.",
+          }),
+          recoveryMovement("pelvicTilts", "saturday-pelvic-tilts", {
+            dose: "1 set x 8-12 slow reps",
+            completionTarget: "Complete 8-12 slow pelvic tilts.",
+          }),
+          recoveryMovement("thoracicOpenBooks", "saturday-open-book-thoracic-rotation", {
+            name: "Open Book Thoracic Rotation",
+            dose: "1 set x 5 reps per side",
+            completionTarget: "Complete 5 slow rotations per side.",
           }),
         ],
       }),
@@ -2283,48 +2300,23 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   0: {
     dayOfWeek: 0,
     dayName: "Sunday",
-    trainingRole: "Complete rest / full reset",
-    sessionTitle: "Complete rest full-body reset",
-    totalDuration: "0-12 min if needed",
+    trainingRole: "Complete Rest",
+    sessionTitle: "Complete Rest",
+    totalDuration: "0 min",
     todayPurpose:
-      "Complete rest first. Use only very gentle recovery mobility if needed, with no fatigue and no target to hit.",
+      "Full rest. Keep the day empty and start the next week fresh.",
     previousDayReason:
-      "Saturday was full rest, so Sunday stays deliberately empty too.",
+      "Saturday was recovery rest, so Sunday stays deliberately empty.",
     adaptationNote:
-      "This should feel like recovery, not training. Skip it entirely if rest feels better.",
-    completionSummary: "Done means nothing feels worked, your breathing is quieter, and movement feels a little easier.",
+      "No gym, no make-up training, and no recovery checklist is scheduled.",
+    completionSummary: "Done means the day stayed empty.",
     logType: "POST_WORKOUT",
     focus: [
-      { label: "Rest match", value: "Full reset", note: "Spine, hips, feet, ankles, and breathing with no fatigue." },
-      { label: "Previous day", value: "Full rest", note: "No make-up training after Saturday rest." },
-      { label: "Feel target", value: "Calmer", note: "Very gentle range, quiet breath, no training feeling." },
+      { label: "Rest match", value: "Complete rest", note: "Keep the day empty." },
+      { label: "Previous day", value: "Recovery rest", note: "No make-up training after Saturday." },
+      { label: "Feel target", value: "Fresh", note: "Start the next week without adding work." },
     ],
-    blocks: [
-      dailyLowerLegBase(),
-      block({
-        id: "sunday-full-reset",
-        title: "Gentle full-body reset",
-        duration: "6-10 min",
-        purpose: "Move the hips, spine, and upper back softly with no fatigue.",
-        adaptationNote: RECOVERY_STOP_NOTE,
-        recoveryIntro: true,
-        exercises: [
-          movement("seatedHipRotations"),
-          movement("seatedSpinalFlexionExtension"),
-          movement("thoracicOpenBooks", {
-            dose: "4-6 reps/side",
-            completionTarget: "Complete 4-6 gentle reps per side without forcing range.",
-            intensity: RECOVERY_INTENSITY,
-          }),
-          movement("childPoseBreathing", {
-            name: "Child's pose breathing or chair-supported breathing",
-            dose: "60-90 sec",
-            completionTarget: "Complete 60-90 seconds of supported breathing.",
-          }),
-        ],
-      }),
-      breathingFinisher("Calm finish"),
-    ],
+    blocks: [],
   },
 };
 

@@ -4,7 +4,7 @@ import { DEFAULT_WORKOUT_PLAN } from "../src/lib/default-workout-plan";
 const prisma = new PrismaClient();
 
 /**
- * Seed the active next-week 5-day taper workout plan for one Supabase user.
+ * Seed the active adjusted current-week workout plan for one Supabase user.
  * Run with: npx tsx prisma/seed.ts <supabaseUserId>
  *
  * The script deactivates that user's current workout plans, preserves completed
@@ -28,7 +28,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Seeding next-week 5-day taper workout plan for ${user.email} (${user.id})`);
+  console.log(`Seeding adjusted current-week workout plan for ${user.email} (${user.id})`);
 
   await prisma.$transaction(async (tx) => {
     await tx.workoutSession.updateMany({
@@ -70,7 +70,7 @@ async function main() {
     }
   });
 
-  console.log("Done! Active workout data now uses the next-week 5-day taper plan.");
+  console.log("Done! Active workout data now uses the adjusted current-week plan.");
 }
 
 main()

@@ -1,13 +1,14 @@
-# Athanor Training Ledger - Adjusted Current Week Taper Microcycle
+# Athanor Training Ledger - Adjusted Current Week Progressive Overload Block
 
 ## Current Context
 
 - Monday Lower A was completed.
-- Tuesday Upper A was missed, and Tuesday is now recovery-only with no gym.
-- The user will train Wednesday, Thursday, and Friday only.
-- Saturday and Sunday are complete rest days.
+- Tuesday was taken off and is now recovery-only.
+- The user will train Wednesday, Thursday, and Friday.
+- Saturday is Recovery Rest at home.
+- Sunday is Complete Rest.
 - Training load is logged in kg. Bodyweight remains logged in lb.
-- Work and commute steps count as primary load.
+- Week 3 target: controlled overload, not max effort.
 - No medication dosing advice and no medical diagnosis.
 
 ## Weekly Structure
@@ -15,11 +16,11 @@
 | Day | Protocol |
 | --- | --- |
 | Monday | Completed - Lower A |
-| Tuesday | Recovery Override / No Gym |
-| Wednesday | Upper A - Push/Pull Strength |
-| Thursday | Lower B - Low-Dose Legs + Hip Stability |
-| Friday | Upper B - Machine Upper + Arms / Training Reset |
-| Saturday | Complete Rest |
+| Tuesday | Off Day / Recovery Reset |
+| Wednesday | Upper A - Progressive Push/Pull Circuit Strength |
+| Thursday | Lower B - Progressive Lower Body + Hip Stability |
+| Friday | Full-Body Machine Circuit + Arms |
+| Saturday | Recovery Rest |
 | Sunday | Complete Rest |
 
 Display rhythm: **4 / 1 / 2**
@@ -30,7 +31,7 @@ Display rhythm: **4 / 1 / 2**
 
 Header copy:
 
-Adjusted current week. Monday lower body was completed. Tuesday is a recovery override. Wednesday through Friday carry the remaining training work. Saturday and Sunday are full rest.
+Adjusted current week. Monday lower body was completed. Tuesday was taken off. Wednesday through Friday now use a higher-volume progressive-overload block because food intake and home recovery are available. Saturday and Sunday are reserved for recovery.
 
 ## Global Training Rules
 
@@ -47,6 +48,18 @@ Ramp-up sets stay outside the ledger and do not have Weight/Reps/RPE logging fie
 - Set 2: easy/moderate x 5-8 reps, RPE 4-5, only if needed.
 
 No treadmill warm-ups, bike warm-ups, running, jumping, HIIT, conditioning finishers, failure training, max effort, heavy loaded spinal flexion, or direct loaded calf raises.
+
+## Progressive Overload Rules
+
+- Week 3 target: controlled overload, not max effort.
+- Main lifts: use the top of the rep range before increasing load.
+- Increase load only when all working sets hit the target reps at the assigned RPE with clean form.
+- Smallest available kg jump preferred.
+- Stay 2-3 reps in reserve on main work.
+- Accessories may stay 1-3 reps in reserve.
+- No failure training.
+- If form breaks, keep load the same next session.
+- If pain rises above 3/10, reduce range/load or stop.
 
 ## Foot-Load Rules
 
@@ -77,115 +90,141 @@ Label: Strength Protocol
 
 Status: Completed / View Session
 
-Subcopy: Completed. Heaviest lower-body day of the week.
+Subcopy: Completed. Heaviest lower-body session of the week.
 
-Monday total working sets: 11
+Keep completed Monday data intact. Do not regenerate or delete the logged session.
 
-## Tuesday - Recovery Override
+## Tuesday - Off Day
 
-Name: Recovery Override - No Gym
+Name: Off Day - Recovery Reset
 
 Label: Recovery Protocol
 
-Subcopy: Unplanned recovery day. Do not make up missed volume. Use foot and ankle recovery only.
+Subcopy: Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only.
 
-Tuesday copy: No step chasing. Work steps count as load. If soles are irritated, recovery only.
+Tuesday copy: No step chasing. Recovery preserves the next three training days.
 
 Routine order:
 
 1. Seated Ankle Pumps - 1-2 minutes; smooth rhythm; no aggressive range.
 2. Ankle Circles - 1 set x 8-12 each direction per side; slow, controlled circles.
-3. Wall Ankle Rocks - 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down; stop before foot or ankle pain rises.
+3. Wall Ankle Rocks - 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down.
 4. Wall Calf Stretch - Knee Straight - 1 round x 20-30 seconds per side; gentle stretch only.
 5. Wall Calf Stretch - Knee Bent - 1 round x 20-30 seconds per side; gentle stretch only.
 6. Supported Breathing Reset - 2 minutes; downshift breathing; jaw, shoulders, and hips relaxed.
 
 ## Wednesday - Upper A
 
-Name: Upper A - Push/Pull Strength
+Name: Upper A - Progressive Push/Pull Circuit Strength
 
 Label: Strength Protocol
 
-Subcopy: Main upper-body session moved from Tuesday. Strong work, controlled fatigue.
+Subcopy: Higher-volume upper-body day. Controlled strength circuits, more total work, no failure.
+
+Structure: paired circuits for efficiency. Rest after each pair, not after every single exercise unless needed.
 
 | Block | Exercise | Sets | Reps | RPE | Rest |
 | --- | --- | ---: | --- | --- | --- |
-| A1 | Incline Dumbbell Press | 3 | 8-12 | 6-7 | 90-120 sec after A2 |
-| A2 | One-Arm Dumbbell Row | 3 | 8-12 per side | 6-7 | 90-120 sec after A2 |
-| B1 | Neutral-Grip Lat Pulldown | 2 | 8-12 | 5-6 | 90-120 sec after B2 |
-| B2 | Plate Lateral Raise / Dumbbell Lateral Raise | 2 | 12-20 | 5-6 | 90-120 sec after B2 |
-| C1 | Rope Triceps Pressdown | 2 | 10-15 | 6 | 90-120 sec after C3 |
-| C2 | Cable Curl | 2 | 10-15 | 6 | 90-120 sec after C3 |
-| C3 | Face Pull | 2 | 12-15 | 5-6 | 90-120 sec after C3 |
+| A1 | Incline Dumbbell Press | 4 | 8-12 | 6-7 | 120 sec after A2 |
+| A2 | One-Arm Dumbbell Row | 4 | 8-12 per side | 6-7 | 120 sec after A2 |
+| B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 6-7 | 120 sec after B2 |
+| B2 | Dumbbell / Plate Lateral Raise | 3 | 12-20 | 6 | 120 sec after B2 |
+| C1 | Rope Triceps Pressdown | 3 | 10-15 | 6-7 | 120 sec after C3 |
+| C2 | Cable Curl | 3 | 10-15 | 6-7 | 120 sec after C3 |
+| C3 | Face Pull | 3 | 12-15 | 6 | 120 sec after C3 |
 
-Wednesday total working sets: 16
+Wednesday total working sets: 23
 
-Required later recovery: Post-Leg Fatigue + Shoulder Reset, 8-12 minutes.
+Wednesday overload target: Add reps first. If all sets hit the upper rep target with clean form and RPE stays within range, increase load next time by the smallest kg jump.
+
+Required later recovery: Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.
 
 ## Thursday - Lower B
 
-Name: Lower B - Low-Dose Legs + Hip Stability
+Name: Lower B - Progressive Lower Body + Hip Stability
 
 Label: Strength Protocol
 
-Subcopy: Reduced lower-body session. Maintain leg pattern, add hip stability, avoid excessive foot and back stress.
+Subcopy: Moderate lower-body overload after Monday legs. More work than the taper, but still controlled for feet and lower back.
+
+Structure: Single-Leg Leg Press uses straight sets. Accessories can be paired.
 
 | Block | Exercise | Sets | Reps | RPE | Rest |
 | --- | --- | ---: | --- | --- | --- |
-| A1 | Single-Leg Leg Press | 2 | 8-10 per leg | 5-6 | 2-3 min |
-| B1 | Seated Hamstring Curl | 2 | 10-12 | 5-6 | 90-120 sec |
-| B2 | Leg Extension | 2 | 10-12 | 5-6 | 90-120 sec after B2 |
-| C1 | Hip Abduction Machine | 2 | 12-20 | 5-6 | 90-120 sec |
+| A1 | Single-Leg Leg Press | 3 | 8-10 per leg | 6-7 | 2-3 min |
+| B1 | Lying Leg Curl | 3 | 10-12 | 6-7 | 120 sec |
+| B2 | Leg Extension | 3 | 10-15 | 6-7 | 120 sec after B2 |
+| C1 | Hip Abduction Machine | 3 | 12-20 | 6 | 2-3 min |
+| C2 | Supported Stationary Lunge or Walking Lunge | 2 | 6-8 per leg | 5-6 | 2-3 min after C2 |
 
-Thursday total working sets: 8
+Thursday total working sets: 14
 
-Required later recovery: Lower-Body Flush + Sole Care, 10-12 minutes.
+Thursday overload target: Keep lunges conservative. Overload leg press, leg curl, leg extension, and hip abduction by reps first. Increase load only when all sets are clean at the target RPE.
 
-## Friday - Upper B
+Required later recovery: Lower-Body Flush + Sole Care, 10-14 minutes.
 
-Name: Upper B - Machine Upper + Arms / Training Reset
+## Friday - Full-Body Machine Circuit + Arms
 
 Label: Strength Protocol
 
-Subcopy: Final training day of the week. Machine-supported upper body and arms. Leave fresher than you arrived.
+Subcopy: Highest-density day of the week. Machine-supported full-body circuits with controlled rests. No HIIT, no failure, no reckless conditioning.
+
+Structure: controlled circuit training. Complete each circuit cleanly, rest after each full round, and let breathing recover before the next round.
 
 | Block | Exercise | Sets | Reps | RPE | Rest |
 | --- | --- | ---: | --- | --- | --- |
-| A1 | Lat Pulldown Variation | 2 | 10-12 | 4-5 | 90 sec |
-| A2 | Incline Machine Press | 2 | 10-12 | 4-5 | 90 sec |
-| B1 | Seated Cable Row | 2 | 10-12 | 4-5 | 90 sec |
-| B2 | Reverse Pec Deck or Face Pull | 2 | 12-15 | 4-5 | 90 sec |
-| C1 | Bicep Curl Machine | 2 | 10-15 | 4-5 | 90 sec |
-| C2 | Optional Rope Triceps Pressdown | 1-2 | 10-15 | 4-5 | 90 sec |
+| A1 | Incline Machine Press | 3 | 8-12 | 6 | after A3 |
+| A2 | Seated Cable Row | 3 | 8-12 | 6 | after A3 |
+| A3 | Leg Extension | 3 | 10-12 | 5-6 | 2 min after A3 |
+| B1 | Lat Pulldown Variation | 3 | 8-12 | 6 | after B3 |
+| B2 | Reverse Pec Deck or Face Pull | 3 | 12-15 | 6 | after B3 |
+| B3 | Seated Hamstring Curl | 3 | 10-12 | 5-6 | 2 min after B3 |
+| C1 | Bicep Curl Machine | 3 | 10-15 | 6-7 | after C3 |
+| C2 | Rope Triceps Pressdown | 3 | 10-15 | 6-7 | after C3 |
+| C3 | Machine Lateral Raise or Dumbbell Lateral Raise | 3 | 12-20 | 6 | 90-120 sec after C3 |
 
-Friday total working sets: 10 standard, 12 only if optional triceps work is completed.
+Friday total working sets: 27
+
+Friday circuit safety: This is circuit-style strength work, not cardio punishment. Do not chase breathlessness. If breathing is not recovered, rest longer. Stop if dizziness, sharp pain, limping, chest pain, unusual shortness of breath, numbness, tingling, or worsening symptoms appear.
+
+Friday overload target: Use conservative loads because density is higher. Add reps before load. Keep all reps clean.
 
 Required later recovery: Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.
 
-## Saturday - Complete Rest
+## Saturday - Recovery Rest
 
 Label: Full Rest
 
-Subcopy: Full rest. No gym. Gentle recovery mobility only if needed.
+Subcopy: Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.
 
-Optional note: If soles, ankles, or lower back feel stiff, use 5-8 minutes of ankle pumps, gentle ankle circles, and supported breathing. No training.
+Optional if stiff:
+
+- Supported Breathing Reset - 2 minutes.
+- Seated Ankle Pumps - 1-2 minutes.
+- Ankle Circles - 1 set x 8-12 each direction.
+- Wall Ankle Rocks - 1 set x 8-12 slow reps.
+- Wall Calf Stretch, Knee Straight - 20-30 seconds per side.
+- Wall Calf Stretch, Knee Bent - 20-30 seconds per side.
+- Pelvic Tilts - 1 set x 8-12 slow reps.
+- Open Book Thoracic Rotation - 1 set x 5 reps per side.
+
+No gym. No make-up sets. No step chasing.
 
 ## Sunday - Complete Rest
 
 Label: Full Rest
 
-Subcopy: Full rest. Keep the day deliberately empty.
-
-Optional note: No make-up training. Start the next week fresh.
+Subcopy: Full rest. Keep the day empty and start the next week fresh.
 
 ## Weekly Set Summary
 
-- Quads: Leg Press 3, Walking Lunges 2, Leg Extension 5, Single-Leg Leg Press 2 = 12 direct/primary sets.
-- Hamstrings: Lying Leg Curl 3, Seated Hamstring Curl 2 = 5 direct sets, plus lunges/leg press assistance.
-- Glutes/hips: Walking Lunges 2, Hip Abduction 2, Leg Press assistance = 4 direct/primary sets plus assistance.
-- Chest: Incline Dumbbell Press 3, Incline Machine Press 2 = 5 direct sets.
-- Back/lats: One-Arm Row 3, Lat Pulldown 4, Seated Cable Row 2 = 9 direct sets.
-- Delts/rear delts: Lateral Raise 2, Face Pull 2, Reverse Pec Deck/Face Pull 2 = 6 direct sets.
-- Triceps: Pressdown 2 plus 1-2 optional reset sets and chest pressing assistance.
-- Biceps: Cable Curl 2, Bicep Curl Machine 2 plus pulling assistance = 4 direct sets.
-- Calves/feet/ankles: mobility/recovery only, no direct loaded calf raise.
+- Quads: Monday completed lower session plus Thursday Single-Leg Leg Press 3, Leg Extension 3, Lunges 2, Friday Leg Extension 3 = strong quad exposure.
+- Hamstrings: Thursday Lying Leg Curl 3, Friday Seated Hamstring Curl 3 plus Monday completed work.
+- Glutes/hips: Thursday Hip Abduction 3, Lunges 2, Leg Press assistance.
+- Chest: Wednesday Incline Dumbbell Press 4, Friday Incline Machine Press 3.
+- Back/lats: Wednesday Row 4, Pulldown 3, Friday Row 3, Pulldown 3.
+- Side delts: Wednesday Lateral Raise 3, Friday Lateral Raise 3.
+- Rear delts/upper back: Wednesday Face Pull 3, Friday Reverse Pec Deck/Face Pull 3.
+- Triceps: Wednesday Pressdown 3, Friday Pressdown 3 plus pressing assistance.
+- Biceps: Wednesday Cable Curl 3, Friday Bicep Curl Machine 3 plus pulling assistance.
+- Feet/ankles/calves: mobility/recovery only, no direct loaded calf raises.

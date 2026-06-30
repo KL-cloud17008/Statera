@@ -13,7 +13,7 @@ export function WorkoutPlanResetButton() {
 
   function handleReset() {
     const confirmed = window.confirm(
-      "Start a fresh copy of the adjusted current-week taper plan? Any open session snapshot will be cleared."
+      "Start a fresh copy of the adjusted current-week plan? Any open session snapshot will be cleared."
     );
 
     if (!confirmed) {
@@ -27,7 +27,7 @@ export function WorkoutPlanResetButton() {
         return;
       }
 
-      toast.success("Started adjusted taper plan");
+      toast.success("Started adjusted current-week plan");
       router.refresh();
     });
   }
@@ -44,7 +44,7 @@ export function WorkoutPlanResetButton() {
       {isPending ? (
         "Starting plan..."
       ) : (
-        "Start new taper plan"
+        "Start adjusted plan"
       )}
     </Button>
   );

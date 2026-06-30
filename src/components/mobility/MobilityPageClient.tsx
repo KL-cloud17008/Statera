@@ -129,8 +129,18 @@ export function MobilityPageClient({
           }
           meta={program.completionSummary}
           contextNote={program.logType === "POST_WORKOUT" ? highStepLoadNote : undefined}
+          hideAction={sessionBlocks.length === 0}
         >
-          <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
+          {sessionBlocks.length > 0 ? (
+            <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
+          ) : (
+            <div className="micro-panel rounded-[var(--radius-card)] p-5">
+              <p className="eyebrow">Complete rest</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                No mobility block is scheduled today.
+              </p>
+            </div>
+          )}
         </RoutineSection>
 
         {showLaterRecovery ? (
@@ -205,6 +215,7 @@ function RoutineSection({
   headerAside,
   meta,
   contextNote,
+  hideAction = false,
 }: {
   title: string;
   summary: string;
@@ -217,6 +228,7 @@ function RoutineSection({
   headerAside?: ReactNode;
   meta?: ReactNode;
   contextNote?: string;
+  hideAction?: boolean;
 }) {
   return (
     <section className="prime-panel p-5 sm:p-6">
@@ -235,7 +247,7 @@ function RoutineSection({
 
         <div className="flex flex-wrap items-center gap-4">
           {headerAside}
-          {completed ? (
+          {hideAction ? null : completed ? (
             <span className="completed-row inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-foreground">
               <CheckCircle2 className="h-4 w-4" />
               Logged
