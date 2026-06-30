@@ -41,6 +41,31 @@ export type WorkoutPlanDaySessionStatus = {
   sessionId?: string;
 };
 
+type PlanStatusMatch = {
+  id: string;
+  dayOfWeek: number;
+  sessionName: string;
+  exercises: Array<{
+    exerciseName: string;
+    sets: number;
+    reps: string;
+    tempo: string | null;
+    restSeconds: number | null;
+    targetRPE: string | null;
+    cues: string | null;
+    supersetGroup: string | null;
+    exerciseType: string;
+    sortOrder?: number | null;
+  }>;
+};
+
+type CompletedPlanSessionForStatus = {
+  id: string;
+  workoutPlanId: string | null;
+  notes: string | null;
+  workoutPlan: PlanStatusMatch | null;
+};
+
 const WORKOUT_RESET_REVALIDATION_PATHS = [
   "/",
   "/workout",
@@ -64,6 +89,46 @@ function revalidateWorkoutSessionPaths() {
   revalidatePath("/workout");
   revalidatePath("/workout/plan");
   revalidatePath("/workout/history");
+}
+
+function getSessionFamily(label: string | null | undefined) {
+  const normalized = (label ?? "").toLowerCase();
+
+  if (normalized.includes("lower a")) {
+    return "lower-a";
+  }
+  if (normalized.includes("upper a")) {
+    return "upper-a";
+  }
+  if (normalized.includes("lower b")) {
+    return "lower-b";
+  }
+  if (normalized.includes("upper b") || normalized.includes("training reset")) {
+    return "upper-b";
+  }
+
+  return null;
+}
+
+function completedSessionMatchesCurrentPlan(
+  session: CompletedPlanSessionForStatus,
+  plan: PlanStatusMatch
+) {
+  if (session.workoutPlanId === plan.id) {
+    return true;
+  }
+
+  const meta = parseWorkoutSessionMeta(session.notes);
+  const sessionDayOfWeek = meta?.dayOfWeek ?? session.workoutPlan?.dayOfWeek;
+  if (sessionDayOfWeek !== plan.dayOfWeek) {
+    return false;
+  }
+
+  if (meta?.planContentHash === getWorkoutPlanContentHash(plan)) {
+    return true;
+  }
+
+  return getSessionFamily(meta?.label ?? session.workoutPlan?.sessionName) === getSessionFamily(plan.sessionName);
 }
 
 async function findOpenSessionsWithPlans(userId: string) {
@@ -151,9 +216,14 @@ export async function getWorkoutPlanDayStatuses(
     prisma.workoutSession.findMany({
       where: {
         userId,
-        workoutPlanId: { in: planIds },
+        workoutPlanId: { not: null },
         completed: true,
         trainingDate: { gte: startOfWeek },
+      },
+      include: {
+        workoutPlan: {
+          include: { exercises: { orderBy: { sortOrder: "asc" } } },
+        },
       },
       orderBy: { trainingDate: "desc" },
     }),
@@ -174,8 +244,8 @@ export async function getWorkoutPlanDayStatuses(
       };
     }
 
-    const completedSession = completedSessions.find(
-      (session) => session.workoutPlanId === plan.id
+    const completedSession = completedSessions.find((session) =>
+      completedSessionMatchesCurrentPlan(session, plan)
     );
     return {
       planId: plan.id,
@@ -276,7 +346,7 @@ export async function startWorkoutSession(
     return { error: "Plan not found" };
   }
   if (!isCurrentWorkoutPlanContent(plan)) {
-    return { error: "This saved plan is out of date. Start a new 5-day taper plan first." };
+    return { error: "This saved plan is out of date. Start a new adjusted taper plan first." };
   }
 
   const now = new Date();

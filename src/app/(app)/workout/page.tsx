@@ -1,6 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
-import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayNumber, getTrainingDayOfWeek } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getWorkoutSessionLoadUnit, parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
 import { workoutLoadToKg } from "@/lib/units";
@@ -22,6 +22,7 @@ export default async function WorkoutPage() {
 
   const plans = await getWorkoutPlans(user.id);
   const currentTrainingDate = getTrainingDate(new Date(), user.timezone);
+  const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
   const trainingDayNum = getTrainingDayNumber(new Date(), user.timezone);
   const todayPlan = trainingDayNum ? plans.find((plan) => plan.dayOfWeek === trainingDayNum) ?? null : null;
 
@@ -96,6 +97,7 @@ export default async function WorkoutPage() {
         exercises: todayPlan.exercises.filter(isLoggableTrainingExercise),
       } : null}
       activeSession={activeSession}
+      trainingDayOfWeek={trainingDayOfWeek}
     />
   );
 }

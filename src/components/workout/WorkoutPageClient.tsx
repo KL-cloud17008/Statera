@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ClipboardList, History } from "lucide-react";
+import { ArrowRight, ClipboardList, History } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Button } from "@/components/ui/button";
 import { SessionLogger } from "./SessionLogger";
@@ -55,13 +55,26 @@ type ActiveSession = {
   previousSets: PrevSet[];
 } | null;
 
+type DayGuidance = {
+  title: string;
+  eyebrow: string;
+  description: string;
+  actionHref?: string;
+  actionLabel?: string;
+  details: string[];
+};
+
 export function WorkoutPageClient({
   todayPlan,
   activeSession,
+  trainingDayOfWeek,
 }: {
   todayPlan: TodayPlan;
   activeSession: ActiveSession;
+  trainingDayOfWeek: number;
 }) {
+  const dayGuidance = !todayPlan ? getDayGuidance(trainingDayOfWeek) : null;
+
   return (
     <div className="page-shell">
       <SectionHeader
@@ -71,14 +84,18 @@ export function WorkoutPageClient({
             ? activeSession.sessionName
             : todayPlan
               ? "Today's protocol"
-              : "Custom training"
+              : dayGuidance
+                ? dayGuidance.title
+                : "Custom training"
         }
         description={
           activeSession
             ? "Log working sets only. Ramp-up sets stay outside the ledger."
             : todayPlan
               ? "Session prep is non-loggable. Working sets start the ledger."
-              : "Build or reuse a focused session."
+              : dayGuidance
+                ? dayGuidance.description
+                : "Build or reuse a focused session."
         }
         action={
           <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -124,6 +141,34 @@ export function WorkoutPageClient({
             </div>
           </details>
         </div>
+      ) : dayGuidance ? (
+        <section className="document-panel">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start">
+            <div>
+              <p className="eyebrow">{dayGuidance.eyebrow}</p>
+              <h2 className="mt-3 text-3xl">{dayGuidance.title}</h2>
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                {dayGuidance.description}
+              </p>
+            </div>
+            {dayGuidance.actionHref && dayGuidance.actionLabel ? (
+              <Button asChild variant="secondary" className="w-full">
+                <Link href={dayGuidance.actionHref}>
+                  {dayGuidance.actionLabel}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+
+          <div className="mt-6 divide-y divide-border border-y border-border">
+            {dayGuidance.details.map((detail) => (
+              <p key={detail} className="py-3 text-sm leading-relaxed text-muted-foreground">
+                {detail}
+              </p>
+            ))}
+          </div>
+        </section>
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] xl:items-start">
           <section className="editorial-surface-quiet space-y-6">
@@ -139,4 +184,48 @@ export function WorkoutPageClient({
       )}
     </div>
   );
+}
+
+function getDayGuidance(dayOfWeek: number): DayGuidance | null {
+  if (dayOfWeek === 2) {
+    return {
+      eyebrow: "Recovery Protocol",
+      title: "Recovery Override — No Gym",
+      description:
+        "Unplanned recovery day. Do not make up missed volume. Use foot and ankle recovery only.",
+      actionHref: "/mobility",
+      actionLabel: "View Recovery",
+      details: [
+        "No step chasing. Work steps count as load. If soles are irritated, recovery only.",
+        "Seated Ankle Pumps — 1-2 minutes, smooth rhythm, no aggressive range.",
+        "Ankle Circles — 1 set x 8-12 each direction per side, slow and controlled.",
+        "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; heel stays down and pain does not rise.",
+        "Wall Calf Stretch, Knee Straight and Knee Bent — 20-30 seconds per side each, gentle only.",
+        "Supported Breathing Reset — 2 minutes with jaw, shoulders, and hips relaxed.",
+      ],
+    };
+  }
+
+  if (dayOfWeek === 6) {
+    return {
+      eyebrow: "Full Rest",
+      title: "Complete Rest",
+      description: "Full rest. No gym. Gentle recovery mobility only if needed.",
+      details: [
+        "If soles, ankles, or lower back feel stiff, use 5-8 minutes of ankle pumps, gentle ankle circles, and supported breathing.",
+        "No training.",
+      ],
+    };
+  }
+
+  if (dayOfWeek === 0) {
+    return {
+      eyebrow: "Full Rest",
+      title: "Complete Rest",
+      description: "Full rest. Keep the day deliberately empty.",
+      details: ["No make-up training. Start the next week fresh."],
+    };
+  }
+
+  return null;
 }

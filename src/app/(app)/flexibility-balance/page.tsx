@@ -27,7 +27,7 @@ export default function FlexibilityBalancePage() {
       .filter((exercise) => /balance/i.test(`${exercise.category ?? ""} ${exercise.name} ${exercise.goal}`))
   );
   const recoveryDayBlocks = [
-    ...getRecoverySessionBlocks(6).slice(0, 1),
+    ...getRecoverySessionBlocks(2).slice(0, 1),
   ];
   const footAnkleBlock = getRequiredLaterRecoveryBlocks("footFlare", 1)[0] ?? dailyMinimum;
 
@@ -49,7 +49,7 @@ export default function FlexibilityBalancePage() {
         <div className="command-deck grid gap-5 rounded-[var(--radius-panel)] p-6 md:grid-cols-4" data-animated="true">
           <OverviewMetric label="Daily Minimum" value={dailyMinimum.duration} />
           <OverviewMetric label="Balance" value={`${balanceDrills.length} drills`} />
-          <OverviewMetric label="Recovery" value="Saturday" />
+          <OverviewMetric label="Recovery" value="Tuesday" />
           <OverviewMetric label="Foot Load" value={footAnkleBlock.duration} />
         </div>
 
@@ -78,10 +78,10 @@ export default function FlexibilityBalancePage() {
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
           <ProtocolBlock
             icon={RotateCcw}
-            eyebrow="Recovery-day block"
-            title="Saturday dedicated recovery"
-            summary="Saturday restores range, breathing, balance, and tissue tolerance without adding conditioning."
-            badge="15-20 min"
+            eyebrow="Recovery override"
+            title="Tuesday recovery override"
+            summary="Tuesday is no gym and no make-up volume. Use foot and ankle recovery only."
+            badge="8-12 min"
           >
             <div className="grid gap-3">
               {recoveryDayBlocks.map((block) => (

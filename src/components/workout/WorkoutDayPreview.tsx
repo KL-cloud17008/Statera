@@ -41,8 +41,9 @@ export function WorkoutDayPreview({
     (exercise) => isLoggableTrainingExercise(exercise) && exercise.exerciseType === "ACCESSORY"
   );
   const totalLoggableSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+  const setCountLabel = /Upper B/.test(plan.sessionName) ? "10 / 12" : String(totalLoggableSets);
   const blockOrder = ["A", "B", "C", "D"] as const;
-  const showLowerBReadiness = plan.sessionName === LOWER_B_BACK_SAFE_TITLE || /Lower A|Posterior Chain/.test(plan.sessionName);
+  const showLowerBReadiness = plan.sessionName === LOWER_B_BACK_SAFE_TITLE || /Lower A/.test(plan.sessionName);
 
   return (
     <section className="document-panel">
@@ -72,7 +73,7 @@ export function WorkoutDayPreview({
             </div>
             <div>
               <p className="eyebrow text-[10px]">Sets</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{totalLoggableSets}</p>
+              <p className="data-number mt-2 text-2xl text-foreground">{setCountLabel}</p>
             </div>
           </div>
         </div>

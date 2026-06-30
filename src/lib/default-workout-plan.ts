@@ -16,8 +16,11 @@ export type DefaultWorkoutDay = {
   exercises: DefaultPlanExercise[];
 };
 
-export const NEXT_WEEK_TAPER_TITLE = "Next Week 5-Day Taper Microcycle";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "next-week-5-day-taper-v1";
+export const NEXT_WEEK_TAPER_TITLE = "Adjusted Current Week Taper Microcycle";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "adjusted-current-week-taper-v2";
+
+export const ADJUSTED_WEEK_HEADER_COPY =
+  "Adjusted current week. Monday lower body was completed. Tuesday is a recovery override. Wednesday through Friday carry the remaining training work. Saturday and Sunday are full rest.";
 
 export const LOWER_A_TAPER_TITLE = "Lower A — Leg Strength Peak / Machine-Supported";
 export const LOWER_B_TAPER_TITLE = "Lower B — Low-Dose Legs + Hip Stability";
@@ -41,7 +44,7 @@ export const BACK_PAIN_RULES = [
   "Sharp pain: stop immediately.",
   "Pain shooting down the leg: stop lower-body loading.",
   "Numbness, tingling, weakness, limping, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.",
-  "If lower-back pain worsens during Leg Press or Back Hyperextension, stop that exercise and switch to Lower Back Relief only.",
+  "If lower-back pain worsens during lower-body loading, stop that exercise and switch to recovery-only work.",
   "No loaded spinal flexion, heavy bracing, max effort, failure training, or grinding.",
 ] as const;
 
@@ -49,21 +52,20 @@ export const WEEKLY_SET_SUMMARY = [
   "Quads: Leg Press 3, Walking Lunges 2, Leg Extension 5, Single-Leg Leg Press 2 = 12 direct/primary sets.",
   "Hamstrings: Lying Leg Curl 3, Seated Hamstring Curl 2 = 5 direct sets, plus lunges/leg press assistance.",
   "Glutes/hips: Walking Lunges 2, Hip Abduction 2, Leg Press assistance = 4 direct/primary sets plus assistance.",
-  "Chest: Incline Dumbbell Press 3, Machine Chest Press 2, Incline Machine Press 2 = 7 direct sets.",
+  "Chest: Incline Dumbbell Press 3, Incline Machine Press 2 = 5 direct sets.",
   "Back/lats: One-Arm Row 3, Lat Pulldown 4, Seated Cable Row 2 = 9 direct sets.",
   "Delts/rear delts: Lateral Raise 2, Face Pull 2, Reverse Pec Deck/Face Pull 2 = 6 direct sets.",
-  "Triceps: Pressdown 4 plus chest pressing assistance.",
-  "Biceps: Cable Curl 4, Bicep Curl Machine 2 plus pulling assistance = 6 direct sets.",
-  "Lower back: Back Hyperextension 1-2 very low-dose sets only if tolerated.",
+  "Triceps: Pressdown 2 plus 1-2 optional reset sets and chest pressing assistance.",
+  "Biceps: Cable Curl 2, Bicep Curl Machine 2 plus pulling assistance = 4 direct sets.",
   "Calves/feet/ankles: mobility/recovery only, no direct loaded calf raise.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
-  "Next week uses a 5-day taper for a 308 lb recently detrained lifter in an aggressive fat-loss phase.",
-  "5 Strength / 1 Recovery / 1 Full Rest. Day 1 is the highest lower-body stress. Days 3-5 reduce volume, joint stress, and systemic fatigue.",
+  ADJUSTED_WEEK_HEADER_COPY,
+  "4 Strength / 1 Recovery / 2 Full Rest. Monday lower body stays completed, Tuesday is recovery-only, and Wednesday through Friday carry the remaining training work.",
   "Work steps count as primary load. Foot pain controls walking volume.",
   "Training loads are logged in kg. Bodyweight remains logged in lb.",
-  "No conditioning finishers, no impact work, no failure training, and no direct loaded calf raises.",
+  "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, no failure training, and no direct loaded calf raises.",
   "Walking to the gym is a general warm-up only if foot load is tolerable.",
   "Ramp-up sets stay outside the ledger: Set 1 very easy x 8-10 reps at RPE 3-4; Set 2 easy/moderate x 5-8 reps at RPE 4-5 only if needed.",
   "Required later recovery is separate same-day work and stays easy: effort 1-3/10, pain 0-2/10 maximum.",
@@ -127,7 +129,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 2,
+    dayOfWeek: 3,
     sessionName: "Upper A — Push/Pull Strength",
     exercises: [
       {
@@ -210,67 +212,6 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 3,
-    sessionName: "Posterior Chain + Upper Recovery Strength",
-    exercises: [
-      {
-        exerciseName: "A1 Seated Cable Row",
-        sets: 2,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5",
-        cues: `${GENERAL_TAPER_CUE}Tall posture, feet planted, row to lower ribs, pause, return under control, no body swing.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "A2 Machine Chest Press or Incline Machine Press",
-        sets: 2,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5",
-        cues: `${GENERAL_TAPER_CUE}Back supported, controlled range, no shoulder pinch, stop well before fatigue.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B1 Rope Triceps Pressdown",
-        sets: 2,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: `${GENERAL_TAPER_CUE}Elbows pinned, smooth finish, no bodyweight lean.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B2 Cable Curl",
-        sets: 2,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: `${GENERAL_TAPER_CUE}Shoulders quiet, no swinging, stop before fatigue.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C1 Back Hyperextension / Back Extension Machine",
-        sets: 1,
-        reps: "8-10; optional second set only if tolerated",
-        tempo: "slow controlled",
-        restSeconds: 120,
-        targetRPE: "4-5",
-        cues: `${GENERAL_TAPER_CUE}Bodyweight only or minimum machine load. Short comfortable range, move slowly, neutral neck, no swinging, no aggressive arching, stop well before fatigue, and treat as movement practice not strength work. Skip if lower-back pain is active. Stop immediately if back pain increases, pain shoots down the leg, numbness, tingling, weakness, or nerve-like symptoms appear.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-    ],
-  },
-  {
     dayOfWeek: 4,
     sessionName: LOWER_B_TAPER_TITLE,
     exercises: [
@@ -322,7 +263,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   },
   {
     dayOfWeek: 5,
-    sessionName: "Training Reset — Machine Upper + Arms",
+    sessionName: "Upper B — Machine Upper + Arms / Training Reset",
     exercises: [
       {
         exerciseName: "A1 Lat Pulldown Variation",
@@ -347,7 +288,18 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B1 Reverse Pec Deck or Face Pull",
+        exerciseName: "B1 Seated Cable Row",
+        sets: 2,
+        reps: "10-12",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "4-5",
+        cues: `${GENERAL_TAPER_CUE}Tall posture, feet planted, row to lower ribs, pause, return under control.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B2 Reverse Pec Deck or Face Pull",
         sets: 2,
         reps: "12-15",
         tempo: "2-1-2",
@@ -368,16 +320,27 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
+      {
+        exerciseName: "C2 Optional Rope Triceps Pressdown",
+        sets: 2,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "4-5",
+        cues: `${GENERAL_TAPER_CUE}Only if fresh. Skip if elbows, shoulders, or general fatigue are elevated.`,
+        supersetGroup: "C",
+        exerciseType: "ACCESSORY",
+      },
     ],
   },
 ];
 
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Lower A - Leg Strength Peak / Machine-Supported",
-  "Tuesday: Upper A - Push/Pull Strength",
-  "Wednesday: Posterior Chain + Upper Recovery Strength",
+  "Monday: Completed - Lower A",
+  "Tuesday: Recovery Override / No Gym",
+  "Wednesday: Upper A - Push/Pull Strength",
   "Thursday: Lower B - Low-Dose Legs + Hip Stability",
-  "Friday: Training Reset - Machine Upper + Arms",
-  "Saturday: Mobility, Flexibility & Balance - Recovery Protocol",
-  "Sunday: Complete rest",
+  "Friday: Upper B - Machine Upper + Arms / Training Reset",
+  "Saturday: Complete Rest",
+  "Sunday: Complete Rest",
 ] as const;

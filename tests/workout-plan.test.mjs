@@ -51,24 +51,24 @@ const mobility = loadTypescriptModule("src/lib/mobility.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
 const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts");
 
-test("canonical workout plan is the next-week 5-day taper microcycle", () => {
-  assert.equal(workoutPlan.NEXT_WEEK_TAPER_TITLE, "Next Week 5-Day Taper Microcycle");
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "next-week-5-day-taper-v1");
-  assert.deepEqual(Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.dayOfWeek), [1, 2, 3, 4, 5]);
+test("canonical workout plan is the adjusted current-week taper microcycle", () => {
+  assert.equal(workoutPlan.NEXT_WEEK_TAPER_TITLE, "Adjusted Current Week Taper Microcycle");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "adjusted-current-week-taper-v2");
+  assert.deepEqual(Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.dayOfWeek), [1, 3, 4, 5]);
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
-    "Monday: Lower A - Leg Strength Peak / Machine-Supported",
-    "Tuesday: Upper A - Push/Pull Strength",
-    "Wednesday: Posterior Chain + Upper Recovery Strength",
+    "Monday: Completed - Lower A",
+    "Tuesday: Recovery Override / No Gym",
+    "Wednesday: Upper A - Push/Pull Strength",
     "Thursday: Lower B - Low-Dose Legs + Hip Stability",
-    "Friday: Training Reset - Machine Upper + Arms",
-    "Saturday: Mobility, Flexibility & Balance - Recovery Protocol",
-    "Sunday: Complete rest",
+    "Friday: Upper B - Machine Upper + Arms / Training Reset",
+    "Saturday: Complete Rest",
+    "Sunday: Complete Rest",
   ]);
-  assert.match(workoutPlanPageSource, /5\/1\/1/);
-  assert.match(workoutPlanPageSource, /5 Strength/);
+  assert.match(workoutPlanPageSource, /4 \/ 1 \/ 2/);
+  assert.match(workoutPlanPageSource, /4 Strength/);
   assert.match(workoutPlanPageSource, /1 Recovery/);
-  assert.match(workoutPlanPageSource, /1 full rest/);
-  assert.match(workoutPlanPageSource, /Next week uses a 5-day taper/);
+  assert.match(workoutPlanPageSource, /2 Full Rest/);
+  assert.match(planSource, /Adjusted current week\. Monday lower body was completed/);
 });
 
 test("strength days use the requested exercise selection and set balance", () => {
@@ -80,7 +80,8 @@ test("strength days use the requested exercise selection and set balance", () =>
     ["C1 Lying Leg Curl", 3, "10-12", "6"],
     ["D1 Leg Extension", 3, "10-12", "6"],
   ]);
-  assertDay(byDay.get(2), "Upper A", 16, [
+  assert.equal(byDay.get(2), undefined);
+  assertDay(byDay.get(3), "Upper A", 16, [
     ["A1 Incline Dumbbell Press", 3, "8-12", "6-7"],
     ["A2 One-Arm Dumbbell Row", 3, "8-12 per side", "6-7"],
     ["B1 Neutral-Grip Lat Pulldown", 2, "8-12", "5-6"],
@@ -89,25 +90,24 @@ test("strength days use the requested exercise selection and set balance", () =>
     ["C2 Cable Curl", 2, "10-15", "6"],
     ["C3 Face Pull", 2, "12-15", "5-6"],
   ]);
-  assertDay(byDay.get(3), "Posterior Chain", 9, [
-    ["A1 Seated Cable Row", 2, "10-12", "5"],
-    ["A2 Machine Chest Press or Incline Machine Press", 2, "10-12", "5"],
-    ["B1 Rope Triceps Pressdown", 2, "10-15", "5-6"],
-    ["B2 Cable Curl", 2, "10-15", "5-6"],
-    ["C1 Back Hyperextension / Back Extension Machine", 1, /optional second set/i, "4-5"],
-  ]);
   assertDay(byDay.get(4), "Lower B", 8, [
     ["A1 Single-Leg Leg Press", 2, "8-10 per leg", "5-6"],
     ["B1 Seated Hamstring Curl", 2, "10-12", "5-6"],
     ["B2 Leg Extension", 2, "10-12", "5-6"],
     ["C1 Hip Abduction Machine", 2, "12-20", "5-6"],
   ]);
-  assertDay(byDay.get(5), "Training Reset", 8, [
+  assertDay(byDay.get(5), "Upper B", 12, [
     ["A1 Lat Pulldown Variation", 2, "10-12", "4-5"],
     ["A2 Incline Machine Press", 2, "10-12", "4-5"],
-    ["B1 Reverse Pec Deck or Face Pull", 2, "12-15", "4-5"],
+    ["B1 Seated Cable Row", 2, "10-12", "4-5"],
+    ["B2 Reverse Pec Deck or Face Pull", 2, "12-15", "4-5"],
     ["C1 Bicep Curl Machine", 2, "10-15", "4-5"],
   ]);
+  const friday = byDay.get(5);
+  const optionalTriceps = friday.exercises.find((exercise) => exercise.exerciseName === "C2 Optional Rope Triceps Pressdown");
+  assert.ok(optionalTriceps);
+  assert.equal(optionalTriceps.sets, 2);
+  assert.equal(optionalTriceps.exerciseType, "ACCESSORY");
 });
 
 test("active plan excludes prohibited and removed strength work", () => {
@@ -128,6 +128,8 @@ test("active plan excludes prohibited and removed strength work", () => {
     "Machine Abdominal Crunch",
     "Pallof Press",
     "Dead Bug",
+    "Back Hyperextension",
+    "Back Extension Machine",
     "Calf Raise",
     "Calf Raises",
   ]) {
@@ -137,11 +139,12 @@ test("active plan excludes prohibited and removed strength work", () => {
   const monday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 1);
   assert.ok(!monday.exercises.some((exercise) => /Seated Hamstring Curl|Hip Abduction Machine|High Wall Sit/i.test(exercise.exerciseName)));
   const wednesday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 3);
-  assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "C1 Back Hyperextension / Back Extension Machine"));
+  assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "A1 Incline Dumbbell Press"));
   const thursday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 4);
   assert.ok(thursday.exercises.some((exercise) => exercise.exerciseName === "C1 Hip Abduction Machine"));
   const friday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 5);
   assert.ok(friday.exercises.some((exercise) => exercise.exerciseName === "C1 Bicep Curl Machine"));
+  assert.ok(friday.exercises.some((exercise) => exercise.exerciseName === "C2 Optional Rope Triceps Pressdown"));
 });
 
 test("plan copy preserves foot-load, back-pain, prep, and recovery rules", () => {
@@ -163,11 +166,13 @@ test("plan copy preserves foot-load, back-pain, prep, and recovery rules", () =>
     "Sharp pain, limping, swelling, warmth, numbness, or tingling",
     "Pain shooting down the leg",
     "bowel/bladder changes",
-    "Leg Press or Back Hyperextension",
+    "lower-body loading",
     "No loaded spinal flexion",
     "No heavy bracing",
     "No max effort",
     "No failure training",
+    "No treadmill warm-ups",
+    "No bike warm-ups",
     "Required later recovery",
     "Ramp set 1: very easy x 8-10, RPE 3-4",
     "Set 2: easy/moderate x 5-8, RPE 4-5 only if needed",
@@ -184,25 +189,26 @@ test("weekly set summary covers the required muscle groups", () => {
     "Quads: Leg Press 3, Walking Lunges 2, Leg Extension 5, Single-Leg Leg Press 2 = 12 direct/primary sets.",
     "Hamstrings: Lying Leg Curl 3, Seated Hamstring Curl 2 = 5 direct sets, plus lunges/leg press assistance.",
     "Glutes/hips: Walking Lunges 2, Hip Abduction 2, Leg Press assistance = 4 direct/primary sets plus assistance.",
-    "Chest: Incline Dumbbell Press 3, Machine Chest Press 2, Incline Machine Press 2 = 7 direct sets.",
+    "Chest: Incline Dumbbell Press 3, Incline Machine Press 2 = 5 direct sets.",
     "Back/lats: One-Arm Row 3, Lat Pulldown 4, Seated Cable Row 2 = 9 direct sets.",
     "Delts/rear delts: Lateral Raise 2, Face Pull 2, Reverse Pec Deck/Face Pull 2 = 6 direct sets.",
-    "Triceps: Pressdown 4 plus chest pressing assistance.",
-    "Biceps: Cable Curl 4, Bicep Curl Machine 2 plus pulling assistance = 6 direct sets.",
-    "Lower back: Back Hyperextension 1-2 very low-dose sets only if tolerated.",
+    "Triceps: Pressdown 2 plus 1-2 optional reset sets and chest pressing assistance.",
+    "Biceps: Cable Curl 2, Bicep Curl Machine 2 plus pulling assistance = 4 direct sets.",
     "Calves/feet/ankles: mobility/recovery only, no direct loaded calf raise.",
   ]);
   assert.match(workoutPlanPageSource, /WEEKLY_SET_SUMMARY/);
 });
 
-test("dashboard and schedule constants reflect five strength days", () => {
-  assert.match(constantsSource, /DEFAULT_TRAINING_DAYS = \[1, 2, 3, 4, 5\]/);
+test("dashboard and schedule constants reflect the adjusted four strength days", () => {
+  assert.match(constantsSource, /DEFAULT_TRAINING_DAYS = \[1, 3, 4, 5\]/);
+  assert.match(constantsSource, /DEFAULT_RECOVERY_DAYS = \[2\]/);
   assert.match(constantsSource, /DEFAULT_REST_DAYS = \[0, 6\]/);
-  assert.match(dashboardSource, /5 Strength \/ 1 Recovery \/ 1 Full Rest/);
-  assert.match(dashboardSource, /day: "WED"[\s\S]*label: "Posterior Chain \+ Upper Recovery Strength"[\s\S]*protocol: "Strength Protocol"/);
-  assert.match(dashboardSource, /day: "SAT"[\s\S]*label: "Mobility, Flexibility & Balance"[\s\S]*protocol: "Recovery Protocol"/);
+  assert.match(dashboardSource, /4 Strength \/ 1 Recovery \/ 2 Full Rest/);
+  assert.match(dashboardSource, /day: "TUE"[\s\S]*label: "Recovery Override"[\s\S]*protocol: "Recovery Protocol"/);
+  assert.match(dashboardSource, /day: "WED"[\s\S]*label: "Upper A"[\s\S]*protocol: "Strength Protocol"/);
+  assert.match(dashboardSource, /day: "SAT"[\s\S]*label: "Complete Rest"[\s\S]*protocol: "Full Rest"/);
   assert.match(dashboardSource, /day: "SUN"[\s\S]*label: "Complete Rest"[\s\S]*protocol: "Full Rest"/);
-  assert.match(dashboardSource, /const isStrengthDay = \[1, 2, 3, 4, 5\]/);
+  assert.match(dashboardSource, /const isStrengthDay = \[1, 3, 4, 5\]/);
 });
 
 test("session actions remain prominent and stateful", () => {
@@ -218,8 +224,8 @@ test("session actions remain prominent and stateful", () => {
 
 test("start-new-plan and stale active snapshots rebuild from the taper template", () => {
   assert.match(workoutPlanResetButtonSource, /Start new taper plan/);
-  assert.match(workoutPlanResetButtonSource, /next-week 5-day taper plan/);
-  assert.match(workoutActionsSource, /Start a new 5-day taper plan first/);
+  assert.match(workoutPlanResetButtonSource, /adjusted current-week taper plan/);
+  assert.match(workoutActionsSource, /Start a new adjusted taper plan first/);
   assert.match(workoutActionsSource, /revalidatePath\("\/"\)/);
   for (const path of ["/workout", "/workout/plan", "/mobility", "/flexibility-balance", "/steps", "/weight", "/settings"]) {
     assert.match(workoutActionsSource, new RegExp(`"${escapeRegExp(path)}"`));
@@ -228,6 +234,9 @@ test("start-new-plan and stale active snapshots rebuild from the taper template"
   assert.match(workoutPlanSeedSource, /workoutPlanId: \{ not: null \}/);
   assert.match(workoutPlanSeedSource, /data: \{ isActive: false \}/);
   assert.match(workoutPlanSeedSource, /createDefaultWorkoutPlans\(tx, userId\)/);
+  assert.match(workoutActionsSource, /completedSessionMatchesCurrentPlan/);
+  assert.match(workoutActionsSource, /getSessionFamily/);
+  assert.match(workoutActionsSource, /workoutPlanId: \{ not: null \}/);
 });
 
 test("workout plan hashes reject old active plan snapshots", () => {
@@ -261,16 +270,19 @@ test("workout plan hashes reject old active plan snapshots", () => {
   assert.equal(workoutPlanVersion.isCurrentWorkoutPlanContent(oldSnapshot), false);
 });
 
-test("mobility later recovery and Saturday routine match the taper", () => {
+test("mobility later recovery and rest routines match the adjusted taper", () => {
+  assert.equal(mobility.getMobilityProgram(2).logType, "POST_WORKOUT");
+  assert.equal(mobility.getMobilityProgram(2).sessionTitle, "Recovery Override — No Gym");
   assert.equal(mobility.getMobilityProgram(3).logType, "PRE_WORKOUT");
-  assert.equal(mobility.getMobilityProgram(6).sessionTitle, "Mobility, Flexibility & Balance — Recovery Protocol");
-  assert.equal(mobility.getMobilityProgram(6).totalDuration, "15-20 min");
+  assert.equal(mobility.getMobilityProgram(3).sessionTitle, "Upper A primer");
+  assert.equal(mobility.getMobilityProgram(6).sessionTitle, "Complete Rest");
+  assert.equal(mobility.getMobilityProgram(6).totalDuration, "0-8 min if needed");
   assert.deepEqual(
     [1, 2, 3, 4, 5].map((day) => mobility.getRequiredLaterRecoveryTitle("standard", day)),
     [
       "Lower Body Downshift + Foot-Flare Care",
+      "Recovery Override — No Gym",
       "Post-Leg Fatigue + Shoulder Reset",
-      "Foot Load Control + Lower Back Relief",
       "Lower-Body Flush + Sole Care",
       "Weekly Downshift / Foot-Flare Recovery",
     ]
@@ -281,25 +293,15 @@ test("mobility later recovery and Saturday routine match the taper", () => {
     (exercise) => exercise.name
   );
   assert.deepEqual(saturdayExercises, [
-    "Supported Breathing Reset",
     "Seated Ankle Pumps",
     "Ankle Circles",
-    "Wall Ankle Rocks",
-    "Wall Calf Stretch - Knee Straight",
-    "Wall Calf Stretch - Knee Bent",
-    "Supported Tandem Balance Hold",
-    "Supported Single-Leg Balance with Toe-Touch Kickstand",
-    "Pelvic Tilts",
-    "Cat-Cow",
-    "Supported Hip-Hinge Rock-Back",
-    "Open Book Thoracic Rotation",
-    "Supported Hip Flexor Stretch",
+    "Supported Breathing Reset",
   ]);
 
   const footFlareBlocks = mobility.getRequiredLaterRecoveryBlocks("footFlare", 4);
   assert.equal(footFlareBlocks[0].title, "Required foot-flare recovery");
   assert.match(mobilityPageSource, /Required foot-flare recovery/);
-  assert.match(flexibilityBalancePageSource, /Saturday dedicated recovery/);
+  assert.match(flexibilityBalancePageSource, /Tuesday recovery override/);
 });
 
 test("nutrition remains removed from navigation and tracker routes", () => {
