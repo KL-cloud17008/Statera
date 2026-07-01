@@ -1,8 +1,40 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { DEFAULT_WORKOUT_PLAN } from "@/lib/default-workout-plan";
-import { isCurrentWorkoutPlanContent } from "@/lib/workout-plan-version";
+import {
+  DEFAULT_WORKOUT_PLAN,
+  DEFAULT_WORKOUT_PLAN_VERSION,
+} from "@/lib/default-workout-plan";
+import {
+  getWorkoutPlanContentHash,
+  isCurrentWorkoutPlanContent,
+} from "@/lib/workout-plan-version";
+import { parseWorkoutSessionMeta, serializeWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
 type WorkoutPlanClient = PrismaClient | Prisma.TransactionClient;
+type WorkoutPlanWithExercises = Prisma.WorkoutPlanGetPayload<{
+  include: { exercises: true };
+}>;
+type OpenSessionWithPlan = Prisma.WorkoutSessionGetPayload<{
+  include: { workoutPlan: { include: { exercises: true } } };
+}>;
+
+function buildCurrentPlanSessionNotes(
+  session: OpenSessionWithPlan,
+  plan: WorkoutPlanWithExercises
+) {
+  const meta = parseWorkoutSessionMeta(session.notes);
+
+  return serializeWorkoutSessionMeta({
+    label: plan.sessionName,
+    source: "plan",
+    loadUnit: meta?.loadUnit ?? WORKOUT_LOAD_UNIT,
+    planTemplateVersion: DEFAULT_WORKOUT_PLAN_VERSION,
+    planContentHash: getWorkoutPlanContentHash(plan),
+    generatedAt: meta?.generatedAt ?? session.createdAt.toISOString(),
+    dayOfWeek: plan.dayOfWeek,
+    workoutPlanId: plan.id,
+  });
+}
 
 export async function createDefaultWorkoutPlans(prisma: WorkoutPlanClient, userId: string) {
   for (const [dayIndex, day] of DEFAULT_WORKOUT_PLAN.entries()) {
@@ -52,13 +84,31 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
   }
 
   const rotatePlans = async (tx: WorkoutPlanClient) => {
-    await tx.workoutSession.deleteMany({
+    const openPlanSessions = await tx.workoutSession.findMany({
       where: {
         userId,
         completed: false,
         workoutPlanId: { not: null },
       },
+      include: {
+        workoutPlan: {
+          include: { exercises: { orderBy: { sortOrder: "asc" } } },
+        },
+      },
     });
+    const preservableOpenSessions = openPlanSessions.filter(
+      (session) => session.workoutPlan && isCurrentWorkoutPlanContent(session.workoutPlan)
+    );
+    const preservableSessionIds = new Set(preservableOpenSessions.map((session) => session.id));
+    const staleOpenSessionIds = openPlanSessions
+      .filter((session) => !preservableSessionIds.has(session.id))
+      .map((session) => session.id);
+
+    if (staleOpenSessionIds.length > 0) {
+      await tx.workoutSession.deleteMany({
+        where: { id: { in: staleOpenSessionIds } },
+      });
+    }
 
     await tx.workoutPlan.updateMany({
       where: { userId, isActive: true },
@@ -66,6 +116,36 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
     });
 
     await createDefaultWorkoutPlans(tx, userId);
+
+    if (preservableOpenSessions.length === 0) {
+      return;
+    }
+
+    const newActivePlans = await tx.workoutPlan.findMany({
+      where: { userId, isActive: true },
+      include: { exercises: { orderBy: { sortOrder: "asc" } } },
+    });
+
+    for (const session of preservableOpenSessions) {
+      const newPlan = newActivePlans.find(
+        (plan) =>
+          plan.dayOfWeek === session.workoutPlan?.dayOfWeek &&
+          isCurrentWorkoutPlanContent(plan)
+      );
+
+      if (!newPlan) {
+        await tx.workoutSession.delete({ where: { id: session.id } });
+        continue;
+      }
+
+      await tx.workoutSession.update({
+        where: { id: session.id },
+        data: {
+          workoutPlanId: newPlan.id,
+          notes: buildCurrentPlanSessionNotes(session, newPlan),
+        },
+      });
+    }
   };
 
   if ("$transaction" in prisma) {

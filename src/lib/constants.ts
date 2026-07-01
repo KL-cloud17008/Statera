@@ -25,8 +25,8 @@ export const TRAINING_DAY_LABELS: Record<number, string> = {
   1: "Monday • Lower A — Leg Strength Peak / Machine-Supported",
   2: "Tuesday • Off Day — Recovery Reset",
   3: "Wednesday • Upper A — Progressive Push/Pull Circuit Strength",
-  4: "Thursday • Lower B — Progressive Lower Body + Hip Stability",
-  5: "Friday • Full-Body Machine Circuit + Arms",
+  4: "Thursday • Lower B — Single-Leg Strength + Hip Stability Circuit",
+  5: "Friday • Full-Body Machine Circuit + Shoulders/Arms",
 };
 
 // Navigation items

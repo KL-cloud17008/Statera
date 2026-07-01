@@ -1632,7 +1632,7 @@ function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): Mob
       id: `${idPrefix}-weekly-reset-downshift`,
       title: "Weekly downshift reset",
       duration: "4-6 min",
-      purpose: "After Friday Full-Body Machine Circuit + Arms, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
+      purpose: "After Friday Full-Body Machine Circuit + Shoulders/Arms, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
       exercises: [
         footFlareMovement("supportedSingleLegBalanceKickstand", `${idPrefix}-single-leg-kickstand`, {
           dose: "10-20 seconds per side",
@@ -1976,7 +1976,7 @@ const DAY_5_LATER_RECOVERY: MobilityBlock = block({
   title: "Weekly Downshift / Foot-Flare Recovery",
   duration: "12-16 min",
   purpose:
-    "Complete later the same day after Friday Full-Body Machine Circuit + Arms. End the week with easy foot, ankle, balance, spine, and breathing work.",
+    "Complete later the same day after Friday Full-Body Machine Circuit + Shoulders/Arms. End the week with easy foot, ankle, balance, spine, and breathing work.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -2164,7 +2164,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Lower B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, knees, hips, hamstrings, hip stability, trunk, and breathing for progressive lower-body work.",
+      "Prepare feet, ankles, knees, hips, hamstrings, hip stability, trunk, and breathing for single-leg lower-body work.",
     previousDayReason:
       "Wednesday was Upper A, so this keeps lower-body prep short and supported.",
     adaptationNote:
@@ -2172,7 +2172,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means hips and ankles feel easier to position without adding fatigue.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Lower B setup", note: "Single-leg press, hamstring curl, leg extension, and hip abduction." },
+      { label: "Training match", value: "Lower B setup", note: "Range-limited single-leg press, supported Bulgarian split squat, seated leg curl, leg extension, and hip abduction." },
       { label: "Foot rule", value: "No step chasing", note: "Gym walking is removed if soles are flaring." },
       { label: "Feel target", value: "Stable", note: "Hips stay quiet and breathing stays easy." },
     ],
@@ -2201,7 +2201,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Full-body circuit primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, rear delts, lats, chest, arms, hamstrings, quads, and breathing for controlled full-body machine circuits.",
+      "Prepare feet, ankles, upper back, rear delts, lats, chest, shoulders, arms, hamstrings, quads, and breathing for controlled full-body machine circuits.",
     previousDayReason:
       "Thursday lower-body work can leave the feet and hips loaded, so Friday keeps prep simple and supported.",
     adaptationNote:
@@ -2209,7 +2209,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Machine circuit", note: "Press, row, leg extension, pulldown, rear delts, hamstring curl, arms, and side delts." },
+      { label: "Training match", value: "Machine circuit", note: "Press, row, pulldown, rear delts, back extension, leg extension, hamstring curl, shoulders, triceps, and biceps." },
       { label: "Circuit rule", value: "Strength density", note: "No HIIT, no breathless chasing, no finishers." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],

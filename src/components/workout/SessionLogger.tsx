@@ -281,17 +281,17 @@ export function SessionLogger({
 
       <section className="editorial-surface px-0 py-0">
         {exerciseGroups.map((group, groupIndex) => {
-          const isSuperset = group.length > 1 && group[0].supersetGroup;
+          const isGroupedBlock = group.length > 1 && group[0].supersetGroup;
           const restSeconds = group[0].restSeconds ?? 90;
 
           return (
             <div key={groupIndex} className="border-t border-border/70 px-6 py-8 first:border-t-0 sm:px-8">
-              {isSuperset ? (
+              {isGroupedBlock ? (
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <p className="eyebrow">Superset</p>
+                    <p className="eyebrow">Block</p>
                     <p className="mt-2 text-lg font-semibold tracking-normal">
-                      Group {group[0].supersetGroup}
+                      Block {group[0].supersetGroup}
                     </p>
                   </div>
                   <RestTimer defaultSeconds={restSeconds} />
@@ -318,7 +318,7 @@ export function SessionLogger({
                 ))}
               </div>
 
-              {!isSuperset && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
+              {!isGroupedBlock && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
                 <div className="mt-6 flex justify-end">
                   <RestTimer defaultSeconds={group[0].restSeconds} />
                 </div>
