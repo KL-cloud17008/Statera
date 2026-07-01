@@ -18,7 +18,7 @@
 | Monday | Completed - Lower A |
 | Tuesday | Off Day / Recovery Reset |
 | Wednesday | Upper A - Progressive Push/Pull Circuit Strength |
-| Thursday | Lower B - Single-Leg Strength + Hip Stability Circuit |
+| Thursday | Lower B - Single-Leg Strength + Posterior Chain / Hip Stability |
 | Friday | Full-Body Machine Circuit + Shoulders/Arms |
 | Saturday | Recovery Rest |
 | Sunday | Complete Rest |
@@ -143,35 +143,36 @@ Required later recovery: Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.
 
 ## Thursday - Lower B
 
-Name: Lower B - Single-Leg Strength + Hip Stability Circuit
+Name: Lower B - Single-Leg Strength + Posterior Chain / Hip Stability
 
 Label: Strength Protocol
 
-Subcopy: Progressive lower-body work without deep torso-compression leg pressing. Single-leg strength first, then controlled accessory circuit.
+Subcopy: Progressive lower-body work without deep torso-compression leg pressing. Single-leg strength first, posterior-chain practice second, then controlled accessory circuit.
 
 Important note: Stop leg press range before thigh/torso contact. If torso pressure appears, shorten range, reduce load, adjust seat/stance, or skip the leg press and complete Bulgarian split squats only.
 
-Structure: Block A standalone single-leg strength, Block B standalone Bulgarian split squat, Block C controlled lower-body accessory circuit.
+Structure: Block A standalone range-limited single-leg press, Block B standalone bench-supported Bulgarian split squat, Block C low-dose back-extension / posterior-chain practice, Block D controlled lower-body accessory circuit.
 
 | Block | Exercise | Sets | Reps | RPE | Rest |
 | --- | --- | ---: | --- | --- | --- |
 | A1 | Single-Leg Leg Press | 2 | 8-10 per leg | 5-6 | 2-3 min |
 | B1 | Bench-Supported Bulgarian Split Squat | 3 | 6-8 per leg | 5-6 | 2-3 min |
-| C1 | Seated Leg Curl | 3 | 10-12 | 6-7 | after C3 |
-| C2 | Hip Abduction Machine | 3 | 12-20 | 6 | after C3 |
-| C3 | Seated Leg Extension | 3 | 10-15 | 6-7 | 2 min after C3 |
+| C1 | Back Hyperextension / Back Extension Machine | 2 | 8-10 | 4-5 | 90-120 sec |
+| D1 | Seated Leg Curl | 3 | 10-12 | 6-7 | after D3 |
+| D2 | Hip Abduction Machine | 3 | 12-20 | 6 | after D3 |
+| D3 | Seated Leg Extension | 3 | 10-15 | 6-7 | 2 min after D3 |
 
-Thursday total working sets: 14
+Thursday total working sets: 16
 
-Thursday overload target: Add reps before load. Do not increase load on single-leg press unless range is pain-free and there is no thigh/torso compression. Bulgarian split squat progresses first by balance, control, and reps before adding dumbbells.
+Thursday overload target: Add reps before load. Do not increase load on single-leg press unless range is pain-free and there is no thigh/torso compression. Bulgarian split squat progresses first by balance, control, and reps before adding dumbbells. Back hyperextension does not progress by load yet; progress by cleaner reps and pain-free control only.
 
-Required later recovery: Lower-Body Flush + Sole Care, 10-14 minutes.
+Required later recovery: Lower-Body Flush + Sole / Back Care, 10-14 minutes.
 
 ## Friday - Full-Body Machine Circuit + Shoulders/Arms
 
 Label: Strength Protocol
 
-Subcopy: Higher-density full-body session with controlled circuits. Strength-density work, not HIIT. Rest until breathing is recovered.
+Subcopy: Higher-density upper/full-body machine session with controlled circuits. Back hyperextensions moved to Thursday. Strength-density work, not HIIT.
 
 Structure: controlled circuits and pairings. Keep all reps clean. Do not chase breathlessness.
 
@@ -179,20 +180,19 @@ Structure: controlled circuits and pairings. Keep all reps clean. Do not chase b
 | --- | --- | ---: | --- | --- | --- |
 | A1 | Incline Machine Press | 3 | 8-12 | 6-7 | after A2 |
 | A2 | Seated Cable Row | 3 | 8-12 | 6-7 | 120 sec after A2 |
-| B1 | Wide-Grip Lat Pulldown | 3 | 8-12 | 6 | after B3 |
-| B2 | Reverse Pec Deck | 3 | 12-15 | 6 | after B3 |
-| B3 | Back Hyperextension / Back Extension Machine | 2 | 8-10 | 4-5 | 2 min after B3 |
+| B1 | Wide-Grip Lat Pulldown | 3 | 8-12 | 6 | after B2 |
+| B2 | Reverse Pec Deck | 3 | 12-15 | 6 | 120 sec after B2 |
 | C1 | Leg Extension | 2 | 10-15 | 5-6 | after C2 |
 | C2 | Single-Leg Lying Curl | 2 | 10-12 per leg | 5-6 | 120 sec after C2 |
 | D1 | Seated Dumbbell Overhead Press | 2 | 8-12 | 5-6 | after D3 |
 | D2 | EZ-Bar Skullcrusher | 2 | 10-12 | 5-6 | after D3 |
 | D3 | EZ-Bar Biceps Curl | 2 | 10-15 | 6 | 90-120 sec after D3 |
 
-Friday total working sets: 24
+Friday total working sets: 22
 
 Friday circuit safety: This is circuit-style strength work, not cardio punishment. Do not chase breathlessness. If breathing is not recovered, rest longer. Stop if dizziness, sharp pain, limping, chest pain, unusual shortness of breath, numbness, tingling, or worsening symptoms appear.
 
-Friday overload target: Use conservative loads because density is high. Add reps before load. Keep all reps clean. Do not add load to overhead press, skullcrushers, or back hyperextension unless the movement is completely pain-free and technically stable.
+Friday overload target: Use conservative loads because density is high. Add reps before load. Keep all reps clean. Do not add load aggressively to overhead press or skullcrushers.
 
 Required later recovery: Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.
 

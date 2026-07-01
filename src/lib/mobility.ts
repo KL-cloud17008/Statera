@@ -1928,11 +1928,11 @@ const DAY_3_LATER_RECOVERY: MobilityBlock = block({
 });
 
 const DAY_4_LATER_RECOVERY: MobilityBlock = block({
-  id: "day-4-lower-body-flush-sole-care",
-  title: "Lower-Body Flush + Sole Care",
+  id: "day-4-lower-body-flush-sole-back-care",
+  title: "Lower-Body Flush + Sole / Back Care",
   duration: "10-14 min",
   purpose:
-    "Complete later the same day after Thursday Lower B. Keep lower-body recovery easy and foot-focused.",
+    "Complete later the same day after Thursday Lower B. Keep lower-body recovery easy, foot-focused, and back-friendly.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -1963,6 +1963,10 @@ const DAY_4_LATER_RECOVERY: MobilityBlock = block({
     recoveryMovement("pelvicTilts", "day-4-pelvic-tilts", {
       dose: "1 set x 8-12 slow reps",
       completionTarget: "Complete 8-12 slow pelvic tilts.",
+    }),
+    recoveryMovement("supportedHipHingeRockBack", "day-4-supported-hip-hinge-rock-back", {
+      dose: "1 set x 6-10 reps",
+      completionTarget: "Complete 6-10 supported hinge rock-backs.",
     }),
     recoveryMovement("supportedBreathingReset", "day-4-supported-breathing-reset", {
       dose: "2 minutes",
@@ -2172,7 +2176,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means hips and ankles feel easier to position without adding fatigue.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Lower B setup", note: "Range-limited single-leg press, supported Bulgarian split squat, seated leg curl, leg extension, and hip abduction." },
+      { label: "Training match", value: "Lower B setup", note: "Range-limited single-leg press, supported Bulgarian split squat, low-dose back extension, seated leg curl, leg extension, and hip abduction." },
       { label: "Foot rule", value: "No step chasing", note: "Gym walking is removed if soles are flaring." },
       { label: "Feel target", value: "Stable", note: "Hips stay quiet and breathing stays easy." },
     ],
@@ -2209,7 +2213,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Machine circuit", note: "Press, row, pulldown, rear delts, back extension, leg extension, hamstring curl, shoulders, triceps, and biceps." },
+      { label: "Training match", value: "Machine circuit", note: "Press, row, pulldown, rear delts, leg extension, hamstring curl, shoulders, triceps, and biceps." },
       { label: "Circuit rule", value: "Strength density", note: "No HIIT, no breathless chasing, no finishers." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],

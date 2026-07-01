@@ -52,7 +52,7 @@ const WEEKLY_RHYTHM = [
   { day: "MON", label: "Lower A", protocol: "Strength Protocol", dayOfWeek: 1 },
   { day: "TUE", label: "Off Day / Recovery Reset", protocol: "Recovery Protocol", dayOfWeek: 2, href: "/mobility" },
   { day: "WED", label: "Upper A", protocol: "Strength Protocol", dayOfWeek: 3 },
-  { day: "THU", label: "Lower B — Single-Leg Strength + Hip Stability Circuit", protocol: "Strength Protocol", dayOfWeek: 4 },
+  { day: "THU", label: "Lower B — Single-Leg Strength + Posterior Chain / Hip Stability", protocol: "Strength Protocol", dayOfWeek: 4 },
   { day: "FRI", label: "Full-Body Machine Circuit + Shoulders/Arms", protocol: "Strength Protocol", dayOfWeek: 5 },
   { day: "SAT", label: "Recovery Rest", protocol: "Full Rest", dayOfWeek: 6 },
   { day: "SUN", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 0 },
@@ -63,7 +63,7 @@ const NEXT_BY_DAY = [
   "Lower A",
   "Off Day — Recovery Reset",
   "Upper A — Progressive Push/Pull Circuit Strength",
-  "Lower B — Single-Leg Strength + Hip Stability Circuit",
+  "Lower B — Single-Leg Strength + Posterior Chain / Hip Stability",
   "Full-Body Machine Circuit + Shoulders/Arms",
   "Recovery Rest",
 ];

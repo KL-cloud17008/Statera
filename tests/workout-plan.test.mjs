@@ -53,13 +53,13 @@ const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts
 
 test("canonical workout plan is the adjusted current-week progressive overload block", () => {
   assert.equal(workoutPlan.NEXT_WEEK_TAPER_TITLE, "Adjusted Current Week Progressive Overload Block");
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "adjusted-current-week-overload-v4");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "adjusted-current-week-overload-v5");
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.dayOfWeek), [1, 3, 4, 5]);
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
     "Monday: Completed - Lower A",
     "Tuesday: Off Day / Recovery Reset",
     "Wednesday: Upper A - Progressive Push/Pull Circuit Strength",
-    "Thursday: Lower B - Single-Leg Strength + Hip Stability Circuit",
+    "Thursday: Lower B - Single-Leg Strength + Posterior Chain / Hip Stability",
     "Friday: Full-Body Machine Circuit + Shoulders/Arms",
     "Saturday: Recovery Rest",
     "Sunday: Complete Rest",
@@ -68,6 +68,9 @@ test("canonical workout plan is the adjusted current-week progressive overload b
   assert.match(workoutPlanPageSource, /4 Strength/);
   assert.match(workoutPlanPageSource, /1 Recovery/);
   assert.match(workoutPlanPageSource, /2 Full Rest/);
+  assert.match(workoutPlanPageSource, /Thursday total working sets: 16/);
+  assert.match(workoutPlanPageSource, /Friday total working sets: 22/);
+  assert.doesNotMatch(workoutPlanPageSource, /Lat \/ Rear Delt \/ Back Extension/i);
   assert.match(planSource, /Adjusted current week\. Monday lower body was completed/);
 });
 
@@ -90,19 +93,19 @@ test("strength days use the requested exercise selection and set balance", () =>
     ["C2 Cable Curl", 3, "10-15", "6-7"],
     ["C3 Face Pull", 3, "12-15", "6"],
   ]);
-  assertDay(byDay.get(4), "Lower B", 14, [
+  assertDay(byDay.get(4), "Lower B", 16, [
     ["A1 Single-Leg Leg Press", 2, "8-10 per leg", "5-6"],
     ["B1 Bench-Supported Bulgarian Split Squat", 3, "6-8 per leg", "5-6"],
-    ["C1 Seated Leg Curl", 3, "10-12", "6-7"],
-    ["C2 Hip Abduction Machine", 3, "12-20", "6"],
-    ["C3 Seated Leg Extension", 3, "10-15", "6-7"],
+    ["C1 Back Hyperextension / Back Extension Machine", 2, "8-10", "4-5"],
+    ["D1 Seated Leg Curl", 3, "10-12", "6-7"],
+    ["D2 Hip Abduction Machine", 3, "12-20", "6"],
+    ["D3 Seated Leg Extension", 3, "10-15", "6-7"],
   ]);
-  assertDay(byDay.get(5), "Full-Body", 24, [
+  assertDay(byDay.get(5), "Full-Body", 22, [
     ["A1 Incline Machine Press", 3, "8-12", "6-7"],
     ["A2 Seated Cable Row", 3, "8-12", "6-7"],
     ["B1 Wide-Grip Lat Pulldown", 3, "8-12", "6"],
     ["B2 Reverse Pec Deck", 3, "12-15", "6"],
-    ["B3 Back Hyperextension / Back Extension Machine", 2, "8-10", "4-5"],
     ["C1 Leg Extension", 2, "10-15", "5-6"],
     ["C2 Single-Leg Lying Curl", 2, "10-12 per leg", "5-6"],
     ["D1 Seated Dumbbell Overhead Press", 2, "8-12", "5-6"],
@@ -142,10 +145,11 @@ test("active plan excludes prohibited and removed strength work", () => {
   const thursday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 4);
   assert.ok(thursday.exercises.some((exercise) => exercise.exerciseName === "A1 Single-Leg Leg Press"));
   assert.ok(thursday.exercises.some((exercise) => exercise.exerciseName === "B1 Bench-Supported Bulgarian Split Squat"));
-  assert.ok(thursday.exercises.some((exercise) => exercise.exerciseName === "C2 Hip Abduction Machine"));
+  assert.ok(thursday.exercises.some((exercise) => exercise.exerciseName === "C1 Back Hyperextension / Back Extension Machine"));
+  assert.ok(thursday.exercises.some((exercise) => exercise.exerciseName === "D2 Hip Abduction Machine"));
   const friday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 5);
   assert.match(friday.sessionName, /Full-Body Machine Circuit \+ Shoulders\/Arms/);
-  assert.ok(friday.exercises.some((exercise) => exercise.exerciseName === "B3 Back Hyperextension / Back Extension Machine"));
+  assert.ok(!friday.exercises.some((exercise) => /Back Hyperextension|Back Extension Machine/i.test(exercise.exerciseName)));
   assert.ok(friday.exercises.some((exercise) => exercise.exerciseName === "C1 Leg Extension"));
   assert.ok(friday.exercises.some((exercise) => exercise.exerciseName === "C2 Single-Leg Lying Curl"));
   assert.ok(friday.exercises.some((exercise) => exercise.exerciseName === "D1 Seated Dumbbell Overhead Press"));
@@ -200,8 +204,8 @@ test("plan copy preserves foot-load, back-pain, prep, and recovery rules", () =>
 test("weekly set summary covers the required muscle groups", () => {
   assert.deepEqual(Array.from(workoutPlan.WEEKLY_SET_SUMMARY), [
     "Quads: Monday completed lower session plus Thursday Single-Leg Leg Press 2, Bulgarian Split Squat 3, Seated Leg Extension 3, and Friday Leg Extension 2 = strong controlled quad exposure.",
-    "Hamstrings: Thursday Seated Leg Curl 3, Friday Single-Leg Lying Curl 2 plus Monday completed work.",
-    "Glutes/hips: Thursday Hip Abduction 3, Bulgarian Split Squat 3, and single-leg press assistance.",
+    "Hamstrings/posterior chain: Thursday Seated Leg Curl 3, Back Hyperextension 2, Friday Single-Leg Lying Curl 2 plus Monday completed work.",
+    "Glutes/hips: Thursday Hip Abduction 3, Bulgarian Split Squat 3, back-extension practice, and single-leg press assistance.",
     "Chest: Wednesday Incline Dumbbell Press 4, Friday Incline Machine Press 3.",
     "Back/lats: Wednesday Row 4, Pulldown 3, Friday Row 3, Pulldown 3.",
     "Shoulders: Wednesday Lateral Raise 3, Friday Seated Dumbbell Overhead Press 2 and Reverse Pec Deck 3.",
@@ -220,8 +224,10 @@ test("dashboard and schedule constants reflect the adjusted four strength days",
   assert.match(dashboardSource, /4 Strength \/ 1 Recovery \/ 2 Full Rest/);
   assert.match(dashboardSource, /day: "TUE"[\s\S]*label: "Off Day \/ Recovery Reset"[\s\S]*protocol: "Recovery Protocol"/);
   assert.match(dashboardSource, /day: "WED"[\s\S]*label: "Upper A"[\s\S]*protocol: "Strength Protocol"/);
-  assert.match(dashboardSource, /day: "THU"[\s\S]*label: "Lower B — Single-Leg Strength \+ Hip Stability Circuit"[\s\S]*protocol: "Strength Protocol"/);
+  assert.match(dashboardSource, /day: "THU"[\s\S]*label: "Lower B — Single-Leg Strength \+ Posterior Chain \/ Hip Stability"[\s\S]*protocol: "Strength Protocol"/);
   assert.match(dashboardSource, /day: "FRI"[\s\S]*label: "Full-Body Machine Circuit \+ Shoulders\/Arms"[\s\S]*protocol: "Strength Protocol"/);
+  assert.match(dashboardSource, /"Lower B — Single-Leg Strength \+ Posterior Chain \/ Hip Stability"/);
+  assert.match(dashboardSource, /"Full-Body Machine Circuit \+ Shoulders\/Arms"/);
   assert.match(dashboardSource, /day: "SAT"[\s\S]*label: "Recovery Rest"[\s\S]*protocol: "Full Rest"/);
   assert.match(dashboardSource, /day: "SUN"[\s\S]*label: "Complete Rest"[\s\S]*protocol: "Full Rest"/);
   assert.match(dashboardSource, /const isStrengthDay = \[1, 3, 4, 5\]/);
@@ -288,6 +294,27 @@ test("workout plan hashes reject old active plan snapshots", () => {
   };
 
   assert.equal(workoutPlanVersion.isCurrentWorkoutPlanContent(oldSnapshot), false);
+
+  const oldFridaySnapshot = {
+    dayOfWeek: 5,
+    sessionName: "Full-Body Machine Circuit + Shoulders/Arms",
+    exercises: [
+      {
+        exerciseName: "B3 Back Hyperextension / Back Extension Machine",
+        sets: 2,
+        reps: "8-10",
+        tempo: "slow",
+        restSeconds: 120,
+        targetRPE: "4-5",
+        cues: "Old Friday back extension placement.",
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+        sortOrder: 0,
+      },
+    ],
+  };
+
+  assert.equal(workoutPlanVersion.isCurrentWorkoutPlanContent(oldFridaySnapshot), false);
 });
 
 test("mobility later recovery and rest routines match the adjusted current week", () => {
@@ -306,7 +333,7 @@ test("mobility later recovery and rest routines match the adjusted current week"
       "Lower Body Downshift + Foot-Flare Care",
       "Off Day — Recovery Reset",
       "Upper-Body Downshift + Foot/Ankle Base",
-      "Lower-Body Flush + Sole Care",
+      "Lower-Body Flush + Sole / Back Care",
       "Weekly Downshift / Foot-Flare Recovery",
     ]
   );

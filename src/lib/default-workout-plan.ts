@@ -17,13 +17,13 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Adjusted Current Week Progressive Overload Block";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "adjusted-current-week-overload-v4";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "adjusted-current-week-overload-v5";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Adjusted current week. Monday lower body was completed. Tuesday was taken off. Wednesday through Friday now use a higher-volume progressive-overload block because food intake and home recovery are available. Saturday and Sunday are reserved for recovery.";
 
 export const LOWER_A_TAPER_TITLE = "Lower A — Leg Strength Peak / Machine-Supported";
-export const LOWER_B_TAPER_TITLE = "Lower B — Single-Leg Strength + Hip Stability Circuit";
+export const LOWER_B_TAPER_TITLE = "Lower B — Single-Leg Strength + Posterior Chain / Hip Stability";
 export const LOWER_B_BACK_SAFE_TITLE = LOWER_B_TAPER_TITLE;
 export const FULL_BODY_CIRCUIT_TITLE = "Full-Body Machine Circuit + Shoulders/Arms";
 
@@ -67,8 +67,8 @@ export const BACK_PAIN_RULES = [
 
 export const WEEKLY_SET_SUMMARY = [
   "Quads: Monday completed lower session plus Thursday Single-Leg Leg Press 2, Bulgarian Split Squat 3, Seated Leg Extension 3, and Friday Leg Extension 2 = strong controlled quad exposure.",
-  "Hamstrings: Thursday Seated Leg Curl 3, Friday Single-Leg Lying Curl 2 plus Monday completed work.",
-  "Glutes/hips: Thursday Hip Abduction 3, Bulgarian Split Squat 3, and single-leg press assistance.",
+  "Hamstrings/posterior chain: Thursday Seated Leg Curl 3, Back Hyperextension 2, Friday Single-Leg Lying Curl 2 plus Monday completed work.",
+  "Glutes/hips: Thursday Hip Abduction 3, Bulgarian Split Squat 3, back-extension practice, and single-leg press assistance.",
   "Chest: Wednesday Incline Dumbbell Press 4, Friday Incline Machine Press 3.",
   "Back/lats: Wednesday Row 4, Pulldown 3, Friday Row 3, Pulldown 3.",
   "Shoulders: Wednesday Lateral Raise 3, Friday Seated Dumbbell Overhead Press 2 and Reverse Pec Deck 3.",
@@ -266,36 +266,47 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Seated Leg Curl",
+        exerciseName: "C1 Back Hyperextension / Back Extension Machine",
+        sets: 2,
+        reps: "8-10",
+        tempo: "slow",
+        restSeconds: 120,
+        targetRPE: "4-5",
+        cues: "Bodyweight only or minimum machine load. Low-dose posterior-chain practice. Short comfortable range, neutral neck, slow tempo, no swinging, no aggressive arching, stop well before fatigue, and movement practice only. Rest 90-120 seconds. Skip if lower-back pain is active. Stop immediately if back pain increases, pain shoots down the leg, numbness, tingling, weakness, or nerve-like symptoms appear. This is not a max-effort posterior-chain lift; it is a controlled hinge-tolerance drill.",
+        supersetGroup: "C",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "D1 Seated Leg Curl",
         sets: 3,
         reps: "10-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
         cues: `${WEEK3_ACCESSORY_CUE}Hips heavy against pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
-        supersetGroup: "C",
+        supersetGroup: "D",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C2 Hip Abduction Machine",
+        exerciseName: "D2 Hip Abduction Machine",
         sets: 3,
         reps: "12-20",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6",
         cues: `${WEEK3_ACCESSORY_CUE}Outer hip/glute medius focus, pelvis still, do not rock torso, control out and back, no jerking, and do not chase load.`,
-        supersetGroup: "C",
+        supersetGroup: "D",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C3 Seated Leg Extension",
+        exerciseName: "D3 Seated Leg Extension",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK3_ACCESSORY_CUE}Smooth reps, no knee snapping, brief pause near top without aggressive lockout, lower slowly, hips stay heavy on pad, and use a controlled comfortable range. Rest after C3: 2 minutes before the next round.`,
-        supersetGroup: "C",
+        cues: `${WEEK3_ACCESSORY_CUE}Smooth reps, no knee snapping, brief pause near top without aggressive lockout, lower slowly, hips stay heavy on pad, and use a controlled comfortable range. Rest after D3: 2 minutes before the next round.`,
+        supersetGroup: "D",
         exerciseType: "WORKING",
       },
     ],
@@ -344,18 +355,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Chest supported, lead with elbows, neck relaxed, controlled return, and no swinging.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B3 Back Hyperextension / Back Extension Machine",
-        sets: 2,
-        reps: "8-10",
-        tempo: "slow",
-        restSeconds: 120,
-        targetRPE: "4-5",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Bodyweight only or minimum machine load. Short comfortable range, neutral neck, slow tempo, no swinging, no aggressive arching, stop well before fatigue, and movement practice only. Skip if lower-back pain is active. Stop immediately if back pain increases, pain shoots down the leg, numbness, tingling, weakness, or nerve-like symptoms appear. Rest after B3: 2 minutes.`,
+        cues: `${CONTROLLED_CIRCUIT_CUE}Chest supported, lead with elbows, neck relaxed, controlled return, and no swinging. Rest after B2: 120 seconds.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -422,7 +422,7 @@ export const DEFAULT_WEEKLY_RHYTHM = [
   "Monday: Completed - Lower A",
   "Tuesday: Off Day / Recovery Reset",
   "Wednesday: Upper A - Progressive Push/Pull Circuit Strength",
-  "Thursday: Lower B - Single-Leg Strength + Hip Stability Circuit",
+  "Thursday: Lower B - Single-Leg Strength + Posterior Chain / Hip Stability",
   "Friday: Full-Body Machine Circuit + Shoulders/Arms",
   "Saturday: Recovery Rest",
   "Sunday: Complete Rest",
