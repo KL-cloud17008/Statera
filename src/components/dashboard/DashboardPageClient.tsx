@@ -16,9 +16,14 @@ import {
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
-import { DEFAULT_WORKOUT_PLAN, type DefaultWorkoutDay } from "@/lib/default-workout-plan";
+import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
+import {
+  DAY_NAMES,
+  buildPlanDayStats,
+  findNextTrainingDay,
+  getPlanDay,
+} from "@/lib/plan-preview";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
-import { isLoggableTrainingExercise } from "@/lib/training-session";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
@@ -106,8 +111,10 @@ export function DashboardPageClient({
     ? formatShortDate(workoutSummary.lastWorkout.trainingDate)
     : null;
   const nextProtocol = getNextProtocol(trainingDayOfWeek);
-  const todayPlanDay = DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === trainingDayOfWeek) ?? null;
+  const todayPlanDay = getPlanDay(trainingDayOfWeek);
   const todayPlanStats = todayPlanDay ? buildPlanDayStats(todayPlanDay) : null;
+  const nextTrainingDay = !todayPlanDay ? findNextTrainingDay(trainingDayOfWeek) : null;
+  const nextTrainingStats = nextTrainingDay ? buildPlanDayStats(nextTrainingDay.day) : null;
   const decision = buildDecision({
     stepsEntries,
     todaySteps,
@@ -178,7 +185,34 @@ export function DashboardPageClient({
                     ))}
                   </ul>
                 </>
-              ) : null}
+              ) : (
+                <>
+                  <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
+                    {recoveryFlagActive ? "Recovery flag active" : "Full rest — recovery only"}
+                  </p>
+                  <ul className="mt-3 space-y-2">
+                    {getRestDayFocus(recoveryFlagActive).map((item) => (
+                      <li key={item} className="flex items-center gap-2.5 text-sm leading-snug text-white/72">
+                        <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  {nextTrainingDay && nextTrainingStats ? (
+                    <div className="mt-5 border-t border-white/12 pt-4">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
+                        Next session · {nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}
+                      </p>
+                      <p className="mt-2 text-sm font-semibold leading-snug text-white">
+                        {nextTrainingDay.day.sessionName}
+                      </p>
+                      <p className="mt-1 text-xs text-white/58">
+                        {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m est.
+                      </p>
+                    </div>
+                  ) : null}
+                </>
+              )}
               <p className="mt-5 text-sm leading-relaxed text-white/66">
                 {decision.title}
               </p>
@@ -198,7 +232,7 @@ export function DashboardPageClient({
             <div className="justify-self-center sm:justify-self-start">
               <StepsProgressRing current={todaySteps} goal={settings.stepGoal} size={176} />
             </div>
-            <StepMiniBars entries={stepsEntries} goal={settings.stepGoal} />
+            <StepMiniBars entries={stepsEntries} goal={settings.stepGoal} todaySteps={todaySteps} timezone={timezone} />
             <div className="space-y-3 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Daily movement</span>
@@ -372,81 +406,94 @@ function SignalTile({
   );
 }
 
-function StepMiniBars({ entries, goal }: { entries: SerializedStepsEntry[]; goal: number }) {
-  const recent = [...entries]
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(-7);
-
-  if (recent.length === 0) {
-    return (
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        No step entries logged yet. The last seven days chart here once entries exist.
-      </p>
-    );
-  }
-
-  const scaleMax = Math.max(goal, ...recent.map((entry) => entry.steps ?? 0), 1);
+function StepMiniBars({
+  entries,
+  goal,
+  todaySteps,
+  timezone,
+}: {
+  entries: SerializedStepsEntry[];
+  goal: number;
+  todaySteps: number;
+  timezone?: string;
+}) {
+  const barAreaPx = 88;
+  const today = getTodayDateString(timezone);
+  const stepsByDate = new Map(entries.map((entry) => [entry.date, entry.steps ?? 0]));
+  // Always chart the last 7 consecutive calendar days ending today (user
+  // timezone) — logged entries can have gaps, so days without an entry show
+  // as zero-stubs instead of collapsing the axis.
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = addDaysToDateString(today, index - 6);
+    const steps = stepsByDate.get(date) ?? (date === today ? todaySteps : 0);
+    return { date, steps };
+  });
+  const scaleMax = Math.max(goal, ...days.map((day) => day.steps), 1);
 
   return (
     <div>
       <div className="flex items-center justify-between text-sm">
-        <span className="text-muted-foreground">Last {recent.length === 1 ? "day" : `${recent.length} days`}</span>
+        <span className="text-muted-foreground">Last 7 days</span>
         <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Goal {goal.toLocaleString()}
         </span>
       </div>
-      <div className="mt-3 flex h-24 items-end gap-2">
-        {recent.map((entry) => {
-          const steps = entry.steps ?? 0;
-          const heightPercent = Math.max(6, Math.round((steps / scaleMax) * 100));
+      <div className="mt-3 flex items-end gap-2">
+        {days.map(({ date, steps }) => {
+          const isToday = date === today;
           const metGoal = goal > 0 && steps >= goal;
+          const barHeight = steps > 0
+            ? Math.max(6, Math.round((steps / scaleMax) * barAreaPx))
+            : 3;
           return (
-            <div
-              key={entry.date}
-              className="flex h-full flex-1 items-end"
-              title={`${formatShortDate(entry.date)}: ${steps.toLocaleString()} steps`}
-            >
+            <div key={date} className="flex flex-1 flex-col items-center gap-2">
               <div
+                className="flex w-full items-end"
+                style={{ height: barAreaPx }}
+                title={`${formatShortDate(date)}: ${steps.toLocaleString()} steps`}
+              >
+                <div
+                  className={cn(
+                    "w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
+                    metGoal
+                      ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
+                      : steps > 0
+                        ? "bg-[rgba(7,17,31,0.16)]"
+                        : "bg-[rgba(7,17,31,0.07)]"
+                  )}
+                  style={{ height: barHeight }}
+                />
+              </div>
+              <p
                 className={cn(
-                  "w-full rounded-full",
-                  metGoal
-                    ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
-                    : "bg-[rgba(7,17,31,0.12)]"
+                  "text-[10px] font-bold uppercase tracking-[0.1em]",
+                  isToday ? "text-foreground" : "text-muted-foreground"
                 )}
-                style={{ height: `${heightPercent}%` }}
-              />
+              >
+                {formatWeekdayInitial(date)}
+              </p>
             </div>
           );
         })}
-      </div>
-      <div className="mt-2 flex gap-2">
-        {recent.map((entry) => (
-          <p key={entry.date} className="flex-1 text-center text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-            {formatWeekdayInitial(entry.date)}
-          </p>
-        ))}
       </div>
     </div>
   );
 }
 
-function buildPlanDayStats(day: DefaultWorkoutDay) {
-  const loggable = day.exercises.filter(isLoggableTrainingExercise);
-  const estimatedSeconds = loggable.reduce((sum, exercise) => {
-    const sets = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
-    // ~45s of work per set plus the programmed rest between sets.
-    return sum + sets * (45 + exercise.restSeconds);
-  }, 0);
-  const estimatedMinutes = Math.max(5, Math.round(estimatedSeconds / 60 / 5) * 5);
-  const topMovements = loggable
-    .slice(0, 3)
-    .map((exercise) => exercise.exerciseName.replace(/^[A-Z]\d*\s+/, ""));
+function getRestDayFocus(recoveryFlagActive: boolean) {
+  if (recoveryFlagActive) {
+    return [
+      "Required foot-flare recovery block applies",
+      "Keep effort 1-3/10 — recovery, not training",
+      "No gym walking, no step chasing",
+    ];
+  }
 
-  return {
-    exerciseCount: loggable.length,
-    estimatedMinutes,
-    topMovements,
-  };
+  return [
+    "Optional easy mobility only if it improves comfort",
+    "No make-up sets, no step chasing",
+    "Start the next training day fresh",
+  ];
 }
 
 function formatWeekdayInitial(dateString: string) {

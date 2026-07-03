@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, ClipboardList, History } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Button } from "@/components/ui/button";
+import { DAY_NAMES, buildPlanDayStats, findNextTrainingDay } from "@/lib/plan-preview";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
 import { CustomWorkoutBuilder } from "./CustomWorkoutBuilder";
@@ -74,6 +75,8 @@ export function WorkoutPageClient({
   trainingDayOfWeek: number;
 }) {
   const dayGuidance = !todayPlan ? getDayGuidance(trainingDayOfWeek) : null;
+  const nextTrainingDay = dayGuidance ? findNextTrainingDay(trainingDayOfWeek) : null;
+  const nextTrainingStats = nextTrainingDay ? buildPlanDayStats(nextTrainingDay.day) : null;
 
   return (
     <div className="page-shell">
@@ -168,6 +171,29 @@ export function WorkoutPageClient({
               </p>
             ))}
           </div>
+
+          {nextTrainingDay && nextTrainingStats ? (
+            <div className="surface-card mt-6 rounded-[var(--radius-card)] p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="eyebrow">
+                    Next session · {nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}
+                  </p>
+                  <p className="mt-3 text-lg font-semibold leading-snug tracking-normal text-foreground">
+                    {nextTrainingDay.day.sessionName}
+                  </p>
+                </div>
+                <p className="data-number text-sm text-muted-foreground">
+                  {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m
+                </p>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-border/70 pt-4 text-sm text-muted-foreground">
+                {nextTrainingStats.topMovements.map((movement) => (
+                  <span key={movement}>{movement}</span>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </section>
       ) : (
         <div className="grid gap-8 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] xl:items-start">
