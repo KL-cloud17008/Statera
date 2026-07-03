@@ -1,7 +1,7 @@
 export const SESSION_PREP_ITEMS = [
   {
     label: "Walk to gym",
-    detail: "General warm-up only if foot load is tolerable",
+    detail: "General warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking.",
   },
   {
     label: "First lift/machine",

@@ -49,23 +49,23 @@ type WorkoutDayStatus = {
 };
 
 const WEEKLY_RHYTHM = [
-  { day: "MON", label: "Lower A", protocol: "Strength Protocol", dayOfWeek: 1 },
-  { day: "TUE", label: "Off Day / Recovery Reset", protocol: "Recovery Protocol", dayOfWeek: 2, href: "/mobility" },
-  { day: "WED", label: "Upper A", protocol: "Strength Protocol", dayOfWeek: 3 },
-  { day: "THU", label: "Lower B — Split Squat + Posterior Chain / Hip Stability", protocol: "Strength Protocol", dayOfWeek: 4 },
-  { day: "FRI", label: "Upper Machine Circuit + Shoulders/Arms", protocol: "Strength Protocol", dayOfWeek: 5 },
-  { day: "SAT", label: "Recovery Rest", protocol: "Full Rest", dayOfWeek: 6 },
+  { day: "MON", label: "Lower A — Single-Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 1 },
+  { day: "TUE", label: "Upper A — Incline Push / Row / Trunk Stability", protocol: "Strength Protocol", dayOfWeek: 2 },
+  { day: "WED", label: "Lower B — Accessory Legs + Hip Stability", protocol: "Strength Protocol", dayOfWeek: 3 },
+  { day: "THU", label: "Upper B — Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 4 },
+  { day: "FRI", label: "Upper Accessory + Arms + Core", protocol: "Strength Protocol", dayOfWeek: 5 },
+  { day: "SAT", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 6 },
   { day: "SUN", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 0 },
 ];
 
 const NEXT_BY_DAY = [
   "Complete Rest",
-  "Lower A",
-  "Off Day — Recovery Reset",
-  "Upper A — Progressive Push/Pull Circuit Strength",
-  "Lower B — Split Squat + Posterior Chain / Hip Stability",
-  "Upper Machine Circuit + Shoulders/Arms",
-  "Recovery Rest",
+  "Lower A — Single-Leg Press + Quad/Hamstring Strength",
+  "Upper A — Incline Push / Row / Trunk Stability",
+  "Lower B — Accessory Legs + Hip Stability",
+  "Upper B — Machine Press / Pull + Shoulders and Arms",
+  "Upper Accessory + Arms + Core",
+  "Complete Rest",
 ];
 
 export function DashboardPageClient({
@@ -219,7 +219,7 @@ export function DashboardPageClient({
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow">Weekly Rhythm</p>
-            <h2 className="mt-2 text-3xl">4 Strength / 1 Recovery / 2 Full Rest.</h2>
+            <h2 className="mt-2 text-3xl">5 Strength / 2 Full Rest.</h2>
           </div>
           <Link href="/workout/plan" className="text-link inline-flex items-center gap-2 text-sm font-semibold">
             Full plan
@@ -259,15 +259,6 @@ export function DashboardPageClient({
                       fullWidth
                     />
                   </div>
-                ) : item.protocol === "Recovery Protocol" && item.href ? (
-                  <div className="mt-auto pt-5">
-                    <Link
-                      href={item.href}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[rgba(7,17,31,0.12)] bg-white/60 px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-white"
-                    >
-                      View Recovery
-                    </Link>
-                  </div>
                 ) : null}
               </div>
             );
@@ -303,11 +294,11 @@ export function DashboardPageClient({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="eyebrow">Movement Quality</p>
-                <p className="data-number mt-4 text-4xl font-semibold text-foreground">1+4</p>
+                <p className="data-number mt-4 text-4xl font-semibold text-foreground">5+2</p>
               </div>
               <Activity className="h-5 w-5 text-muted-foreground" />
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">One recovery override plus short resets around strength days.</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Five training-day resets plus full rest on Saturday and Sunday.</p>
           </Link>
         </div>
 
@@ -420,7 +411,7 @@ function buildDecision({
   const highStepLoad =
     (recentStepEntries.length >= 3 && recentStepAverage >= stepGoal * 1.15) ||
     todaySteps >= stepGoal * 1.35;
-  const isStrengthDay = [1, 3, 4, 5].includes(trainingDayOfWeek);
+  const isStrengthDay = [1, 2, 3, 4, 5].includes(trainingDayOfWeek);
   const expectedMobilityType = isStrengthDay ? "PRE_WORKOUT" : "POST_WORKOUT";
   const mobilityDone = mobilitySummary.completedTypes.includes(expectedMobilityType);
   const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;

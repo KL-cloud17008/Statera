@@ -85,32 +85,9 @@ function revalidateWorkoutResetPaths() {
 }
 
 function revalidateWorkoutSessionPaths() {
-  revalidatePath("/");
-  revalidatePath("/workout");
-  revalidatePath("/workout/plan");
-  revalidatePath("/workout/history");
-}
-
-function getSessionFamily(label: string | null | undefined) {
-  const normalized = (label ?? "").toLowerCase();
-
-  if (normalized.includes("lower a")) {
-    return "lower-a";
+  for (const path of WORKOUT_RESET_REVALIDATION_PATHS) {
+    revalidatePath(path);
   }
-  if (normalized.includes("upper a")) {
-    return "upper-a";
-  }
-  if (normalized.includes("lower b")) {
-    return "lower-b";
-  }
-  if (normalized.includes("full-body") || normalized.includes("machine circuit")) {
-    return "full-body-circuit";
-  }
-  if (normalized.includes("upper b") || normalized.includes("training reset")) {
-    return "upper-b";
-  }
-
-  return null;
 }
 
 function completedSessionMatchesCurrentPlan(
@@ -131,7 +108,7 @@ function completedSessionMatchesCurrentPlan(
     return true;
   }
 
-  return getSessionFamily(meta?.label ?? session.workoutPlan?.sessionName) === getSessionFamily(plan.sessionName);
+  return false;
 }
 
 async function findOpenSessionsWithPlans(userId: string) {
@@ -349,7 +326,7 @@ export async function startWorkoutSession(
     return { error: "Plan not found" };
   }
   if (!isCurrentWorkoutPlanContent(plan)) {
-    return { error: "This saved plan is out of date. Start a new adjusted current-week plan first." };
+    return { error: "This saved plan is out of date. Start a new next-week plan first." };
   }
 
   const now = new Date();

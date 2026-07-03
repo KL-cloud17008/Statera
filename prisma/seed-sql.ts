@@ -4,7 +4,7 @@ import { DEFAULT_WORKOUT_PLAN } from "../src/lib/default-workout-plan";
 const prisma = new PrismaClient();
 
 /**
- * Compatibility seed entrypoint for the active adjusted current-week workout plan.
+ * Compatibility seed entrypoint for the active next-week progressive overload workout plan.
  * Run with: npx tsx prisma/seed-sql.ts <supabaseUserId>
  *
  * The script deactivates that user's current workout plans, preserves completed
@@ -28,7 +28,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Seeding adjusted current-week workout plan for ${user.email} (${user.id})`);
+  console.log(`Seeding next-week progressive overload workout plan for ${user.email} (${user.id})`);
 
   await prisma.$transaction(async (tx) => {
     await tx.workoutSession.updateMany({
@@ -70,7 +70,7 @@ async function main() {
     }
   });
 
-  console.log("Done! Active workout data now uses the adjusted current-week plan.");
+  console.log("Done! Active workout data now uses the next-week progressive overload plan.");
 }
 
 main()

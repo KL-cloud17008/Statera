@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/section-header";
 import {
   getAllMobilityPrograms,
-  getRecoverySessionBlocks,
   getRequiredLaterRecoveryBlocks,
   type MobilityBlock,
   type MobilityExercise,
@@ -34,7 +33,7 @@ export default function FlexibilityBalancePage() {
       .filter((exercise) => /balance/i.test(`${exercise.category ?? ""} ${exercise.name} ${exercise.goal}`))
   );
   const recoveryDayBlocks = [
-    ...getRecoverySessionBlocks(2).slice(0, 1),
+    ...getRequiredLaterRecoveryBlocks("standard", 5).slice(0, 1),
   ];
   const footAnkleBlock = getRequiredLaterRecoveryBlocks("footFlare", 1)[0] ?? dailyMinimum;
 
@@ -56,7 +55,7 @@ export default function FlexibilityBalancePage() {
         <div className="command-deck grid gap-5 rounded-[var(--radius-panel)] p-6 md:grid-cols-4" data-animated="true">
           <OverviewMetric label="Daily Minimum" value={dailyMinimum.duration} />
           <OverviewMetric label="Balance" value={`${balanceDrills.length} drills`} />
-          <OverviewMetric label="Recovery" value="Tuesday" />
+          <OverviewMetric label="Recovery" value="Weekdays" />
           <OverviewMetric label="Foot Load" value={footAnkleBlock.duration} />
         </div>
 
@@ -85,10 +84,10 @@ export default function FlexibilityBalancePage() {
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
           <ProtocolBlock
             icon={RotateCcw}
-            eyebrow="Recovery reset"
-            title="Tuesday recovery reset"
-            summary="Tuesday is off and has no make-up volume. Use foot and ankle recovery only."
-            badge="8-12 min"
+            eyebrow="Required later recovery"
+            title="Weekday recovery blocks"
+            summary="Each strength day has a low-intensity later block. Saturday and Sunday stay full rest."
+            badge="8-16 min"
           >
             <div className="grid gap-3">
               {recoveryDayBlocks.map((block) => (

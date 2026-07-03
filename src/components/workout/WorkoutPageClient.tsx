@@ -187,32 +187,13 @@ export function WorkoutPageClient({
 }
 
 function getDayGuidance(dayOfWeek: number): DayGuidance | null {
-  if (dayOfWeek === 2) {
-    return {
-      eyebrow: "Recovery Protocol",
-      title: "Off Day — Recovery Reset",
-      description:
-        "Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only.",
-      actionHref: "/mobility",
-      actionLabel: "View Recovery",
-      details: [
-        "No step chasing. Recovery preserves the next three training days.",
-        "Seated Ankle Pumps — 1-2 minutes, smooth rhythm, no aggressive range.",
-        "Ankle Circles — 1 set x 8-12 each direction per side, slow and controlled.",
-        "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down.",
-        "Wall Calf Stretch, Knee Straight and Knee Bent — 20-30 seconds per side each, gentle only.",
-        "Supported Breathing Reset — 2 minutes with jaw, shoulders, and hips relaxed.",
-      ],
-    };
-  }
-
   if (dayOfWeek === 6) {
     return {
       eyebrow: "Full Rest",
-      title: "Recovery Rest",
+      title: "Complete Rest",
       description: "Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
       details: [
-        "Optional if stiff: supported breathing, ankle pumps, ankle circles, wall ankle rocks, gentle calf stretches, pelvic tilts, and open book rotations.",
+        "Optional recovery only if helpful: supported breathing, ankle pumps, ankle circles, and gentle calf stretches.",
         "No gym. No make-up sets. No step chasing.",
       ],
     };

@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ClipboardList } from "lucide-react";
 import { getWorkoutPlanDayStatuses, getWorkoutPlans } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
@@ -24,98 +22,98 @@ import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-s
 const WEEK_STRUCTURE = [
   {
     day: "Monday",
-    title: "Lower A — Leg Strength Peak / Machine-Supported",
+    title: "Lower A — Single-Leg Press + Quad/Hamstring Strength",
     protocol: "Strength Protocol",
     dayOfWeek: 1,
-    note: "Completed. Heaviest lower-body session of the week.",
-    laterRecovery: "Completed Monday session data stays intact.",
-    statusNote: "Completed / View Session",
+    note: "Primary lower-body strength day. Single-leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
+    laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
+    details: [
+      "Block B: Single-Leg Press and Walking Lunges. Rest 180-300 seconds; this is not conditioning.",
+      "Block C: Lying Leg Curl and Seated Leg Extension. Rest 120 seconds after C2.",
+      "Block D: Hip Abduction Machine and Hip Adduction Machine. Rest 120 seconds after D2.",
+      "Monday total working sets: 17.",
+    ],
   },
   {
     day: "Tuesday",
-    title: "Off Day — Recovery Reset",
-    protocol: "Recovery Protocol",
-    note: "Taken off. No missed-volume penalty. Use light foot, ankle, and breathing recovery only.",
-    laterRecovery: "No step chasing. Recovery preserves the next three training days.",
+    title: "Upper A — Incline Push / Row / Trunk Stability",
+    protocol: "Strength Protocol",
+    dayOfWeek: 2,
+    note: "Upper-body strength with one incline chest slot, strong pulling work, rear delts, and anti-rotation trunk work.",
+    laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
     details: [
-      "Seated Ankle Pumps — 1-2 minutes; smooth rhythm; no aggressive range.",
-      "Ankle Circles — 1 set x 8-12 each direction per side; slow, controlled circles.",
-      "Wall Ankle Rocks — 1 set x 8-12 slow reps per side; knee tracks over middle toes; heel stays down.",
-      "Wall Calf Stretch, Knee Straight — 1 round x 20-30 seconds per side; gentle stretch only.",
-      "Wall Calf Stretch, Knee Bent — 1 round x 20-30 seconds per side; gentle stretch only.",
-      "Supported Breathing Reset — 2 minutes; downshift breathing; jaw, shoulders, and hips relaxed.",
+      "Block A: Dumbbell Incline Press and Machine Row.",
+      "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
+      "Block C: Rope Triceps Pressdown, Standing Cable Anti-Rotation Press, and Face Pull.",
+      "Tuesday total working sets: 19.",
+      "Anti-rotation work is trunk control, not a max strength lift.",
     ],
-    actionHref: "/mobility",
-    actionLabel: "View Recovery",
   },
   {
     day: "Wednesday",
-    title: "Upper A — Progressive Push/Pull Circuit Strength",
+    title: "Lower B — Accessory Legs + Hip Stability",
     protocol: "Strength Protocol",
     dayOfWeek: 3,
-    note: "Higher-volume upper-body day. Controlled strength circuits, more total work, no failure.",
-    laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
+    note: "Lower accessory day. Supports Monday without turning into another max-effort leg session.",
+    laterRecovery: "Lower-Body Flush + Back Care, 10-14 minutes.",
     details: [
-      "Use paired circuits for efficiency. Rest after each pair, not after every single exercise unless needed.",
-      "Wednesday total working sets: 23.",
-      "Overload target: add reps first. If every set hits the upper target with clean form and target RPE, increase next time by the smallest kg jump.",
+      "Block A: Supported Stationary Bulgarian Split Squat.",
+      "Block B: Back Hyperextension / Back Extension Machine.",
+      "Block C: Seated Leg Extension and Seated Leg Curl.",
+      "Block D: Hip Adduction Machine and Hip Abduction Machine.",
+      "Wednesday total working sets: 15.",
     ],
   },
   {
     day: "Thursday",
-    title: "Lower B — Split Squat + Posterior Chain / Hip Stability",
+    title: "Upper B — Machine Press / Pull + Shoulders and Arms",
     protocol: "Strength Protocol",
     dayOfWeek: 4,
-    note: "Progressive lower-body work without leg press. Split squat strength first, posterior-chain practice second, then controlled accessory circuit.",
-    laterRecovery: "Lower-Body Flush + Sole / Back Care, 10-14 minutes.",
+    note: "Balanced upper-body day with mid-chest machine press, rows, pulldown, shoulders, and arms.",
+    laterRecovery: "Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.",
     details: [
-      "Block B: standalone bench-supported Bulgarian split squat.",
-      "Block C: low-dose back-extension / posterior-chain practice.",
-      "Block D: 3 controlled rounds. Seated Leg Curl, Hip Abduction Machine, Seated Leg Extension. Rest 2 minutes after D3.",
-      "Thursday total working sets: 15.",
-      "Overload target: add reps before load. Do not add dumbbells to Bulgarian split squats until balance, control, and foot tolerance are stable. Back hyperextension does not progress by load yet; progress by cleaner reps and pain-free control only.",
+      "Block A: Machine Press and Seated Cable Row.",
+      "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
+      "Block C: Rope Triceps Pressdown, Cable Curl, and Dumbbell Overhead Press.",
+      "Thursday total working sets: 20.",
+      "Machine Press balances repeated incline pressing with neutral mid-chest work.",
     ],
   },
   {
     day: "Friday",
-    title: "Upper Machine Circuit + Shoulders/Arms",
+    title: "Upper Accessory + Arms + Core",
     protocol: "Strength Protocol",
     dayOfWeek: 5,
-    note: "Upper-body and arms density session after Thursday legs. Machine press replaces incline press to balance chest work. No direct leg extension or lying leg curl today.",
+    note: "Accessory upper-body day with chest balance, rows, arms, rear delts, and direct trunk stability.",
     laterRecovery: "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.",
     details: [
-      "Block A: Machine chest / row superset. Machine Press and Seated Cable Row. Rest 120 seconds after A2.",
-      "Block B: Lat / side delt superset. Wide-Grip Lat Pulldown and Dumbbell or Plate Lateral Raise. Rest 120 seconds after B2.",
-      "Block C: Rear delt / hip adduction superset. Reverse Pec Deck and Hip Adduction Machine. Rest 120 seconds after C2.",
-      "Block D: Triceps / shoulders / biceps tri-set. Rope Triceps Pressdown, Seated Dumbbell Overhead Press, Cable Curl. Rest 90-120 seconds after D3.",
-      "Friday total prescribed sets: 25.",
-      "Circuit safety: circuit-style strength work, not cardio punishment. Do not chase breathlessness. If breathing is not recovered, rest longer. Stop if dizziness, sharp pain, limping, chest pain, unusual shortness of breath, numbness, tingling, or worsening symptoms appear.",
-      "Overload target: use conservative loads because density is high. Add reps before load. Keep all reps clean. Do not add load aggressively to overhead press.",
+      "Block A: Pec Deck or High-to-Low Cable Fly and Chest-Supported Row or Seated Cable Row.",
+      "Block B: Cable Curl and Rope Triceps Pressdown.",
+      "Block C: Face Pull.",
+      "Block D: Incline Bench Plank and Supported Cable Anti-Rotation Hold.",
+      "Friday total working sets: 18.",
     ],
   },
   {
     day: "Saturday",
-    title: "Recovery Rest",
+    title: "Complete Rest",
     protocol: "Full Rest",
-    note: "Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
-    laterRecovery: "No gym. No make-up sets. No step chasing.",
+    note: "Full rest. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
+    laterRecovery: "No required block. Optional recovery only: breathing reset, seated ankle pumps, ankle circles, and easy wall calf stretches.",
     details: [
-      "Optional if stiff: Supported Breathing Reset — 2 minutes.",
+      "Supported Breathing Reset — 2 minutes.",
       "Seated Ankle Pumps — 1-2 minutes.",
       "Ankle Circles — 1 set x 8-12 each direction.",
-      "Wall Ankle Rocks — 1 set x 8-12 slow reps.",
       "Wall Calf Stretch, Knee Straight — 20-30 seconds per side.",
       "Wall Calf Stretch, Knee Bent — 20-30 seconds per side.",
-      "Pelvic Tilts — 1 set x 8-12 slow reps.",
-      "Open Book Thoracic Rotation — 1 set x 5 reps per side.",
     ],
   },
   {
     day: "Sunday",
     title: "Complete Rest",
     protocol: "Full Rest",
-    note: "Full rest. Keep the day deliberately empty.",
-    laterRecovery: "No make-up training. Start the next week fresh.",
+    note: "Full rest. Keep the day deliberately empty and start the next week fresh.",
+    laterRecovery: "No required block. No make-up training.",
   },
 ] as const;
 
@@ -159,17 +157,16 @@ export default async function WorkoutPlanPage() {
         <div className="command-deck grid gap-4 rounded-[var(--radius-panel)] p-6 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end" data-animated="true">
           <div>
             <p className="eyebrow">Week structure</p>
-            <p className="data-number mt-3 text-4xl text-foreground">4 / 1 / 2</p>
+            <p className="data-number mt-3 text-4xl text-foreground">5 / 0 / 2</p>
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-white/68">
-            Monday lower body was completed. Tuesday was taken off. Wednesday through Friday now
-            use controlled progressive overload because food intake and home recovery are available.
-            Saturday and Sunday are reserved for recovery. Ramp-up sets stay outside the ledger.
-            Required later recovery remains separate.
+            Five training days with balanced chest, back, legs, hips, arms, and trunk stability.
+            Progress by clean reps before load. Saturday and Sunday are full rest. Ramp-up sets
+            stay outside the ledger. Required later recovery remains separate.
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
-            <Badge variant="secondary">4 Strength</Badge>
-            <Badge variant="outline">1 Recovery</Badge>
+            <Badge variant="secondary">5 Strength</Badge>
+            <Badge variant="outline">0 Recovery</Badge>
             <Badge variant="outline">2 Full Rest</Badge>
           </div>
         </div>
@@ -226,7 +223,7 @@ export default async function WorkoutPlanPage() {
             const workingCount = loggableExercises.length;
             const totalSets = loggableExercises
               .reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
-            const showBackReadiness = plan?.dayOfWeek === 1 || plan?.dayOfWeek === 4;
+            const showBackReadiness = plan?.dayOfWeek === 3 || plan?.dayOfWeek === 4;
 
             return (
               <section key={day.day} className="py-8 first:pt-0 last:pb-0">
@@ -242,11 +239,6 @@ export default async function WorkoutPlanPage() {
                       <Badge variant={day.protocol === "Strength Protocol" ? "default" : "outline"}>{day.protocol}</Badge>
                     </div>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{day.note}</p>
-                    {"statusNote" in day && typeof day.statusNote === "string" ? (
-                      <p className="status-note mt-3 inline-flex px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
-                        {day.statusNote}
-                      </p>
-                    ) : null}
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
                       <span className="font-semibold text-foreground">Required later recovery:</span> {day.laterRecovery}
                     </p>
@@ -280,25 +272,12 @@ export default async function WorkoutPlanPage() {
                         </div>
                         <div>
                           <p className="eyebrow text-[10px]">Sets</p>
-                          <p className="data-number mt-2 text-2xl text-foreground">
-                            {"setLabel" in day && typeof day.setLabel === "string" ? day.setLabel : totalSets}
-                          </p>
+                          <p className="data-number mt-2 text-2xl text-foreground">{totalSets}</p>
                         </div>
                       </div>
                     </div>
                   ) : null}
 
-                  {!plan &&
-                  "actionHref" in day &&
-                  typeof day.actionHref === "string" &&
-                  "actionLabel" in day &&
-                  typeof day.actionLabel === "string" ? (
-                    <div className="grid gap-4 text-sm lg:justify-items-end lg:text-right">
-                      <Button asChild variant="secondary" className="w-full sm:w-auto sm:min-w-40">
-                        <Link href={day.actionHref}>{day.actionLabel}</Link>
-                      </Button>
-                    </div>
-                  ) : null}
                 </div>
 
                 {plan ? (
@@ -325,9 +304,7 @@ export default async function WorkoutPlanPage() {
                   </div>
                 ) : (
                   <div className="mt-6 border-y border-border py-4 text-sm leading-relaxed text-muted-foreground">
-                    {day.protocol === "Recovery Protocol"
-                        ? "Use the mobility page for the recovery override. Do not add gym work, missed volume, conditioning, or step chasing."
-                        : "Keep the day deliberately empty. Use only gentle recovery mobility if needed."}
+                    Keep the day deliberately empty. Use only gentle recovery mobility if needed.
                   </div>
                 )}
               </section>

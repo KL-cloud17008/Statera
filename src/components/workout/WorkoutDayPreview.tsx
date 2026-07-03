@@ -45,7 +45,8 @@ export function WorkoutDayPreview({
   const blockCount = blockOrder.filter((block) =>
     workingExercises.some((exercise) => exercise.supersetGroup === block)
   ).length;
-  const showLowerBReadiness = plan.sessionName === LOWER_B_BACK_SAFE_TITLE || /Lower A/.test(plan.sessionName);
+  const showLowerBReadiness =
+    plan.sessionName === LOWER_B_BACK_SAFE_TITLE || /Lower A|Upper B/.test(plan.sessionName);
 
   return (
     <section className="document-panel">
@@ -55,7 +56,7 @@ export function WorkoutDayPreview({
             <p className="eyebrow">Today&apos;s programmed work</p>
             <h2 className="mt-3 max-w-3xl">{plan.sessionName}</h2>
             <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              Walking covers warm-up and recovery. Ramp-up sets stay outside the ledger.
+              Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking. Ramp-up sets stay outside the ledger.
             </p>
             {showLowerBReadiness ? (
               <p className="status-note mt-4 inline-flex px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
@@ -83,7 +84,7 @@ export function WorkoutDayPreview({
 
       <div className="command-deck grid gap-5 rounded-[var(--radius-panel)] p-5 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end" data-animated="true">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <ProtocolMeta label="Walk to gym" value="General warm-up" note="Only if foot load is tolerable." />
+          <ProtocolMeta label="Walk to gym" value="General warm-up" note="Use transport or reduce walking if foot/ankle pain rises above 3/10." />
           <ProtocolMeta label="At gym" value="Ramp-up sets" note="First lift or machine, RPE 3-5." />
           <ProtocolMeta label="Main work" value="Working sets" note="No failure training or conditioning." />
           <ProtocolMeta label="Later" value="Required recovery" note="Separate same-day block." />

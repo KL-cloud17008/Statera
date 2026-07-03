@@ -13,7 +13,7 @@ export function WorkoutPlanResetButton() {
 
   function handleReset() {
     const confirmed = window.confirm(
-      "Start a fresh copy of the adjusted current-week plan? Any open session snapshot will be cleared."
+      "Start a fresh copy of the next-week progressive overload plan? Any open session snapshot will be cleared."
     );
 
     if (!confirmed) {
@@ -27,7 +27,7 @@ export function WorkoutPlanResetButton() {
         return;
       }
 
-      toast.success("Started adjusted current-week plan");
+      toast.success("Started next-week progressive overload plan");
       router.refresh();
     });
   }
@@ -44,7 +44,7 @@ export function WorkoutPlanResetButton() {
       {isPending ? (
         "Starting plan..."
       ) : (
-        "Start adjusted plan"
+        "Start new plan"
       )}
     </Button>
   );

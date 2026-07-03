@@ -41,7 +41,7 @@ async function main() {
     throw new Error(supabaseUserId ? `User not found: ${supabaseUserId}` : "No users found.");
   }
 
-  console.log(`Seeding adjusted current-week workout plan for ${user.email} (${user.id})`);
+  console.log(`Seeding next-week progressive overload workout plan for ${user.email} (${user.id})`);
 
   const { error: closeSessionsError } = await supabase
     .from("WorkoutSession")
@@ -102,7 +102,7 @@ async function main() {
     console.log(`  ${day.sessionName} — ${day.exercises.length} exercises`);
   }
 
-  console.log("Done! Active workout data now uses the adjusted current-week plan.");
+  console.log("Done! Active workout data now uses the next-week progressive overload plan.");
 }
 
 main().catch((error) => {

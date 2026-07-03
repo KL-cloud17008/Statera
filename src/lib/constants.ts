@@ -11,22 +11,22 @@ export const DEFAULT_PROTEIN_TARGET = 305;
 export const DEFAULT_CARB_TARGET = 207;
 export const DEFAULT_FAT_TARGET = 83;
 
-// Training schedule — dayOfWeek values stored in DB (adjusted current week)
+// Training schedule — dayOfWeek values stored in DB (next-week progressive block)
 // Day 1 = Sunday night (training date Mon), Day 2 = Monday night (Tue), etc.
-export const DEFAULT_TRAINING_DAYS = [1, 3, 4, 5];
+export const DEFAULT_TRAINING_DAYS = [1, 2, 3, 4, 5];
 export const DEFAULT_REST_DAYS = [0, 6]; // Sat and Sun training dates = full rest
-export const DEFAULT_RECOVERY_DAYS = [2]; // Tuesday off day / recovery reset
+export const DEFAULT_RECOVERY_DAYS: number[] = [];
 
 // Training day boundary (hour in TRAINING_TIMEZONE)
 export const TRAINING_DAY_BOUNDARY_HOUR = 12; // noon
 
 /** Labels for training days — keyed by dayOfWeek (DB value 1-5). */
 export const TRAINING_DAY_LABELS: Record<number, string> = {
-  1: "Monday • Lower A — Leg Strength Peak / Machine-Supported",
-  2: "Tuesday • Off Day — Recovery Reset",
-  3: "Wednesday • Upper A — Progressive Push/Pull Circuit Strength",
-  4: "Thursday • Lower B — Split Squat + Posterior Chain / Hip Stability",
-  5: "Friday • Upper Machine Circuit + Shoulders/Arms",
+  1: "Monday • Lower A — Single-Leg Press + Quad/Hamstring Strength",
+  2: "Tuesday • Upper A — Incline Push / Row / Trunk Stability",
+  3: "Wednesday • Lower B — Accessory Legs + Hip Stability",
+  4: "Thursday • Upper B — Machine Press / Pull + Shoulders and Arms",
+  5: "Friday • Upper Accessory + Arms + Core",
 };
 
 // Navigation items
