@@ -17,21 +17,21 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Adjusted Current Week Progressive Overload Block";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "adjusted-current-week-overload-v5";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "adjusted-current-week-overload-v6";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Adjusted current week. Monday lower body was completed. Tuesday was taken off. Wednesday through Friday now use a higher-volume progressive-overload block because food intake and home recovery are available. Saturday and Sunday are reserved for recovery.";
 
 export const LOWER_A_TAPER_TITLE = "Lower A — Leg Strength Peak / Machine-Supported";
-export const LOWER_B_TAPER_TITLE = "Lower B — Single-Leg Strength + Posterior Chain / Hip Stability";
+export const LOWER_B_TAPER_TITLE = "Lower B — Split Squat + Posterior Chain / Hip Stability";
 export const LOWER_B_BACK_SAFE_TITLE = LOWER_B_TAPER_TITLE;
-export const FULL_BODY_CIRCUIT_TITLE = "Full-Body Machine Circuit + Shoulders/Arms";
+export const FULL_BODY_CIRCUIT_TITLE = "Upper Machine Circuit + Shoulders/Arms";
 
 export const LOWER_B_BACK_PAIN_READINESS_NOTE =
   "Back-pain rule: pain 0-2/10 is acceptable if stable. Pain 3-4/10 means reduce range, load, stance, or duration. Pain 5/10 or higher, sharp pain, or pain shooting down the leg means stop.";
 
 export const PROGRESSIVE_OVERLOAD_RULES = [
-  "Week 3 target: controlled overload, not max effort.",
+  "Week 3 controlled overload.",
   "Add reps before load.",
   "Main lifts: use the top of the rep range before increasing load.",
   "Increase load only when all working sets hit the upper rep target at the assigned RPE with clean form.",
@@ -66,15 +66,15 @@ export const BACK_PAIN_RULES = [
 ] as const;
 
 export const WEEKLY_SET_SUMMARY = [
-  "Quads: Monday completed lower session plus Thursday Single-Leg Leg Press 2, Bulgarian Split Squat 3, Seated Leg Extension 3, and Friday Leg Extension 2 = strong controlled quad exposure.",
-  "Hamstrings/posterior chain: Thursday Seated Leg Curl 3, Back Hyperextension 2, Friday Single-Leg Lying Curl 2 plus Monday completed work.",
-  "Glutes/hips: Thursday Hip Abduction 3, Bulgarian Split Squat 3, back-extension practice, and single-leg press assistance.",
-  "Chest: Wednesday Incline Dumbbell Press 4, Friday Incline Machine Press 3.",
+  "Quads: Monday completed lower session plus Thursday Bulgarian Split Squat 4 and Seated Leg Extension 3 = controlled quad exposure without Friday leg-extension work.",
+  "Hamstrings/posterior chain: Thursday Seated Leg Curl 3 and Back Hyperextension 2 plus Monday completed work.",
+  "Glutes/hips: Thursday Hip Abduction 3, Bulgarian Split Squat 4, back-extension practice, and Friday light Hip Adduction 2.",
+  "Chest: Wednesday Incline Dumbbell Press 4, Friday Machine Press 3.",
   "Back/lats: Wednesday Row 4, Pulldown 3, Friday Row 3, Pulldown 3.",
-  "Shoulders: Wednesday Lateral Raise 3, Friday Seated Dumbbell Overhead Press 2 and Reverse Pec Deck 3.",
+  "Shoulders: Wednesday Lateral Raise 3, Friday Lateral Raise 3, Seated Dumbbell Overhead Press 2, and Reverse Pec Deck 3.",
   "Rear delts/upper back: Wednesday Face Pull 3, Friday Reverse Pec Deck/Face Pull 3.",
-  "Triceps: Wednesday Pressdown 3, Friday EZ-Bar Skullcrusher 2 plus pressing assistance.",
-  "Biceps: Wednesday Cable Curl 3, Friday EZ-Bar Biceps Curl 2 plus pulling assistance.",
+  "Triceps: Wednesday Pressdown 3, Friday Rope Triceps Pressdown 3 plus pressing assistance.",
+  "Biceps: Wednesday Cable Curl 3, Friday Cable Curl 3 plus pulling assistance.",
   "Feet/ankles/calves: mobility/recovery only, no direct loaded calf raises.",
 ] as const;
 
@@ -244,24 +244,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: LOWER_B_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Single-Leg Leg Press",
-        sets: 2,
-        reps: "8-10 per leg",
-        tempo: "3-1-1",
-        restSeconds: 180,
-        targetRPE: "5-6",
-        cues: `${WEEK3_MAIN_CUE}${HIGH_LOAD_CUE}Straight sets only. Three reps in reserve. One leg at a time, start lighter than expected, full foot on platform, knee tracks over middle toes, control the lowering, stop range before thigh/torso contact, keep hips and lower back stable against the pad, no deep compression, and no bouncing. Stop or shorten range if torso pressure, abdominal compression, back pain, hip pinch, knee pain, or foot pain appears.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
         exerciseName: "B1 Bench-Supported Bulgarian Split Squat",
-        sets: 3,
+        sets: 4,
         reps: "6-8 per leg",
         tempo: "controlled",
         restSeconds: 180,
         targetRPE: "5-6",
-        cues: `${WEEK3_MAIN_CUE}Bodyweight first; kg load only if dumbbells are used later. Three reps in reserve. Standalone exercise, not circuit. Use rack, rail, or wall support as needed, rear foot on bench, short controlled range, slight forward torso lean allowed, front foot flat, knee tracks over middle toes, do not chase depth, no bouncing, and no rushing. Regression: supported stationary split squat with rear foot on floor. Regress or skip if sole pain, knee pain, hip pinch, lower-back irritation, or balance loss appears.`,
+        cues: `${WEEK3_MAIN_CUE}Bodyweight first; kg load only if dumbbells are used later. Standalone exercise, not circuit. Use rack, rail, or wall support as needed, rear foot on bench, short controlled range, slight forward torso lean allowed, front foot flat, knee tracks over middle toes, do not chase depth, no bouncing, and no rushing. Regression: supported stationary split squat with rear foot on floor. Regress or skip if sole pain, knee pain, hip pinch, lower-back irritation, or balance loss appears. Progression: add reps before load. Do not add dumbbells until balance, control, and foot tolerance are stable.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -272,7 +261,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "slow",
         restSeconds: 120,
         targetRPE: "4-5",
-        cues: "Bodyweight only or minimum machine load. Low-dose posterior-chain practice. Short comfortable range, neutral neck, slow tempo, no swinging, no aggressive arching, stop well before fatigue, and movement practice only. Rest 90-120 seconds. Skip if lower-back pain is active. Stop immediately if back pain increases, pain shoots down the leg, numbness, tingling, weakness, or nerve-like symptoms appear. This is not a max-effort posterior-chain lift; it is a controlled hinge-tolerance drill.",
+        cues: "Bodyweight only or minimum machine load. Low-dose posterior-chain practice. Short comfortable range, neutral neck, slow tempo, no swinging, no aggressive arching, stop well before fatigue, and movement practice only. Skip if lower-back pain is active. Stop immediately if back pain increases, pain shoots down the leg, numbness, tingling, weakness, or nerve-like symptoms appear. Safety note: this is not a max-effort posterior-chain lift; it is a controlled hinge-tolerance drill.",
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
@@ -283,7 +272,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK3_ACCESSORY_CUE}Hips heavy against pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
+        cues: `${WEEK3_ACCESSORY_CUE}Complete 3 controlled rounds. Rest after the full circuit, not after each exercise unless needed. Hips heavy against pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
@@ -294,7 +283,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6",
-        cues: `${WEEK3_ACCESSORY_CUE}Outer hip/glute medius focus, pelvis still, do not rock torso, control out and back, no jerking, and do not chase load.`,
+        cues: `${WEEK3_ACCESSORY_CUE}Rest after the full circuit, not after each exercise unless needed. Outer hip/glute medius focus, pelvis still, do not rock torso, control out and back, no jerking, and do not chase load.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
@@ -305,7 +294,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK3_ACCESSORY_CUE}Smooth reps, no knee snapping, brief pause near top without aggressive lockout, lower slowly, hips stay heavy on pad, and use a controlled comfortable range. Rest after D3: 2 minutes before the next round.`,
+        cues: `${WEEK3_ACCESSORY_CUE}Smooth reps, no knee snapping, brief pause near top without aggressive lockout, lower slowly, hips stay heavy on pad, and use a controlled comfortable range. Reduce load or range if front-of-knee irritation appears. Stop if knee pain rises above 3/10. Rest after D3: 120 seconds before the next round.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
@@ -316,13 +305,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: FULL_BODY_CIRCUIT_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Incline Machine Press",
+        exerciseName: "A1 Machine Press",
         sets: 3,
         reps: "8-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Back supported, handles track upper chest, controlled range, no shoulder pinch, and no grinding.`,
+        cues: `${CONTROLLED_CIRCUIT_CUE}Neutral/mid-chest press angle, back supported, handles track mid-chest, controlled range, no shoulder pinch, and no grinding. Reason: balances repeated incline pressing with more neutral chest work.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
@@ -349,67 +338,67 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B2 Reverse Pec Deck",
+        exerciseName: "B2 Dumbbell or Plate Lateral Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6",
+        cues: `${CONTROLLED_CIRCUIT_CUE}Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging, and stop before shoulder pinch. Rest after B2: 120 seconds.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "C1 Reverse Pec Deck",
         sets: 3,
         reps: "12-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Chest supported, lead with elbows, neck relaxed, controlled return, and no swinging. Rest after B2: 120 seconds.`,
-        supersetGroup: "B",
+        cues: `${CONTROLLED_CIRCUIT_CUE}Chest supported, lead with elbows, neck relaxed, controlled return, and no swinging.`,
+        supersetGroup: "C",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Leg Extension",
+        exerciseName: "C2 Hip Adduction Machine",
         sets: 2,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${CONTROLLED_CIRCUIT_CUE}Keep this lower intensity because legs were trained Thursday. Controlled inward squeeze, pelvis still, no rocking, no chasing load, and stop if hip/groin/knee discomfort appears. Rest after C2: 120 seconds.`,
+        supersetGroup: "C",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "D1 Rope Triceps Pressdown",
+        sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Smooth reps, no knee snapping, controlled comfortable range, and stop before knee irritation.`,
-        supersetGroup: "C",
+        targetRPE: "6-7",
+        cues: `${CONTROLLED_CIRCUIT_CUE}Elbows pinned, finish with control, avoid leaning over the cable, no shoulder compensation.`,
+        supersetGroup: "D",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C2 Single-Leg Lying Curl",
-        sets: 2,
-        reps: "10-12 per leg",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${CONTROLLED_CIRCUIT_CUE}One leg at a time, hips heavy on pad, smooth curl, slow return, and no lower-back arching. Rest after C2: 120 seconds.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "D1 Seated Dumbbell Overhead Press",
+        exerciseName: "D2 Seated Dumbbell Overhead Press",
         sets: 2,
         reps: "8-12",
         tempo: "2-1-2",
-        restSeconds: 90,
+        restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Use back support if available. Seated and controlled, ribs down, no excessive arching, press in a comfortable path, stop before shoulder pinch, and no grinding. This is not barbell military press; keep it light and controlled.`,
+        cues: `${CONTROLLED_CIRCUIT_CUE}Use back support if available. Seated and controlled, ribs down, no excessive arching, press in a comfortable path, stop before shoulder pinch, and no grinding. Safety note: this is not barbell military press; keep it light and controlled. Do not add load aggressively to overhead press.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "D2 EZ-Bar Skullcrusher",
-        sets: 2,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: `${CONTROLLED_CIRCUIT_CUE}Elbows steady, controlled lowering, do not flare aggressively, stop before elbow pain, and no bouncing. Regression: use cable rope overhead extension or rope pressdown if elbows dislike skullcrushers.`,
-        supersetGroup: "D",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "D3 EZ-Bar Biceps Curl",
-        sets: 2,
+        exerciseName: "D3 Cable Curl",
+        sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "6",
+        restSeconds: 120,
+        targetRPE: "6-7",
         cues: `${CONTROLLED_CIRCUIT_CUE}No swinging, elbows controlled, shoulders quiet, and smooth full-range curl. Rest after D3: 90-120 seconds.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
@@ -422,8 +411,8 @@ export const DEFAULT_WEEKLY_RHYTHM = [
   "Monday: Completed - Lower A",
   "Tuesday: Off Day / Recovery Reset",
   "Wednesday: Upper A - Progressive Push/Pull Circuit Strength",
-  "Thursday: Lower B - Single-Leg Strength + Posterior Chain / Hip Stability",
-  "Friday: Full-Body Machine Circuit + Shoulders/Arms",
+  "Thursday: Lower B - Split Squat + Posterior Chain / Hip Stability",
+  "Friday: Upper Machine Circuit + Shoulders/Arms",
   "Saturday: Recovery Rest",
   "Sunday: Complete Rest",
 ] as const;

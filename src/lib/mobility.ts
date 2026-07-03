@@ -1632,7 +1632,7 @@ function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): Mob
       id: `${idPrefix}-weekly-reset-downshift`,
       title: "Weekly downshift reset",
       duration: "4-6 min",
-      purpose: "After Friday Full-Body Machine Circuit + Shoulders/Arms, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
+      purpose: "After Friday Upper Machine Circuit + Shoulders/Arms, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
       exercises: [
         footFlareMovement("supportedSingleLegBalanceKickstand", `${idPrefix}-single-leg-kickstand`, {
           dose: "10-20 seconds per side",
@@ -1980,7 +1980,7 @@ const DAY_5_LATER_RECOVERY: MobilityBlock = block({
   title: "Weekly Downshift / Foot-Flare Recovery",
   duration: "12-16 min",
   purpose:
-    "Complete later the same day after Friday Full-Body Machine Circuit + Shoulders/Arms. End the week with easy foot, ankle, balance, spine, and breathing work.",
+    "Complete later the same day after Friday Upper Machine Circuit + Shoulders/Arms. End the week with easy foot, ankle, balance, spine, and breathing work.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -2176,7 +2176,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means hips and ankles feel easier to position without adding fatigue.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Lower B setup", note: "Range-limited single-leg press, supported Bulgarian split squat, low-dose back extension, seated leg curl, leg extension, and hip abduction." },
+      { label: "Training match", value: "Lower B setup", note: "Supported Bulgarian split squat, low-dose back extension, seated leg curl, seated leg extension, and hip abduction." },
       { label: "Foot rule", value: "No step chasing", note: "Gym walking is removed if soles are flaring." },
       { label: "Feel target", value: "Stable", note: "Hips stay quiet and breathing stays easy." },
     ],
@@ -2201,11 +2201,11 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   5: {
     dayOfWeek: 5,
     dayName: "Friday",
-    trainingRole: "Full-body machine circuit day",
-    sessionTitle: "Full-body circuit primer",
+    trainingRole: "Upper machine circuit day",
+    sessionTitle: "Upper machine circuit primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, rear delts, lats, chest, shoulders, arms, hamstrings, quads, and breathing for controlled full-body machine circuits.",
+      "Prepare feet, ankles, upper back, rear delts, lats, chest, shoulders, arms, and breathing for controlled upper-body machine circuits.",
     previousDayReason:
       "Thursday lower-body work can leave the feet and hips loaded, so Friday keeps prep simple and supported.",
     adaptationNote:
@@ -2213,17 +2213,17 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Machine circuit", note: "Press, row, pulldown, rear delts, leg extension, hamstring curl, shoulders, triceps, and biceps." },
+      { label: "Training match", value: "Upper machine circuit", note: "Machine press, row, pulldown, lateral raise, rear delts, light hip adduction, shoulders, triceps, and biceps." },
       { label: "Circuit rule", value: "Strength density", note: "No HIIT, no breathless chasing, no finishers." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
       dailyLowerLegBase(),
       block({
-        id: "friday-full-body-circuit-prep",
-        title: "Full-body circuit prep block",
+        id: "friday-upper-machine-circuit-prep",
+        title: "Upper machine circuit prep block",
         duration: "3-5 min",
-        purpose: "Prepare upper back, lats, rear delts, shoulders, elbows, and trunk before controlled machine circuits.",
+        purpose: "Prepare upper back, lats, rear delts, shoulders, elbows, and trunk before controlled upper-body machine circuits.",
         adaptationNote: "Do not force shoulder range. Stop before pinch.",
         exercises: [
           movement("wallThoracicRotations"),
