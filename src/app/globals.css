@@ -709,6 +709,35 @@
       animation-delay: 120ms;
     }
 
+    @keyframes bar-rise {
+      from {
+        transform: scaleY(0);
+      }
+      to {
+        transform: scaleY(1);
+      }
+    }
+
+    .bar-rise {
+      transform-origin: bottom;
+      animation: bar-rise var(--duration-slow) var(--ease-glide) both;
+    }
+
+    @keyframes track-fill {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    .track-fill {
+      transform-origin: left;
+      animation: track-fill var(--duration-slow) var(--ease-glide) both;
+      animation-delay: 160ms;
+    }
+
     .surface-card.interactive-row:hover {
       transform: translateY(-2px);
     }

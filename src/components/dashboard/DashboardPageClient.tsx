@@ -217,9 +217,9 @@ export function DashboardPageClient({
                 {decision.title}
               </p>
             </div>
-            <Link href={decision.href} className="inline-flex items-center justify-between gap-4 rounded-full border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white transition-colors hover:border-[color-mix(in_srgb,var(--sky-accent)_50%,transparent)] hover:bg-white/12">
+            <Link href={decision.href} className="group inline-flex items-center justify-between gap-4 rounded-full border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white transition-[background-color,border-color,transform] duration-150 hover:border-[color-mix(in_srgb,var(--sky-accent)_50%,transparent)] hover:bg-white/12 active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0">
               Open next action
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
             </Link>
           </div>
         </div>
@@ -239,7 +239,7 @@ export function DashboardPageClient({
                 <span className="data-number font-semibold text-foreground">{stepCompletion}%</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-[rgba(7,17,31,0.08)]">
-                <div className="h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
+                <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
               </div>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="micro-panel">
@@ -282,7 +282,7 @@ export function DashboardPageClient({
           </Link>
         </div>
 
-        <div className="mt-6 grid gap-2 lg:grid-cols-7">
+        <div className="mt-6 grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
           {WEEKLY_RHYTHM.map((item) => {
             const isToday = item.dayOfWeek === trainingDayOfWeek;
             return (
@@ -400,7 +400,7 @@ function SignalTile({
         <p className="eyebrow text-[10px]">{label}</p>
         {icon}
       </div>
-      <p className="data-number mt-4 text-2xl font-semibold leading-tight text-white">{value}</p>
+      <p className="data-number value-reveal mt-4 text-2xl font-semibold leading-tight text-white">{value}</p>
       <p className="mt-2 text-xs leading-relaxed text-white/58">{detail}</p>
     </div>
   );
@@ -439,7 +439,7 @@ function StepMiniBars({
         </span>
       </div>
       <div className="mt-3 flex items-end gap-2">
-        {days.map(({ date, steps }) => {
+        {days.map(({ date, steps }, index) => {
           const isToday = date === today;
           const metGoal = goal > 0 && steps >= goal;
           const barHeight = steps > 0
@@ -454,14 +454,14 @@ function StepMiniBars({
               >
                 <div
                   className={cn(
-                    "w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
+                    "bar-rise w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
                     metGoal
                       ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
                       : steps > 0
                         ? "bg-[rgba(7,17,31,0.16)]"
                         : "bg-[rgba(7,17,31,0.07)]"
                   )}
-                  style={{ height: barHeight }}
+                  style={{ height: barHeight, animationDelay: `${index * 45}ms` }}
                 />
               </div>
               <p
