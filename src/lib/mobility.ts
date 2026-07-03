@@ -2213,7 +2213,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper accessory setup", note: "Chest balance, row, arms, face pull, incline bench plank, and anti-rotation hold." },
+      { label: "Training match", value: "Upper accessory setup", note: "Chest balance, row, arms, face pull, and anti-rotation hold." },
       { label: "Trunk rule", value: "Control", note: "No heavy bracing and no loaded spinal flexion." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],

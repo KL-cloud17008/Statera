@@ -80,7 +80,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Front delts: enough from pressing; do not add more.",
   "Triceps: good.",
   "Biceps: good.",
-  "Core/trunk: fixed through anti-rotation and incline bench plank.",
+  "Core/trunk: covered through controlled anti-rotation holds.",
   "Calves/feet: mobility only; no loaded calf raises yet.",
 ] as const;
 
@@ -482,18 +482,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "D1 Incline Bench Plank",
-        sets: 2,
-        reps: "15-30 seconds",
-        tempo: "steady hold",
-        restSeconds: 90,
-        targetRPE: "4-5",
-        cues: "Bodyweight. Hands on bench, ribs down, glutes lightly active, breathe, no sagging, no lower-back pain.",
-        supersetGroup: "D",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "D2 Supported Cable Anti-Rotation Hold",
+        exerciseName: "D1 Supported Cable Anti-Rotation Hold",
         sets: 2,
         reps: "10-20 seconds per side",
         tempo: "steady hold",

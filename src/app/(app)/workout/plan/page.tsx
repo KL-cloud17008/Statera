@@ -90,8 +90,8 @@ const WEEK_STRUCTURE = [
       "Block A: Pec Deck or High-to-Low Cable Fly and Chest-Supported Row or Seated Cable Row.",
       "Block B: Cable Curl and Rope Triceps Pressdown.",
       "Block C: Face Pull.",
-      "Block D: Incline Bench Plank and Supported Cable Anti-Rotation Hold.",
-      "Friday total working sets: 18.",
+      "Block D: Supported Cable Anti-Rotation Hold.",
+      "Friday total working sets: 16.",
     ],
   },
   {

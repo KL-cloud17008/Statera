@@ -125,10 +125,9 @@ Required later recovery: Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.
 | B1 | Cable Curl | 3 | 10-15 | 6-7 |
 | B2 | Rope Triceps Pressdown | 3 | 10-15 | 6-7 |
 | C1 | Face Pull | 3 | 12-15 | 5-6 |
-| D1 | Incline Bench Plank | 2 | 15-30 seconds | 4-5 |
-| D2 | Supported Cable Anti-Rotation Hold | 2 | 10-20 seconds per side | 4-5 |
+| D1 | Supported Cable Anti-Rotation Hold | 2 | 10-20 seconds per side | 4-5 |
 
-Friday total working sets: 18.
+Friday total working sets: 16.
 
 ## Weekly Set Summary
 
@@ -136,8 +135,8 @@ Friday total working sets: 18.
 - Tuesday: 19 sets
 - Wednesday: 15 sets
 - Thursday: 20 sets
-- Friday: 18 sets
-- Weekly total: 89 sets
+- Friday: 16 sets
+- Weekly total: 87 sets
 
 ## Muscle-Group Balance
 
@@ -152,5 +151,5 @@ Friday total working sets: 18.
 - Front delts: enough from pressing; do not add more.
 - Triceps: good.
 - Biceps: good.
-- Core/trunk: fixed through anti-rotation and incline bench plank.
+- Core/trunk: covered through controlled anti-rotation holds.
 - Calves/feet: mobility only; no loaded calf raises yet.
