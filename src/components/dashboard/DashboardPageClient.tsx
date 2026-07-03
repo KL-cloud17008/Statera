@@ -14,8 +14,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
+import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
+import { DEFAULT_WORKOUT_PLAN, type DefaultWorkoutDay } from "@/lib/default-workout-plan";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
+import { isLoggableTrainingExercise } from "@/lib/training-session";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
@@ -103,6 +106,8 @@ export function DashboardPageClient({
     ? formatShortDate(workoutSummary.lastWorkout.trainingDate)
     : null;
   const nextProtocol = getNextProtocol(trainingDayOfWeek);
+  const todayPlanDay = DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === trainingDayOfWeek) ?? null;
+  const todayPlanStats = todayPlanDay ? buildPlanDayStats(todayPlanDay) : null;
   const decision = buildDecision({
     stepsEntries,
     todaySteps,
@@ -152,11 +157,33 @@ export function DashboardPageClient({
               <p className="eyebrow">Today&apos;s Protocol</p>
               <p className="mt-4 text-4xl font-semibold leading-tight text-white">{nextProtocol}</p>
               <div className="copper-rule mt-5" />
+              {todayPlanStats ? (
+                <>
+                  <div className="mt-5 grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="data-number text-2xl font-semibold leading-tight text-white">{todayPlanStats.exerciseCount}</p>
+                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Exercises</p>
+                    </div>
+                    <div>
+                      <p className="data-number text-2xl font-semibold leading-tight text-white">~{todayPlanStats.estimatedMinutes}m</p>
+                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Est. duration</p>
+                    </div>
+                  </div>
+                  <ul className="mt-5 space-y-2">
+                    {todayPlanStats.topMovements.map((movement) => (
+                      <li key={movement} className="flex items-center gap-2.5 text-sm leading-snug text-white/72">
+                        <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
+                        {movement}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
               <p className="mt-5 text-sm leading-relaxed text-white/66">
                 {decision.title}
               </p>
             </div>
-            <Link href={decision.href} className="inline-flex items-center justify-between gap-4 rounded-full border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white transition-colors hover:border-[#70c7ff]/50 hover:bg-white/12">
+            <Link href={decision.href} className="inline-flex items-center justify-between gap-4 rounded-full border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white transition-colors hover:border-[color-mix(in_srgb,var(--sky-accent)_50%,transparent)] hover:bg-white/12">
               Open next action
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -166,19 +193,13 @@ export function DashboardPageClient({
 
       <section className="grid gap-5 xl:grid-cols-[minmax(0,0.66fr)_minmax(22rem,0.34fr)]">
         <div className="prime-panel p-6 sm:p-7">
-          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
-            <div>
-              <p className="eyebrow">Step Progress</p>
-              <div className="mt-5 flex flex-wrap items-end gap-x-5 gap-y-3">
-                <p className="data-number text-6xl font-semibold leading-none text-foreground sm:text-7xl">
-                  {todaySteps.toLocaleString()}
-                </p>
-                <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  of {settings.stepGoal.toLocaleString()}
-                </p>
-              </div>
+          <p className="eyebrow">Step Progress</p>
+          <div className="mt-6 grid items-center gap-7 sm:grid-cols-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)_16rem]">
+            <div className="justify-self-center sm:justify-self-start">
+              <StepsProgressRing current={todaySteps} goal={settings.stepGoal} size={176} />
             </div>
-            <div className="space-y-3">
+            <StepMiniBars entries={stepsEntries} goal={settings.stepGoal} />
+            <div className="space-y-3 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Daily movement</span>
                 <span className="data-number font-semibold text-foreground">{stepCompletion}%</span>
@@ -349,6 +370,89 @@ function SignalTile({
       <p className="mt-2 text-xs leading-relaxed text-white/58">{detail}</p>
     </div>
   );
+}
+
+function StepMiniBars({ entries, goal }: { entries: SerializedStepsEntry[]; goal: number }) {
+  const recent = [...entries]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-7);
+
+  if (recent.length === 0) {
+    return (
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        No step entries logged yet. The last seven days chart here once entries exist.
+      </p>
+    );
+  }
+
+  const scaleMax = Math.max(goal, ...recent.map((entry) => entry.steps ?? 0), 1);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between text-sm">
+        <span className="text-muted-foreground">Last {recent.length === 1 ? "day" : `${recent.length} days`}</span>
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          Goal {goal.toLocaleString()}
+        </span>
+      </div>
+      <div className="mt-3 flex h-24 items-end gap-2">
+        {recent.map((entry) => {
+          const steps = entry.steps ?? 0;
+          const heightPercent = Math.max(6, Math.round((steps / scaleMax) * 100));
+          const metGoal = goal > 0 && steps >= goal;
+          return (
+            <div
+              key={entry.date}
+              className="flex h-full flex-1 items-end"
+              title={`${formatShortDate(entry.date)}: ${steps.toLocaleString()} steps`}
+            >
+              <div
+                className={cn(
+                  "w-full rounded-full",
+                  metGoal
+                    ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
+                    : "bg-[rgba(7,17,31,0.12)]"
+                )}
+                style={{ height: `${heightPercent}%` }}
+              />
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-2 flex gap-2">
+        {recent.map((entry) => (
+          <p key={entry.date} className="flex-1 text-center text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+            {formatWeekdayInitial(entry.date)}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function buildPlanDayStats(day: DefaultWorkoutDay) {
+  const loggable = day.exercises.filter(isLoggableTrainingExercise);
+  const estimatedSeconds = loggable.reduce((sum, exercise) => {
+    const sets = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
+    // ~45s of work per set plus the programmed rest between sets.
+    return sum + sets * (45 + exercise.restSeconds);
+  }, 0);
+  const estimatedMinutes = Math.max(5, Math.round(estimatedSeconds / 60 / 5) * 5);
+  const topMovements = loggable
+    .slice(0, 3)
+    .map((exercise) => exercise.exerciseName.replace(/^[A-Z]\d*\s+/, ""));
+
+  return {
+    exerciseCount: loggable.length,
+    estimatedMinutes,
+    topMovements,
+  };
+}
+
+function formatWeekdayInitial(dateString: string) {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {
+    weekday: "narrow",
+  });
 }
 
 function getGreeting() {

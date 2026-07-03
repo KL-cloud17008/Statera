@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logSet } from "@/actions/workout";
@@ -31,6 +31,8 @@ export function SetInput({
   isFinisher,
   logged,
   previous,
+  prefill = null,
+  shouldAdvance = false,
   onSaved,
   completed,
   onCompletedChange,
@@ -43,7 +45,9 @@ export function SetInput({
   isFinisher: boolean;
   logged: SetData | null;
   previous: PrevSet | null;
-  onSaved: (setKey: string) => void;
+  prefill?: PrevSet | null;
+  shouldAdvance?: boolean;
+  onSaved: (setKey: string, values: PrevSet) => void;
   completed: boolean;
   onCompletedChange: (checked: boolean) => void;
   className?: string;
@@ -54,12 +58,35 @@ export function SetInput({
   const [reps, setReps] = useState(logged?.repsCompleted?.toString() ?? "");
   const [rpe, setRpe] = useState(logged?.actualRPE?.toString() ?? "");
   const [notes, setNotes] = useState(logged?.notes ?? "");
+  const [showNotes, setShowNotes] = useState(!!logged?.notes);
   const [saved, setSaved] = useState(!!logged);
   const [isPending, startTransition] = useTransition();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [appliedPrefill, setAppliedPrefill] = useState<PrevSet | null>(null);
   const hasLoggableValue =
     weight.trim().length > 0 ||
     (!isFinisher && reps.trim().length > 0) ||
     notes.trim().length > 0;
+
+  // Prefill the values of the set saved just before this one, so the next
+  // set can be logged with a single tap when nothing changed.
+  if (prefill !== appliedPrefill) {
+    setAppliedPrefill(prefill);
+    if (prefill && !saved && !weight.trim() && !reps.trim()) {
+      if (prefill.weightUsed != null) {
+        setWeight(prefill.weightUsed.toFixed(1));
+      }
+      if (prefill.repsCompleted != null) {
+        setReps(prefill.repsCompleted.toString());
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (shouldAdvance) {
+      containerRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [shouldAdvance]);
 
   function copyPrevious() {
     if (!previous) {
@@ -87,14 +114,21 @@ export function SetInput({
       }
       formData.set("exerciseName", exerciseName);
       formData.set("setNumber", setNumber.toString());
+      let savedWeight: number | null = null;
       if (weight) {
         const parsedWeight = Number.parseFloat(weight);
         if (!Number.isNaN(parsedWeight)) {
           formData.set("weightUsed", parsedWeight.toString());
+          savedWeight = parsedWeight;
         }
       }
+      let savedReps: number | null = null;
       if (!isFinisher && reps) {
         formData.set("repsCompleted", reps);
+        const parsedReps = Number.parseInt(reps, 10);
+        if (!Number.isNaN(parsedReps)) {
+          savedReps = parsedReps;
+        }
       }
       if (notes) {
         formData.set("notes", notes);
@@ -110,13 +144,16 @@ export function SetInput({
       }
 
       setSaved(true);
-      onSaved(`${exerciseName}:${setNumber}`);
+      onSaved(`${exerciseName}:${setNumber}`, {
+        weightUsed: savedWeight,
+        repsCompleted: savedReps,
+      });
     });
   }
 
   return (
-    <div className={cn("interactive-row grid gap-4 rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.09)] bg-white/42 px-3 py-4", completed && "completed-row opacity-85", className)}>
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <div ref={containerRef} className={cn("interactive-row grid gap-3 rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.09)] bg-white/42 px-3 py-3 md:gap-4 md:py-4", completed && "completed-row opacity-85", className)}>
+      <div className="flex flex-wrap items-start justify-between gap-3 md:gap-4">
         <div className="flex items-start gap-3">
           <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />
           <div>
@@ -146,87 +183,111 @@ export function SetInput({
         </div>
       </div>
 
-      <div className={`grid gap-3 ${isFinisher ? "md:grid-cols-[1fr_1.2fr_0.55fr]" : "md:grid-cols-[1fr_1fr_0.5fr]"}`}>
-        <Input
-          aria-label={`${exerciseName} set ${setNumber} weight`}
-          type="number"
-          inputMode="decimal"
-          step="0.1"
-          placeholder={isFinisher ? "Score" : `Weight (${WORKOUT_LOAD_UNIT})`}
-          value={weight}
-          onChange={(event) => {
-            setWeight(event.target.value);
-            setSaved(false);
-          }}
-          onBlur={handleSave}
-          className="h-11"
-        />
-        {isFinisher ? (
+      <div className={cn("grid grid-cols-3 gap-2 md:gap-3", isFinisher ? "md:grid-cols-[1fr_1.2fr_0.55fr]" : "md:grid-cols-[1fr_1fr_0.5fr]")}>
+        <label className="grid content-start gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            {isFinisher ? "Score" : WORKOUT_LOAD_UNIT}
+          </span>
           <Input
-            aria-label={`${exerciseName} set ${setNumber} notes`}
-            type="text"
-            value={notes}
+            aria-label={`${exerciseName} set ${setNumber} weight`}
+            type="number"
+            inputMode="decimal"
+            step="0.1"
+            placeholder={isFinisher ? "Score" : "0.0"}
+            value={weight}
             onChange={(event) => {
-              setNotes(event.target.value);
+              setWeight(event.target.value);
               setSaved(false);
             }}
             onBlur={handleSave}
             className="h-11"
-            placeholder="Notes"
           />
+        </label>
+        {isFinisher ? (
+          <label className="grid content-start gap-1">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Notes</span>
+            <Input
+              aria-label={`${exerciseName} set ${setNumber} notes`}
+              type="text"
+              value={notes}
+              onChange={(event) => {
+                setNotes(event.target.value);
+                setSaved(false);
+              }}
+              onBlur={handleSave}
+              className="h-11"
+              placeholder="Notes"
+            />
+          </label>
         ) : (
+          <label className="grid content-start gap-1">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reps</span>
+            <Input
+              aria-label={`${exerciseName} set ${setNumber} reps`}
+              type="number"
+              inputMode="numeric"
+              placeholder="0"
+              value={reps}
+              onChange={(event) => {
+                setReps(event.target.value);
+                setSaved(false);
+              }}
+              onBlur={handleSave}
+              className="h-11"
+            />
+          </label>
+        )}
+        <label className="grid content-start gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">RPE</span>
           <Input
-            aria-label={`${exerciseName} set ${setNumber} reps`}
+            aria-label={`${exerciseName} set ${setNumber} RPE`}
             type="number"
             inputMode="numeric"
-            placeholder="Reps"
-            value={reps}
+            min="1"
+            max="10"
+            placeholder="1-10"
+            value={rpe}
             onChange={(event) => {
-              setReps(event.target.value);
+              setRpe(event.target.value);
               setSaved(false);
             }}
             onBlur={handleSave}
             className="h-11"
           />
-        )}
+        </label>
+      </div>
+
+      {!isFinisher && showNotes ? (
         <Input
-          aria-label={`${exerciseName} set ${setNumber} RPE`}
-          type="number"
-          inputMode="numeric"
-          min="1"
-          max="10"
-          placeholder="RPE"
-          value={rpe}
+          aria-label={`${exerciseName} set ${setNumber} notes`}
+          type="text"
+          value={notes}
           onChange={(event) => {
-            setRpe(event.target.value);
+            setNotes(event.target.value);
             setSaved(false);
           }}
           onBlur={handleSave}
           className="h-11"
+          placeholder="Optional notes"
         />
-      </div>
+      ) : null}
 
-      <div className={`grid gap-3 ${!isFinisher ? "md:grid-cols-[minmax(0,1fr)_auto]" : ""}`}>
+      <div className="flex items-center gap-4">
         {!isFinisher ? (
-          <Input
-            aria-label={`${exerciseName} set ${setNumber} notes`}
-            type="text"
-            value={notes}
-            onChange={(event) => {
-              setNotes(event.target.value);
-              setSaved(false);
-            }}
-            onBlur={handleSave}
-            className="h-11"
-            placeholder="Optional notes"
-          />
+          <button
+            type="button"
+            onClick={() => setShowNotes((current) => !current)}
+            className="text-link whitespace-nowrap text-xs"
+          >
+            {showNotes ? "- note" : "+ note"}
+          </button>
         ) : null}
         <Button
           type="button"
           variant={saved ? "outline" : "secondary"}
           onClick={handleSave}
           disabled={!hasLoggableValue || isPending}
-          className={cn("h-11 w-full md:w-auto", isFinisher && "md:justify-self-end")}
+          className={cn("h-11 flex-1 md:flex-none md:min-w-36", isFinisher && "md:ml-auto")}
         >
           {isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />

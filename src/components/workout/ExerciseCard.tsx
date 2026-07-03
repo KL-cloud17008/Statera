@@ -58,6 +58,8 @@ export function ExerciseCard({
   onSetCompleteChange: (exerciseName: string, setNumber: number, complete: boolean) => void;
 }) {
   const [showCues, setShowCues] = useState(false);
+  const [sessionPrefills, setSessionPrefills] = useState<Record<number, { weightUsed: number | null; repsCompleted: number | null }>>({});
+  const [advanceTarget, setAdvanceTarget] = useState<number | null>(null);
   const isLoggable = isLoggableTrainingExercise(exercise);
   const isFinisher = exercise.exerciseType === "FINISHER";
   const setCount = isFinisher ? 1 : exercise.sets;
@@ -84,7 +86,7 @@ export function ExerciseCard({
               <p className="eyebrow">{getExerciseLabel(exercise)}</p>
               <h3
                 className={cn(
-                  "tracking-normal",
+                  "line-clamp-2 tracking-normal max-md:text-base max-md:leading-snug",
                   exerciseComplete ? "text-muted-foreground line-through" : "text-foreground"
                 )}
               >
@@ -147,7 +149,15 @@ export function ExerciseCard({
                   isFinisher={isFinisher}
                   logged={logged ?? null}
                   previous={previous ?? null}
-                  onSaved={onSetLogged}
+                  prefill={sessionPrefills[setNum] ?? null}
+                  shouldAdvance={advanceTarget === setNum}
+                  onSaved={(setKey, values) => {
+                    onSetLogged(setKey);
+                    if (setNum < setCount) {
+                      setSessionPrefills((current) => ({ ...current, [setNum + 1]: values }));
+                      setAdvanceTarget(setNum + 1);
+                    }
+                  }}
                   completed={completedSetNumbers.has(setNum)}
                   onCompletedChange={(checked) => onSetCompleteChange(exercise.exerciseName, setNum, checked)}
                 />

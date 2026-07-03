@@ -2,13 +2,31 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Timer } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) {
+export function RestTimer({
+  defaultSeconds = 90,
+  variant = "inline",
+}: {
+  defaultSeconds?: number;
+  variant?: "inline" | "bar";
+}) {
   const [isRunning, setIsRunning] = useState(false);
   const [duration, setDuration] = useState(defaultSeconds);
   const [timeLeft, setTimeLeft] = useState(defaultSeconds);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const hasAlertedRef = useRef(false);
+  const [prevDefault, setPrevDefault] = useState(defaultSeconds);
+
+  // The sticky bar follows the current exercise, so pick up its programmed
+  // rest when it changes — but never interrupt a countdown in progress.
+  if (prevDefault !== defaultSeconds) {
+    setPrevDefault(defaultSeconds);
+    if (!isRunning) {
+      setDuration(defaultSeconds);
+      setTimeLeft(defaultSeconds);
+    }
+  }
 
   useEffect(() => {
     if (!isRunning) {
@@ -56,6 +74,11 @@ export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) 
   }
 
   function adjustDuration(delta: number) {
+    if (isRunning) {
+      setTimeLeft((current) => Math.max(1, current + delta));
+      return;
+    }
+
     setDuration((current) => {
       const next = Math.max(15, current + delta);
       setTimeLeft(next);
@@ -66,6 +89,63 @@ export function RestTimer({ defaultSeconds = 90 }: { defaultSeconds?: number }) 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const display = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+  if (variant === "bar") {
+    return (
+      <div className="flex shrink-0 items-center gap-0.5">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => adjustDuration(-15)}
+          disabled={!isRunning && duration <= 15}
+          className="text-xs text-white/64 hover:bg-white/8 hover:text-white"
+          aria-label="Reduce rest timer by 15 seconds"
+        >
+          -15
+        </Button>
+        {isRunning ? (
+          <span className="data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-white">
+            {timeLeft === 0 ? "GO" : display}
+          </span>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={start}
+            className="gap-1.5 border-white/14 bg-white/8 px-2.5 text-white hover:bg-white/16 hover:text-white"
+            aria-label={`Start ${duration} second rest timer`}
+          >
+            <Timer className="h-3.5 w-3.5" />
+            <span className="data-number">{duration}s</span>
+          </Button>
+        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => adjustDuration(15)}
+          className="text-xs text-white/64 hover:bg-white/8 hover:text-white"
+          aria-label="Increase rest timer by 15 seconds"
+        >
+          +15
+        </Button>
+        {isRunning ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={stop}
+            className="px-2 text-xs text-white/64 hover:bg-white/8 hover:text-white"
+            aria-label="Stop rest timer"
+          >
+            {timeLeft === 0 ? "Reset" : "Stop"}
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
 
   if (!isRunning) {
     return (

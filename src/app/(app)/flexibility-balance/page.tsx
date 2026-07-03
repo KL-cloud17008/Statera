@@ -89,9 +89,12 @@ export default function FlexibilityBalancePage() {
             summary="Each strength day has a low-intensity later block. Saturday and Sunday stay full rest."
             badge="8-16 min"
           >
-            <div className="grid gap-3">
+            <div className="flex flex-1 flex-col gap-4">
               {recoveryDayBlocks.map((block) => (
-                <BlockSummary key={block.id} block={block} />
+                <div key={block.id} className="flex flex-1 flex-col gap-4">
+                  <BlockSummary block={block} />
+                  <MovementList exercises={block.exercises.slice(0, 6)} />
+                </div>
               ))}
             </div>
           </ProtocolBlock>
@@ -127,7 +130,7 @@ function ProtocolBlock({
   children: ReactNode;
 }) {
   return (
-    <article className="prime-panel grid gap-5 rounded-[var(--radius-card)] p-5">
+    <article className="prime-panel flex flex-col gap-5 rounded-[var(--radius-card)] p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-3">
           <p className="eyebrow">{eyebrow}</p>
@@ -138,17 +141,17 @@ function ProtocolBlock({
           <Icon className="h-4 w-4" />
         </div>
       </div>
-      <Badge variant="outline">{badge}</Badge>
-      {children}
+      <Badge variant="outline" className="self-start">{badge}</Badge>
+      <div className="flex flex-1 flex-col">{children}</div>
     </article>
   );
 }
 
 function MovementList({ exercises }: { exercises: MobilityExercise[] }) {
   return (
-    <div className="divide-y divide-border border-y border-border">
+    <div className="flex flex-1 flex-col divide-y divide-border border-y border-border">
       {exercises.map((exercise) => (
-        <div key={exercise.id} className="interactive-row grid gap-3 px-2 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(9rem,auto)] sm:items-start">
+        <div key={exercise.id} className="interactive-row grid flex-1 content-center gap-3 px-2 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(9rem,auto)]">
           <div>
             <p className="font-medium text-foreground">{exercise.name}</p>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{exercise.goal}</p>

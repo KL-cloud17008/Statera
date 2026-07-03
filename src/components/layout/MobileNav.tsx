@@ -9,7 +9,7 @@ export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary navigation" className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden">
+    <nav aria-label="Primary navigation" data-mobile-nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden">
       <div className="chrome-surface hide-scrollbar flex items-center gap-1 overflow-x-auto rounded-full border p-1.5 backdrop-blur-xl">
         {NAV_ITEMS.map((item) => {
           const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);

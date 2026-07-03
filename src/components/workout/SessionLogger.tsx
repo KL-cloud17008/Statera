@@ -78,6 +78,15 @@ export function SessionLogger({
     [exercises]
   );
 
+  // Signal the active session to the shell so the bottom app-nav hides
+  // (see globals.css) and the session dock takes its place.
+  useEffect(() => {
+    document.body.dataset.activeWorkoutSession = "true";
+    return () => {
+      delete document.body.dataset.activeWorkoutSession;
+    };
+  }, []);
+
   useEffect(() => {
     const start = new Date(startTime).getTime();
     const updateElapsed = () => {
@@ -124,6 +133,8 @@ export function SessionLogger({
     }
     return completed;
   }, [completedSets, loggableExercises]);
+
+  const currentTarget = findCurrentTarget(loggableExercises, completedSets);
 
   const totalExercises = loggableExercises.length;
   const completedCount = completedExercises.size;
@@ -294,7 +305,9 @@ export function SessionLogger({
                       Block {group[0].supersetGroup}
                     </p>
                   </div>
-                  <RestTimer defaultSeconds={restSeconds} />
+                  <div className="hidden md:block">
+                    <RestTimer defaultSeconds={restSeconds} />
+                  </div>
                 </div>
               ) : null}
 
@@ -319,7 +332,7 @@ export function SessionLogger({
               </div>
 
               {!isGroupedBlock && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 hidden justify-end md:flex">
                   <RestTimer defaultSeconds={group[0].restSeconds} />
                 </div>
               ) : null}
@@ -327,6 +340,25 @@ export function SessionLogger({
           );
         })}
       </section>
+
+      <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden">
+        <div className="chrome-surface rounded-[var(--radius-panel)] border px-4 py-3 backdrop-blur-xl">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-semibold tracking-normal text-white">
+                {currentTarget ? currentTarget.exercise.exerciseName : "All sets logged"}
+              </p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
+                {currentTarget
+                  ? `Set ${currentTarget.setNumber} of ${currentTarget.totalSets}`
+                  : "Ready to complete session"}
+              </p>
+            </div>
+            <RestTimer variant="bar" defaultSeconds={currentTarget?.exercise.restSeconds || 90} />
+          </div>
+          <Progress value={progressPercent} className="mt-2.5 h-1 border-white/12 bg-white/10" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -350,6 +382,18 @@ function SessionPrepStrip() {
       </div>
     </div>
   );
+}
+
+function findCurrentTarget(exercises: PlanExercise[], completedSets: Set<string>) {
+  for (const exercise of exercises) {
+    const totalSets = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
+    for (let setNumber = 1; setNumber <= totalSets; setNumber += 1) {
+      if (!completedSets.has(`${exercise.exerciseName}:${setNumber}`)) {
+        return { exercise, setNumber, totalSets };
+      }
+    }
+  }
+  return null;
 }
 
 function formatSessionDate(dateString: string) {

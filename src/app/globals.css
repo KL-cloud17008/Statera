@@ -206,6 +206,11 @@
     background: transparent;
   }
 
+  /* The workout session dock replaces the app-nav while a session is live. */
+  body[data-active-workout-session="true"] [data-mobile-nav] {
+    display: none;
+  }
+
   .chrome-surface {
     border-color: var(--sidebar-border);
     background:

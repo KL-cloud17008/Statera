@@ -1,22 +1,34 @@
-﻿"use client";
+"use client";
 
 import {
-  Activity,
+  CalendarClock,
+  Flag,
+  Gauge,
   HeartPulse,
   Minus,
-  Scale,
   Target,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
+import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { StatCard } from "@/components/ui/stat-card";
-import type { WeightStats } from "@/lib/weight";
+import { normalizeGoalTargetDate } from "@/lib/app-settings";
+import { computeRequiredWeeklyLossPace, type WeightStats } from "@/lib/weight";
 import {
   formatBodyweight,
   formatBodyweightDelta,
 } from "@/lib/units";
 
 export function WeightStatsCards({ stats }: { stats: WeightStats }) {
+  const { settings } = useAppSettings();
+  const targetDate = normalizeGoalTargetDate(settings.weightGoalTargetDate);
+  const requiredPace = computeRequiredWeeklyLossPace(
+    stats.currentWeight,
+    stats.goalWeight,
+    stats.lastEntryDate,
+    targetDate
+  );
+
   const trendIcon =
     stats.trend === "down" ? (
       <TrendingDown className="h-5 w-5" />
@@ -31,25 +43,47 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       ? `${stats.weeklyRate > 0 ? "+" : ""}${stats.weeklyRate.toFixed(1)} lb/wk`
       : "--";
 
+  const remainingToGoal =
+    stats.currentWeight != null && stats.goalWeight != null
+      ? stats.goalWeight - stats.currentWeight
+      : null;
+
+  const projectedHint = stats.projectedGoalDate
+    ? `At the current ${weeklyRate} pace`
+    : stats.weeklyRate == null
+      ? "Needs more weigh-ins to project"
+      : "Current pace is not moving toward goal";
+
+  const paceHint =
+    requiredPace != null && targetDate
+      ? `Required -${requiredPace.toFixed(1)} lb/wk to hit ${formatGoalDate(targetDate)}`
+      : targetDate
+        ? `No further loss required by ${formatGoalDate(targetDate)}`
+        : "Set a target date in settings to compare";
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <StatCard
-        label="Current Weight"
-        value={formatBodyweight(stats.currentWeight)}
-        hint={stats.lastEntryDate ?? "No data yet"}
-        icon={<Scale className="h-5 w-5" />}
+        label="Projected Goal Date"
+        value={stats.projectedGoalDate ? formatGoalDate(stats.projectedGoalDate) : "--"}
+        hint={projectedHint}
+        icon={<CalendarClock className="h-5 w-5" />}
       />
       <StatCard
-        label="From Start"
-        value={formatBodyweightDelta(stats.totalChange)}
-        hint={`Rate ${weeklyRate}`}
-        icon={trendIcon}
+        label="Weekly Pace"
+        value={weeklyRate}
+        hint={paceHint}
+        icon={<Gauge className="h-5 w-5" />}
       />
       <StatCard
-        label="7-Day Trend"
-        value={formatBodyweight(stats.avg7Day)}
-        hint="Smoothed moving average"
-        icon={<Activity className="h-5 w-5" />}
+        label="Remaining to Goal"
+        value={formatBodyweightDelta(remainingToGoal)}
+        hint={
+          stats.goalWeight != null
+            ? `To reach ${formatBodyweight(stats.goalWeight)}`
+            : "Set a goal weight in settings"
+        }
+        icon={<Flag className="h-5 w-5" />}
       />
       <StatCard
         label="BMI"
@@ -60,11 +94,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       <StatCard
         label="Goal Weight"
         value={formatBodyweight(stats.goalWeight)}
-        hint={
-          stats.projectedGoalDate
-            ? `Projected ${stats.projectedGoalDate}`
-            : "Set a target date in settings"
-        }
+        hint="Target set in profile settings"
         icon={<Target className="h-5 w-5" />}
       />
       <StatCard
@@ -75,4 +105,12 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       />
     </div>
   );
+}
+
+function formatGoalDate(dateString: string) {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
