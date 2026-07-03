@@ -1,7 +1,9 @@
 :root {
   color-scheme: light;
   --font-sans-base: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: ui-serif, Georgia, "Times New Roman", serif;
+  /* ui-serif only resolves on Apple platforms; the explicit chain keeps the
+     editorial display voice on Windows/Android instead of falling to default serif. */
+  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --font-mono-base: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
 
   --type-12: 0.75rem;
@@ -17,9 +19,10 @@
   --leading-tight: 1.1;
   --leading-snug: 1.25;
   --leading-normal: 1.5;
-  --tracking-tight: 0;
-  --tracking-tighter: 0;
+  --tracking-tight: -0.011em;
+  --tracking-tighter: -0.022em;
   --tracking-wide: 0.08em;
+  --tracking-caps: 0.16em;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -35,9 +38,10 @@
   --radius: 0.625rem;
   --radius-tight: 0.5rem;
   --radius-pill: 999px;
-  --radius-card: 0.5rem;
-  --radius-surface: 0.75rem;
-  --radius-panel: 0.75rem;
+  /* Three-tier containment: card (inner tiles/rows) < surface (cards) < panel (page sections). */
+  --radius-card: 0.625rem;
+  --radius-surface: 0.875rem;
+  --radius-panel: 1.125rem;
 
   --aubergine-ink: #07111f;
   --espresso: #070b12;
@@ -106,7 +110,7 @@
   --warning-foreground: #f8fbff;
   --border: rgba(7, 17, 31, 0.13);
   --input: var(--input-fill);
-  --ring: rgba(79, 124, 255, 0.22);
+  --ring: rgba(79, 124, 255, 0.25);
   --chart-1: #102033;
   --chart-2: var(--electric-blue);
   --chart-3: var(--sage);
@@ -122,10 +126,44 @@
   --sidebar-ring: rgba(79, 124, 255, 0.38);
   --nav-surface: rgba(5, 7, 11, 0.93);
   --nav-surface-raised: rgba(10, 18, 32, 0.96);
-  --shadow-soft: 0 1px 0 rgba(255, 255, 255, 0.74) inset, 0 1px 2px rgba(7, 17, 31, 0.045), 0 10px 28px rgba(38, 74, 119, 0.05);
-  --shadow-elevated: 0 1px 0 rgba(255, 255, 255, 0.82) inset, 0 22px 50px rgba(8, 17, 31, 0.1), 0 3px 10px rgba(41, 87, 132, 0.05);
-  --shadow-command: 0 1px 0 rgba(255, 255, 255, 0.1) inset, 0 22px 58px rgba(5, 7, 11, 0.34), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  /* Elevation ladder — level 1 rests on the atmosphere, level 2 is a raised card,
+     level 3 floats (hover, docks, overlays). Each layers contact + mid + ambient. */
+  --shadow-soft:
+    0 1px 0 rgba(255, 255, 255, 0.78) inset,
+    0 1px 2px rgba(7, 17, 31, 0.055),
+    0 3px 8px rgba(8, 17, 31, 0.04),
+    0 12px 32px rgba(38, 74, 119, 0.06);
+  --shadow-elevated:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 1px 3px rgba(7, 17, 31, 0.05),
+    0 8px 20px rgba(8, 17, 31, 0.055),
+    0 26px 56px rgba(8, 17, 31, 0.09);
+  --shadow-floating:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 2px 5px rgba(7, 17, 31, 0.06),
+    0 14px 30px rgba(8, 17, 31, 0.08),
+    0 34px 72px rgba(38, 74, 119, 0.12);
+  --shadow-pressed:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 1px 2px rgba(7, 17, 31, 0.06);
+  --shadow-command:
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 2px 6px rgba(5, 7, 11, 0.28),
+    0 24px 64px rgba(5, 7, 11, 0.36),
+    0 0 0 1px rgba(255, 255, 255, 0.045);
   --shadow-glow: 0 0 0 1px rgba(111, 199, 255, 0.16), 0 20px 60px rgba(54, 119, 255, 0.14);
+
+  /* Shared surface fills — veil (tiles/rows) < raised (cards) < floating (feature panels). */
+  --surface-veil-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(231, 244, 253, 0.72));
+  --surface-raised-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(238, 247, 253, 0.84));
+  --surface-floating-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(236, 246, 253, 0.89));
+
+  /* Motion primitives — patient glide, never bouncy. */
+  --ease-glide: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 150ms;
+  --duration-medium: 340ms;
+  --duration-slow: 640ms;
   --glass-border: rgba(255, 255, 255, 0.68);
   --cool-hairline: rgba(7, 17, 31, 0.11);
   --command-grid: rgba(191, 233, 255, 0.1);
