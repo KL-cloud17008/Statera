@@ -27,7 +27,7 @@ export function MobileHeader() {
     <header className="sticky top-0 z-40 px-3 pb-2 pt-[max(env(safe-area-inset-top),0.75rem)] md:hidden">
       <div className="chrome-surface flex items-end justify-between gap-4 rounded-[var(--radius-panel)] border px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground shadow-[rgba(112,199,255,0.18)_0_0_24px]">
+          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground shadow-[color-mix(in_srgb,var(--sky-accent)_18%,transparent)_0_0_24px]">
             <BrandMark className="h-5 w-5" />
           </span>
           <div>

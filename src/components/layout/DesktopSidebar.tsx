@@ -20,8 +20,8 @@ export function DesktopSidebar() {
   return (
     <header className="sticky top-0 z-40 hidden px-4 py-3 md:block">
       <div className="chrome-surface mx-auto flex h-16 max-w-[112rem] items-center gap-3 rounded-full border px-3 backdrop-blur-xl lg:gap-4 lg:px-4">
-        <Link href="/" className="group flex min-w-[11rem] items-center gap-3 text-sidebar-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_rgba(112,199,255,0.72),0_0_0_5px_rgba(79,124,255,0.22)]">
-          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground shadow-[rgba(112,199,255,0.18)_0_0_24px] transition-colors group-hover:border-white/24">
+        <Link href="/" className="group flex min-w-[11rem] items-center gap-3 text-sidebar-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--sky-accent)_72%,transparent),0_0_0_5px_color-mix(in_srgb,var(--electric-blue)_22%,transparent)]">
+          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground shadow-[color-mix(in_srgb,var(--sky-accent)_18%,transparent)_0_0_24px] transition-colors group-hover:border-white/24">
             <BrandMark className="h-5 w-5" />
           </span>
           <div className="leading-none">
@@ -39,16 +39,16 @@ export function DesktopSidebar() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "group inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-[0.78rem] font-semibold tracking-normal transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_rgba(107,128,255,0.72),0_0_0_5px_rgba(107,128,255,0.22)] motion-reduce:transition-none",
+                  "group inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-[0.78rem] font-semibold tracking-normal transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--violet-blue)_72%,transparent),0_0_0_5px_color-mix(in_srgb,var(--violet-blue)_22%,transparent)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
                   isActive
-                    ? "border-[rgba(112,199,255,0.44)] bg-[rgba(112,199,255,0.12)] text-white shadow-[rgba(112,199,255,0.22)_0_0_0_1px_inset,rgba(79,124,255,0.18)_0_0_24px]"
+                    ? "border-[color-mix(in_srgb,var(--sky-accent)_44%,transparent)] bg-[color-mix(in_srgb,var(--sky-accent)_12%,transparent)] text-white shadow-[color-mix(in_srgb,var(--sky-accent)_22%,transparent)_0_0_0_1px_inset,color-mix(in_srgb,var(--electric-blue)_18%,transparent)_0_0_24px]"
                     : "border-transparent text-white/62 hover:border-white/14 hover:bg-white/8 hover:text-white"
                 )}
               >
                 <item.icon
                   className={cn(
                     "h-3.5 w-3.5 shrink-0 transition-colors duration-150 motion-reduce:transition-none",
-                    isActive ? "text-[#9fdbff]" : "text-white/48 group-hover:text-white/82"
+                    isActive ? "text-[color-mix(in_srgb,var(--sky-accent)_72%,white)]" : "text-white/48 group-hover:text-white/82"
                   )}
                   strokeWidth={1.8}
                 />
