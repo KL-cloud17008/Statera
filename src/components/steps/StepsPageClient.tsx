@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Link from "next/link";
 import { CalendarCheck, Flame, Target, TrendingUp } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { StatCard } from "@/components/ui/stat-card";
@@ -20,9 +21,11 @@ import { formatDistance } from "@/lib/units";
 export function StepsPageClient({
   entries,
   timezone,
+  backfillDate,
 }: {
   entries: SerializedStepsEntry[];
   timezone?: string;
+  backfillDate?: string;
 }) {
   const { settings } = useAppSettings();
   const stats = calculateStepStats(entries, settings.stepGoal, { timezone });
@@ -62,11 +65,18 @@ export function StepsPageClient({
               steps logged
             </p>
           </div>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <CommandMetric label="Goal Days" value={stats.goalDaysTotal.toLocaleString()} detail={`${stats.completionRate}% completion rate`} />
-            <CommandMetric label="Streak" value={stats.currentStreak.toLocaleString()} detail="Consecutive goal days" />
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <CommandMetric label="Goal Days" value={stats.goalDaysTotal.toLocaleString()} detail={`${stats.completionRate}% of days since first entry`} />
+            <CommandMetric
+              label="Streak"
+              value={stats.currentStreak.toLocaleString()}
+              detail={
+                stats.streakUnloggedDays > 0
+                  ? `At risk — ${stats.streakUnloggedDays} unlogged ${stats.streakUnloggedDays === 1 ? "day" : "days"}`
+                  : "Consecutive goal days"
+              }
+            />
             <CommandMetric label="7-Day Avg" value={stats.sevenDayAverage.toLocaleString()} detail={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`} />
-            <CommandMetric label="Distance" value={formatDistance(stats.todaySteps, settings.distanceUnit)} detail={`Goal ${settings.stepGoal.toLocaleString()}`} />
           </div>
         </div>
       </section>
@@ -87,7 +97,22 @@ export function StepsPageClient({
           <StatCard
             label="Streak"
             value={`${stats.currentStreak}`}
-            hint="Consecutive goal days"
+            hint={
+              stats.streakUnloggedDays > 0 && stats.streakBackfillDate ? (
+                <>
+                  Streak at risk: {stats.streakUnloggedDays} unlogged{" "}
+                  {stats.streakUnloggedDays === 1 ? "day" : "days"} —{" "}
+                  <Link
+                    href={`/steps?backfill=${stats.streakBackfillDate}#quick-add`}
+                    className="text-link font-semibold"
+                  >
+                    backfill {formatBackfillDate(stats.streakBackfillDate)}
+                  </Link>
+                </>
+              ) : (
+                "Consecutive goal days"
+              )
+            }
             icon={<Flame className="h-5 w-5" />}
           />
           <StatCard
@@ -101,14 +126,21 @@ export function StepsPageClient({
       <StepsChart entries={entries} goal={settings.stepGoal} timezone={timezone} />
 
       <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-4">
-          <StepsEntryForm timezone={timezone} />
+        <div id="quick-add" className="space-y-4">
+          <StepsEntryForm key={backfillDate ?? "today"} timezone={timezone} initialDate={backfillDate} />
           <StepsHeatmap entries={entries} goal={settings.stepGoal} />
         </div>
         <StepsHistoryList entries={entries} />
       </div>
     </div>
   );
+}
+
+function formatBackfillDate(dateString: string) {
+  return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
 
 function CommandMetric({

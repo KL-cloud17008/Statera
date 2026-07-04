@@ -50,6 +50,9 @@ export function WeightChart({
 
   const allChartData = useMemo(() => buildChartData(entries), [entries]);
   const targetDate = normalizeGoalTargetDate(settings.weightGoalTargetDate);
+  // On short windows the far-off goal would crush the Y-axis and flatten real
+  // progress; scale to visible data and annotate the goal instead.
+  const showFullGoal = zoom === "3M" || zoom === "ALL";
 
   const targetSummary = useMemo<TargetDateSummary | null>(() => {
     if (!targetDate) {
@@ -94,6 +97,7 @@ export function WeightChart({
     }));
 
     if (
+      !showFullGoal ||
       !targetDate ||
       goalWeight == null ||
       transformed.length === 0
@@ -139,7 +143,7 @@ export function WeightChart({
         projection: targetWeight,
       },
     ].sort((a, b) => a.date.localeCompare(b.date));
-  }, [filteredData, goalWeight, targetDate]);
+  }, [filteredData, goalWeight, showFullGoal, targetDate]);
 
   if (entries.length === 0) {
     return (
@@ -190,7 +194,12 @@ export function WeightChart({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="chart-frame">
+        <div className="chart-frame relative">
+        {!showFullGoal && goalWeight != null ? (
+          <span className="absolute bottom-4 right-5 z-10 rounded-full border border-border/80 bg-white/78 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-sm">
+            Goal {goalWeight.toFixed(1)} lb{goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
+          </span>
+        ) : null}
         <ResponsiveContainer width="100%" height={280}>
           <ComposedChart
             data={chartData}
@@ -243,7 +252,7 @@ export function WeightChart({
                     : "Projection",
               ]}
             />
-            {goalLine != null ? (
+            {showFullGoal && goalLine != null ? (
               <ReferenceLine
                 y={goalLine}
                 stroke="var(--color-chart-3)"

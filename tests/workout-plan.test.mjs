@@ -530,6 +530,36 @@ test("daily step goal still supports 8000 and step streak behavior is stable", (
   ], 8000, "2026-06-25");
   assert.equal(stats.currentStreak, 4);
   assert.equal(stats.goalDaysTotal, 4);
+  assert.equal(stats.streakUnloggedDays, 0);
+  assert.equal(stats.streakBackfillDate, null);
+
+  // NEW streak semantics: an unlogged day is missing data, not failure.
+  // Short gaps (<=3 consecutive unlogged days) are bridged and surfaced for
+  // backfill; a LOGGED below-goal day still breaks the streak.
+  const bridged = steps.calculateStepStats([
+    stepEntry("2026-07-01", 9953),
+    stepEntry("2026-07-02", 9971),
+    // 2026-07-03 never logged
+  ], 8000, "2026-07-04");
+  assert.equal(bridged.currentStreak, 2);
+  assert.equal(bridged.streakUnloggedDays, 1);
+  assert.equal(bridged.streakBackfillDate, "2026-07-03");
+
+  const brokenByLoggedMiss = steps.calculateStepStats([
+    stepEntry("2026-07-01", 9953),
+    stepEntry("2026-07-02", 3000),
+    stepEntry("2026-07-03", 9000),
+  ], 8000, "2026-07-04");
+  assert.equal(brokenByLoggedMiss.currentStreak, 1);
+  assert.equal(brokenByLoggedMiss.streakUnloggedDays, 0);
+
+  const longGapEndsStreak = steps.calculateStepStats([
+    stepEntry("2026-06-24", 9000),
+    // 2026-06-25 .. 2026-06-28 unlogged (4-day run exceeds the bridge limit)
+    stepEntry("2026-06-29", 9200),
+  ], 8000, "2026-06-30");
+  assert.equal(longGapEndsStreak.currentStreak, 1);
+  assert.equal(longGapEndsStreak.streakUnloggedDays, 0);
 });
 
 test("weight goal helpers still support aggressive target copy without medical dosing", () => {

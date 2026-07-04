@@ -137,6 +137,9 @@ export function DashboardPageClient({
   const recoveryFlagActive =
     mobilitySummary.footFlareLogged ||
     /foot-flare|High step load/i.test(decision.title);
+  // Rest / recovery days don't score steps against the goal (A-audit): steps
+  // still display, but no failure framing.
+  const stepGoalSuspended = !todayPlanDay || recoveryFlagActive;
 
   return (
     <div className="page-shell">
@@ -152,7 +155,16 @@ export function DashboardPageClient({
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <SignalTile icon={<Footprints className="h-4 w-4" />} label="Today status" value={`${stepCompletion}%`} detail={`${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()}`} />
+              <SignalTile
+                icon={<Footprints className="h-4 w-4" />}
+                label="Today status"
+                value={stepGoalSuspended ? (!todayPlanDay ? "Rest" : "Recovery") : `${stepCompletion}%`}
+                detail={
+                  stepGoalSuspended
+                    ? `Step goal suspended · ${todaySteps.toLocaleString()} steps logged`
+                    : `${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()}`
+                }
+              />
               <SignalTile icon={<ShieldCheck className="h-4 w-4" />} label="Readiness flag" value={recoveryFlagActive ? "Recovery" : "Clear"} detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"} />
               <SignalTile icon={<Dumbbell className="h-4 w-4" />} label="Current phase" value={nextProtocol} detail={`${workoutSummary.weeklySessions} sessions this week`} />
               <SignalTile icon={<Scale className="h-4 w-4" />} label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={getTrendCopy(weightStats.trend)} />
@@ -236,15 +248,32 @@ export function DashboardPageClient({
             <div className="space-y-3 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Daily movement</span>
-                <span className="data-number font-semibold text-foreground">{stepCompletion}%</span>
+                <span className="data-number font-semibold text-foreground">
+                  {stepGoalSuspended ? "Suspended" : `${stepCompletion}%`}
+                </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-[rgba(7,17,31,0.08)]">
-                <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
-              </div>
+              {stepGoalSuspended ? (
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Step goal suspended — recovery day. {todaySteps.toLocaleString()} steps logged, not scored.
+                </p>
+              ) : (
+                <div className="h-2 overflow-hidden rounded-full bg-[rgba(7,17,31,0.08)]">
+                  <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="micro-panel">
                   <p className="eyebrow text-[10px]">Streak</p>
                   <p className="data-number mt-2 text-3xl font-semibold text-foreground">{stepStats.currentStreak}</p>
+                  {stepStats.streakUnloggedDays > 0 && stepStats.streakBackfillDate ? (
+                    <Link
+                      href={`/steps?backfill=${stepStats.streakBackfillDate}#quick-add`}
+                      className="text-link mt-1 block text-[11px] font-semibold leading-snug"
+                    >
+                      At risk — backfill {stepStats.streakUnloggedDays}{" "}
+                      {stepStats.streakUnloggedDays === 1 ? "day" : "days"}
+                    </Link>
+                  ) : null}
                 </div>
                 <div className="micro-panel">
                   <p className="eyebrow text-[10px]">Goal Days</p>
@@ -349,7 +378,7 @@ export function DashboardPageClient({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="eyebrow">Movement Quality</p>
-                <p className="data-number mt-4 text-4xl font-semibold text-foreground">5+2</p>
+                <p className="data-number mt-4 text-3xl font-semibold text-foreground">5 train + 2 rest</p>
               </div>
               <Activity className="h-5 w-5 text-muted-foreground" />
             </div>
@@ -572,8 +601,12 @@ function buildDecision({
   const expectedMobilityType = isStrengthDay ? "PRE_WORKOUT" : "POST_WORKOUT";
   const mobilityDone = mobilitySummary.completedTypes.includes(expectedMobilityType);
   const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;
+  const stepGoalSuspendedForSignals =
+    !isStrengthDay || mobilitySummary.footFlareLogged || highStepLoad;
   const signals = [
-    `${todaySteps.toLocaleString()} of ${stepGoal.toLocaleString()} steps logged today.`,
+    stepGoalSuspendedForSignals
+      ? `Step goal suspended — recovery day. ${todaySteps.toLocaleString()} steps logged.`
+      : `${todaySteps.toLocaleString()} of ${stepGoal.toLocaleString()} steps logged today.`,
     "Nutrition is tracked externally in Cronometer.",
     mobilityDone ? "Expected mobility is logged." : "Expected mobility is still open.",
   ];

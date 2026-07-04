@@ -13,6 +13,9 @@ export type SerializedStepsEntry = {
   steps: number | null;
 };
 
+/** Longest run of consecutive unlogged days a streak can bridge before it ends. */
+const MAX_BRIDGEABLE_UNLOGGED_RUN = 3;
+
 export type NormalizedStepEntry = {
   id: string;
   date: string;
@@ -185,15 +188,47 @@ export function calculateStepStats(
   const daily = buildDailyStepsDataFromToday(entries, 7, today);
   const todaySteps = byDate.get(today) ?? 0;
   const goalReachedToday = todaySteps >= goal;
+
+  // Streak semantics: a logged below-goal day breaks the streak; an UNLOGGED
+  // day is missing data, not failure — short gaps (up to
+  // MAX_BRIDGEABLE_UNLOGGED_RUN consecutive unlogged days) are bridged, and
+  // reported so the UI can prompt a backfill instead of silently zeroing.
+  const recentEntries = getNormalizedStepEntries(entries);
+  const earliestLoggedDate =
+    recentEntries.length > 0 ? recentEntries[recentEntries.length - 1].date : null;
   let cursor = goalReachedToday ? today : addDaysToDateString(today, -1);
   let streak = 0;
+  let streakUnloggedDays = 0;
+  let streakBackfillDate: string | null = null;
+  let pendingUnloggedRun = 0;
+  let pendingUnloggedDates: string[] = [];
 
-  while ((byDate.get(cursor) ?? 0) >= goal) {
+  while (earliestLoggedDate != null && cursor >= earliestLoggedDate) {
+    const loggedSteps = byDate.get(cursor);
+    if (loggedSteps == null) {
+      pendingUnloggedRun += 1;
+      if (pendingUnloggedRun > MAX_BRIDGEABLE_UNLOGGED_RUN) {
+        break;
+      }
+      pendingUnloggedDates.push(cursor);
+      cursor = addDaysToDateString(cursor, -1);
+      continue;
+    }
+
+    if (loggedSteps < goal) {
+      break;
+    }
+
+    // Goal day: commit any bridged gap between it and the newer part of the streak.
+    streakUnloggedDays += pendingUnloggedRun;
+    if (streakBackfillDate == null && pendingUnloggedDates.length > 0) {
+      streakBackfillDate = pendingUnloggedDates[0];
+    }
+    pendingUnloggedRun = 0;
+    pendingUnloggedDates = [];
     streak += 1;
     cursor = addDaysToDateString(cursor, -1);
   }
-
-  const recentEntries = getNormalizedStepEntries(entries);
   const goalDaysTotal = recentEntries.filter((entry) => entry.steps >= goal).length;
   const latestCompletedGoalDate =
     recentEntries.find((entry) => entry.date <= today && entry.steps >= goal)?.date ?? null;
@@ -214,6 +249,8 @@ export function calculateStepStats(
     todayPercent: Math.min(100, Math.round((todaySteps / goal) * 100)),
     goalDaysTotal,
     currentStreak: streak,
+    streakUnloggedDays,
+    streakBackfillDate,
     bestDay,
     sevenDayAverage,
     recentEntries: recentEntries.slice(0, recentLimit),

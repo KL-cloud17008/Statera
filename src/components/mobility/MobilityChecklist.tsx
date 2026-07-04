@@ -121,8 +121,11 @@ export function MobilityChecklist({
               {block.recoveryIntro ? (
                 <RecoveryIntro variant={block.recoveryIntroVariant ?? "standard"} />
               ) : null}
-              {block.previousDayReason || block.adaptationNote ? (
-                <BlockContext block={block} />
+              {block.previousDayReason || getBlockAdaptationNote(block) ? (
+                <BlockContext
+                  previousDayReason={block.previousDayReason}
+                  adaptationNote={getBlockAdaptationNote(block)}
+                />
               ) : null}
 
               <div className="space-y-3">
@@ -267,18 +270,30 @@ function RecoveryIntro({
   );
 }
 
+// The RecoveryIntro panel already renders RECOVERY_STOP_NOTE as its safety
+// footer, so a block whose adaptationNote is that same paragraph would repeat
+// it verbatim — show it once.
+function getBlockAdaptationNote(block: MobilityBlock) {
+  if (block.recoveryIntro && block.adaptationNote === RECOVERY_STOP_NOTE) {
+    return undefined;
+  }
+  return block.adaptationNote;
+}
+
 function BlockContext({
-  block,
+  previousDayReason,
+  adaptationNote,
 }: {
-  block: MobilityBlock;
+  previousDayReason?: string;
+  adaptationNote?: string;
 }) {
   return (
     <div className="grid gap-3 rounded-[var(--radius-card)] border border-border bg-white/54 p-5 shadow-[var(--shadow-soft)] md:grid-cols-2">
-      {block.previousDayReason ? (
-        <DetailCopy label="Previous-day reset" value={block.previousDayReason} />
+      {previousDayReason ? (
+        <DetailCopy label="Previous-day reset" value={previousDayReason} />
       ) : null}
-      {block.adaptationNote ? (
-        <DetailCopy label="How to use this block" value={block.adaptationNote} />
+      {adaptationNote ? (
+        <DetailCopy label="How to use this block" value={adaptationNote} />
       ) : null}
     </div>
   );

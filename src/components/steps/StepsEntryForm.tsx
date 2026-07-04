@@ -20,10 +20,12 @@ export function StepsEntryForm({
   editEntry,
   onDone,
   timezone,
+  initialDate,
 }: {
   editEntry?: StepsEntry;
   onDone?: () => void;
   timezone?: string;
+  initialDate?: string;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
@@ -71,7 +73,7 @@ export function StepsEntryForm({
               id={editEntry ? `edit-date-${editEntry.id}` : "steps-date"}
               name="date"
               type="date"
-              defaultValue={editEntry?.date ?? today}
+              defaultValue={editEntry?.date ?? initialDate ?? today}
               required
               className="h-12"
             />

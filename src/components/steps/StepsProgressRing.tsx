@@ -53,15 +53,15 @@ export function StepsProgressRing({
           strokeDashoffset={strokeDashoffset}
         />
       </svg>
-      <div className="absolute inset-4 flex flex-col items-center justify-center rounded-full border border-white/20 bg-white/92 text-center shadow-[var(--shadow-elevated)] backdrop-blur-md">
+      <div className="absolute inset-4 flex flex-col items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/92 px-5 text-center shadow-[var(--shadow-elevated)] backdrop-blur-md">
         <p className="eyebrow">Today</p>
-        <p className="mt-2 text-4xl font-semibold text-foreground data-number">
+        <p className="mt-1.5 text-3xl font-semibold leading-none text-foreground data-number">
           {current.toLocaleString()}
         </p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-xs text-muted-foreground">
           Goal {goal.toLocaleString()}
         </p>
-        <p className="warm-pill mt-3 rounded-full px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-primary">
+        <p className="warm-pill mt-2 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">
           {percentage}% reached
         </p>
       </div>
