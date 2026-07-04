@@ -422,10 +422,12 @@ function StepMiniBars({
   const stepsByDate = new Map(entries.map((entry) => [entry.date, entry.steps ?? 0]));
   // Always chart the last 7 consecutive calendar days ending today (user
   // timezone) — logged entries can have gaps, so days without an entry show
-  // as zero-stubs instead of collapsing the axis.
+  // as zero-stubs instead of collapsing the axis. Today prefers the live
+  // count so a missing or stale entry row can never hide it.
   const days = Array.from({ length: 7 }, (_, index) => {
     const date = addDaysToDateString(today, index - 6);
-    const steps = stepsByDate.get(date) ?? (date === today ? todaySteps : 0);
+    const logged = stepsByDate.get(date) ?? 0;
+    const steps = date === today ? Math.max(logged, todaySteps) : logged;
     return { date, steps };
   });
   const scaleMax = Math.max(goal, ...days.map((day) => day.steps), 1);
@@ -444,22 +446,26 @@ function StepMiniBars({
           const metGoal = goal > 0 && steps >= goal;
           const barHeight = steps > 0
             ? Math.max(6, Math.round((steps / scaleMax) * barAreaPx))
-            : 3;
+            : isToday
+              ? 6
+              : 3;
           return (
             <div key={date} className="flex flex-1 flex-col items-center gap-2">
               <div
                 className="flex w-full items-end"
                 style={{ height: barAreaPx }}
-                title={`${formatShortDate(date)}: ${steps.toLocaleString()} steps`}
+                title={`${formatShortDate(date)}${isToday ? " (today)" : ""}: ${steps.toLocaleString()} steps`}
               >
                 <div
                   className={cn(
                     "bar-rise w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
                     metGoal
                       ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
-                      : steps > 0
-                        ? "bg-[rgba(7,17,31,0.16)]"
-                        : "bg-[rgba(7,17,31,0.07)]"
+                      : isToday
+                        ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))] opacity-65"
+                        : steps > 0
+                          ? "bg-[rgba(7,17,31,0.16)]"
+                          : "bg-[rgba(7,17,31,0.07)]"
                   )}
                   style={{ height: barHeight, animationDelay: `${index * 45}ms` }}
                 />
