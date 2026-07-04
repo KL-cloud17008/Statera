@@ -36,6 +36,7 @@ type WeightStats = {
 
 type WorkoutSummary = {
   weeklyVolume: number;
+  prevWeeklyVolume: number;
   weeklySessions: number;
   hasCompletedWorkoutToday: boolean;
   lastWorkout: {
@@ -108,6 +109,14 @@ export function DashboardPageClient({
     ? Math.min(100, Math.round((todaySteps / settings.stepGoal) * 100))
     : 0;
   const weeklyVolume = formatWorkoutVolume(workoutSummary.weeklyVolume);
+  const volumeWeekOverWeek =
+    workoutSummary.prevWeeklyVolume > 0
+      ? Math.round(
+          ((workoutSummary.weeklyVolume - workoutSummary.prevWeeklyVolume) /
+            workoutSummary.prevWeeklyVolume) *
+            100
+        )
+      : null;
   const lastWorkoutVolume = workoutSummary.lastWorkout
     ? formatWorkoutVolume(workoutSummary.lastWorkout.volume)
     : null;
@@ -174,7 +183,13 @@ export function DashboardPageClient({
                     : `${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()}`
                 }
               />
-              <SignalTile icon={<ShieldCheck className="h-4 w-4" />} label="Readiness flag" value={recoveryFlagActive ? "Recovery" : "Clear"} detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"} />
+              <SignalTile
+                icon={<ShieldCheck className="h-4 w-4" />}
+                label="Readiness flag"
+                value={recoveryFlagActive ? "Recovery" : "Clear"}
+                detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"}
+                tone={recoveryFlagActive ? "attention" : "default"}
+              />
               <SignalTile icon={<Dumbbell className="h-4 w-4" />} label="Current phase" value={nextProtocol} detail={`${workoutSummary.weeklySessions} sessions this week`} />
               <SignalTile icon={<Scale className="h-4 w-4" />} label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={getTrendCopy(weightStats.trend)} />
             </div>
@@ -277,7 +292,7 @@ export function DashboardPageClient({
                   {stepStats.streakUnloggedDays > 0 && stepStats.streakBackfillDate ? (
                     <Link
                       href={`/steps?backfill=${stepStats.streakBackfillDate}#quick-add`}
-                      className="text-link mt-1 block text-[11px] font-semibold leading-snug"
+                      className="mt-1 block text-[11px] font-semibold leading-snug text-[var(--attention)] hover:underline"
                     >
                       At risk — backfill {stepStats.streakUnloggedDays}{" "}
                       {stepStats.streakUnloggedDays === 1 ? "day" : "days"}
@@ -378,6 +393,12 @@ export function DashboardPageClient({
               <div>
                 <p className="eyebrow">Training Output</p>
                 <p className="data-number mt-4 text-4xl font-semibold text-foreground">{weeklyVolume}</p>
+                {volumeWeekOverWeek != null ? (
+                  <p className="data-number mt-1 text-xs font-semibold text-muted-foreground">
+                    {volumeWeekOverWeek >= 0 ? "+" : ""}
+                    {volumeWeekOverWeek}% vs last week
+                  </p>
+                ) : null}
               </div>
               <Dumbbell className="h-5 w-5 text-muted-foreground" />
             </div>
@@ -427,11 +448,13 @@ function SignalTile({
   label,
   value,
   detail,
+  tone = "default",
 }: {
   icon: ReactNode;
   label: string;
   value: string;
   detail: string;
+  tone?: "default" | "attention";
 }) {
   return (
     <div className="black-glass min-h-32 rounded-[var(--radius-card)] p-4">
@@ -439,7 +462,16 @@ function SignalTile({
         <p className="eyebrow text-[10px]">{label}</p>
         {icon}
       </div>
-      <p className="data-number value-reveal mt-4 text-2xl font-semibold leading-tight text-white">{value}</p>
+      <p
+        className={cn(
+          "data-number value-reveal mt-4 text-2xl font-semibold leading-tight",
+          tone === "attention"
+            ? "text-[color-mix(in_srgb,var(--attention)_55%,white)]"
+            : "text-white"
+        )}
+      >
+        {value}
+      </p>
       <p className="mt-2 text-xs leading-relaxed text-white/58">{detail}</p>
     </div>
   );

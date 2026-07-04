@@ -57,6 +57,10 @@
   --mist: #cfdeea;
   --warm-cream: #e6f4ff;
   --copper: #b97852;
+  /* Rare warning/attention accent (deepened copper, AA at small sizes on light
+     surfaces). Applied ONLY to: recovery-flag states, the pace guardrail,
+     streak-at-risk, and pain >=3 states. */
+  --attention: #9a5a32;
   --ember: #c27b4f;
   --coral: #c97886;
   --sage: #2f8a79;

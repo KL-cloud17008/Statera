@@ -45,6 +45,12 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       ? stats.goalWeight - stats.currentWeight
       : null;
 
+  const paceGuardrailActive =
+    stats.weeklyRate != null &&
+    stats.currentWeight != null &&
+    stats.weeklyRate < 0 &&
+    Math.abs(stats.weeklyRate) > stats.currentWeight * 0.01;
+
   const projectedHint = stats.projectedGoalDate
     ? `At the current ${weeklyRate} pace`
     : stats.weeklyRate == null
@@ -71,7 +77,13 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
         value={weeklyRate}
         hint={paceHint}
         icon={<Gauge className="h-5 w-5" />}
-      />
+      >
+        {paceGuardrailActive ? (
+          <p className="text-xs leading-relaxed text-[var(--attention)]">
+            Pace above ~1% of bodyweight/wk — consider easing to protect muscle.
+          </p>
+        ) : null}
+      </StatCard>
       <StatCard
         label="Remaining to Goal"
         value={remainingToGoal != null ? formatBodyweight(Math.abs(remainingToGoal)) : "--"}

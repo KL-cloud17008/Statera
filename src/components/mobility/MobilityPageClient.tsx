@@ -256,7 +256,7 @@ function RoutineSection({
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
           {meta ? <p className="text-sm text-muted-foreground">{meta}</p> : null}
           {contextNote ? (
-            <p className="status-note inline-flex max-w-3xl px-3 py-2 text-xs font-semibold leading-relaxed text-foreground">
+            <p className="status-note status-note-attention inline-flex max-w-3xl px-3 py-2 text-xs font-semibold leading-relaxed">
               {contextNote}
             </p>
           ) : null}

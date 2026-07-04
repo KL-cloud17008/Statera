@@ -305,6 +305,12 @@
     color: color-mix(in srgb, var(--success) 62%, var(--foreground) 38%);
   }
 
+  .status-note-attention {
+    border-color: color-mix(in srgb, var(--attention) 36%, var(--border) 64%);
+    background: color-mix(in srgb, var(--attention) 8%, white 92%);
+    color: var(--attention);
+  }
+
   .status-note-error {
     border-color: color-mix(in srgb, var(--destructive) 38%, var(--border) 62%);
     background: color-mix(in srgb, var(--destructive) 10%, white 90%);

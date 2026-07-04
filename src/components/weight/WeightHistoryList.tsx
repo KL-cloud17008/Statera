@@ -66,6 +66,19 @@ export function WeightHistoryList({
     grouped.set(entry.date, bucket);
   }
 
+  // An entry is a "new low" when it undercuts every earlier weigh-in.
+  const newLowIds = new Set<string>();
+  const chronological = [...entries].sort(
+    (a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt)
+  );
+  let runningMin = Number.POSITIVE_INFINITY;
+  for (const entry of chronological) {
+    if (runningMin !== Number.POSITIVE_INFINITY && entry.weight < runningMin) {
+      newLowIds.add(entry.id);
+    }
+    runningMin = Math.min(runningMin, entry.weight);
+  }
+
   return (
     <>
       <Card>
@@ -109,6 +122,12 @@ export function WeightHistoryList({
                               <Badge variant={statusVariant[entry.status]}>
                                 {statusLabel[entry.status]}
                               </Badge>
+                              {newLowIds.has(entry.id) ? (
+                                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--copper)]">
+                                  <span className="h-1 w-1 rounded-full bg-[var(--copper)]" />
+                                  New low
+                                </span>
+                              ) : null}
                               {entry.bodyFatPercent != null ? (
                                 <span className="text-xs text-muted-foreground">
                                   {entry.bodyFatPercent}% bf

@@ -72,6 +72,14 @@ export default async function DashboardPage() {
     (sum, session) => sum + calculateSessionVolume(session.sets, getWorkoutSessionLoadUnit(session.notes)),
     0
   );
+  const startOfPrevWeek = new Date(startOfWeek);
+  startOfPrevWeek.setDate(startOfPrevWeek.getDate() - 7);
+  const prevWeeklyVolume = recentSessions
+    .filter((session) => session.trainingDate >= startOfPrevWeek && session.trainingDate < startOfWeek)
+    .reduce(
+      (sum, session) => sum + calculateSessionVolume(session.sets, getWorkoutSessionLoadUnit(session.notes)),
+      0
+    );
   const lastWorkout = recentSessions[0]
     ? {
         label: getSessionLabel(recentSessions[0]),
@@ -91,6 +99,7 @@ export default async function DashboardPage() {
       }}
       workoutSummary={{
         weeklyVolume,
+        prevWeeklyVolume,
         weeklySessions: weeklySessions.length,
         hasCompletedWorkoutToday,
         lastWorkout,

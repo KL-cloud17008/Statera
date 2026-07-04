@@ -104,7 +104,12 @@ export function PainCheckInCard({
       </div>
 
       {footValue != null ? (
-        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+        <p
+          className={cn(
+            "mt-3 text-xs leading-relaxed",
+            footValue >= 3 ? "text-[var(--attention)]" : "text-muted-foreground"
+          )}
+        >
           {footGuidance(footValue)}
         </p>
       ) : null}

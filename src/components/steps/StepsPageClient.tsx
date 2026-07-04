@@ -99,16 +99,16 @@ export function StepsPageClient({
             value={`${stats.currentStreak}`}
             hint={
               stats.streakUnloggedDays > 0 && stats.streakBackfillDate ? (
-                <>
+                <span className="text-[var(--attention)]">
                   Streak at risk: {stats.streakUnloggedDays} unlogged{" "}
                   {stats.streakUnloggedDays === 1 ? "day" : "days"} —{" "}
                   <Link
                     href={`/steps?backfill=${stats.streakBackfillDate}#quick-add`}
-                    className="text-link font-semibold"
+                    className="font-semibold underline-offset-2 hover:underline"
                   >
                     backfill {formatBackfillDate(stats.streakBackfillDate)}
                   </Link>
-                </>
+                </span>
               ) : (
                 "Consecutive goal days"
               )
