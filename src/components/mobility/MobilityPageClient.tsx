@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logMobility } from "@/actions/mobility";
+import type { SerializedPainCheckIn } from "@/actions/pain";
+import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { MobilityChecklist } from "./MobilityChecklist";
 import {
   getRequiredLaterRecoveryBlocks,
@@ -24,16 +26,25 @@ export function MobilityPageClient({
   completedTypes,
   highStepLoad,
   recentStepTotal,
+  painCheckIn = null,
+  todayFootPain = null,
+  timezone,
 }: {
   dayOfWeek: number;
   completedTypes: string[];
   highStepLoad?: boolean;
   recentStepTotal?: number;
+  painCheckIn?: SerializedPainCheckIn | null;
+  todayFootPain?: number | null;
+  timezone?: string;
 }) {
   const router = useRouter();
   const [pendingType, setPendingType] = useState<string | null>(null);
+  // Logged sole pain >= 5/10 activates foot-flare recovery alongside the
+  // existing step-load threshold (foot-load rules).
+  const highFootPain = todayFootPain != null && todayFootPain >= 5;
   const [recoveryMode, setRecoveryMode] = useState<RecoveryMode>(
-    highStepLoad ? "footFlare" : "standard"
+    highStepLoad || highFootPain ? "footFlare" : "standard"
   );
   const [isPending, startTransition] = useTransition();
 
@@ -47,11 +58,15 @@ export function MobilityPageClient({
       : program.blocks;
   const laterRecoveryBlocks = getRequiredLaterRecoveryBlocks(recoveryMode, dayOfWeek);
   const laterRecoveryTitle = getRequiredLaterRecoveryTitle(recoveryMode, dayOfWeek);
-  const highStepLoadNote = highStepLoad
-    ? `High step load detected${
-        recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
-      }. Required foot-flare recovery is active; keep it easy and foot-focused.`
-    : undefined;
+  const highStepLoadNote = highFootPain
+    ? `Sole pain ${todayFootPain}/10 logged today. Required foot-flare recovery is active; keep it easy and foot-focused.`
+    : highStepLoad
+      ? `High step load detected${
+          recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
+        }. Required foot-flare recovery is active; keep it easy and foot-focused.`
+      : todayFootPain != null && todayFootPain >= 3
+        ? `Foot pain ${todayFootPain}/10 logged today. Reduce step load, split walking into smaller chunks, no gym walking.`
+        : undefined;
 
   const sessionCompleted = completedTypes.includes(program.logType);
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
@@ -102,6 +117,8 @@ export function MobilityPageClient({
             <FocusCell key={item.label} label={item.label} value={item.value} note={item.note} />
           ))}
         </div>
+
+        <PainCheckInCard latest={painCheckIn} timezone={timezone} />
 
         <RoutineSection
           title={program.sessionTitle}

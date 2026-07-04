@@ -1,8 +1,9 @@
 ﻿import type { Metadata } from "next";
 import { getTodayMobilityLogs } from "@/actions/mobility";
+import { getLatestPainCheckIn } from "@/actions/pain";
 import { getStepsEntries } from "@/actions/steps";
 import { MobilityPageClient } from "@/components/mobility/MobilityPageClient";
-import { getTrainingDayOfWeek } from "@/lib/dates";
+import { getTodayDateString, getTrainingDayOfWeek } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 
 export const metadata: Metadata = {
@@ -17,13 +18,18 @@ export default async function MobilityPage() {
   }
 
   const dayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
-  const [logs, recentSteps] = await Promise.all([
+  const [logs, recentSteps, painCheckIn] = await Promise.all([
     getTodayMobilityLogs(user.id, user.timezone),
     getStepsEntries(user.id, 3, user.timezone),
+    getLatestPainCheckIn(user.id),
   ]);
   const completedTypes = logs.map((log) => log.type);
   const recentStepTotal = recentSteps.reduce((sum, entry) => sum + (entry.steps ?? 0), 0);
   const highStepLoad = recentStepTotal > 20000;
+  const todayFootPain =
+    painCheckIn && painCheckIn.date === getTodayDateString(user.timezone)
+      ? painCheckIn.footPain
+      : null;
 
   return (
     <MobilityPageClient
@@ -31,6 +37,9 @@ export default async function MobilityPage() {
       completedTypes={completedTypes}
       highStepLoad={highStepLoad}
       recentStepTotal={recentStepTotal}
+      painCheckIn={painCheckIn}
+      todayFootPain={todayFootPain}
+      timezone={user.timezone}
     />
   );
 }

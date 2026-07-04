@@ -13,6 +13,8 @@ import {
   Scale,
   ShieldCheck,
 } from "lucide-react";
+import type { SerializedPainCheckIn } from "@/actions/pain";
+import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
@@ -86,6 +88,7 @@ export function DashboardPageClient({
   latestWeightDate,
   timezone,
   trainingDayOfWeek,
+  painCheckIn,
 }: {
   stepsEntries: SerializedStepsEntry[];
   todaySteps: number;
@@ -96,6 +99,7 @@ export function DashboardPageClient({
   latestWeightDate: string | null;
   timezone?: string;
   trainingDayOfWeek: number;
+  painCheckIn: SerializedPainCheckIn | null;
 }) {
   const { settings } = useAppSettings();
   const stepStats = calculateStepStats(stepsEntries, settings.stepGoal, { timezone });
@@ -111,6 +115,9 @@ export function DashboardPageClient({
     ? formatShortDate(workoutSummary.lastWorkout.trainingDate)
     : null;
   const nextProtocol = getNextProtocol(trainingDayOfWeek);
+  const todayLocalDate = getTodayDateString(timezone);
+  const todayFootPain =
+    painCheckIn && painCheckIn.date === todayLocalDate ? painCheckIn.footPain : null;
   const todayPlanDay = getPlanDay(trainingDayOfWeek);
   const todayPlanStats = todayPlanDay ? buildPlanDayStats(todayPlanDay) : null;
   const nextTrainingDay = !todayPlanDay ? findNextTrainingDay(trainingDayOfWeek) : null;
@@ -123,6 +130,7 @@ export function DashboardPageClient({
     mobilitySummary,
     latestWeightDate,
     trainingDayOfWeek,
+    todayFootPain,
   });
   const workoutStatusByDay = new Map(
     workoutDayStatuses.map((status) => [status.dayOfWeek, status])
@@ -136,7 +144,8 @@ export function DashboardPageClient({
         : ArrowRight;
   const recoveryFlagActive =
     mobilitySummary.footFlareLogged ||
-    /foot-flare|High step load/i.test(decision.title);
+    (todayFootPain != null && todayFootPain >= 5) ||
+    /foot-flare|High step load|Sole pain/i.test(decision.title);
   // Rest / recovery days don't score steps against the goal (A-audit): steps
   // still display, but no failure framing.
   const stepGoalSuspended = !todayPlanDay || recoveryFlagActive;
@@ -296,6 +305,7 @@ export function DashboardPageClient({
               </p>
             ))}
           </div>
+          <PainCheckInCard latest={painCheckIn} timezone={timezone} className="mt-5" />
         </div>
       </section>
 
@@ -578,6 +588,7 @@ function buildDecision({
   mobilitySummary,
   latestWeightDate,
   trainingDayOfWeek,
+  todayFootPain,
 }: {
   stepsEntries: SerializedStepsEntry[];
   todaySteps: number;
@@ -586,6 +597,7 @@ function buildDecision({
   mobilitySummary: MobilitySummary;
   latestWeightDate: string | null;
   trainingDayOfWeek: number;
+  todayFootPain: number | null;
 }) {
   const recentStepEntries = [...stepsEntries]
     .sort((a, b) => b.date.localeCompare(a.date))
@@ -601,15 +613,33 @@ function buildDecision({
   const expectedMobilityType = isStrengthDay ? "PRE_WORKOUT" : "POST_WORKOUT";
   const mobilityDone = mobilitySummary.completedTypes.includes(expectedMobilityType);
   const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;
+  const highFootPain = todayFootPain != null && todayFootPain >= 5;
   const stepGoalSuspendedForSignals =
-    !isStrengthDay || mobilitySummary.footFlareLogged || highStepLoad;
+    !isStrengthDay || mobilitySummary.footFlareLogged || highStepLoad || highFootPain;
   const signals = [
     stepGoalSuspendedForSignals
       ? `Step goal suspended — recovery day. ${todaySteps.toLocaleString()} steps logged.`
       : `${todaySteps.toLocaleString()} of ${stepGoal.toLocaleString()} steps logged today.`,
     "Nutrition is tracked externally in Cronometer.",
     mobilityDone ? "Expected mobility is logged." : "Expected mobility is still open.",
+    todayFootPain == null
+      ? "No foot-pain check-in logged yet today."
+      : todayFootPain >= 5
+        ? `Foot pain ${todayFootPain}/10 logged — recovery only, no gym walking, no step chasing.`
+        : todayFootPain >= 3
+          ? `Foot pain ${todayFootPain}/10 logged — reduce step load, split walking into smaller chunks, no gym walking.`
+          : `Foot pain ${todayFootPain}/10 logged — normal controlled activity allowed.`,
   ];
+
+  if (highFootPain) {
+    return {
+      title: `Sole pain ${todayFootPain}/10 logged. Recovery only today.`,
+      description:
+        "Sole/plantar pain 5+/10: work-only walking if unavoidable, recovery only, no gym walking, no step chasing. Required Foot-Flare Recovery applies.",
+      href: "/mobility",
+      signals,
+    };
+  }
 
   if (mobilitySummary.footFlareLogged || highStepLoad) {
     return {

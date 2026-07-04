@@ -34,6 +34,7 @@ model User {
   mobilityLogs     MobilityLog[]
   dailyLogs        DailyLog[]
   progressPhotos   ProgressPhoto[]
+  painCheckIns     PainCheckIn[]
 }
 
 // ─── WEIGHT TRACKING ───
@@ -222,6 +223,23 @@ model MobilityLog {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, date])
+}
+
+// ─── PAIN CHECK-IN (daily 0-10 sole/foot signal, optional lower back) ───
+
+model PainCheckIn {
+  id            String   @id @default(cuid())
+  userId        String
+  date          DateTime @db.Date // local calendar day
+  footPain      Int      // 0-10 sole/foot/ankle
+  lowerBackPain Int?     // 0-10, optional secondary
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
   @@index([userId, date])
 }
 

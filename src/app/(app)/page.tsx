@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from "next";
+import { getLatestPainCheckIn } from "@/actions/pain";
 import { getStepsEntries, getTodaySteps } from "@/actions/steps";
 import { getWeightEntries } from "@/actions/weight";
 import { getRecentSessions, getWorkoutPlanDayStatuses } from "@/actions/workout";
@@ -24,7 +25,7 @@ export default async function DashboardPage() {
   const trainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
 
-  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs, workoutDayStatuses] = await Promise.all([
+  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs, workoutDayStatuses, painCheckIn] = await Promise.all([
     getStepsEntries(user.id, 180, user.timezone),
     getTodaySteps(user.id, user.timezone),
     getWeightEntries(user.id),
@@ -34,6 +35,7 @@ export default async function DashboardPage() {
       orderBy: { createdAt: "desc" },
     }),
     getWorkoutPlanDayStatuses(user.id, user.timezone),
+    getLatestPainCheckIn(user.id),
   ]);
 
   const serializedSteps = stepsEntries.map((entry) => ({
@@ -104,6 +106,7 @@ export default async function DashboardPage() {
       latestWeightDate={serializedWeights[0]?.date ?? null}
       timezone={user.timezone}
       trainingDayOfWeek={trainingDayOfWeek}
+      painCheckIn={painCheckIn}
     />
   );
 }
