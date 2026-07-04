@@ -6,6 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { buildMonthlyHeatmap, type SerializedStepsEntry } from "@/lib/steps";
 
+function formatCellSteps(steps: number) {
+  if (steps <= 0) {
+    return "—";
+  }
+  if (steps >= 10000) {
+    return `${Math.round(steps / 1000)}k`;
+  }
+  return `${Math.round(steps / 100) / 10}k`;
+}
+
 function getHeatLevel(steps: number, goal: number) {
   const ratio = goal > 0 ? steps / goal : 0;
   if (ratio >= 1) return "bg-[linear-gradient(180deg,#15243a,#08111f)] text-primary-foreground border-[rgba(112,199,255,0.36)]";
@@ -58,23 +68,25 @@ export function StepsHeatmap({
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="grid grid-cols-7 gap-2 text-center text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+        <div className="grid grid-cols-7 gap-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
             <span key={day}>{day}</span>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1.5">
           {Array.from({ length: startWeekday }).map((_, index) => (
-            <div key={`pad-${index}`} className="h-12 rounded-[var(--radius-card)] border border-transparent" />
+            <div key={`pad-${index}`} className="h-14 rounded-[var(--radius-tight)] border border-transparent" />
           ))}
           {days.map((day) => (
             <div
               key={day.date}
-              className={`flex h-12 flex-col justify-between rounded-[var(--radius-card)] border px-2 py-2 text-xs ${getHeatLevel(day.steps, goal)}`}
+              className={`flex h-14 min-w-0 flex-col justify-between overflow-hidden rounded-[var(--radius-tight)] border px-1.5 py-1.5 ${getHeatLevel(day.steps, goal)}`}
               title={`${day.date}: ${day.steps.toLocaleString()} steps`}
             >
-              <span>{day.day}</span>
-              <span className="data-number text-[11px]">{day.steps > 0 ? Math.round(day.steps / 100) / 10 : "-"}k</span>
+              <span className="text-[11px] leading-none">{day.day}</span>
+              <span className="data-number whitespace-nowrap text-[10px] leading-none">
+                {formatCellSteps(day.steps)}
+              </span>
             </div>
           ))}
         </div>

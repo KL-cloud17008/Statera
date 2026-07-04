@@ -121,21 +121,56 @@ export function computeBMI(weightLbs: number | null, heightInches: number | null
   return Math.round(((weightLbs / (heightInches * heightInches)) * 703) * 10) / 10;
 }
 
+const TREND_WINDOW_DAYS = 28;
+const MIN_TREND_SPAN_DAYS = 7;
+
+/**
+ * Weekly pace from a least-squares regression over the most recent 28 days of
+ * daily averages (anchored to the latest entry). A regression keeps a plateau
+ * week or a single outlier weigh-in from zeroing the trend the way an
+ * endpoint-to-endpoint delta does. Falls back to the full history when the
+ * recent window is too sparse to be stable (< 2 points or < 7 days of span).
+ */
 export function computeWeeklyRate(entries: SerializedWeightEntry[]) {
   if (entries.length < 2) {
     return null;
   }
 
-  const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date));
-  const first = sorted[0];
-  const last = sorted[sorted.length - 1];
-  const totalDays = Math.max(1, Math.round((new Date(`${last.date}T00:00:00`).getTime() - new Date(`${first.date}T00:00:00`).getTime()) / 86400000));
-  const totalWeeks = totalDays / 7;
-  if (totalWeeks <= 0) {
+  const points = [...groupWeightEntriesByDay(entries).entries()]
+    .map(([date, weight]) => ({
+      day: new Date(`${date}T00:00:00`).getTime() / 86400000,
+      weight,
+    }))
+    .sort((a, b) => a.day - b.day);
+
+  if (points.length < 2) {
     return null;
   }
 
-  return Math.round((((last.weight - first.weight) / totalWeeks) * 10)) / 10;
+  const latestDay = points[points.length - 1].day;
+  let window = points.filter((point) => latestDay - point.day <= TREND_WINDOW_DAYS - 1);
+  if (
+    window.length < 2 ||
+    window[window.length - 1].day - window[0].day < MIN_TREND_SPAN_DAYS
+  ) {
+    window = points;
+  }
+
+  const count = window.length;
+  const meanDay = window.reduce((sum, point) => sum + point.day, 0) / count;
+  const meanWeight = window.reduce((sum, point) => sum + point.weight, 0) / count;
+  let numerator = 0;
+  let denominator = 0;
+  for (const point of window) {
+    numerator += (point.day - meanDay) * (point.weight - meanWeight);
+    denominator += (point.day - meanDay) ** 2;
+  }
+
+  if (denominator === 0) {
+    return null;
+  }
+
+  return Math.round((numerator / denominator) * 7 * 10) / 10;
 }
 
 export function projectGoalDate(currentWeight: number | null, goalWeight: number | null, weeklyRate: number | null) {

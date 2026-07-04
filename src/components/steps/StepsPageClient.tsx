@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { Flame, Footprints, Target, TrendingUp } from "lucide-react";
+import { CalendarCheck, Flame, Target, TrendingUp } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { StatCard } from "@/components/ui/stat-card";
 import { StepsChart } from "@/components/steps/StepsChart";
@@ -9,6 +9,7 @@ import { StepsHeatmap } from "@/components/steps/StepsHeatmap";
 import { StepsHistoryList } from "@/components/steps/StepsHistoryList";
 import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
+import { getTodayDateString } from "@/lib/dates";
 import {
   calculateStepStats,
   getWeeklyStepChange,
@@ -26,6 +27,12 @@ export function StepsPageClient({
   const { settings } = useAppSettings();
   const stats = calculateStepStats(entries, settings.stepGoal, { timezone });
   const weeklyChange = getWeeklyStepChange(entries, timezone);
+  const today = getTodayDateString(timezone);
+  const monthPrefix = today.slice(0, 7);
+  const daysIntoMonth = Number.parseInt(today.slice(8, 10), 10);
+  const goalDaysThisMonth = entries.filter(
+    (entry) => entry.date.slice(0, 7) === monthPrefix && (entry.steps ?? 0) >= settings.stepGoal
+  ).length;
 
   return (
     <div className="page-shell">
@@ -48,7 +55,7 @@ export function StepsPageClient({
         <div>
           <p className="eyebrow">Today</p>
           <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
-            <p className="data-number text-6xl font-semibold leading-none text-white sm:text-7xl">
+            <p className="data-number value-reveal text-6xl font-semibold leading-none text-white sm:text-7xl">
               {stats.todaySteps.toLocaleString()}
             </p>
             <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/58">
@@ -66,10 +73,10 @@ export function StepsPageClient({
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
-            label="Today"
-            value={stats.todaySteps.toLocaleString()}
-            hint={formatDistance(stats.todaySteps, settings.distanceUnit)}
-            icon={<Footprints className="h-5 w-5" />}
+            label="Goal Days This Month"
+            value={goalDaysThisMonth.toLocaleString()}
+            hint={`Of ${daysIntoMonth} ${daysIntoMonth === 1 ? "day" : "days"} so far`}
+            icon={<CalendarCheck className="h-5 w-5" />}
           />
           <StatCard
             label="7-Day Average"
@@ -116,7 +123,7 @@ function CommandMetric({
   return (
     <div className="black-glass rounded-[var(--radius-card)] p-4">
       <p className="eyebrow text-[10px]">{label}</p>
-      <p className="data-number mt-3 text-2xl font-semibold text-white">{value}</p>
+      <p className="data-number value-reveal mt-3 text-2xl font-semibold text-white">{value}</p>
       <p className="mt-1 text-xs leading-relaxed text-white/58">{detail}</p>
     </div>
   );

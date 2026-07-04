@@ -14,10 +14,7 @@ import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { StatCard } from "@/components/ui/stat-card";
 import { normalizeGoalTargetDate } from "@/lib/app-settings";
 import { computeRequiredWeeklyLossPace, type WeightStats } from "@/lib/weight";
-import {
-  formatBodyweight,
-  formatBodyweightDelta,
-} from "@/lib/units";
+import { formatBodyweight } from "@/lib/units";
 
 export function WeightStatsCards({ stats }: { stats: WeightStats }) {
   const { settings } = useAppSettings();
@@ -77,10 +74,10 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       />
       <StatCard
         label="Remaining to Goal"
-        value={formatBodyweightDelta(remainingToGoal)}
+        value={remainingToGoal != null ? formatBodyweight(Math.abs(remainingToGoal)) : "--"}
         hint={
           stats.goalWeight != null
-            ? `To reach ${formatBodyweight(stats.goalWeight)}`
+            ? `To go — goal ${formatBodyweight(stats.goalWeight)}`
             : "Set a goal weight in settings"
         }
         icon={<Flag className="h-5 w-5" />}
