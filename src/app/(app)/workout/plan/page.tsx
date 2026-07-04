@@ -157,7 +157,7 @@ export default async function WorkoutPlanPage() {
         <div className="command-deck grid gap-4 rounded-[var(--radius-panel)] p-6 md:grid-cols-[12rem_minmax(0,1fr)_14rem] md:items-end" data-animated="true">
           <div>
             <p className="eyebrow">Week structure</p>
-            <p className="data-number mt-3 text-4xl text-foreground">5 / 0 / 2</p>
+            <p className="data-number value-reveal mt-3 text-4xl text-foreground">5 / 0 / 2</p>
           </div>
           <p className="max-w-3xl text-sm leading-relaxed text-white/68">
             Five training days with balanced chest, back, legs, hips, arms, and trunk stability.
@@ -176,7 +176,10 @@ export default async function WorkoutPlanPage() {
             <p className="eyebrow">Foot-load rules</p>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
               {FOOT_LOAD_RULES.map((rule) => (
-                <li key={rule}>{rule}</li>
+                <li key={rule} className="flex items-start gap-2.5">
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
+                  {rule}
+                </li>
               ))}
             </ul>
           </div>
@@ -184,7 +187,10 @@ export default async function WorkoutPlanPage() {
             <p className="eyebrow">Back-pain rules</p>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
               {BACK_PAIN_RULES.map((rule) => (
-                <li key={rule}>{rule}</li>
+                <li key={rule} className="flex items-start gap-2.5">
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
+                  {rule}
+                </li>
               ))}
             </ul>
           </div>
@@ -268,11 +274,11 @@ export default async function WorkoutPlanPage() {
                       <div className="grid w-full grid-cols-2 gap-4">
                         <div>
                           <p className="eyebrow text-[10px]">Exercises</p>
-                          <p className="data-number mt-2 text-2xl text-foreground">{workingCount}</p>
+                          <p className="data-number value-reveal mt-2 text-2xl text-foreground">{workingCount}</p>
                         </div>
                         <div>
                           <p className="eyebrow text-[10px]">Sets</p>
-                          <p className="data-number mt-2 text-2xl text-foreground">{totalSets}</p>
+                          <p className="data-number value-reveal mt-2 text-2xl text-foreground">{totalSets}</p>
                         </div>
                       </div>
                     </div>

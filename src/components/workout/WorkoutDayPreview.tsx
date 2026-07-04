@@ -68,15 +68,15 @@ export function WorkoutDayPreview({
           <div className="grid grid-cols-3 gap-3 text-sm xl:text-right">
             <div>
               <p className="eyebrow text-[10px]">Blocks</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{blockCount}</p>
+              <p className="data-number value-reveal mt-2 text-2xl text-foreground">{blockCount}</p>
             </div>
             <div>
               <p className="eyebrow text-[10px]">Exercises</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{loggableExercises.length}</p>
+              <p className="data-number value-reveal mt-2 text-2xl text-foreground">{loggableExercises.length}</p>
             </div>
             <div>
               <p className="eyebrow text-[10px]">Sets</p>
-              <p className="data-number mt-2 text-2xl text-foreground">{totalLoggableSets}</p>
+              <p className="data-number value-reveal mt-2 text-2xl text-foreground">{totalLoggableSets}</p>
             </div>
           </div>
         </div>

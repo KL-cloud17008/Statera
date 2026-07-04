@@ -246,19 +246,19 @@ export function SessionLogger({
             <div className="grid gap-3 text-sm text-white/64 sm:grid-cols-3 xl:grid-cols-3">
               <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Elapsed</p>
-                <p className="mt-2 text-2xl font-semibold tracking-normal text-white data-number">
+                <p className="value-reveal mt-2 text-2xl font-semibold tracking-normal text-white data-number">
                   {elapsedMinutes}m
                 </p>
               </div>
               <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Saved</p>
-                <p className="mt-2 text-2xl font-semibold tracking-normal text-white data-number">
+                <p className="value-reveal mt-2 text-2xl font-semibold tracking-normal text-white data-number">
                   {savedSetKeys.size}
                 </p>
               </div>
               <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Complete</p>
-                <p className="mt-2 text-2xl font-semibold tracking-normal text-white data-number">
+                <p className="value-reveal mt-2 text-2xl font-semibold tracking-normal text-white data-number">
                   {completedCount}/{totalExercises}
                 </p>
               </div>

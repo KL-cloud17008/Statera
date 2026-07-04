@@ -18,7 +18,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-start gap-3 border-t border-border/70 py-8 text-left",
+        "warm-dashed-panel flex flex-col items-start gap-3 rounded-[var(--radius-surface)] px-6 py-8 text-left",
         className
       )}
     >
