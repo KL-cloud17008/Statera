@@ -16,6 +16,33 @@ import {
 } from "@/lib/mobility";
 import { cn } from "@/lib/utils";
 
+/**
+ * Collapse a full dose descriptor into a compact numeric prescription for the
+ * badge ("1-2 sets of 5-10 slow circles each direction per ankle" -> "1-2×5-10/dir").
+ * The full descriptor stays available in the expanded details and on hover.
+ */
+function compactDose(dose: string) {
+  const compact = dose
+    .toLowerCase()
+    .replace(/(\d[\d.]*(?:-\d[\d.]*)?)\s*(?:sets?|rounds?)\s*(?:of|x)\s*/g, "$1×")
+    .replace(/(\d)\s*x\s*(?=\d)/g, "$1×")
+    .replace(/\s*sec(?:onds?)?\b/g, "s")
+    .replace(/\s+min(?:utes?)?\b/g, "min")
+    .replace(/\s+(?:slow|easy|gentle|controlled|quiet|calm)\b/g, "")
+    .replace(/\s*(?:circles?|reps?|repetitions?)\b/g, "")
+    .replace(/\s*(?:each|per)\s+direction(?:\s+per\s+\w+)?\b/g, "/dir")
+    .replace(/\s*(?:each|per)\s+side\b/g, "/side")
+    .replace(/\s*(?:each|per)\s+(?:leg|foot)\b/g, "/leg")
+    .replace(/\s*(?:each|per)\s+ankle\b/g, "/ankle")
+    .replace(/\s*(?:each|per)\s+(?:arm|hand)\b/g, "/arm")
+    .replace(/\s*(?:each|per)\s+stance\b/g, "/stance")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  // Unrecognized phrasing that stays long keeps the original wording.
+  return compact.length > 0 && compact.length <= 18 ? compact : dose;
+}
+
 export function MobilityChecklist({
   blocks,
   title,
@@ -148,9 +175,12 @@ export function MobilityChecklist({
                               </p>
                             </button>
 
-                            <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:justify-end">
-                              <p className="rounded-full border border-border bg-white/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                                {exercise.dose}
+                            <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:flex-col sm:items-end sm:justify-start">
+                              <p
+                                title={exercise.dose}
+                                className="whitespace-nowrap rounded-full border border-border bg-white/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground"
+                              >
+                                {compactDose(exercise.dose)}
                               </p>
                               {hasDetails ? (
                                 <button
@@ -268,6 +298,7 @@ function MovementDetails({
     >
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
         <div className="space-y-4">
+          <DetailCopy label="Prescribed dose" value={exercise.dose} />
           {exercise.category ? <DetailCopy label="Category" value={exercise.category} /> : null}
           <DetailCopy label="Goal" value={exercise.goal} />
           {exercise.setup ? <DetailCopy label="Setup" value={exercise.setup} /> : null}
@@ -409,7 +440,7 @@ function DetailList({
       <ul className="mt-2 space-y-2">
         {items.map((item) => (
           <li key={item} className="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
-            <span className="mt-[0.6em] h-1.5 w-1.5 rounded-full bg-[color-mix(in_srgb,var(--electric-blue)_62%,var(--border)_38%)]" />
+            <span className="mt-[0.65em] h-1 w-1 rounded-full bg-[var(--sky-accent)]" />
             <span>{item}</span>
           </li>
         ))}

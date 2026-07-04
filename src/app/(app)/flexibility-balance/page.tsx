@@ -179,7 +179,7 @@ function OverviewMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="black-glass rounded-[var(--radius-card)] p-4">
       <p className="eyebrow text-[10px]">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-white">{value}</p>
+      <p className="value-reveal mt-3 text-2xl font-semibold text-white">{value}</p>
     </div>
   );
 }

@@ -86,7 +86,7 @@ export function MobilityPageClient({
       <SectionHeader
         className="page-hero-muted"
         eyebrow="Mobility protocol"
-        title={`${program.dayName} - ${program.trainingRole}`}
+        title={`${program.dayName} — ${program.trainingRole}`}
         description={program.todayPurpose}
       >
         <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">

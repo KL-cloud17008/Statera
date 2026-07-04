@@ -100,7 +100,7 @@
     letter-spacing: var(--tracking-tighter);
     font-weight: 460;
     line-height: 0.96;
-    max-width: 14ch;
+    max-width: 20ch;
   }
 
   h2 {
