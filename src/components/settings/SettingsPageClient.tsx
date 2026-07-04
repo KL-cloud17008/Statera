@@ -169,6 +169,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       downloadTextFile("athanor-steps.csv", csv.steps, "text/csv;charset=utf-8;");
       downloadTextFile("athanor-workouts.csv", csv.workouts, "text/csv;charset=utf-8;");
       downloadTextFile("athanor-nutrition.csv", csv.nutrition, "text/csv;charset=utf-8;");
+      downloadTextFile("athanor-pain.csv", csv.pain, "text/csv;charset=utf-8;");
       toast.success("CSV exports downloaded");
     } finally {
       setIsExporting(false);
@@ -609,12 +610,13 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 <ImportCount label="Mobility" value={pendingImport.preview.counts.mobilityLogs} />
                 <ImportCount label="Nutrition" value={pendingImport.preview.counts.nutritionDays} />
                 <ImportCount label="Saved foods" value={pendingImport.preview.counts.savedFoods} />
+                <ImportCount label="Pain check-ins" value={pendingImport.preview.counts.painCheckIns} />
               </div>
 
               <div className="status-note status-note-error px-4 py-3 text-sm leading-relaxed">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                  <p>This import replaces steps, weight entries, training sessions, mobility logs, nutrition records, saved foods, saved meals, and progress photos.</p>
+                  <p>This import replaces steps, weight entries, training sessions, mobility logs, nutrition records, saved foods, saved meals, progress photos, and pain check-ins.</p>
                 </div>
               </div>
 

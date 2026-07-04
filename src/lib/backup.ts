@@ -12,6 +12,7 @@ export const BACKUP_COLLECTION_KEYS = [
   "savedFoods",
   "savedMeals",
   "progressPhotos",
+  "painCheckIns",
 ] as const;
 
 export type BackupCollectionKey = (typeof BACKUP_COLLECTION_KEYS)[number];
@@ -168,7 +169,7 @@ function validateCollection(
   errors: string[],
   dates: string[]
 ) {
-  if (key === "dailyLogs" || key === "nutritionDays") {
+  if (key === "dailyLogs" || key === "nutritionDays" || key === "painCheckIns") {
     const seenDates = new Set<string>();
     items.forEach((item, index) => {
       if (!isRecord(item) || typeof item.date !== "string" || !isDateString(item.date)) {
@@ -250,6 +251,11 @@ function validateCollection(
         requireDate(item.date, `${path}.date`, errors, dates);
         requireString(item.imageUrl, `${path}.imageUrl`, errors, 2048);
         validateOptionalString(item.notes, `${path}.notes`, errors, 500);
+        break;
+      case "painCheckIns":
+        requireDate(item.date, `${path}.date`, errors, dates);
+        requireNumber(item.footPain, `${path}.footPain`, errors, 0, 10, true);
+        validateOptionalNumber(item.lowerBackPain, `${path}.lowerBackPain`, errors, 0, 10, true);
         break;
     }
   });

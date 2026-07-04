@@ -136,6 +136,12 @@ type BackupProgressPhoto = {
   notes?: string | null;
 };
 
+type BackupPainCheckIn = {
+  date: string;
+  footPain: number;
+  lowerBackPain?: number | null;
+};
+
 type BackupPayload = {
   version?: number;
   exportedAt?: string;
@@ -149,6 +155,7 @@ type BackupPayload = {
   savedFoods?: BackupSavedFood[];
   savedMeals?: BackupSavedMeal[];
   progressPhotos?: BackupProgressPhoto[];
+  painCheckIns?: BackupPainCheckIn[];
 };
 
 type ExportedDailyLog = {
@@ -287,6 +294,7 @@ export async function exportUserData() {
     savedFoods,
     savedMeals,
     progressPhotos,
+    painCheckIns,
   ] = await Promise.all([
     prisma.weightEntry.findMany({
       where: { userId: user.id },
@@ -328,7 +336,15 @@ export async function exportUserData() {
       where: { userId: user.id },
       orderBy: { date: "asc" },
     }),
+    prisma.painCheckIn.findMany({
+      where: { userId: user.id },
+      orderBy: { date: "asc" },
+    }),
   ]);
+
+  // Backup dates are date-only strings — the same format the import
+  // validator requires, so an export always round-trips.
+  const toDateOnly = (date: Date) => date.toISOString().split("T")[0];
 
   const payload = {
     version: 1,
@@ -344,15 +360,24 @@ export async function exportUserData() {
       carbTarget: user.carbTarget,
       fatTarget: user.fatTarget,
     },
-    weightEntries,
-    dailyLogs,
+    weightEntries: weightEntries.map((entry) => ({ ...entry, date: toDateOnly(entry.date) })),
+    dailyLogs: dailyLogs.map((log) => ({ ...log, date: toDateOnly(log.date) })),
     workoutPlans,
-    workoutSessions,
-    mobilityLogs,
-    nutritionDays,
+    workoutSessions: workoutSessions.map((session) => ({
+      ...session,
+      date: toDateOnly(session.date),
+      trainingDate: toDateOnly(session.trainingDate),
+    })),
+    mobilityLogs: mobilityLogs.map((log) => ({ ...log, date: toDateOnly(log.date) })),
+    nutritionDays: nutritionDays.map((day) => ({ ...day, date: toDateOnly(day.date) })),
     savedFoods,
     savedMeals,
-    progressPhotos,
+    progressPhotos: progressPhotos.map((photo) => ({ ...photo, date: toDateOnly(photo.date) })),
+    painCheckIns: painCheckIns.map((checkIn) => ({
+      date: toDateOnly(checkIn.date),
+      footPain: checkIn.footPain,
+      lowerBackPain: checkIn.lowerBackPain,
+    })),
   };
 
   const stepsCsv = [
@@ -394,12 +419,21 @@ export async function exportUserData() {
     ),
   ].join("\n");
 
+  const painCsv = [
+    "Date,Foot Pain (0-10),Lower Back Pain (0-10)",
+    ...painCheckIns.map(
+      (checkIn) =>
+        `${toDateOnly(checkIn.date)},${checkIn.footPain},${checkIn.lowerBackPain ?? ""}`
+    ),
+  ].join("\n");
+
   return {
     payload,
     csv: {
       steps: stepsCsv,
       workouts: workoutsCsv,
       nutrition: nutritionCsv,
+      pain: painCsv,
     },
   };
 }
@@ -424,6 +458,7 @@ export async function clearAllUserData() {
     prisma.savedMeal.deleteMany({ where: { userId: user.id } }),
     prisma.savedFood.deleteMany({ where: { userId: user.id } }),
     prisma.progressPhoto.deleteMany({ where: { userId: user.id } }),
+    prisma.painCheckIn.deleteMany({ where: { userId: user.id } }),
   ]);
 
   revalidateAllUserRoutes();
@@ -476,6 +511,7 @@ export async function importUserData(formData: FormData) {
     await tx.savedMeal.deleteMany({ where: { userId: user.id } });
     await tx.savedFood.deleteMany({ where: { userId: user.id } });
     await tx.progressPhoto.deleteMany({ where: { userId: user.id } });
+    await tx.painCheckIn.deleteMany({ where: { userId: user.id } });
 
     const importedTimezone =
       payload.profile?.timezone && isValidTimeZone(payload.profile.timezone)
@@ -744,6 +780,21 @@ export async function importUserData(formData: FormData) {
           date: parseDate(photo.date),
           imageUrl: photo.imageUrl,
           notes: photo.notes ?? null,
+        })),
+      });
+    }
+
+    const painCheckIns = (payload.painCheckIns ?? []).filter(
+      (checkIn) =>
+        typeof checkIn.date === "string" && typeof checkIn.footPain === "number"
+    );
+    if (painCheckIns.length > 0) {
+      await tx.painCheckIn.createMany({
+        data: painCheckIns.map((checkIn) => ({
+          userId: user.id,
+          date: parseDate(checkIn.date),
+          footPain: checkIn.footPain,
+          lowerBackPain: checkIn.lowerBackPain ?? null,
         })),
       });
     }
