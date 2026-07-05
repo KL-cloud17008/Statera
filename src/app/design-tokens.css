@@ -1,11 +1,18 @@
-:root {
-  color-scheme: light;
-  --font-sans-base: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  /* ui-serif only resolves on Apple platforms; the explicit chain keeps the
-     editorial display voice on Windows/Android instead of falling to default serif. */
-  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
-  --font-mono-base: "SFMono-Regular", "SF Mono", Consolas, "Liberation Mono", monospace;
+/* ───────────────────────────────────────────────────────────────
+   BASALT — warm-dark instrument.
+   Elevation by luminance, never shadow. One chromatic voice (ember),
+   used rarely. Mono caps labels against light serif display.
+   ─────────────────────────────────────────────────────────────── */
 
+:root {
+  color-scheme: dark;
+
+  /* Font variables are provided by next/font on <html>; stacks below are fallbacks. */
+  --font-sans-base: var(--font-inter, Inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-fraunces, "Iowan Old Style"), "Palatino Linotype", Georgia, serif;
+  --font-mono-base: var(--font-jetbrains-mono, "JetBrains Mono"), "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Type scale */
   --type-12: 0.75rem;
   --type-14: 0.875rem;
   --type-16: 1rem;
@@ -16,14 +23,15 @@
   --type-56: 3.5rem;
   --type-72: 4.5rem;
 
-  --leading-tight: 1.1;
+  --leading-tight: 1.05;
   --leading-snug: 1.25;
-  --leading-normal: 1.5;
-  --tracking-tight: -0.011em;
+  --leading-normal: 1.55;
+  --tracking-tight: -0.015em;
   --tracking-tighter: -0.022em;
   --tracking-wide: 0.08em;
-  --tracking-caps: 0.16em;
+  --tracking-caps: 0.18em;
 
+  /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -35,143 +43,146 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  --radius: 0.625rem;
-  --radius-tight: 0.5rem;
+  /* Radii: inputs/chips small, cards mid, panels large, actions pill. */
+  --radius: 0.5rem;
+  --radius-tight: 0.375rem;
   --radius-pill: 999px;
-  /* Three-tier containment: card (inner tiles/rows) < surface (cards) < panel (page sections). */
-  --radius-card: 0.625rem;
+  --radius-card: 0.875rem;
   --radius-surface: 0.875rem;
-  --radius-panel: 1.125rem;
+  --radius-panel: 1.25rem;
 
-  --aubergine-ink: #07111f;
-  --espresso: #070b12;
-  --near-black: #05070b;
-  --charcoal: #152033;
-  --warm-graphite: #314156;
-  --taupe: #5b6a82;
-  --zinc-taupe: #94a4b8;
-  --linen: #e9f3fb;
-  --cream-paper: #f8fbff;
-  --bone: #eef6fc;
-  --soft-paper: #dfeaf4;
-  --mist: #cfdeea;
-  --warm-cream: #e6f4ff;
-  --copper: #b97852;
-  /* Rare warning/attention accent (deepened copper, AA at small sizes on light
-     surfaces). Applied ONLY to: recovery-flag states, the pace guardrail,
-     streak-at-risk, and pain >=3 states. */
-  --attention: #9a5a32;
-  --ember: #c27b4f;
-  --coral: #c97886;
-  --sage: #2f8a79;
-  --ochre: #9b7b45;
-  --rosewood: #b64c66;
-  --electric-blue: #4f7cff;
-  --sky-accent: #70c7ff;
-  --glacier: #bfe9ff;
-  --violet-blue: #7f8cff;
-  --obsidian: #070b12;
-  --command-ink: #0a1220;
+  /* ── Basalt primitives ── */
+  --basalt-0: #0f0d0b; /* canvas */
+  --basalt-1: #181512; /* surface: cards */
+  --basalt-2: #211d18; /* raised: tiles, hover */
+  --basalt-3: #2a251f; /* overlay: dock, popovers */
+  --cream: #f2eae0;    /* text primary — never pure white */
+  --cream-2: #b9ae9f;  /* text secondary */
+  --cream-3: #8b8173;  /* labels / muted */
+  --hairline: rgba(240, 232, 220, 0.1);
+  --hairline-strong: rgba(240, 232, 220, 0.18);
 
-  --warm-canvas: var(--linen);
-  --card-wash: rgba(248, 251, 255, 0.84);
-  --input-fill: #ffffff;
-  --midnight-ink: var(--aubergine-ink);
-  --slate-text: var(--aubergine-ink);
-  --onyx: var(--espresso);
+  /* The one chromatic voice. */
+  --ember: #e06a38;
+  --ember-bright: #ec8a5e; /* small-text safe on dark */
+  --ember-veil: rgba(224, 106, 56, 0.12);
+  --olive: #9db380;        /* goal-met / positive, only */
+  --olive-veil: rgba(157, 179, 128, 0.12);
+
+  /* Semantic attention (recovery flags, pain >=3, streak-at-risk, pace guardrail). */
+  --attention: var(--ember-bright);
+
+  /* ── Legacy palette names, remapped into Basalt so nothing renders
+        undefined during the staged migration. Stages 2-6 remove usages. ── */
+  --aubergine-ink: var(--basalt-0);
+  --espresso: var(--basalt-0);
+  --near-black: #0b0908;
+  --charcoal: var(--basalt-2);
+  --warm-graphite: #3a332b;
+  --taupe: var(--cream-3);
+  --zinc-taupe: var(--cream-2);
+  --linen: var(--basalt-0);
+  --cream-paper: var(--basalt-1);
+  --bone: var(--basalt-2);
+  --soft-paper: var(--basalt-2);
+  --mist: var(--basalt-2);
+  --warm-cream: var(--cream);
+  --copper: #c87b4e;
+  --ember-500: var(--ember);
+  --coral: #d98a76;
+  --sage: var(--olive);
+  --ochre: #c8a04e;
+  --rosewood: #de6a55;
+  --electric-blue: var(--copper);
+  --sky-accent: var(--ember-bright);
+  --glacier: #e8cdb4;
+  --violet-blue: var(--ember-bright);
+  --obsidian: var(--basalt-0);
+  --command-ink: var(--basalt-1);
+  --command-grid: rgba(240, 232, 220, 0.045);
+
+  --warm-canvas: var(--basalt-0);
+  --card-wash: rgba(24, 21, 18, 0.85);
+  --input-fill: var(--basalt-1);
+  --midnight-ink: var(--cream);
+  --slate-text: var(--cream);
+  --onyx: var(--basalt-0);
   --quiet-black: var(--near-black);
-  --deep-charcoal: var(--charcoal);
-  --medium-gray: var(--warm-graphite);
-  --subtle-gray: var(--taupe);
-  --light-steel: var(--zinc-taupe);
-  --accent-purple: var(--electric-blue);
-  --muted-slate: var(--taupe);
+  --deep-charcoal: var(--basalt-2);
+  --medium-gray: var(--cream-2);
+  --subtle-gray: var(--cream-3);
+  --light-steel: var(--cream-2);
+  --accent-purple: var(--ember);
+  --muted-slate: var(--cream-3);
 
-  --success-500: var(--sage);
+  --success-500: var(--olive);
   --warning-500: var(--ochre);
-  --error-500: var(--rosewood);
-  --info-500: #3d6f9f;
+  --error-500: #e0654f;
+  --info-500: var(--cream-2);
 
-  --background: var(--warm-canvas);
-  --foreground: var(--aubergine-ink);
-  --card: var(--cream-paper);
-  --card-foreground: var(--slate-text);
-  --popover: var(--cream-paper);
-  --popover-foreground: var(--slate-text);
-  --primary: var(--command-ink);
-  --primary-foreground: #f8fbff;
-  --secondary: var(--bone);
-  --secondary-foreground: var(--charcoal);
-  --muted: var(--mist);
-  --muted-foreground: var(--taupe);
-  --accent: color-mix(in srgb, var(--electric-blue) 10%, var(--cream-paper) 90%);
-  --accent-foreground: var(--aubergine-ink);
+  /* ── shadcn semantic tokens ── */
+  --background: var(--basalt-0);
+  --foreground: var(--cream);
+  --card: var(--basalt-1);
+  --card-foreground: var(--cream);
+  --popover: var(--basalt-3);
+  --popover-foreground: var(--cream);
+  --primary: var(--cream);
+  --primary-foreground: var(--basalt-0);
+  --secondary: var(--basalt-2);
+  --secondary-foreground: var(--cream);
+  --muted: var(--basalt-2);
+  --muted-foreground: var(--cream-2);
+  --accent: var(--ember-veil);
+  --accent-foreground: var(--cream);
   --destructive: var(--error-500);
-  --destructive-foreground: #fff7f7;
-  --success: var(--success-500);
-  --success-foreground: #f8fbff;
-  --warning: var(--warning-500);
-  --warning-foreground: #f8fbff;
-  --border: rgba(7, 17, 31, 0.13);
+  --destructive-foreground: #fff3ef;
+  --success: var(--olive);
+  --success-foreground: var(--basalt-0);
+  --warning: var(--ochre);
+  --warning-foreground: var(--basalt-0);
+  --border: var(--hairline);
   --input: var(--input-fill);
-  --ring: rgba(79, 124, 255, 0.25);
-  --chart-1: #102033;
-  --chart-2: var(--electric-blue);
-  --chart-3: var(--sage);
+  --ring: rgba(236, 138, 94, 0.55);
+  --chart-1: var(--cream);
+  --chart-2: var(--ember-bright);
+  --chart-3: var(--olive);
   --chart-4: var(--copper);
-  --chart-5: var(--zinc-taupe);
-  --sidebar: var(--near-black);
-  --sidebar-foreground: #f8fbff;
-  --sidebar-primary: var(--electric-blue);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(238, 246, 255, 0.08);
-  --sidebar-accent-foreground: #f8fbff;
-  --sidebar-border: rgba(238, 246, 255, 0.14);
-  --sidebar-ring: rgba(79, 124, 255, 0.38);
-  --nav-surface: rgba(5, 7, 11, 0.93);
-  --nav-surface-raised: rgba(10, 18, 32, 0.96);
-  /* Elevation ladder — level 1 rests on the atmosphere, level 2 is a raised card,
-     level 3 floats (hover, docks, overlays). Each layers contact + mid + ambient. */
-  --shadow-soft:
-    0 1px 0 rgba(255, 255, 255, 0.78) inset,
-    0 1px 2px rgba(7, 17, 31, 0.055),
-    0 3px 8px rgba(8, 17, 31, 0.04),
-    0 12px 32px rgba(38, 74, 119, 0.06);
-  --shadow-elevated:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 1px 3px rgba(7, 17, 31, 0.05),
-    0 8px 20px rgba(8, 17, 31, 0.055),
-    0 26px 56px rgba(8, 17, 31, 0.09);
-  --shadow-floating:
-    0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 2px 5px rgba(7, 17, 31, 0.06),
-    0 14px 30px rgba(8, 17, 31, 0.08),
-    0 34px 72px rgba(38, 74, 119, 0.12);
-  --shadow-pressed:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 1px 2px rgba(7, 17, 31, 0.06);
-  --shadow-command:
-    0 1px 0 rgba(255, 255, 255, 0.1) inset,
-    0 2px 6px rgba(5, 7, 11, 0.28),
-    0 24px 64px rgba(5, 7, 11, 0.36),
-    0 0 0 1px rgba(255, 255, 255, 0.045);
-  --shadow-glow: 0 0 0 1px rgba(111, 199, 255, 0.16), 0 20px 60px rgba(54, 119, 255, 0.14);
+  --chart-5: var(--cream-3);
+  --sidebar: var(--basalt-1);
+  --sidebar-foreground: var(--cream);
+  --sidebar-primary: var(--ember);
+  --sidebar-primary-foreground: var(--cream);
+  --sidebar-accent: rgba(240, 232, 220, 0.06);
+  --sidebar-accent-foreground: var(--cream);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--ring);
+  --nav-surface: rgba(15, 13, 11, 0.88);
+  --nav-surface-raised: rgba(24, 21, 18, 0.92);
 
-  /* Shared surface fills — veil (tiles/rows) < raised (cards) < floating (feature panels). */
-  --surface-veil-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(231, 244, 253, 0.72));
-  --surface-raised-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(238, 247, 253, 0.84));
-  --surface-floating-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(236, 246, 253, 0.89));
+  /* Elevation is luminance, not shadow — every shadow token resolves to none. */
+  --shadow-soft: none;
+  --shadow-elevated: none;
+  --shadow-floating: none;
+  --shadow-pressed: none;
+  --shadow-command: none;
+  --shadow-glow: none;
 
-  /* Motion primitives — patient glide, never bouncy. */
+  --glass-border: var(--hairline-strong);
+  --cool-hairline: var(--hairline);
+
+  /* Surface fills (kept as gradients so multi-layer backgrounds stay valid). */
+  --surface-veil-fill: linear-gradient(180deg, #1b1815, #181512);
+  --surface-raised-fill: linear-gradient(180deg, #1c1815, #181512);
+  --surface-floating-fill: linear-gradient(180deg, #241f1a, #211d18);
+
+  /* Canvas: near-flat, faint warm lift at the top. */
+  --atmosphere-background: linear-gradient(180deg, #151210 0%, #0f0d0b 22rem);
+
+  /* Motion — two speeds, no bounce. */
   --ease-glide: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --duration-fast: 150ms;
-  --duration-medium: 340ms;
-  --duration-slow: 640ms;
-  --glass-border: rgba(255, 255, 255, 0.68);
-  --cool-hairline: rgba(7, 17, 31, 0.11);
-  --command-grid: rgba(191, 233, 255, 0.1);
-  --atmosphere-background:
-    linear-gradient(90deg, rgba(7, 17, 31, 0.075) 0, rgba(7, 17, 31, 0.018) 5rem, transparent 17rem),
-    linear-gradient(180deg, #dcecf8 0%, #f8fbff 34%, #e8f4fb 74%, #dcebf4 100%);
+  --duration-fast: 160ms;
+  --duration-medium: 320ms;
+  --duration-slow: 700ms;
 }

@@ -6,16 +6,16 @@ const THEME_STORAGE_KEY = "theme";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
-    document.documentElement.classList.remove("dark", "system");
-    document.documentElement.classList.add("light");
-    document.documentElement.style.colorScheme = "light";
+    document.documentElement.classList.remove("light", "system");
+    document.documentElement.classList.add("dark");
+    document.documentElement.style.colorScheme = "dark";
 
     try {
-      if (window.localStorage.getItem(THEME_STORAGE_KEY) !== "light") {
-        window.localStorage.setItem(THEME_STORAGE_KEY, "light");
+      if (window.localStorage.getItem(THEME_STORAGE_KEY) !== "dark") {
+        window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
       }
     } catch {
-      // Storage can be unavailable in strict privacy modes; the UI remains light.
+      // Storage can be unavailable in strict privacy modes; the UI remains dark.
     }
   }, []);
 
