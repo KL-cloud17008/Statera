@@ -54,18 +54,18 @@ export default async function WeightPage() {
         <div>
           <p className="eyebrow">Current Bodyweight</p>
           <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
-            <p className="data-number value-reveal text-6xl font-semibold leading-none text-white sm:text-7xl">
+            <p className="data-number value-reveal text-6xl font-medium leading-none text-[var(--cream)] sm:text-7xl">
               {formatBodyweight(stats.currentWeight)}
             </p>
-            <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/58">
+            <p className="pb-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
               Goal {formatBodyweight(stats.goalWeight)}
             </p>
           </div>
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/66">
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-[var(--cream-2)]">
             {formatBodyweightConversion(stats.currentWeight) || "Log a weigh-in to unlock kg and stone conversion."}
           </p>
-          <div className="mt-8 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--copper),var(--electric-blue),var(--sky-accent))]" style={{ width: `${getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight)}%` }} />
+          <div className="mt-8 h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.06)]">
+            <div className="track-fill h-full rounded-full bg-[var(--cream)]" style={{ width: `${getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight)}%` }} />
           </div>
         </div>
 
@@ -98,8 +98,8 @@ function WeightHeroMetric({
   return (
     <div className="black-glass rounded-[var(--radius-card)] p-4">
       <p className="eyebrow text-[10px]">{label}</p>
-      <p className="data-number value-reveal mt-3 text-2xl font-semibold text-white">{value}</p>
-      <p className="mt-1 text-xs text-white/58">{detail}</p>
+      <p className="data-number value-reveal mt-3 text-2xl font-medium text-[var(--cream)]">{value}</p>
+      <p className="mt-1 text-xs text-[var(--cream-3)]">{detail}</p>
     </div>
   );
 }

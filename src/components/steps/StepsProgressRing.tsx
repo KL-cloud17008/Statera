@@ -61,7 +61,7 @@ export function StepsProgressRing({
         <p className="mt-1 text-xs text-muted-foreground">
           Goal {goal.toLocaleString()}
         </p>
-        <p className="warm-pill mt-2 whitespace-nowrap rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">
+        <p className="warm-pill mt-2 whitespace-nowrap rounded-full px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
           {percentage}% reached
         </p>
       </div>
