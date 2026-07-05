@@ -4,16 +4,21 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-semibold tracking-normal transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_58%,transparent),0_0_0_5px_var(--ring)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full border text-sm font-semibold tracking-normal transition-[background-color,border-color,color,box-shadow,transform] duration-[var(--duration-fast)] ease-[var(--ease-standard)] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
   {
     variants: {
       variant: {
-        default: "border-[rgba(238,246,255,0.14)] bg-[linear-gradient(180deg,#15243a,#08111f)] text-primary-foreground shadow-[var(--shadow-command)] hover:border-[rgba(112,199,255,0.42)] hover:bg-[linear-gradient(180deg,#1a2d48,#0a1424)]",
-        destructive: "border-transparent bg-destructive text-destructive-foreground shadow-[rgba(238,246,255,0.12)_0_1px_0_inset] hover:brightness-105",
-        outline: "border-[rgba(7,17,31,0.14)] bg-[rgba(255,255,255,0.62)] text-foreground shadow-[var(--shadow-soft)] backdrop-blur-md hover:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] hover:bg-white/80",
-        secondary: "border-[rgba(7,17,31,0.1)] bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(229,243,252,0.78))] text-secondary-foreground shadow-[var(--shadow-soft)] hover:border-[color-mix(in_srgb,var(--electric-blue)_26%,var(--border)_74%)] hover:bg-white",
-        ghost: "border-transparent bg-transparent text-muted-foreground hover:bg-white/50 hover:text-foreground",
-        link: "border-transparent bg-transparent px-0 text-foreground/76 hover:text-foreground hover:underline hover:underline-offset-4",
+        default:
+          "border-transparent bg-primary text-primary-foreground hover:bg-[color-mix(in_srgb,var(--cream)_90%,white)]",
+        destructive:
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-[color-mix(in_srgb,var(--destructive)_88%,white)]",
+        outline:
+          "border-[var(--hairline-strong)] bg-transparent text-foreground hover:bg-[var(--basalt-2)]",
+        secondary:
+          "border-[var(--hairline)] bg-[var(--basalt-2)] text-secondary-foreground hover:border-[var(--hairline-strong)] hover:bg-[var(--basalt-3)]",
+        ghost:
+          "border-transparent bg-transparent text-muted-foreground hover:bg-[rgba(240,232,220,0.07)] hover:text-foreground",
+        link: "border-transparent bg-transparent px-0 text-foreground/80 hover:text-foreground hover:underline hover:underline-offset-4",
       },
       size: {
         default: "h-11 px-4",

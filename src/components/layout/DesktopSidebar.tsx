@@ -19,14 +19,17 @@ export function DesktopSidebar() {
 
   return (
     <header className="sticky top-0 z-40 hidden px-4 py-3 md:block">
-      <div className="chrome-surface mx-auto flex h-16 max-w-[112rem] items-center gap-3 rounded-full border px-3 backdrop-blur-xl lg:gap-4 lg:px-4">
-        <Link href="/" className="group flex min-w-[11rem] items-center gap-3 text-sidebar-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--sky-accent)_72%,transparent),0_0_0_5px_color-mix(in_srgb,var(--electric-blue)_22%,transparent)]">
-          <span className="flex size-9 items-center justify-center rounded-full border border-white/12 bg-white/8 text-sidebar-foreground shadow-[color-mix(in_srgb,var(--sky-accent)_18%,transparent)_0_0_24px] transition-colors group-hover:border-white/24">
+      <div className="chrome-surface mx-auto flex h-16 max-w-[112rem] items-center gap-3 rounded-full border px-3 lg:gap-4 lg:px-4">
+        <Link
+          href="/"
+          className="group flex min-w-[11rem] items-center gap-3 text-[var(--cream)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)]"
+        >
+          <span className="flex size-9 items-center justify-center rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] text-[var(--cream)] transition-colors group-hover:border-[var(--hairline-strong)]">
             <BrandMark className="h-5 w-5" />
           </span>
           <div className="leading-none">
-            <p className="text-[1.04rem] font-semibold tracking-normal">Athanor</p>
-            <p className="mt-1.5 text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-white/52">Prime ledger</p>
+            <p className="[font-family:var(--font-display)] text-[1.12rem] font-[380] tracking-[-0.01em]">Athanor</p>
+            <p className="mt-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[0.2em] text-[var(--cream-3)]">Prime ledger</p>
           </div>
         </Link>
 
@@ -39,16 +42,16 @@ export function DesktopSidebar() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "group inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-[0.78rem] font-semibold tracking-normal transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--violet-blue)_72%,transparent),0_0_0_5px_color-mix(in_srgb,var(--violet-blue)_22%,transparent)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
+                  "group inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] transition-[background-color,border-color,color] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
                   isActive
-                    ? "border-[color-mix(in_srgb,var(--sky-accent)_44%,transparent)] bg-[color-mix(in_srgb,var(--sky-accent)_12%,transparent)] text-white shadow-[color-mix(in_srgb,var(--sky-accent)_22%,transparent)_0_0_0_1px_inset,color-mix(in_srgb,var(--electric-blue)_18%,transparent)_0_0_24px]"
-                    : "border-transparent text-white/62 hover:border-white/14 hover:bg-white/8 hover:text-white"
+                    ? "border-[var(--hairline-strong)] bg-[rgba(240,232,220,0.07)] text-[var(--cream)]"
+                    : "border-transparent text-[var(--cream-3)] hover:bg-[rgba(240,232,220,0.05)] hover:text-[var(--cream)]"
                 )}
               >
                 <item.icon
                   className={cn(
-                    "h-3.5 w-3.5 shrink-0 transition-colors duration-150 motion-reduce:transition-none",
-                    isActive ? "text-[color-mix(in_srgb,var(--sky-accent)_72%,white)]" : "text-white/48 group-hover:text-white/82"
+                    "h-3.5 w-3.5 shrink-0 transition-colors duration-[var(--duration-fast)] motion-reduce:transition-none",
+                    isActive ? "text-[var(--ember-bright)]" : "text-[var(--cream-3)] group-hover:text-[var(--cream-2)]"
                   )}
                   strokeWidth={1.8}
                 />
@@ -59,12 +62,12 @@ export function DesktopSidebar() {
         </nav>
 
         <div className="flex min-w-[3rem] items-center justify-end gap-3 xl:min-w-[10.5rem]">
-          <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/7 px-3 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.13em] text-white/62 xl:flex">
+          <div className="hidden items-center gap-2 rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-3 py-2 font-mono text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)] xl:flex">
             <CalendarDays className="h-3.5 w-3.5" />
             <span>{todayLabel}</span>
           </div>
           <form action={signOut}>
-            <Button variant="ghost" size="icon-sm" aria-label="Sign out" className="text-white/58 hover:bg-white/8 hover:text-white">
+            <Button variant="ghost" size="icon-sm" aria-label="Sign out" className="text-[var(--cream-3)] hover:text-[var(--cream)]">
               <LogOut className="h-4 w-4" />
             </Button>
           </form>
