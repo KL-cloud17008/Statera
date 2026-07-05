@@ -159,7 +159,7 @@ export default async function WorkoutPlanPage() {
             <p className="eyebrow">Week structure</p>
             <p className="data-number value-reveal mt-3 text-4xl text-foreground">5 / 0 / 2</p>
           </div>
-          <p className="max-w-3xl text-sm leading-relaxed text-white/68">
+          <p className="max-w-3xl text-sm leading-relaxed text-[var(--cream-2)]">
             Five training days with balanced chest, back, legs, hips, arms, and trunk stability.
             Progress by clean reps before load. Saturday and Sunday are full rest. Ramp-up sets
             stay outside the ledger. Required later recovery remains separate.
@@ -177,7 +177,7 @@ export default async function WorkoutPlanPage() {
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
               {FOOT_LOAD_RULES.map((rule) => (
                 <li key={rule} className="flex items-start gap-2.5">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--cream-3)]" />
                   {rule}
                 </li>
               ))}
@@ -188,7 +188,7 @@ export default async function WorkoutPlanPage() {
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
               {BACK_PAIN_RULES.map((rule) => (
                 <li key={rule} className="flex items-start gap-2.5">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--cream-3)]" />
                   {rule}
                 </li>
               ))}

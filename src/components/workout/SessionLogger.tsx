@@ -224,17 +224,17 @@ export function SessionLogger({
           <div>
             <p className="eyebrow">Live session</p>
             <h2 className="mt-3 text-4xl">{sessionName}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/68">
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--cream-2)]">
               Log working sets only. Ramp-up sets stay outside the ledger.
             </p>
             {showLowerBReadiness ? (
-              <p className="black-glass mt-4 inline-flex max-w-2xl px-4 py-3 text-sm font-semibold leading-relaxed text-white/78">
+              <p className="black-glass mt-4 inline-flex max-w-2xl rounded-[var(--radius-tight)] px-4 py-3 text-sm font-semibold leading-relaxed text-[var(--cream-2)]">
                 {LOWER_B_BACK_PAIN_READINESS_NOTE}
               </p>
             ) : null}
             {isStale ? (
-              <div className="black-glass mt-5 flex max-w-2xl items-start gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm leading-relaxed text-white/70">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-white/70" />
+              <div className="black-glass mt-5 flex max-w-2xl items-start gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm leading-relaxed text-[var(--cream-2)]">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--attention)]" />
                 <p>
                   Resume previous open session from {formatSessionDate(trainingDate)}. Discard it to return to today&apos;s programmed session.
                 </p>
@@ -243,22 +243,22 @@ export function SessionLogger({
           </div>
 
           <div className="space-y-5 xl:text-right">
-            <div className="grid gap-3 text-sm text-white/64 sm:grid-cols-3 xl:grid-cols-3">
+            <div className="grid gap-3 text-sm text-[var(--cream-3)] sm:grid-cols-3 xl:grid-cols-3">
               <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Elapsed</p>
-                <p className="value-reveal mt-2 text-2xl font-semibold tracking-normal text-white data-number">
+                <p className="value-reveal mt-2 text-2xl font-medium tracking-normal text-[var(--cream)] data-number">
                   {elapsedMinutes}m
                 </p>
               </div>
               <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Saved</p>
-                <p className="value-reveal mt-2 text-2xl font-semibold tracking-normal text-white data-number">
+                <p className="value-reveal mt-2 text-2xl font-medium tracking-normal text-[var(--cream)] data-number">
                   {savedSetKeys.size}
                 </p>
               </div>
               <div className="black-glass rounded-[var(--radius-card)] p-4">
                 <p className="eyebrow">Complete</p>
-                <p className="value-reveal mt-2 text-2xl font-semibold tracking-normal text-white data-number">
+                <p className="value-reveal mt-2 text-2xl font-medium tracking-normal text-[var(--cream)] data-number">
                   {completedCount}/{totalExercises}
                 </p>
               </div>
@@ -282,11 +282,11 @@ export function SessionLogger({
         <SessionPrepStrip />
 
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm text-white/64">
+          <div className="flex items-center justify-between text-sm text-[var(--cream-3)]">
             <span>{completedCount}/{totalExercises} exercises logged</span>
-            <span className="data-number text-white">{progressPercent}%</span>
+            <span className="data-number text-[var(--cream)]">{progressPercent}%</span>
           </div>
-          <Progress value={progressPercent} className="border-white/12 bg-white/10" />
+          <Progress value={progressPercent} />
         </div>
       </section>
 
@@ -342,13 +342,13 @@ export function SessionLogger({
       </section>
 
       <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden">
-        <div className="chrome-surface rounded-[var(--radius-panel)] border px-4 py-3 backdrop-blur-xl">
+        <div className="chrome-surface rounded-[var(--radius-panel)] border px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold tracking-normal text-white">
+              <p className="truncate text-sm font-semibold tracking-normal text-[var(--cream)]">
                 {currentTarget ? currentTarget.exercise.exerciseName : "All sets logged"}
               </p>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
+              <p className="mt-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
                 {currentTarget
                   ? `Set ${currentTarget.setNumber} of ${currentTarget.totalSets}`
                   : "Ready to complete session"}
@@ -356,7 +356,7 @@ export function SessionLogger({
             </div>
             <RestTimer variant="bar" defaultSeconds={currentTarget?.exercise.restSeconds || 90} />
           </div>
-          <Progress value={progressPercent} className="mt-2.5 h-1 border-white/12 bg-white/10" />
+          <Progress value={progressPercent} className="mt-2.5 h-1" />
         </div>
       </div>
     </div>
