@@ -38,7 +38,7 @@ export function StepsProgressRing({
           cy="100"
           r={radius}
           className="fill-none"
-          stroke="rgba(255,255,255,0.2)"
+          stroke="rgba(240,232,220,0.1)"
           strokeWidth="14"
         />
         <circle
@@ -53,7 +53,7 @@ export function StepsProgressRing({
           strokeDashoffset={strokeDashoffset}
         />
       </svg>
-      <div className="absolute inset-4 flex flex-col items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/92 px-5 text-center shadow-[var(--shadow-elevated)] backdrop-blur-md">
+      <div className="absolute inset-4 flex flex-col items-center justify-center overflow-hidden rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] px-5 text-center">
         <p className="eyebrow">Today</p>
         <p className="mt-1.5 text-3xl font-semibold leading-none text-foreground data-number">
           {current.toLocaleString()}

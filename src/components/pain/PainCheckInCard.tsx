@@ -179,10 +179,10 @@ function PainChip({
       disabled={disabled}
       onClick={() => onSelect(value)}
       className={cn(
-        "data-number flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-[background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none",
+        "data-number flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none",
         selected
-          ? "border-transparent bg-primary text-primary-foreground shadow-[rgba(238,246,255,0.12)_0_1px_0_inset]"
-          : "border-border/80 bg-white/60 text-muted-foreground hover:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] hover:text-foreground"
+          ? "border-transparent bg-primary text-primary-foreground"
+          : "border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] text-[var(--cream-2)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)]"
       )}
     >
       {value}

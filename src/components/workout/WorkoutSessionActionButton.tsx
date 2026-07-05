@@ -33,14 +33,12 @@ export function WorkoutSessionActionButton({
   planId,
   status,
   prominent = false,
-  onDark = false,
   fullWidth = false,
   className,
 }: {
   planId?: string;
   status: SessionActionStatus;
   prominent?: boolean;
-  onDark?: boolean;
   fullWidth?: boolean;
   className?: string;
 }) {
@@ -51,7 +49,6 @@ export function WorkoutSessionActionButton({
   const buttonClassName = cn(
     "min-h-11 text-center",
     fullWidth && "w-full",
-    onDark && "border-white/20 bg-[#edf7ff] text-[#07111f] hover:bg-white",
     className
   );
 
@@ -93,7 +90,7 @@ export function WorkoutSessionActionButton({
   return (
     <Button
       type="button"
-      variant={onDark || !prominent ? "secondary" : "default"}
+      variant={prominent ? "default" : "secondary"}
       onClick={handleStart}
       disabled={isPending}
       className={buttonClassName}

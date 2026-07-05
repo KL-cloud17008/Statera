@@ -105,6 +105,11 @@ export function DashboardPageClient({
   const { settings } = useAppSettings();
   const stepStats = calculateStepStats(stepsEntries, settings.stepGoal, { timezone });
   const greeting = getGreeting();
+  const heroDateLabel = new Date().toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
   const stepCompletion = settings.stepGoal > 0
     ? Math.min(100, Math.round((todaySteps / settings.stepGoal) * 100))
     : 0;
@@ -161,18 +166,18 @@ export function DashboardPageClient({
 
   return (
     <div className="page-shell">
-      <section className="command-deck p-5 sm:p-7 lg:p-8" data-animated="true">
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.35fr)] xl:items-stretch">
-          <div className="flex min-h-[28rem] flex-col justify-between gap-10">
-            <div>
-              <p className="eyebrow">{greeting}</p>
-              <h1 className="mt-5 max-w-5xl">Private performance command.</h1>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/66">
-                Today&apos;s protocol, movement load, recovery flag, and bodyweight signal.
-              </p>
-            </div>
+      <section data-animated="true">
+        <div>
+          <p className="eyebrow">{greeting} — {heroDateLabel}</p>
+          <h1 className="mt-6">Private performance command.</h1>
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            Today&apos;s protocol, movement load, recovery flag, and bodyweight signal.
+          </p>
+        </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-10 border-t border-dashed border-[var(--hairline)] pt-8">
+          <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.34fr)] xl:items-start">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-10 xl:grid-cols-4">
               <SignalTile
                 icon={<Footprints className="h-4 w-4" />}
                 label="Today status"
@@ -193,70 +198,70 @@ export function DashboardPageClient({
               <SignalTile icon={<Dumbbell className="h-4 w-4" />} label="Current phase" value={nextProtocol} detail={`${workoutSummary.weeklySessions} sessions this week`} />
               <SignalTile icon={<Scale className="h-4 w-4" />} label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={getTrendCopy(weightStats.trend)} />
             </div>
-          </div>
 
-          <div className="black-glass flex flex-col justify-between gap-8 rounded-[var(--radius-panel)] p-5">
-            <div>
-              <p className="eyebrow">Today&apos;s Protocol</p>
-              <p className="mt-4 text-4xl font-semibold leading-tight text-white">{nextProtocol}</p>
-              <div className="copper-rule mt-5" />
-              {todayPlanStats ? (
-                <>
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div>
-                      <p className="data-number text-2xl font-semibold leading-tight text-white">{todayPlanStats.exerciseCount}</p>
-                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Exercises</p>
+            <div className="surface-card flex flex-col justify-between gap-8 rounded-[var(--radius-panel)] p-6">
+              <div>
+                <p className="eyebrow">Today&apos;s Protocol</p>
+                <p className="mt-4 [font-family:var(--font-display)] text-3xl font-[380] leading-[1.05] tracking-[-0.01em] text-[var(--cream)]">{nextProtocol}</p>
+                <div className="copper-rule mt-5" />
+                {todayPlanStats ? (
+                  <>
+                    <div className="mt-5 grid grid-cols-2 gap-3">
+                      <div>
+                        <p className="data-number text-2xl font-medium leading-tight text-[var(--cream)]">{todayPlanStats.exerciseCount}</p>
+                        <p className="mt-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Exercises</p>
+                      </div>
+                      <div>
+                        <p className="data-number text-2xl font-medium leading-tight text-[var(--cream)]">~{todayPlanStats.estimatedMinutes}m</p>
+                        <p className="mt-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Est. duration</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="data-number text-2xl font-semibold leading-tight text-white">~{todayPlanStats.estimatedMinutes}m</p>
-                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">Est. duration</p>
-                    </div>
-                  </div>
-                  <ul className="mt-5 space-y-2">
-                    {todayPlanStats.topMovements.map((movement) => (
-                      <li key={movement} className="flex items-center gap-2.5 text-sm leading-snug text-white/72">
-                        <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
-                        {movement}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <>
-                  <p className="mt-5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
-                    {recoveryFlagActive ? "Recovery flag active" : "Full rest — recovery only"}
-                  </p>
-                  <ul className="mt-3 space-y-2">
-                    {getRestDayFocus(recoveryFlagActive).map((item) => (
-                      <li key={item} className="flex items-center gap-2.5 text-sm leading-snug text-white/72">
-                        <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--sky-accent)]" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  {nextTrainingDay && nextTrainingStats ? (
-                    <div className="mt-5 border-t border-white/12 pt-4">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
-                        Next session · {nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}
-                      </p>
-                      <p className="mt-2 text-sm font-semibold leading-snug text-white">
-                        {nextTrainingDay.day.sessionName}
-                      </p>
-                      <p className="mt-1 text-xs text-white/58">
-                        {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m est.
-                      </p>
-                    </div>
-                  ) : null}
-                </>
-              )}
-              <p className="mt-5 text-sm leading-relaxed text-white/66">
-                {decision.title}
-              </p>
+                    <ul className="mt-5 space-y-2">
+                      {todayPlanStats.topMovements.map((movement) => (
+                        <li key={movement} className="flex items-center gap-2.5 text-sm leading-snug text-[var(--cream-2)]">
+                          <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--cream-3)]" />
+                          {movement}
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
+                      {recoveryFlagActive ? "Recovery flag active" : "Full rest — recovery only"}
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {getRestDayFocus(recoveryFlagActive).map((item) => (
+                        <li key={item} className="flex items-center gap-2.5 text-sm leading-snug text-[var(--cream-2)]">
+                          <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--cream-3)]" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    {nextTrainingDay && nextTrainingStats ? (
+                      <div className="mt-5 border-t border-[var(--hairline)] pt-4">
+                        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
+                          Next session · {nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}
+                        </p>
+                        <p className="mt-2 text-sm font-semibold leading-snug text-[var(--cream)]">
+                          {nextTrainingDay.day.sessionName}
+                        </p>
+                        <p className="mt-1 text-xs text-[var(--cream-3)]">
+                          {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m est.
+                        </p>
+                      </div>
+                    ) : null}
+                  </>
+                )}
+                <p className="mt-5 text-sm leading-relaxed text-[var(--cream-2)]">
+                  {decision.title}
+                </p>
+              </div>
+              <Link href={decision.href} className="group inline-flex items-center justify-between gap-4 rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] px-4 py-3 text-sm font-semibold text-[var(--cream)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:bg-[rgba(240,232,220,0.08)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0">
+                Open next action
+                <ArrowRight className="h-4 w-4 transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
+              </Link>
             </div>
-            <Link href={decision.href} className="group inline-flex items-center justify-between gap-4 rounded-full border border-white/14 bg-white/8 px-4 py-3 text-sm font-semibold text-white transition-[background-color,border-color,transform] duration-150 hover:border-[color-mix(in_srgb,var(--sky-accent)_50%,transparent)] hover:bg-white/12 active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0">
-              Open next action
-              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
-            </Link>
           </div>
         </div>
       </section>
@@ -281,8 +286,8 @@ export function DashboardPageClient({
                   Step goal suspended — recovery day. {todaySteps.toLocaleString()} steps logged, not scored.
                 </p>
               ) : (
-                <div className="h-2 overflow-hidden rounded-full bg-[rgba(7,17,31,0.08)]">
-                  <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
+                <div className="h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.06)]">
+                  <div className="track-fill h-full rounded-full bg-[var(--cream)]" style={{ width: `${stepCompletion}%` }} />
                 </div>
               )}
               <div className="grid grid-cols-2 gap-3 pt-2">
@@ -343,20 +348,20 @@ export function DashboardPageClient({
               <div
                 key={item.day}
                 className={cn(
-                  "interactive-row flex min-h-48 flex-col rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.1)] bg-white/42 p-4",
-                  isToday && "border-[rgba(79,124,255,0.36)] bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(224,239,255,0.78))] shadow-[var(--shadow-glow)]"
+                  "interactive-row flex min-h-48 flex-col rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--basalt-1)] p-4",
+                  isToday && "border-[var(--hairline-strong)] bg-[var(--basalt-2)]"
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
                   <p className="eyebrow text-[10px]">{item.day}</p>
                   {isToday ? (
-                    <span className="rounded-full border border-[rgba(79,124,255,0.3)] bg-[rgba(79,124,255,0.08)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-foreground">
+                    <span className="rounded-full border border-[color-mix(in_srgb,var(--ember)_45%,transparent)] bg-[var(--ember-veil)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
                       Today
                     </span>
                   ) : null}
                 </div>
                 <p className="mt-4 text-sm font-semibold leading-snug text-foreground">{item.label}</p>
-                <p className="mt-5 inline-flex rounded-full border border-[rgba(7,17,31,0.11)] bg-white/54 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                <p className="mt-5 inline-flex rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)]">
                   {item.protocol}
                 </p>
                 {item.protocol === "Strength Protocol" ? (
@@ -457,22 +462,20 @@ function SignalTile({
   tone?: "default" | "attention";
 }) {
   return (
-    <div className="black-glass min-h-32 rounded-[var(--radius-card)] p-4">
-      <div className="flex items-center justify-between gap-3 text-white/68">
+    <div className="border-l border-[var(--hairline)] pl-5">
+      <div className="flex items-center justify-between gap-3 pr-2 text-[var(--cream-3)]">
         <p className="eyebrow text-[10px]">{label}</p>
         {icon}
       </div>
       <p
         className={cn(
-          "data-number value-reveal mt-4 text-2xl font-semibold leading-tight",
-          tone === "attention"
-            ? "text-[color-mix(in_srgb,var(--attention)_55%,white)]"
-            : "text-white"
+          "data-number value-reveal mt-4 text-2xl font-medium leading-tight",
+          tone === "attention" ? "text-[var(--attention)]" : "text-[var(--cream)]"
         )}
       >
         {value}
       </p>
-      <p className="mt-2 text-xs leading-relaxed text-white/58">{detail}</p>
+      <p className="mt-2.5 text-xs leading-relaxed text-[var(--cream-3)]">{detail}</p>
     </div>
   );
 }
@@ -531,12 +534,12 @@ function StepMiniBars({
                   className={cn(
                     "bar-rise w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
                     metGoal
-                      ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
+                      ? "bg-[var(--olive)]"
                       : isToday
-                        ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))] opacity-65"
+                        ? "bg-[var(--cream)]"
                         : steps > 0
-                          ? "bg-[rgba(7,17,31,0.16)]"
-                          : "bg-[rgba(7,17,31,0.07)]"
+                          ? "bg-[rgba(240,232,220,0.22)]"
+                          : "bg-[rgba(240,232,220,0.08)]"
                   )}
                   style={{ height: barHeight, animationDelay: `${index * 45}ms` }}
                 />

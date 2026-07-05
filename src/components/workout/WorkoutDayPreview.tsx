@@ -91,7 +91,7 @@ export function WorkoutDayPreview({
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 
-        <WorkoutSessionActionButton planId={plan.id} status="start" prominent onDark fullWidth />
+        <WorkoutSessionActionButton planId={plan.id} status="start" prominent fullWidth />
       </div>
 
       <SessionPrepStrip />
