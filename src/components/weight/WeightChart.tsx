@@ -196,7 +196,7 @@ export function WeightChart({
       <CardContent>
         <div className="chart-frame relative">
         {!showFullGoal && goalWeight != null ? (
-          <span className="absolute bottom-4 right-5 z-10 rounded-full border border-border/80 bg-white/78 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground backdrop-blur-sm">
+          <span className="absolute bottom-4 right-5 z-10 rounded-full border border-[var(--hairline)] bg-[var(--basalt-2)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
             Goal {goalWeight.toFixed(1)} lb{goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
           </span>
         ) : null}

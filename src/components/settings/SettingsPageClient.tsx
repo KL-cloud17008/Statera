@@ -565,7 +565,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-        <Card className="border-destructive/30 bg-[color-mix(in_srgb,var(--cream-paper)_82%,var(--destructive)_18%)]">
+        <Card className="border-destructive/30 bg-[color-mix(in_srgb,var(--basalt-1)_90%,var(--destructive)_10%)]">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] bg-destructive/12 text-destructive">

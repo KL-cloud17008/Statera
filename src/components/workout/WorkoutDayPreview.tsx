@@ -91,7 +91,7 @@ export function WorkoutDayPreview({
           <ProtocolMeta label="Load unit" value={WORKOUT_LOAD_UNIT.toUpperCase()} note="Session load and volume are logged in kilograms." />
         </div>
 
-        <WorkoutSessionActionButton planId={plan.id} status="start" prominent onDark fullWidth />
+        <WorkoutSessionActionButton planId={plan.id} status="start" prominent fullWidth />
       </div>
 
       <SessionPrepStrip />
@@ -203,10 +203,10 @@ function ProtocolMeta({
   note: string;
 }) {
   return (
-    <div className="border-t border-white/12 pt-4">
-      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/50">{label}</p>
-      <p className="mt-2 text-sm font-semibold text-primary-foreground">{value}</p>
-      <p className="mt-1 text-xs leading-relaxed text-white/58">{note}</p>
+    <div className="border-t border-[var(--hairline)] pt-4">
+      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">{label}</p>
+      <p className="mt-2 text-sm font-semibold text-[var(--cream)]">{value}</p>
+      <p className="mt-1 text-xs leading-relaxed text-[var(--cream-3)]">{note}</p>
     </div>
   );
 }

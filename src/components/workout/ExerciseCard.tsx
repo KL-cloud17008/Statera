@@ -115,7 +115,7 @@ export function ExerciseCard({
           </div>
 
           {showCues && exercise.cues ? (
-            <p className="max-w-2xl rounded-[var(--radius-tight)] border-l-2 border-[color-mix(in_srgb,var(--electric-blue)_42%,var(--border)_58%)] bg-accent/45 px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="max-w-2xl rounded-[var(--radius-tight)] border-l-2 border-[var(--hairline-strong)] bg-[var(--veil-1)] px-4 py-3 text-sm leading-relaxed text-muted-foreground">
               {exercise.cues}
             </p>
           ) : null}

@@ -152,7 +152,7 @@ export function SetInput({
   }
 
   return (
-    <div ref={containerRef} className={cn("interactive-row grid gap-3 rounded-[var(--radius-card)] border border-[rgba(7,17,31,0.09)] bg-white/42 px-3 py-3 md:gap-4 md:py-4", completed && "completed-row opacity-85", className)}>
+    <div ref={containerRef} className={cn("interactive-row grid gap-3 rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--basalt-2)] px-3 py-3 md:gap-4 md:py-4", completed && "completed-row opacity-85", className)}>
       <div className="flex flex-wrap items-start justify-between gap-3 md:gap-4">
         <div className="flex items-start gap-3">
           <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />
@@ -185,7 +185,7 @@ export function SetInput({
 
       <div className={cn("grid grid-cols-3 gap-2 md:gap-3", isFinisher ? "md:grid-cols-[1fr_1.2fr_0.55fr]" : "md:grid-cols-[1fr_1fr_0.5fr]")}>
         <label className="grid content-start gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
             {isFinisher ? "Score" : WORKOUT_LOAD_UNIT}
           </span>
           <Input
@@ -205,7 +205,7 @@ export function SetInput({
         </label>
         {isFinisher ? (
           <label className="grid content-start gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Notes</span>
+            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Notes</span>
             <Input
               aria-label={`${exerciseName} set ${setNumber} notes`}
               type="text"
@@ -221,7 +221,7 @@ export function SetInput({
           </label>
         ) : (
           <label className="grid content-start gap-1">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Reps</span>
+            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Reps</span>
             <Input
               aria-label={`${exerciseName} set ${setNumber} reps`}
               type="number"
@@ -238,7 +238,7 @@ export function SetInput({
           </label>
         )}
         <label className="grid content-start gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">RPE</span>
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">RPE</span>
           <Input
             aria-label={`${exerciseName} set ${setNumber} RPE`}
             type="number"

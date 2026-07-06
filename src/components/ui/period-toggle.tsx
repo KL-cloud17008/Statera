@@ -14,7 +14,7 @@ export function PeriodToggle<T extends string>({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border border-[rgba(7,17,31,0.1)] bg-white/58 p-1 shadow-[var(--shadow-soft)] backdrop-blur-md",
+        "inline-flex items-center gap-1 rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] p-1",
         className
       )}
     >
@@ -26,9 +26,9 @@ export function PeriodToggle<T extends string>({
             type="button"
             onClick={() => onChange(option.value)}
             className={cn(
-              "min-h-10 rounded-full px-3 py-2 text-xs font-medium uppercase tracking-[0.12em] transition-all duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]",
+              "min-h-10 rounded-full px-3 py-2 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)]",
               active
-                ? "bg-[linear-gradient(180deg,#15243a,#08111f)] text-primary-foreground shadow-[var(--shadow-command)]"
+                ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >

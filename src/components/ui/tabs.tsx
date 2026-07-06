@@ -27,7 +27,7 @@ function TabsList({
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
-      className={cn("inline-flex w-fit items-center gap-1 rounded-full border border-border bg-[color-mix(in_srgb,var(--cream-paper)_68%,var(--bone)_32%)] p-1 shadow-[var(--shadow-soft)]", className)}
+      className={cn("inline-flex w-fit items-center gap-1 rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] p-1", className)}
       {...props}
     />
   );
@@ -41,7 +41,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex min-h-10 flex-1 items-center justify-center rounded-full border border-transparent px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-150 hover:text-foreground data-[state=active]:border-[color-mix(in_srgb,var(--electric-blue)_32%,var(--border)_68%)] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[rgba(238,246,255,0.12)_0_1px_0_inset] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)]",
+        "inline-flex min-h-10 flex-1 items-center justify-center rounded-full border border-transparent px-4 py-2 font-mono text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)]",
         className
       )}
       {...props}

@@ -58,10 +58,10 @@ export function StepsPageClient({
         <div>
           <p className="eyebrow">Today</p>
           <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
-            <p className="data-number value-reveal text-6xl font-semibold leading-none text-white sm:text-7xl">
+            <p className="data-number value-reveal text-6xl font-medium leading-none text-[var(--cream)] sm:text-7xl">
               {stats.todaySteps.toLocaleString()}
             </p>
-            <p className="pb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white/58">
+            <p className="pb-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
               steps logged
             </p>
           </div>
@@ -155,8 +155,8 @@ function CommandMetric({
   return (
     <div className="black-glass rounded-[var(--radius-card)] p-4">
       <p className="eyebrow text-[10px]">{label}</p>
-      <p className="data-number value-reveal mt-3 text-2xl font-semibold text-white">{value}</p>
-      <p className="mt-1 text-xs leading-relaxed text-white/58">{detail}</p>
+      <p className="data-number value-reveal mt-3 text-2xl font-medium text-[var(--cream)]">{value}</p>
+      <p className="mt-1 text-xs leading-relaxed text-[var(--cream-3)]">{detail}</p>
     </div>
   );
 }

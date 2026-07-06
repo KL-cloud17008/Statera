@@ -99,13 +99,19 @@ export function RestTimer({
           size="icon-sm"
           onClick={() => adjustDuration(-15)}
           disabled={!isRunning && duration <= 15}
-          className="text-xs text-white/64 hover:bg-white/8 hover:text-white"
+          className="text-xs text-[var(--cream-3)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
           aria-label="Reduce rest timer by 15 seconds"
         >
           -15
         </Button>
         {isRunning ? (
-          <span className="data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-white">
+          <span
+            className={
+              timeLeft === 0
+                ? "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-[var(--sky-accent)]"
+                : "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-[var(--cream)]"
+            }
+          >
             {timeLeft === 0 ? "GO" : display}
           </span>
         ) : (
@@ -114,7 +120,7 @@ export function RestTimer({
             variant="ghost"
             size="sm"
             onClick={start}
-            className="gap-1.5 border-white/14 bg-white/8 px-2.5 text-white hover:bg-white/16 hover:text-white"
+            className="gap-1.5 border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 text-[var(--cream)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
             aria-label={`Start ${duration} second rest timer`}
           >
             <Timer className="h-3.5 w-3.5" />
@@ -126,7 +132,7 @@ export function RestTimer({
           variant="ghost"
           size="icon-sm"
           onClick={() => adjustDuration(15)}
-          className="text-xs text-white/64 hover:bg-white/8 hover:text-white"
+          className="text-xs text-[var(--cream-3)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
           aria-label="Increase rest timer by 15 seconds"
         >
           +15
@@ -137,7 +143,7 @@ export function RestTimer({
             variant="ghost"
             size="sm"
             onClick={stop}
-            className="px-2 text-xs text-white/64 hover:bg-white/8 hover:text-white"
+            className="px-2 text-xs text-[var(--cream-3)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
             aria-label="Stop rest timer"
           >
             {timeLeft === 0 ? "Reset" : "Stop"}

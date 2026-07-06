@@ -311,7 +311,7 @@ function RecoveryModeControl({
     <div className="micro-panel w-full min-w-0 rounded-[var(--radius-card)] p-3 sm:w-auto sm:min-w-[21rem]">
       <p className="eyebrow text-[10px]">Recovery mode</p>
       <div
-        className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-border/80 bg-white/60 p-1"
+        className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] p-1"
         aria-label="Recovery mode"
       >
         {options.map((option) => {
@@ -323,10 +323,10 @@ function RecoveryModeControl({
               aria-pressed={isActive}
               onClick={() => onChange(option.value)}
               className={cn(
-                "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-150 focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--electric-blue)_48%,transparent),0_0_0_5px_var(--ring)] motion-reduce:transition-none",
+                "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] motion-reduce:transition-none",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-[rgba(238,246,255,0.12)_0_1px_0_inset]"
-                  : "text-muted-foreground hover:bg-[color-mix(in_srgb,var(--cream-paper)_72%,transparent)] hover:text-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-[var(--veil-2)] hover:text-foreground"
               )}
             >
               {option.label}
