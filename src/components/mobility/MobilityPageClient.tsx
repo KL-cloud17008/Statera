@@ -326,7 +326,7 @@ function RecoveryModeControl({
                 "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] motion-reduce:transition-none",
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-[rgba(240,232,220,0.06)] hover:text-foreground"
+                  : "text-muted-foreground hover:bg-[var(--veil-2)] hover:text-foreground"
               )}
             >
               {option.label}

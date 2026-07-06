@@ -257,7 +257,7 @@ export function DashboardPageClient({
                   {decision.title}
                 </p>
               </div>
-              <Link href={decision.href} className="group inline-flex items-center justify-between gap-4 rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] px-4 py-3 text-sm font-semibold text-[var(--cream)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:bg-[rgba(240,232,220,0.08)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0">
+              <Link href={decision.href} className="group inline-flex items-center justify-between gap-4 rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-4 py-3 text-sm font-semibold text-[var(--cream)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:bg-[var(--veil-2)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0">
                 Open next action
                 <ArrowRight className="h-4 w-4 transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
               </Link>
@@ -286,8 +286,8 @@ export function DashboardPageClient({
                   Step goal suspended — recovery day. {todaySteps.toLocaleString()} steps logged, not scored.
                 </p>
               ) : (
-                <div className="h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.06)]">
-                  <div className="track-fill h-full rounded-full bg-[var(--cream)]" style={{ width: `${stepCompletion}%` }} />
+                <div className="h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[var(--veil-2)]">
+                  <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
                 </div>
               )}
               <div className="grid grid-cols-2 gap-3 pt-2">
@@ -355,13 +355,13 @@ export function DashboardPageClient({
                 <div className="flex items-center justify-between gap-2">
                   <p className="eyebrow text-[10px]">{item.day}</p>
                   {isToday ? (
-                    <span className="rounded-full border border-[color-mix(in_srgb,var(--ember)_45%,transparent)] bg-[var(--ember-veil)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
+                    <span className="rounded-full border border-[rgba(79,124,255,0.3)] bg-[rgba(79,124,255,0.08)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-foreground">
                       Today
                     </span>
                   ) : null}
                 </div>
                 <p className="mt-4 text-sm font-semibold leading-snug text-foreground">{item.label}</p>
-                <p className="mt-5 inline-flex rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)]">
+                <p className="mt-5 inline-flex rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)]">
                   {item.protocol}
                 </p>
                 {item.protocol === "Strength Protocol" ? (
@@ -534,12 +534,12 @@ function StepMiniBars({
                   className={cn(
                     "bar-rise w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
                     metGoal
-                      ? "bg-[var(--olive)]"
+                      ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
                       : isToday
-                        ? "bg-[var(--cream)]"
+                        ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))] opacity-65"
                         : steps > 0
-                          ? "bg-[rgba(240,232,220,0.22)]"
-                          : "bg-[rgba(240,232,220,0.08)]"
+                          ? "bg-[rgba(7,17,31,0.16)]"
+                          : "bg-[rgba(7,17,31,0.07)]"
                   )}
                   style={{ height: barHeight, animationDelay: `${index * 45}ms` }}
                 />

@@ -17,7 +17,7 @@ const buttonVariants = cva(
         secondary:
           "border-[var(--hairline)] bg-[var(--basalt-2)] text-secondary-foreground hover:border-[var(--hairline-strong)] hover:bg-[var(--basalt-3)]",
         ghost:
-          "border-transparent bg-transparent text-muted-foreground hover:bg-[rgba(240,232,220,0.07)] hover:text-foreground",
+          "border-transparent bg-transparent text-muted-foreground hover:bg-[var(--veil-2)] hover:text-foreground",
         link: "border-transparent bg-transparent px-0 text-foreground/80 hover:text-foreground hover:underline hover:underline-offset-4",
       },
       size: {

@@ -18,10 +18,10 @@ function formatCellSteps(steps: number) {
 
 function getHeatLevel(steps: number, goal: number) {
   const ratio = goal > 0 ? steps / goal : 0;
-  if (ratio >= 1) return "bg-[var(--olive)] text-[var(--basalt-0)] border-transparent";
-  if (ratio >= 0.75) return "bg-[var(--olive-veil)] text-foreground border-[color-mix(in_srgb,var(--olive)_36%,transparent)]";
-  if (ratio >= 0.5) return "bg-[rgba(240,232,220,0.1)] text-foreground border-[var(--hairline)]";
-  if (ratio > 0) return "bg-[rgba(240,232,220,0.05)] text-muted-foreground border-[var(--hairline)]";
+  if (ratio >= 1) return "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))] text-[#07111f] border-transparent";
+  if (ratio >= 0.75) return "bg-[rgba(112,199,255,0.22)] text-foreground border-[rgba(79,124,255,0.32)]";
+  if (ratio >= 0.5) return "bg-[rgba(112,199,255,0.12)] text-foreground border-[var(--hairline)]";
+  if (ratio > 0) return "bg-[var(--veil-1)] text-muted-foreground border-[var(--hairline)]";
   return "bg-transparent text-muted-foreground/60 border-[var(--hairline)]";
 }
 

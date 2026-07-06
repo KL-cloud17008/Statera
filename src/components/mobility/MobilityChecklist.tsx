@@ -181,7 +181,7 @@ export function MobilityChecklist({
                             <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:flex-col sm:items-end sm:justify-start">
                               <p
                                 title={exercise.dose}
-                                className="whitespace-nowrap rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-3)]"
+                                className="whitespace-nowrap rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-3)]"
                               >
                                 {compactDose(exercise.dose)}
                               </p>
@@ -191,7 +191,7 @@ export function MobilityChecklist({
                                   aria-expanded={isExpanded}
                                   aria-controls={detailsId}
                                   onClick={() => toggleExpanded(key)}
-                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)] transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] motion-reduce:transition-none"
+                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)] transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] motion-reduce:transition-none"
                                 >
                                   <span>How to do it</span>
                                   <ChevronDown
@@ -255,7 +255,7 @@ function RecoveryIntro({
           {rules.map((rule) => (
             <p
               key={rule}
-              className="rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] px-3 py-2 text-xs font-semibold text-foreground"
+              className="rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-2 text-xs font-semibold text-foreground"
             >
               {rule}
             </p>
@@ -353,7 +353,7 @@ function IntensityBox({
         ].map((item) => (
           <p
             key={item}
-            className="rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] px-3 py-2 text-xs font-semibold leading-relaxed text-foreground"
+            className="rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-2 text-xs font-semibold leading-relaxed text-foreground"
           >
             {item}
           </p>
@@ -426,7 +426,7 @@ function NumberedSteps({
 
           return (
             <div key={`${row.stepNumber}-${row.item}`} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
-              <span className="data-number mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.06)] text-[11px] text-foreground">
+              <span className="data-number mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--veil-2)] text-[11px] text-foreground">
                 {row.stepNumber}
               </span>
               <p>{row.item}</p>

@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0F0D0B",
+  themeColor: "#0A1220",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -54,10 +54,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`light ${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        <meta name="color-scheme" content="dark" />
+        <meta name="color-scheme" content="light" />
         <meta name="darkreader-lock" />
       </head>
       <body className="antialiased">

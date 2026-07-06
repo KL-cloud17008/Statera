@@ -1,11 +1,19 @@
 /* ───────────────────────────────────────────────────────────────
-   BASALT — warm-dark instrument.
-   Elevation by luminance, never shadow. One chromatic voice (ember),
-   used rarely. Mono caps labels against light serif display.
+   ATHANOR palette on the BASALT structure.
+   Light sky-mist atmosphere + light cards; obsidian/command-ink for
+   nav, heroes, and dark metric panels; sky/electric accent; copper
+   as the single sanctioned attention color.
+
+   The tier tokens are CONTEXTUAL: :root carries the light-surface
+   values; .chrome-surface / .command-deck / .command-panel /
+   .login-landscape re-declare them for dark surfaces (globals.css).
+   So --cream = "primary text for the current surface" (ink on
+   light, glacier white on dark), --basalt-N = the surface ladder
+   for the current context, --veil-N = translucent fills that adapt.
    ─────────────────────────────────────────────────────────────── */
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* Font variables are provided by next/font on <html>; stacks below are fallbacks. */
   --font-sans-base: var(--font-inter, Inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -51,74 +59,82 @@
   --radius-surface: 0.875rem;
   --radius-panel: 1.25rem;
 
-  /* ── Basalt primitives ── */
-  --basalt-0: #0f0d0b; /* canvas */
-  --basalt-1: #181512; /* surface: cards */
-  --basalt-2: #211d18; /* raised: tiles, hover */
-  --basalt-3: #2a251f; /* overlay: dock, popovers */
-  --cream: #f2eae0;    /* text primary — never pure white */
-  --cream-2: #b9ae9f;  /* text secondary */
-  --cream-3: #8b8173;  /* labels / muted */
-  --hairline: rgba(240, 232, 220, 0.1);
-  --hairline-strong: rgba(240, 232, 220, 0.18);
+  /* ── Athanor primitives ── */
+  --sky-accent: #70c7ff;
+  --electric-blue: #4f7cff;
+  --glacier: #bfe9ff;
+  --copper: #b97852;
+  --sage: #2f8a79;
+  --ink: #07111f;
 
-  /* The one chromatic voice. */
-  --ember: #e06a38;
-  --ember-bright: #ec8a5e; /* small-text safe on dark */
-  --ember-veil: rgba(224, 106, 56, 0.12);
-  --olive: #9db380;        /* goal-met / positive, only */
-  --olive-veil: rgba(157, 179, 128, 0.12);
+  /* ── Contextual tiers — LIGHT surface values ── */
+  --basalt-0: #e3edf6; /* canvas / inset wells */
+  --basalt-1: #f8fbff; /* surface: cards */
+  --basalt-2: #e9f3fb; /* raised: tiles, hover */
+  --basalt-3: #ffffff; /* overlay: popovers, selection */
+  --cream: var(--ink);   /* text primary for this context */
+  --cream-2: #3f4e63;    /* text secondary */
+  --cream-3: #5b6a82;    /* labels / muted */
+  --hairline: rgba(7, 17, 31, 0.12);
+  --hairline-strong: rgba(7, 17, 31, 0.24);
+  --veil-1: rgba(7, 17, 31, 0.045); /* subtle translucent fill */
+  --veil-2: rgba(7, 17, 31, 0.08);  /* stronger translucent fill */
 
-  /* Semantic attention (recovery flags, pain >=3, streak-at-risk, pace guardrail). */
-  --attention: var(--ember-bright);
+  /* Accent tokens keep their BASALT names; values are the sky family. */
+  --ember: var(--electric-blue);
+  --ember-bright: var(--sky-accent);
+  --ember-veil: rgba(112, 199, 255, 0.16);
+  --olive: var(--sage);              /* success / completed semantics */
+  --olive-veil: rgba(47, 138, 121, 0.12);
 
-  /* Copper — ember's quieter sibling; acknowledgment marks (new-low) and rule fades. */
-  --copper: #c87b4e;
+  /* The single sanctioned attention color (recovery flag, streak-at-risk,
+     pain >=3, pace guardrail) — copper, deepened for AA on light. */
+  --attention: #9a5a32;
 
-  --success-500: var(--olive);
-  --warning-500: #c8a04e;
-  --error-500: #e0654f;
-  --info-500: var(--cream-2);
+  --success-500: var(--sage);
+  --warning-500: #9b7b45;
+  --error-500: #b64c66;
+  --info-500: #3d6f9f;
 
-  /* ── shadcn semantic tokens ── */
-  --background: var(--basalt-0);
-  --foreground: var(--cream);
+  /* ── shadcn semantic tokens (light) ── */
+  --background: #eaf3fa;
+  --foreground: var(--ink);
   --card: var(--basalt-1);
-  --card-foreground: var(--cream);
+  --card-foreground: var(--ink);
   --popover: var(--basalt-3);
-  --popover-foreground: var(--cream);
-  --primary: var(--cream);
-  --primary-foreground: var(--basalt-0);
+  --popover-foreground: var(--ink);
+  --primary: #0a1220;
+  --primary-foreground: #f8fbff;
   --secondary: var(--basalt-2);
-  --secondary-foreground: var(--cream);
-  --muted: var(--basalt-2);
+  --secondary-foreground: var(--ink);
+  --muted: #dcebf4;
   --muted-foreground: var(--cream-2);
   --accent: var(--ember-veil);
-  --accent-foreground: var(--cream);
+  --accent-foreground: var(--ink);
   --destructive: var(--error-500);
-  --destructive-foreground: #fff3ef;
-  --success: var(--olive);
-  --success-foreground: var(--basalt-0);
+  --destructive-foreground: #fff7f7;
+  --success: var(--success-500);
+  --success-foreground: #f8fbff;
   --warning: var(--warning-500);
-  --warning-foreground: var(--basalt-0);
+  --warning-foreground: #f8fbff;
   --border: var(--hairline);
-  --input: var(--basalt-1);
-  --ring: rgba(236, 138, 94, 0.55);
-  --chart-1: var(--cream);
-  --chart-2: var(--ember-bright);
-  --chart-3: var(--olive);
+  --input: #ffffff;
+  --ring: rgba(79, 124, 255, 0.5);
+  --chart-1: #102033;
+  --chart-2: var(--electric-blue);
+  --chart-3: var(--sage);
   --chart-4: var(--copper);
-  --chart-5: var(--cream-3);
-  --sidebar: var(--basalt-1);
-  --sidebar-foreground: var(--cream);
-  --sidebar-primary: var(--ember);
-  --sidebar-primary-foreground: var(--cream);
-  --sidebar-accent: rgba(240, 232, 220, 0.06);
-  --sidebar-accent-foreground: var(--cream);
-  --sidebar-border: var(--hairline);
-  --sidebar-ring: var(--ring);
+  --chart-5: #94a4b8;
+  --sidebar: #05070b;
+  --sidebar-foreground: #f8fbff;
+  --sidebar-primary: var(--electric-blue);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(238, 246, 255, 0.08);
+  --sidebar-accent-foreground: #f8fbff;
+  --sidebar-border: rgba(238, 246, 255, 0.14);
+  --sidebar-ring: rgba(79, 124, 255, 0.38);
 
-  /* Elevation is luminance, not shadow — every shadow token resolves to none. */
+  /* Elevation stays luminance-only — every shadow token resolves to none. */
   --shadow-soft: none;
   --shadow-elevated: none;
   --shadow-floating: none;
@@ -126,8 +142,10 @@
   --shadow-command: none;
   --shadow-glow: none;
 
-  /* Canvas: near-flat, faint warm lift at the top. */
-  --atmosphere-background: linear-gradient(180deg, #151210 0%, #0f0d0b 22rem);
+  /* Canvas: the sky-mist atmosphere. */
+  --atmosphere-background:
+    linear-gradient(90deg, rgba(7, 17, 31, 0.075) 0, rgba(7, 17, 31, 0.018) 5rem, transparent 17rem),
+    linear-gradient(180deg, #dcecf8 0%, #f8fbff 34%, #e8f4fb 74%, #dcebf4 100%);
 
   /* Motion — two speeds, no bounce. */
   --ease-glide: cubic-bezier(0.19, 1, 0.22, 1);

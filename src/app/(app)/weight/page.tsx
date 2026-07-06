@@ -64,8 +64,8 @@ export default async function WeightPage() {
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-[var(--cream-2)]">
             {formatBodyweightConversion(stats.currentWeight) || "Log a weigh-in to unlock kg and stone conversion."}
           </p>
-          <div className="mt-8 h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.06)]">
-            <div className="track-fill h-full rounded-full bg-[var(--cream)]" style={{ width: `${getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight)}%` }} />
+          <div className="mt-8 h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[var(--veil-2)]">
+            <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--copper),var(--electric-blue),var(--sky-accent))]" style={{ width: `${getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight)}%` }} />
           </div>
         </div>
 

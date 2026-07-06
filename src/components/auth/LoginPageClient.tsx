@@ -42,7 +42,7 @@ export function LoginPageClient() {
           <section className="login-landscape flex min-h-[31rem] flex-col justify-between rounded-[var(--radius-card)] p-7 sm:p-9">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="flex size-11 items-center justify-center rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] text-[var(--cream)]">
+                <span className="flex size-11 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] text-[var(--cream)]">
                   <BrandMark className="h-6 w-6" />
                 </span>
                 <div>
@@ -52,7 +52,7 @@ export function LoginPageClient() {
                   </p>
                 </div>
               </div>
-              <span className="rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-3 py-1.5 font-mono text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
+              <span className="rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-1.5 font-mono text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
                 Private OS
               </span>
             </div>
@@ -71,7 +71,7 @@ export function LoginPageClient() {
                 ["Weight", "Body trend"],
                 ["Training", "Output log"],
               ].map(([title, copy]) => (
-                <div key={title} className="rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-4 py-3">
+                <div key={title} className="rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--veil-1)] px-4 py-3">
                   <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">{title}</p>
                   <p className="mt-2 text-sm font-medium text-[var(--cream)]">{copy}</p>
                 </div>

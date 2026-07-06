@@ -38,7 +38,7 @@ export function StepsProgressRing({
           cy="100"
           r={radius}
           className="fill-none"
-          stroke="rgba(240,232,220,0.1)"
+          stroke="var(--hairline)"
           strokeWidth="14"
         />
         <circle

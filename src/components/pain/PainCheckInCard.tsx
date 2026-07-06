@@ -182,7 +182,7 @@ function PainChip({
         "data-number flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none",
         selected
           ? "border-transparent bg-primary text-primary-foreground"
-          : "border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] text-[var(--cream-2)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)]"
+          : "border-[var(--hairline)] bg-[var(--veil-1)] text-[var(--cream-2)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)]"
       )}
     >
       {value}
