@@ -37,30 +37,30 @@ export function LoginPageClient() {
 
   return (
     <div className="app-atmosphere flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
-      <div className="login-frame w-full max-w-6xl rounded-[var(--radius-panel)] p-2 backdrop-blur-xl sm:p-3">
+      <div className="login-frame w-full max-w-6xl rounded-[var(--radius-panel)] p-2 sm:p-3">
         <div className="grid gap-3 lg:grid-cols-[1.08fr_0.92fr]">
-          <section className="login-landscape flex min-h-[31rem] flex-col justify-between rounded-[0.875rem] p-7 sm:p-9">
+          <section className="login-landscape flex min-h-[31rem] flex-col justify-between rounded-[var(--radius-card)] p-7 sm:p-9">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="flex size-11 items-center justify-center rounded-full border border-white/12 bg-white/8 text-primary-foreground">
+                <span className="flex size-11 items-center justify-center rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.05)] text-[var(--cream)]">
                   <BrandMark className="h-6 w-6" />
                 </span>
                 <div>
-                  <p className="text-[1.05rem] font-medium text-primary-foreground">Athanor</p>
-                  <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-white/48">
+                  <p className="[font-family:var(--font-display)] text-[1.12rem] font-[380] tracking-[-0.01em] text-[var(--cream)]">Athanor</p>
+                  <p className="mt-1 font-mono text-[0.6rem] font-medium uppercase tracking-[0.2em] text-[var(--cream-3)]">
                     Prime ledger
                   </p>
                 </div>
               </div>
-              <span className="rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-white/62">
+              <span className="rounded-full border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-3 py-1.5 font-mono text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
                 Private OS
               </span>
             </div>
 
             <div className="max-w-3xl py-12 sm:py-16">
-              <p className="text-[0.75rem] font-bold uppercase tracking-[0.16em] text-white/58">Athanor Prime</p>
-              <h1 className="mt-5 max-w-3xl text-primary-foreground">Private performance operating system.</h1>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/64">
+              <p className="eyebrow">Athanor Prime</p>
+              <h1 className="mt-5 max-w-3xl text-[var(--cream)]">Private performance operating system.</h1>
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-[var(--cream-2)]">
                 Training, steps, bodyweight, and recovery signal in one precise ledger.
               </p>
             </div>
@@ -71,15 +71,15 @@ export function LoginPageClient() {
                 ["Weight", "Body trend"],
                 ["Training", "Output log"],
               ].map(([title, copy]) => (
-                <div key={title} className="rounded-[var(--radius-card)] border border-white/10 bg-white/7 px-4 py-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">{title}</p>
-                  <p className="mt-2 text-sm font-medium text-primary-foreground">{copy}</p>
+                <div key={title} className="rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[rgba(240,232,220,0.04)] px-4 py-3">
+                  <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">{title}</p>
+                  <p className="mt-2 text-sm font-medium text-[var(--cream)]">{copy}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="login-auth-panel flex min-h-[31rem] flex-col justify-center rounded-[0.875rem] p-6 sm:p-8 lg:p-10">
+          <section className="login-auth-panel flex min-h-[31rem] flex-col justify-center rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10">
             <div className="mx-auto w-full max-w-md">
               <div className="mb-8 text-center">
                 <div className="duna-mark-surface mx-auto flex size-14 items-center justify-center rounded-full text-foreground">

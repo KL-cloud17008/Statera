@@ -199,7 +199,7 @@ export function WeightImportClient() {
           <CardContent className="space-y-4">
             <div className="max-h-80 overflow-auto rounded-[var(--radius-card)] border border-border">
               <div className="min-w-[34rem]">
-                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-[color-mix(in_srgb,var(--mist)_82%,var(--bone)_18%)] px-4 py-3 text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-[var(--basalt-2)] px-4 py-3 font-mono text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
                   <span>Date</span>
                   <span>Weight</span>
                   <span>Status</span>

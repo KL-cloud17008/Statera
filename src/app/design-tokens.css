@@ -72,51 +72,11 @@
   /* Semantic attention (recovery flags, pain >=3, streak-at-risk, pace guardrail). */
   --attention: var(--ember-bright);
 
-  /* ── Legacy palette names, remapped into Basalt so nothing renders
-        undefined during the staged migration. Stages 2-6 remove usages. ── */
-  --aubergine-ink: var(--basalt-0);
-  --espresso: var(--basalt-0);
-  --near-black: #0b0908;
-  --charcoal: var(--basalt-2);
-  --warm-graphite: #3a332b;
-  --taupe: var(--cream-3);
-  --zinc-taupe: var(--cream-2);
-  --linen: var(--basalt-0);
-  --cream-paper: var(--basalt-1);
-  --bone: var(--basalt-2);
-  --soft-paper: var(--basalt-2);
-  --mist: var(--basalt-2);
-  --warm-cream: var(--cream);
+  /* Copper — ember's quieter sibling; acknowledgment marks (new-low) and rule fades. */
   --copper: #c87b4e;
-  --ember-500: var(--ember);
-  --coral: #d98a76;
-  --sage: var(--olive);
-  --ochre: #c8a04e;
-  --rosewood: #de6a55;
-  --electric-blue: var(--copper);
-  --sky-accent: var(--ember-bright);
-  --glacier: #e8cdb4;
-  --violet-blue: var(--ember-bright);
-  --obsidian: var(--basalt-0);
-  --command-ink: var(--basalt-1);
-  --command-grid: rgba(240, 232, 220, 0.045);
-
-  --warm-canvas: var(--basalt-0);
-  --card-wash: rgba(24, 21, 18, 0.85);
-  --input-fill: var(--basalt-1);
-  --midnight-ink: var(--cream);
-  --slate-text: var(--cream);
-  --onyx: var(--basalt-0);
-  --quiet-black: var(--near-black);
-  --deep-charcoal: var(--basalt-2);
-  --medium-gray: var(--cream-2);
-  --subtle-gray: var(--cream-3);
-  --light-steel: var(--cream-2);
-  --accent-purple: var(--ember);
-  --muted-slate: var(--cream-3);
 
   --success-500: var(--olive);
-  --warning-500: var(--ochre);
+  --warning-500: #c8a04e;
   --error-500: #e0654f;
   --info-500: var(--cream-2);
 
@@ -139,10 +99,10 @@
   --destructive-foreground: #fff3ef;
   --success: var(--olive);
   --success-foreground: var(--basalt-0);
-  --warning: var(--ochre);
+  --warning: var(--warning-500);
   --warning-foreground: var(--basalt-0);
   --border: var(--hairline);
-  --input: var(--input-fill);
+  --input: var(--basalt-1);
   --ring: rgba(236, 138, 94, 0.55);
   --chart-1: var(--cream);
   --chart-2: var(--ember-bright);
@@ -157,8 +117,6 @@
   --sidebar-accent-foreground: var(--cream);
   --sidebar-border: var(--hairline);
   --sidebar-ring: var(--ring);
-  --nav-surface: rgba(15, 13, 11, 0.88);
-  --nav-surface-raised: rgba(24, 21, 18, 0.92);
 
   /* Elevation is luminance, not shadow — every shadow token resolves to none. */
   --shadow-soft: none;
@@ -167,14 +125,6 @@
   --shadow-pressed: none;
   --shadow-command: none;
   --shadow-glow: none;
-
-  --glass-border: var(--hairline-strong);
-  --cool-hairline: var(--hairline);
-
-  /* Surface fills (kept as gradients so multi-layer backgrounds stay valid). */
-  --surface-veil-fill: linear-gradient(180deg, #1b1815, #181512);
-  --surface-raised-fill: linear-gradient(180deg, #1c1815, #181512);
-  --surface-floating-fill: linear-gradient(180deg, #241f1a, #211d18);
 
   /* Canvas: near-flat, faint warm lift at the top. */
   --atmosphere-background: linear-gradient(180deg, #151210 0%, #0f0d0b 22rem);

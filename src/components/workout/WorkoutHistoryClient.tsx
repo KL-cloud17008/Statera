@@ -105,7 +105,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                       type="button"
                       aria-pressed={isSelected}
                       onClick={() => setSelectedDate(isSelected ? null : day.date)}
-                      className={`interactive-row flex h-[4.5rem] flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[color-mix(in_srgb,var(--electric-blue)_45%,var(--primary)_55%)] bg-[color-mix(in_srgb,var(--electric-blue)_10%,var(--cream-paper)_90%)]" : "border-border bg-[color-mix(in_srgb,var(--mist)_64%,var(--bone)_36%)]"}`}
+                      className={`interactive-row flex h-[4.5rem] flex-col rounded-[var(--radius-card)] border px-3 py-3 text-left ${isSelected ? "border-[var(--hairline-strong)] bg-[var(--basalt-3)]" : "border-[var(--hairline)] bg-[var(--basalt-1)]"}`}
                     >
                       <span className="text-sm font-semibold text-foreground data-number">{day.day}</span>
                       <div className="mt-auto flex flex-wrap gap-1">
