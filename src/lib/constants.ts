@@ -22,7 +22,7 @@ export const TRAINING_DAY_BOUNDARY_HOUR = 12; // noon
 
 /** Labels for training days — keyed by dayOfWeek (DB value 1-5). */
 export const TRAINING_DAY_LABELS: Record<number, string> = {
-  1: "Monday • Lower A — Single-Leg Press + Quad/Hamstring Strength",
+  1: "Monday • Lower A — Leg Press + Quad/Hamstring Strength",
   2: "Tuesday • Upper A — Incline Push / Row / Trunk Stability",
   3: "Wednesday • Lower B — Accessory Legs + Hip Stability",
   4: "Thursday • Upper B — Machine Press / Pull + Shoulders and Arms",

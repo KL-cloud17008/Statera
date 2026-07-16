@@ -22,16 +22,16 @@ import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-s
 const WEEK_STRUCTURE = [
   {
     day: "Monday",
-    title: "Lower A — Single-Leg Press + Quad/Hamstring Strength",
+    title: "Lower A — Leg Press + Quad/Hamstring Strength",
     protocol: "Strength Protocol",
     dayOfWeek: 1,
-    note: "Primary lower-body strength day. Single-leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
+    note: "Primary lower-body strength day. Leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
     laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
     details: [
-      "Block B: Single-Leg Press and Walking Lunges. Rest 180-300 seconds; this is not conditioning.",
+      "Block B: Leg Press and Walking Lunges. Rest 180-300 seconds; this is not conditioning.",
       "Block C: Lying Leg Curl and Seated Leg Extension. Rest 120 seconds after C2.",
       "Block D: Hip Abduction Machine and Hip Adduction Machine. Rest 120 seconds after D2.",
-      "Monday total working sets: 17.",
+      "Monday total working sets: 19.",
     ],
   },
   {

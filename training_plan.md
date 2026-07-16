@@ -8,7 +8,7 @@ Five training days with balanced chest, back, legs, hips, arms, and trunk stabil
 
 | Day | Plan |
 | --- | --- |
-| Monday | Lower A - Single-Leg Press + Quad/Hamstring Strength |
+| Monday | Lower A - Leg Press + Quad/Hamstring Strength |
 | Tuesday | Upper A - Incline Push / Row / Trunk Stability |
 | Wednesday | Lower B - Accessory Legs + Hip Stability |
 | Thursday | Upper B - Machine Press / Pull + Shoulders and Arms |
@@ -44,20 +44,20 @@ Five training days with balanced chest, back, legs, hips, arms, and trunk stabil
 
 ## Monday - Lower A
 
-Name: Lower A - Single-Leg Press + Quad/Hamstring Strength
+Name: Lower A - Leg Press + Quad/Hamstring Strength
 
 Required later recovery: Lower-Body Flush + Sole Care, 10-14 minutes.
 
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
-| B1 | Single-Leg Press | 3 | 8-12 per leg | 5-7 |
-| B2 | Walking Lunges | 2 | 6-10 steps per leg | 4-5 |
+| B1 | Leg Press | 3 | 8-12 | 5-7 |
+| B2 | Walking Lunges | 4 | 6-10 steps per leg | 4-5 |
 | C1 | Lying Leg Curl | 3 | 10-12 | 6-7 |
 | C2 | Seated Leg Extension | 3 | 10-15 | 6-7 |
 | D1 | Hip Abduction Machine | 3 | 12-20 | 6 |
 | D2 | Hip Adduction Machine | 3 | 12-20 | 5-6 |
 
-Monday total working sets: 17.
+Monday total working sets: 19.
 
 ## Tuesday - Upper A
 
@@ -131,12 +131,12 @@ Friday total working sets: 16.
 
 ## Weekly Set Summary
 
-- Monday: 17 sets
+- Monday: 19 sets
 - Tuesday: 19 sets
 - Wednesday: 15 sets
 - Thursday: 20 sets
 - Friday: 16 sets
-- Weekly total: 87 sets
+- Weekly total: 89 sets
 
 ## Muscle-Group Balance
 

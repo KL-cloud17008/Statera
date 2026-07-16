@@ -60,7 +60,7 @@ type WorkoutDayStatus = {
 };
 
 const WEEKLY_RHYTHM = [
-  { day: "MON", label: "Lower A — Single-Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 1 },
+  { day: "MON", label: "Lower A — Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 1 },
   { day: "TUE", label: "Upper A — Incline Push / Row / Trunk Stability", protocol: "Strength Protocol", dayOfWeek: 2 },
   { day: "WED", label: "Lower B — Accessory Legs + Hip Stability", protocol: "Strength Protocol", dayOfWeek: 3 },
   { day: "THU", label: "Upper B — Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 4 },
@@ -71,7 +71,7 @@ const WEEKLY_RHYTHM = [
 
 const NEXT_BY_DAY = [
   "Complete Rest",
-  "Lower A — Single-Leg Press + Quad/Hamstring Strength",
+  "Lower A — Leg Press + Quad/Hamstring Strength",
   "Upper A — Incline Push / Row / Trunk Stability",
   "Lower B — Accessory Legs + Hip Stability",
   "Upper B — Machine Press / Pull + Shoulders and Arms",

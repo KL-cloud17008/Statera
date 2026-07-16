@@ -57,7 +57,7 @@ test("canonical workout plan is the next-week progressive overload block", () =>
   assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "next-week-progressive-overload-v1");
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.dayOfWeek), [1, 2, 3, 4, 5]);
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
-    "Monday: Lower A — Single-Leg Press + Quad/Hamstring Strength",
+    "Monday: Lower A — Leg Press + Quad/Hamstring Strength",
     "Tuesday: Upper A — Incline Push / Row / Trunk Stability",
     "Wednesday: Lower B — Accessory Legs + Hip Stability",
     "Thursday: Upper B — Machine Press / Pull + Shoulders and Arms",
@@ -69,12 +69,12 @@ test("canonical workout plan is the next-week progressive overload block", () =>
   assert.match(workoutPlanPageSource, /5 Strength/);
   assert.match(workoutPlanPageSource, /0 Recovery/);
   assert.match(workoutPlanPageSource, /2 Full Rest/);
-  assert.match(workoutPlanPageSource, /Monday total working sets: 17/);
+  assert.match(workoutPlanPageSource, /Monday total working sets: 19/);
   assert.match(workoutPlanPageSource, /Tuesday total working sets: 19/);
   assert.match(workoutPlanPageSource, /Wednesday total working sets: 15/);
   assert.match(workoutPlanPageSource, /Thursday total working sets: 20/);
   assert.match(workoutPlanPageSource, /Friday total working sets: 16/);
-  assert.match(trainingPlanSource, /Weekly total: 87 sets/);
+  assert.match(trainingPlanSource, /Weekly total: 89 sets/);
   assert.doesNotMatch(workoutPlanPageSource, /Completed \/ View Session|Completed Monday session/i);
   assert.match(planSource, /Five training days with balanced chest, back, legs, hips, arms, and trunk stability/);
 });
@@ -82,9 +82,9 @@ test("canonical workout plan is the next-week progressive overload block", () =>
 test("strength days use the requested exercise selection and set balance", () => {
   const byDay = new Map(workoutPlan.DEFAULT_WORKOUT_PLAN.map((day) => [day.dayOfWeek, day]));
 
-  assertDay(byDay.get(1), "Lower A", 17, [
-    ["B1 Single-Leg Press", 3, "8-12 per leg", "5-7"],
-    ["B2 Walking Lunges", 2, "6-10 steps per leg", "4-5"],
+  assertDay(byDay.get(1), "Lower A", 19, [
+    ["B1 Leg Press", 3, "8-12", "5-7"],
+    ["B2 Walking Lunges", 4, "6-10 steps per leg", "4-5"],
     ["C1 Lying Leg Curl", 3, "10-12", "6-7"],
     ["C2 Seated Leg Extension", 3, "10-15", "6-7"],
     ["D1 Hip Abduction Machine", 3, "12-20", "6"],
@@ -159,7 +159,7 @@ test("active plan excludes prohibited and removed strength work", () => {
   }
 
   const monday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 1);
-  assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "B1 Single-Leg Press"));
+  assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "B1 Leg Press"));
   assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "B2 Walking Lunges"));
   assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "D1 Hip Abduction Machine"));
   assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "D2 Hip Adduction Machine"));
@@ -282,7 +282,7 @@ test("dashboard and schedule constants reflect the next-week five strength days"
   assert.match(constantsSource, /DEFAULT_RECOVERY_DAYS: number\[\] = \[\]/);
   assert.match(constantsSource, /DEFAULT_REST_DAYS = \[0, 6\]/);
   assert.match(dashboardSource, /5 Strength \/ 2 Full Rest/);
-  assert.match(dashboardSource, /day: "MON"[\s\S]*label: "Lower A — Single-Leg Press \+ Quad\/Hamstring Strength"[\s\S]*protocol: "Strength Protocol"/);
+  assert.match(dashboardSource, /day: "MON"[\s\S]*label: "Lower A — Leg Press \+ Quad\/Hamstring Strength"[\s\S]*protocol: "Strength Protocol"/);
   assert.match(dashboardSource, /day: "TUE"[\s\S]*label: "Upper A — Incline Push \/ Row \/ Trunk Stability"[\s\S]*protocol: "Strength Protocol"/);
   assert.match(dashboardSource, /day: "WED"[\s\S]*label: "Lower B — Accessory Legs \+ Hip Stability"[\s\S]*protocol: "Strength Protocol"/);
   assert.match(dashboardSource, /day: "THU"[\s\S]*label: "Upper B — Machine Press \/ Pull \+ Shoulders and Arms"[\s\S]*protocol: "Strength Protocol"/);
