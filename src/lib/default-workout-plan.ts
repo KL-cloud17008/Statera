@@ -22,7 +22,7 @@ export const DEFAULT_WORKOUT_PLAN_VERSION = "next-week-progressive-overload-v1";
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
 
-export const LOWER_A_TAPER_TITLE = "Lower A — Single-Leg Press + Quad/Hamstring Strength";
+export const LOWER_A_TAPER_TITLE = "Lower A — Leg Press + Quad/Hamstring Strength";
 export const UPPER_A_TITLE = "Upper A — Incline Push / Row / Trunk Stability";
 export const LOWER_B_TAPER_TITLE = "Lower B — Accessory Legs + Hip Stability";
 export const UPPER_B_TITLE = "Upper B — Machine Press / Pull + Shoulders and Arms";
@@ -117,24 +117,24 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: LOWER_A_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "B1 Single-Leg Press",
+        exerciseName: "B1 Leg Press",
         sets: 3,
-        reps: "8-12 per leg",
+        reps: "8-12",
         tempo: "controlled lowering",
         restSeconds: 180,
         targetRPE: "5-7",
-        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. One leg at a time, full foot on platform, knee tracks over middle toes, control the lowering, stop before hip/back/foot irritation, and do not chase deep range if torso compression appears. Pain rule: if soles/ankles feel worse than 3/10, reduce load/range or regress to supported stationary split squat.`,
+        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. Both feet full on the platform, knees track over middle toes, control the lowering, stop before hip/back/foot irritation, and do not chase deep range if the torso compresses. Pain rule: if soles/ankles feel worse than 3/10, reduce load/range or regress to supported stationary split squat.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
         exerciseName: "B2 Walking Lunges",
-        sets: 2,
+        sets: 4,
         reps: "6-10 steps per leg",
         tempo: "controlled steps",
         restSeconds: 300,
         targetRPE: "4-5",
-        cues: `${WEEK4_MAIN_CUE}Bodyweight only or minimum load only. Not conditioning. Controlled steps, tall torso, front foot flat, knee tracks over middle toes, no rushing. Pain rule: skip if sole pain, ankle pain, knee pain, lower-back irritation, or balance loss appears. If feet/ankles rise above 3/10, remove walking lunges first.`,
+        cues: `${WEEK4_MAIN_CUE}Bodyweight only or minimum load only. Not conditioning. Controlled steps, tall torso, front foot flat, knee tracks over middle toes, no rushing. Pain rule: skip if sole pain, ankle pain, knee pain, lower-back irritation, or balance loss appears. If sole/ankle pain reaches 3/10 at any point during the session, skip the remaining lunge sets — do not push through them. Under the foot-load rule, walking lunges remain the first exercise removed.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -497,7 +497,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
 ];
 
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Lower A — Single-Leg Press + Quad/Hamstring Strength",
+  "Monday: Lower A — Leg Press + Quad/Hamstring Strength",
   "Tuesday: Upper A — Incline Push / Row / Trunk Stability",
   "Wednesday: Lower B — Accessory Legs + Hip Stability",
   "Thursday: Upper B — Machine Press / Pull + Shoulders and Arms",
