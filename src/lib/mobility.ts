@@ -2311,6 +2311,122 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   },
 };
 
+function backCareMovement(input: {
+  id: string;
+  name: string;
+  cues: string;
+  dose: string;
+  scaleDown?: string[];
+  progression?: string[];
+  painRule?: string;
+}): MobilityExercise {
+  return {
+    id: input.id,
+    name: input.name,
+    dose: input.dose,
+    cues: input.cues,
+    goal: "Part of the personal back-care decompression routine.",
+    howTo: [],
+    beginnerPointers: [],
+    commonMistakes: [],
+    scaleDown: input.scaleDown ?? [],
+    progression: input.progression,
+    completionTarget: `Complete ${input.dose} comfortably.`,
+    painRule:
+      input.painRule ?? "Stop any movement that increases pain or moves symptoms down the leg.",
+    intensity: BACK_PAIN_RELIEF_INTENSITY,
+  };
+}
+
+/**
+ * User-supplied relief routine — names, setups, modifications, and dosages are
+ * verbatim from the user's own routine. Do not rename, re-dose, or reorder.
+ */
+export const BACK_CARE_DECOMPRESSION: MobilityBlock = block({
+  id: "back-care-decompression",
+  title: "Back care — decompression routine",
+  duration: "As needed",
+  purpose:
+    "Personal relief routine, available every day including full rest days. Relief work, not training — gentle effort only.",
+  adaptationNote:
+    "Numbness, tingling, weakness, limping, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.",
+  exercises: [
+    backCareMovement({
+      id: "back-care-legs-up-the-wall",
+      name: "Legs Up the Wall with Lumbar Support",
+      cues: "Rolled towel under lower back above tailbone, legs vertical against wall.",
+      scaleDown: ["Knees-bent modification for tight hamstrings."],
+      dose: "8 long deep breaths × 4–5 sets",
+    }),
+    backCareMovement({
+      id: "back-care-double-knee-to-chest",
+      name: "Double Knee-to-Chest Stretch",
+      cues: "Both knees to chest, lumbar decompression.",
+      scaleDown: ["Wider-leg modification."],
+      dose: "Hold 20–40s × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-spinal-rocks",
+      name: "Spinal Rocks",
+      cues: "Knees clasped, rock along spine. On a mat or carpeted surface.",
+      dose: "20–30 rocks × 3–4 sets",
+    }),
+    backCareMovement({
+      id: "back-care-supine-figure-4",
+      name: "Supine Figure-4 / Piriformis Stretch",
+      cues: "Ankle over opposite knee, pull thigh to chest.",
+      dose: "20–40s per side × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-modified-pigeon",
+      name: "Modified Pigeon Pose",
+      cues: "Lead leg bent in front, torso lowered, opposite shoulder toward lead knee.",
+      dose: "20–40s per side × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-single-knee-to-chest",
+      name: "Single Knee-to-Chest Stretch",
+      cues: "One knee to chest.",
+      progression: ["Diagonal-to-opposite-shoulder variation."],
+      dose: "20–40s per side × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-childs-pose",
+      name: "Child's Pose",
+      cues: "Arms extended, hips to heels.",
+      dose: "8 breaths or 20–40s × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-cobra-prone-extension",
+      name: "Cobra Pose / Prone Extension",
+      cues: "Hands under shoulders, pelvis grounded. START at Sphinx; progress to full cobra only if symptom-free; stop if pain increases or moves down the leg.",
+      scaleDown: ["Sphinx (forearms) modification."],
+      dose: "20–40s × 4–5",
+      painRule: "Stop if pain increases or moves down the leg.",
+    }),
+    backCareMovement({
+      id: "back-care-supine-ql",
+      name: "Supine QL Stretch",
+      cues: "Shoulder pinned, leg drawn across torso.",
+      progression: ["Leverage progression."],
+      dose: "20–40s per side × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-kneeling-psoas",
+      name: "Kneeling Psoas / Hip Flexor Stretch",
+      cues: "Half-lunge, trailing glute squeezed, no lumbar overarch.",
+      dose: "20–40s per side × 4–5",
+    }),
+    backCareMovement({
+      id: "back-care-hamstring-stretch",
+      name: "Hamstring Stretch (Seated or Elevated)",
+      cues: "Hip hinge, flat back.",
+      scaleDown: ["Elevated-leg modification."],
+      dose: "20–40s per side × 4–5",
+    }),
+  ],
+});
+
 export const UNDO_SITTING: MobilityBlock = block({
   id: "desk-reset",
   title: "Desk Reset (optional)",

@@ -21,13 +21,14 @@ export async function logMobility(
   const version = (formData.get("version") as string) || "A";
   const notes = (formData.get("notes") as string) || null;
 
-  if (!["PRE_WORKOUT", "POST_WORKOUT", "UNDO_SITTING"].includes(type)) {
+  if (!["PRE_WORKOUT", "POST_WORKOUT", "UNDO_SITTING", "BACK_CARE"].includes(type)) {
     return { error: "Invalid type" };
   }
 
   const trainingDate = getTrainingDate(new Date(), user.timezone);
 
-  if (type !== "UNDO_SITTING") {
+  // Primer/recovery log once per day; desk resets and back care repeat as needed.
+  if (type === "PRE_WORKOUT" || type === "POST_WORKOUT") {
     const existing = await prisma.mobilityLog.findFirst({
       where: {
         userId: user.id,

@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logPainCheckIn, type SerializedPainCheckIn } from "@/actions/pain";
-import { FOOT_LOAD_RULES } from "@/lib/default-workout-plan";
+import { BACK_PAIN_RULES, FOOT_LOAD_RULES } from "@/lib/default-workout-plan";
 import { getTodayDateString } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 const PAIN_VALUES = Array.from({ length: 11 }, (_, value) => value);
+
+const BACK_REMOVE_RULE =
+  "If lower back rises above 3/10, remove back hyperextensions and overhead press first.";
+const BACK_RED_FLAG = BACK_PAIN_RULES[5];
 
 function footGuidance(footPain: number) {
   if (footPain >= 5) {
@@ -19,6 +23,16 @@ function footGuidance(footPain: number) {
     return FOOT_LOAD_RULES[1];
   }
   return FOOT_LOAD_RULES[0];
+}
+
+function backGuidance(backPain: number) {
+  if (backPain >= 5) {
+    return `${BACK_PAIN_RULES[2]} ${BACK_REMOVE_RULE}`;
+  }
+  if (backPain >= 3) {
+    return BACK_REMOVE_RULE;
+  }
+  return BACK_PAIN_RULES[0];
 }
 
 function formatCheckInDate(dateString: string) {
@@ -44,7 +58,6 @@ export function PainCheckInCard({
   const [backValue, setBackValue] = useState<number | null>(
     loggedToday ? (latest.lowerBackPain ?? null) : null
   );
-  const [showBack, setShowBack] = useState(loggedToday && latest.lowerBackPain != null);
   const [isPending, startTransition] = useTransition();
 
   function save(nextFoot: number, nextBack: number | null) {
@@ -82,15 +95,18 @@ export function PainCheckInCard({
     <div className={cn("micro-panel rounded-[var(--radius-card)] p-4", className)}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="eyebrow text-[10px]">Foot pain check-in</p>
+          <p className="eyebrow text-[10px]">Pain check-in</p>
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            Soles / feet, 0-10. One tap logs today.
+            Feet / soles and lower back, 0-10. One tap logs today.
           </p>
         </div>
         {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" /> : null}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-1.5" role="group" aria-label="Foot pain 0 to 10">
+      <p className="mt-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+        Feet / soles
+      </p>
+      <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Foot pain 0 to 10">
         {PAIN_VALUES.map((value) => (
           <PainChip
             key={value}
@@ -106,7 +122,7 @@ export function PainCheckInCard({
       {footValue != null ? (
         <p
           className={cn(
-            "mt-3 text-xs leading-relaxed",
+            "mt-2 text-xs leading-relaxed",
             footValue >= 3 ? "text-[var(--attention)]" : "text-muted-foreground"
           )}
         >
@@ -114,32 +130,39 @@ export function PainCheckInCard({
         </p>
       ) : null}
 
-      <button
-        type="button"
-        onClick={() => setShowBack((current) => !current)}
-        className="text-link mt-3 text-xs font-semibold"
-      >
-        {showBack ? "- lower back" : "+ lower back (optional)"}
-      </button>
+      <p className="mt-4 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+        Lower back
+      </p>
+      <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Lower-back pain 0 to 10">
+        {PAIN_VALUES.map((value) => (
+          <PainChip
+            key={value}
+            value={value}
+            selected={backValue === value}
+            disabled={isPending || footValue == null}
+            onSelect={handleBackTap}
+            ariaLabel={`Log lower-back pain ${value} of 10`}
+          />
+        ))}
+      </div>
+      {footValue == null ? (
+        <p className="mt-2 text-xs text-muted-foreground">Log feet first, then lower back.</p>
+      ) : null}
 
-      {showBack ? (
-        <div className="mt-2">
-          <div className="flex flex-wrap gap-1.5" role="group" aria-label="Lower-back pain 0 to 10">
-            {PAIN_VALUES.map((value) => (
-              <PainChip
-                key={value}
-                value={value}
-                selected={backValue === value}
-                disabled={isPending || footValue == null}
-                onSelect={handleBackTap}
-                ariaLabel={`Log lower-back pain ${value} of 10`}
-              />
-            ))}
-          </div>
-          {footValue == null ? (
-            <p className="mt-2 text-xs text-muted-foreground">Log feet first, then lower back.</p>
+      {backValue != null ? (
+        <>
+          <p
+            className={cn(
+              "mt-2 text-xs leading-relaxed",
+              backValue >= 3 ? "text-[var(--attention)]" : "text-muted-foreground"
+            )}
+          >
+            {backGuidance(backValue)}
+          </p>
+          {backValue >= 3 ? (
+            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{BACK_RED_FLAG}</p>
           ) : null}
-        </div>
+        </>
       ) : null}
 
       <p

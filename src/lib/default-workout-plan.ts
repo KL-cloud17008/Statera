@@ -102,9 +102,6 @@ const WEEK4_MAIN_CUE =
 const WEEK4_ACCESSORY_CUE =
   "Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. ";
 
-const PAIN_CONTROL_CUE =
-  "If form breaks, keep load the same next session. Pain 5/10 or higher means stop that movement. ";
-
 const FOOT_WALKING_CUE =
   "Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking. ";
 
@@ -283,17 +280,6 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B1 Back Hyperextension / Back Extension Machine",
-        sets: 2,
-        reps: "8-10",
-        tempo: "slow",
-        restSeconds: 120,
-        targetRPE: "4-5",
-        cues: `Bodyweight only or minimum machine load. Short comfortable range, neutral neck, slow tempo, no swinging, no aggressive arching, stop well before fatigue. Pain rule: skip if lower-back pain is active. Stop immediately if back pain increases, pain shoots down the leg, numbness, tingling, weakness, or nerve-like symptoms appear. ${PAIN_CONTROL_CUE}`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
         exerciseName: "C1 Seated Leg Extension",
         sets: 3,
         reps: "10-15",
@@ -306,12 +292,12 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "C2 Seated Leg Curl",
-        sets: 3,
+        sets: 4,
         reps: "10-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Hips heavy, smooth curl, pause gently, slow return, no jerking.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Hips heavy, smooth curl, pause gently, slow return, no jerking. Fourth set replaces back hyperextensions to keep hamstring volume without loaded spinal extension.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
@@ -416,7 +402,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use back support if available. Seated and controlled, ribs down, no excessive arching, comfortable press path, stop before shoulder pinch, no grinding. Safety note: this is not barbell military press. Keep it light and controlled.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use back support if available. Seated and controlled, ribs down, no excessive arching, comfortable press path, stop before shoulder pinch, no grinding. Safety note: this is not barbell military press. Keep it light and controlled. Removed while lower-back pain is 3/10 or higher — it returns when pain clears.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
