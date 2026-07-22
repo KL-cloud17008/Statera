@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, ClipboardList, History } from "lucide-react";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Button } from "@/components/ui/button";
+import { BACK_PAIN_RULES } from "@/lib/default-workout-plan";
 import { DAY_NAMES, buildPlanDayStats, findNextTrainingDay } from "@/lib/plan-preview";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
@@ -69,12 +70,15 @@ export function WorkoutPageClient({
   todayPlan,
   activeSession,
   trainingDayOfWeek,
+  todayBackPain = null,
 }: {
   todayPlan: TodayPlan;
   activeSession: ActiveSession;
   trainingDayOfWeek: number;
+  todayBackPain?: number | null;
 }) {
   const dayGuidance = !todayPlan ? getDayGuidance(trainingDayOfWeek) : null;
+  const backPainGateActive = todayBackPain != null && todayBackPain >= 3;
   const nextTrainingDay = dayGuidance ? findNextTrainingDay(trainingDayOfWeek) : null;
   const nextTrainingStats = nextTrainingDay ? buildPlanDayStats(nextTrainingDay.day) : null;
 
@@ -119,6 +123,17 @@ export function WorkoutPageClient({
         }
       />
 
+      {backPainGateActive ? (
+        <div className="status-note status-note-attention px-4 py-3 text-sm leading-relaxed">
+          <p className="font-semibold">
+            {todayBackPain != null && todayBackPain >= 5
+              ? `Lower-back pain ${todayBackPain}/10 logged. Pain 5/10 or higher means stop that movement — back hyperextensions and overhead press stay removed.`
+              : `Lower-back pain ${todayBackPain}/10 logged. Remove back hyperextensions and overhead press first.`}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed opacity-90">{BACK_PAIN_RULES[5]}</p>
+        </div>
+      ) : null}
+
       {activeSession ? (
         <SessionLogger
           sessionId={activeSession.id}
@@ -132,7 +147,7 @@ export function WorkoutPageClient({
         />
       ) : todayPlan ? (
         <div className="grid gap-8">
-          <WorkoutDayPreview plan={todayPlan} />
+          <WorkoutDayPreview plan={todayPlan} backPainGateActive={backPainGateActive} />
           <details className="group ledger-divider pt-6">
             <summary className="warm-pill flex cursor-pointer list-none items-center justify-between gap-4 rounded-full px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:text-foreground">
               <span>Custom session builder</span>

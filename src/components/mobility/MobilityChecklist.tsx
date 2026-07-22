@@ -24,11 +24,15 @@ import { cn } from "@/lib/utils";
 function compactDose(dose: string) {
   const compact = dose
     .toLowerCase()
+    .replace(/–/g, "-")
+    .replace(/\s*×\s*/g, "×")
     .replace(/(\d[\d.]*(?:-\d[\d.]*)?)\s*(?:sets?|rounds?)\s*(?:of|x)\s*/g, "$1×")
     .replace(/(\d)\s*x\s*(?=\d)/g, "$1×")
+    .replace(/\bhold\s+/g, "")
+    .replace(/\s*sets\b/g, "")
     .replace(/\s*sec(?:onds?)?\b/g, "s")
     .replace(/\s+min(?:utes?)?\b/g, "min")
-    .replace(/\s+(?:slow|easy|gentle|controlled|quiet|calm)\b/g, "")
+    .replace(/\s+(?:slow|easy|gentle|controlled|quiet|calm|long|deep)\b/g, "")
     .replace(/\s*(?:circles?|reps?|repetitions?)\b/g, "")
     .replace(/\s*(?:each|per)\s+direction(?:\s+per\s+\w+)?\b/g, "/dir")
     .replace(/\s*(?:each|per)\s+side\b/g, "/side")
@@ -40,7 +44,7 @@ function compactDose(dose: string) {
     .trim();
 
   // Unrecognized phrasing that stays long keeps the original wording.
-  return compact.length > 0 && compact.length <= 18 ? compact : dose;
+  return compact.length > 0 && compact.length <= 24 ? compact : dose;
 }
 
 export function MobilityChecklist({

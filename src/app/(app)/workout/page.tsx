@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from "next";
+import { getLatestPainCheckIn } from "@/actions/pain";
 import { prisma } from "@/lib/db";
-import { getTrainingDate, getTrainingDayNumber, getTrainingDayOfWeek } from "@/lib/dates";
+import { getTodayDateString, getTrainingDate, getTrainingDayNumber, getTrainingDayOfWeek } from "@/lib/dates";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getWorkoutSessionLoadUnit, parseWorkoutSessionMeta } from "@/lib/workout-session-meta";
 import { workoutLoadToKg } from "@/lib/units";
@@ -21,6 +22,11 @@ export default async function WorkoutPage() {
   }
 
   const plans = await getWorkoutPlans(user.id);
+  const painCheckIn = await getLatestPainCheckIn(user.id);
+  const todayBackPain =
+    painCheckIn && painCheckIn.date === getTodayDateString(user.timezone)
+      ? (painCheckIn.lowerBackPain ?? null)
+      : null;
   const currentTrainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
   const trainingDayNum = getTrainingDayNumber(new Date(), user.timezone);
@@ -98,6 +104,7 @@ export default async function WorkoutPage() {
       } : null}
       activeSession={activeSession}
       trainingDayOfWeek={trainingDayOfWeek}
+      todayBackPain={todayBackPain}
     />
   );
 }

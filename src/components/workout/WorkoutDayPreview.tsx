@@ -29,9 +29,11 @@ type Plan = {
 export function WorkoutDayPreview({
   plan,
   hideHeader,
+  backPainGateActive = false,
 }: {
   plan: Plan;
   hideHeader?: boolean;
+  backPainGateActive?: boolean;
 }) {
   const loggableExercises = plan.exercises.filter(isLoggableTrainingExercise);
   const workingExercises = plan.exercises.filter(
@@ -129,7 +131,14 @@ export function WorkoutDayPreview({
                   <div key={exercise.id} className="protocol-row interactive-row px-2">
                     <p className="data-number text-xl text-muted-foreground">{block}{i + 1}</p>
                     <div>
-                      <h3 className="text-[1.2rem] leading-snug">{exercise.exerciseName}</h3>
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <h3 className="text-[1.2rem] leading-snug">{exercise.exerciseName}</h3>
+                        {backPainGateActive && /Overhead Press/i.test(exercise.exerciseName) ? (
+                          <span className="rounded-full border border-[color-mix(in_srgb,var(--copper)_42%,transparent)] bg-[color-mix(in_srgb,var(--copper)_10%,transparent)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
+                            Removed — lower-back ≥3/10
+                          </span>
+                        ) : null}
+                      </div>
                       {exercise.cues ? (
                         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p>
                       ) : null}

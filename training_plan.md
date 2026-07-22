@@ -86,13 +86,12 @@ Required later recovery: Lower-Body Flush + Back Care, 10-14 minutes.
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
 | A1 | Supported Stationary Bulgarian Split Squat | 3 | 8-10 per leg | 5-6 |
-| B1 | Back Hyperextension / Back Extension Machine | 2 | 8-10 | 4-5 |
 | C1 | Seated Leg Extension | 3 | 10-15 | 6 |
-| C2 | Seated Leg Curl | 3 | 10-12 | 6 |
+| C2 | Seated Leg Curl | 4 | 10-12 | 6 |
 | D1 | Hip Adduction Machine | 2 | 12-20 | 5-6 |
 | D2 | Hip Abduction Machine | 2 | 12-20 | 5-6 |
 
-Wednesday total working sets: 15.
+Wednesday total working sets: 14.
 
 ## Thursday - Upper B
 
@@ -133,10 +132,10 @@ Friday total working sets: 16.
 
 - Monday: 19 sets
 - Tuesday: 19 sets
-- Wednesday: 15 sets
+- Wednesday: 14 sets
 - Thursday: 20 sets
 - Friday: 16 sets
-- Weekly total: 89 sets
+- Weekly total: 88 sets
 
 ## Muscle-Group Balance
 

@@ -132,6 +132,10 @@ export function DashboardPageClient({
   const todayLocalDate = getTodayDateString(timezone);
   const todayFootPain =
     painCheckIn && painCheckIn.date === todayLocalDate ? painCheckIn.footPain : null;
+  const todayBackPain =
+    painCheckIn && painCheckIn.date === todayLocalDate
+      ? (painCheckIn.lowerBackPain ?? null)
+      : null;
   const todayPlanDay = getPlanDay(trainingDayOfWeek);
   const todayPlanStats = todayPlanDay ? buildPlanDayStats(todayPlanDay) : null;
   const nextTrainingDay = !todayPlanDay ? findNextTrainingDay(trainingDayOfWeek) : null;
@@ -145,6 +149,7 @@ export function DashboardPageClient({
     latestWeightDate,
     trainingDayOfWeek,
     todayFootPain,
+    todayBackPain,
   });
   const workoutStatusByDay = new Map(
     workoutDayStatuses.map((status) => [status.dayOfWeek, status])
@@ -624,6 +629,7 @@ function buildDecision({
   latestWeightDate,
   trainingDayOfWeek,
   todayFootPain,
+  todayBackPain,
 }: {
   stepsEntries: SerializedStepsEntry[];
   todaySteps: number;
@@ -633,6 +639,7 @@ function buildDecision({
   latestWeightDate: string | null;
   trainingDayOfWeek: number;
   todayFootPain: number | null;
+  todayBackPain: number | null;
 }) {
   const recentStepEntries = [...stepsEntries]
     .sort((a, b) => b.date.localeCompare(a.date))
@@ -665,6 +672,16 @@ function buildDecision({
           ? `Foot pain ${todayFootPain}/10 logged — reduce step load, split walking into smaller chunks, no gym walking.`
           : `Foot pain ${todayFootPain}/10 logged — normal controlled activity allowed.`,
   ];
+
+  if (todayBackPain != null) {
+    signals.push(
+      todayBackPain >= 5
+        ? `Lower-back pain ${todayBackPain}/10 logged — pain 5/10 or higher means stop that movement. Back hyperextensions and overhead press stay removed.`
+        : todayBackPain >= 3
+          ? `Lower-back pain ${todayBackPain}/10 logged — remove back hyperextensions and overhead press first.`
+          : `Lower-back pain ${todayBackPain}/10 logged — 0-2/10 acceptable if stable.`
+    );
+  }
 
   if (highFootPain) {
     return {

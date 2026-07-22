@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClipboardList } from "lucide-react";
+import { getLatestPainCheckIn } from "@/actions/pain";
 import { getWorkoutPlanDayStatuses, getWorkoutPlans } from "@/actions/workout";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -7,7 +8,7 @@ import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionA
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { SectionHeader } from "@/components/ui/section-header";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { getTrainingDayOfWeek } from "@/lib/dates";
+import { getTodayDateString, getTrainingDayOfWeek } from "@/lib/dates";
 import {
   ADJUSTED_WEEK_HEADER_COPY,
   BACK_PAIN_RULES,
@@ -58,10 +59,9 @@ const WEEK_STRUCTURE = [
     laterRecovery: "Lower-Body Flush + Back Care, 10-14 minutes.",
     details: [
       "Block A: Supported Stationary Bulgarian Split Squat.",
-      "Block B: Back Hyperextension / Back Extension Machine.",
-      "Block C: Seated Leg Extension and Seated Leg Curl.",
+      "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension).",
       "Block D: Hip Adduction Machine and Hip Abduction Machine.",
-      "Wednesday total working sets: 15.",
+      "Wednesday total working sets: 14.",
     ],
   },
   {
@@ -128,10 +128,16 @@ export default async function WorkoutPlanPage() {
     return null;
   }
 
-  const [plans, dayStatuses] = await Promise.all([
+  const [plans, dayStatuses, painCheckIn] = await Promise.all([
     getWorkoutPlans(user.id),
     getWorkoutPlanDayStatuses(user.id, user.timezone),
+    getLatestPainCheckIn(user.id),
   ]);
+  const todayBackPain =
+    painCheckIn && painCheckIn.date === getTodayDateString(user.timezone)
+      ? (painCheckIn.lowerBackPain ?? null)
+      : null;
+  const backPainGateActive = todayBackPain != null && todayBackPain >= 3;
   const plansByDay = new Map(plans.map((plan) => [plan.dayOfWeek, plan]));
   const statusByPlanId = new Map(dayStatuses.map((status) => [status.planId, status]));
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
@@ -296,6 +302,11 @@ export default async function WorkoutPlanPage() {
                             {exercise.supersetGroup ? <Badge variant="outline">Block {exercise.supersetGroup}</Badge> : null}
                             {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
                             {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
+                            {backPainGateActive && /Overhead Press/i.test(exercise.exerciseName) ? (
+                              <span className="rounded-full border border-[color-mix(in_srgb,var(--copper)_42%,transparent)] bg-[color-mix(in_srgb,var(--copper)_10%,transparent)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
+                                Removed — lower-back ≥3/10
+                              </span>
+                            ) : null}
                           </div>
                           {exercise.cues ? <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{exercise.cues}</p> : null}
                         </div>

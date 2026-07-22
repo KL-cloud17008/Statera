@@ -71,10 +71,10 @@ test("canonical workout plan is the next-week progressive overload block", () =>
   assert.match(workoutPlanPageSource, /2 Full Rest/);
   assert.match(workoutPlanPageSource, /Monday total working sets: 19/);
   assert.match(workoutPlanPageSource, /Tuesday total working sets: 19/);
-  assert.match(workoutPlanPageSource, /Wednesday total working sets: 15/);
+  assert.match(workoutPlanPageSource, /Wednesday total working sets: 14/);
   assert.match(workoutPlanPageSource, /Thursday total working sets: 20/);
   assert.match(workoutPlanPageSource, /Friday total working sets: 16/);
-  assert.match(trainingPlanSource, /Weekly total: 89 sets/);
+  assert.match(trainingPlanSource, /Weekly total: 88 sets/);
   assert.doesNotMatch(workoutPlanPageSource, /Completed \/ View Session|Completed Monday session/i);
   assert.match(planSource, /Five training days with balanced chest, back, legs, hips, arms, and trunk stability/);
 });
@@ -99,11 +99,10 @@ test("strength days use the requested exercise selection and set balance", () =>
     ["C2 Standing Cable Anti-Rotation Press", 2, "8-12 per side", "4-5"],
     ["C3 Face Pull", 3, "12-15", "6"],
   ]);
-  assertDay(byDay.get(3), "Lower B", 15, [
+  assertDay(byDay.get(3), "Lower B", 14, [
     ["A1 Supported Stationary Bulgarian Split Squat", 3, "8-10 per leg", "5-6"],
-    ["B1 Back Hyperextension / Back Extension Machine", 2, "8-10", "4-5"],
     ["C1 Seated Leg Extension", 3, "10-15", "6"],
-    ["C2 Seated Leg Curl", 3, "10-12", "6"],
+    ["C2 Seated Leg Curl", 4, "10-12", "6"],
     ["D1 Hip Adduction Machine", 2, "12-20", "5-6"],
     ["D2 Hip Abduction Machine", 2, "12-20", "5-6"],
   ]);
@@ -154,6 +153,8 @@ test("active plan excludes prohibited and removed strength work", () => {
     "Incline Bench Plank",
     "Calf Raise",
     "Calf Raises",
+    "Back Hyperextension",
+    "Back Extension Machine",
   ]) {
     assert.doesNotMatch(activePlanText, new RegExp(escapeRegExp(prohibited), "i"));
   }
@@ -173,7 +174,7 @@ test("active plan excludes prohibited and removed strength work", () => {
   const wednesday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 3);
   assert.ok(!wednesday.exercises.some((exercise) => /Leg Press/i.test(exercise.exerciseName)));
   assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "A1 Supported Stationary Bulgarian Split Squat"));
-  assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "B1 Back Hyperextension / Back Extension Machine"));
+  assert.ok(!wednesday.exercises.some((exercise) => /Back Hyperextension|Back Extension/i.test(exercise.exerciseName)));
   assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "C1 Seated Leg Extension"));
   assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "C2 Seated Leg Curl"));
   assert.equal(countMovement(wednesday, /Hip Abduction Machine/), 1);

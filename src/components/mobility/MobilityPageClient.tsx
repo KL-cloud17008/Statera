@@ -10,6 +10,7 @@ import type { SerializedPainCheckIn } from "@/actions/pain";
 import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { MobilityChecklist } from "./MobilityChecklist";
 import {
+  BACK_CARE_DECOMPRESSION,
   getRequiredLaterRecoveryBlocks,
   getRequiredLaterRecoveryTitle,
   getMobilityProgram,
@@ -70,6 +71,7 @@ export function MobilityPageClient({
 
   const sessionCompleted = completedTypes.includes(program.logType);
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
+  const backCareCount = completedTypes.filter((type) => type === "BACK_CARE").length;
 
   function handleLogCompletion(type: string, version = program.sessionTitle) {
     setPendingType(type);
@@ -89,7 +91,9 @@ export function MobilityPageClient({
           ? "Mobility primer logged"
           : type === "POST_WORKOUT"
             ? "Recovery mobility logged"
-            : "Undo-sitting logged"
+            : type === "BACK_CARE"
+              ? "Back care logged"
+              : "Undo-sitting logged"
       );
       setPendingType(null);
       router.refresh();
@@ -184,6 +188,19 @@ export function MobilityPageClient({
             <MobilityChecklist blocks={laterRecoveryBlocks} title="Required later recovery" />
           </RoutineSection>
         ) : null}
+
+        <RoutineSection
+          title="Back care — decompression routine"
+          summary="Personal relief routine — available every day, including full rest days. Relief work, not training: gentle effort only, and stop any movement that increases pain or moves symptoms down the leg."
+          completed={false}
+          isPending={isPending}
+          isCurrentAction={pendingType === "BACK_CARE"}
+          actionLabel="Log back care"
+          onLog={() => handleLogCompletion("BACK_CARE", "Back care — decompression routine")}
+          meta={backCareCount > 0 ? `${backCareCount} logged today` : "As needed — no schedule, no required dose."}
+        >
+          <MobilityChecklist blocks={[BACK_CARE_DECOMPRESSION]} title="Back care — decompression routine" />
+        </RoutineSection>
 
         <RoutineSection
           title="Optional desk reset"
