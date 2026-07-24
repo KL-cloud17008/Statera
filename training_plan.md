@@ -51,7 +51,7 @@ Required later recovery: Lower-Body Flush + Sole Care, 10-14 minutes.
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
 | B1 | Leg Press | 3 | 8-12 | 5-7 |
-| B2 | Walking Lunges | 4 | 6-10 steps per leg | 4-5 |
+| B2 | Walking Lunges (dumbbells 16 kg) | 4 | 12-20 steps total (6-10 per leg) | 5-6 |
 | C1 | Lying Leg Curl | 3 | 10-12 | 6-7 |
 | C2 | Seated Leg Extension | 3 | 10-15 | 6-7 |
 | D1 | Hip Abduction Machine | 3 | 12-20 | 6 |
@@ -68,14 +68,14 @@ Required later recovery: Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
 | A1 | Dumbbell Incline Press | 3 | 8-12 | 6-7 |
-| A2 | Machine Row | 3 | 8-12 | 6-7 |
+| A2 | Chest-Supported Row or Seated Cable Row (or Machine Shoulder Press if rows unavailable) | 3 | 8-12 | 6-7 |
 | B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 6-7 |
 | B2 | Dumbbell / Plate Lateral Raise | 3 | 12-20 | 6 |
-| C1 | Rope Triceps Pressdown | 2 | 10-15 | 6-7 |
-| C2 | Standing Cable Anti-Rotation Press | 2 | 8-12 per side | 4-5 |
-| C3 | Face Pull | 3 | 12-15 | 6 |
+| C1 | Triceps Extension Machine (downstairs) or Triceps Pushdown, bar (upstairs) | 3 | 10-15 | 6-7 |
+| C2 | Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs) | 3 | 10-15 curl / 12-20 lateral raise | 6-7 |
+| C3 | Reverse Pec Deck (downstairs) or Dead Hang (upstairs) | 3 | 12-15 reps pec deck / 20-40 seconds hold dead hang | 5-6 |
 
-Tuesday total working sets: 19.
+Tuesday total working sets: 21.
 
 ## Wednesday - Lower B
 
@@ -88,10 +88,13 @@ Required later recovery: Lower-Body Flush + Back Care, 10-14 minutes.
 | A1 | Supported Stationary Bulgarian Split Squat | 3 | 8-10 per leg | 5-6 |
 | C1 | Seated Leg Extension | 3 | 10-15 | 6 |
 | C2 | Seated Leg Curl | 4 | 10-12 | 6 |
-| D1 | Hip Adduction Machine | 2 | 12-20 | 5-6 |
-| D2 | Hip Abduction Machine | 2 | 12-20 | 5-6 |
+| D1 | Hip Adduction Machine | 4 | 12-20 | 5-6 |
+| D2 | Hip Abduction Machine | 4 | 12-20 | 5-6 |
+| E1 | Single-Arm Seated Dumbbell Preacher Curl | 3 | 10-15 | 6-7 |
+| E2 | Standing Dumbbell Reverse Curl | 3 | 10-15 | 6-7 |
+| F1 | Triceps Pushdown, bar (drop set) | 2 | 10-15, then 2 controlled drops | 6-7 |
 
-Wednesday total working sets: 14.
+Wednesday total working sets: 26.
 
 ## Thursday - Upper B
 
@@ -105,11 +108,11 @@ Required later recovery: Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.
 | A2 | Seated Cable Row | 3 | 8-12 | 6-7 |
 | B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 6-7 |
 | B2 | Dumbbell / Plate Lateral Raise | 3 | 12-20 | 6 |
-| C1 | Rope Triceps Pressdown | 3 | 10-15 | 6-7 |
-| C2 | Cable Curl | 3 | 10-15 | 6-7 |
-| C3 | Dumbbell Overhead Press | 2 | 8-12 | 5-6 |
+| C1 | Triceps Pressdown, bar | 3 | 10-15 | 6-7 |
+| C2 | Reverse Cable Crossover | 3 | 12-15 | 5-6 |
+| C3 | Face-Away Bayesian Cable Curl | 3 | 10-15 | 6-7 |
 
-Thursday total working sets: 20.
+Thursday total working sets: 21.
 
 ## Friday - Upper Accessory
 
@@ -131,11 +134,11 @@ Friday total working sets: 16.
 ## Weekly Set Summary
 
 - Monday: 19 sets
-- Tuesday: 19 sets
-- Wednesday: 14 sets
-- Thursday: 20 sets
+- Tuesday: 21 sets
+- Wednesday: 26 sets
+- Thursday: 21 sets
 - Friday: 16 sets
-- Weekly total: 88 sets
+- Weekly total: 103 sets
 
 ## Muscle-Group Balance
 

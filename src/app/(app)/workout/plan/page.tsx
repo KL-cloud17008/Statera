@@ -29,7 +29,7 @@ const WEEK_STRUCTURE = [
     note: "Primary lower-body strength day. Leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
     laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
     details: [
-      "Block B: Leg Press and Walking Lunges. Rest 180-300 seconds; this is not conditioning.",
+      "Block B: Leg Press and Walking Lunges (weighted, dumbbells 16 kg). Rest 180-300 seconds; this is not conditioning.",
       "Block C: Lying Leg Curl and Seated Leg Extension. Rest 120 seconds after C2.",
       "Block D: Hip Abduction Machine and Hip Adduction Machine. Rest 120 seconds after D2.",
       "Monday total working sets: 19.",
@@ -40,14 +40,14 @@ const WEEK_STRUCTURE = [
     title: "Upper A — Incline Push / Row / Trunk Stability",
     protocol: "Strength Protocol",
     dayOfWeek: 2,
-    note: "Upper-body strength with one incline chest slot, strong pulling work, rear delts, and anti-rotation trunk work.",
+    note: "Upper-body strength with one incline chest slot, strong pulling work, rear delts, and arm work.",
     laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
     details: [
-      "Block A: Dumbbell Incline Press and Machine Row.",
+      "Block A: Dumbbell Incline Press and Chest-Supported Row or Seated Cable Row (or Machine Shoulder Press only if rows are unavailable).",
       "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
-      "Block C: Rope Triceps Pressdown, Standing Cable Anti-Rotation Press, and Face Pull.",
-      "Tuesday total working sets: 19.",
-      "Anti-rotation work is trunk control, not a max strength lift.",
+      "Block C: Triceps Extension Machine (downstairs) or Triceps Pushdown, bar (upstairs); Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs); Reverse Pec Deck (downstairs) or Dead Hang (upstairs).",
+      "Tuesday total working sets: 21.",
+      "Machine Shoulder Press is a press substitute, not row volume — choosing it leaves this day without a horizontal pull.",
     ],
   },
   {
@@ -60,8 +60,10 @@ const WEEK_STRUCTURE = [
     details: [
       "Block A: Supported Stationary Bulgarian Split Squat.",
       "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension).",
-      "Block D: Hip Adduction Machine and Hip Abduction Machine.",
-      "Wednesday total working sets: 14.",
+      "Block D: Hip Adduction Machine and Hip Abduction Machine (4 sets each).",
+      "Block E: Single-Arm Seated Dumbbell Preacher Curl and Standing Dumbbell Reverse Curl. Neutral spine, no torso swing.",
+      "Block F: Triceps Pushdown, bar (drop set) — 2 working sets, then 2 controlled drops stopping 1-2 reps short of failure on each drop. Controlled drop, not training to failure.",
+      "Wednesday total working sets: 26.",
     ],
   },
   {
@@ -74,8 +76,8 @@ const WEEK_STRUCTURE = [
     details: [
       "Block A: Machine Press and Seated Cable Row.",
       "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
-      "Block C: Rope Triceps Pressdown, Cable Curl, and Dumbbell Overhead Press.",
-      "Thursday total working sets: 20.",
+      "Block C: Triceps Pressdown, bar; Reverse Cable Crossover; and Face-Away Bayesian Cable Curl.",
+      "Thursday total working sets: 21.",
       "Machine Press balances repeated incline pressing with neutral mid-chest work.",
     ],
   },
