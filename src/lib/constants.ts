@@ -25,7 +25,7 @@ export const TRAINING_DAY_LABELS: Record<number, string> = {
   1: "Monday • Lower A — Leg Press + Quad/Hamstring Strength",
   2: "Tuesday • Upper A — Incline Push / Row / Trunk Stability",
   3: "Wednesday • Lower B — Accessory Legs + Hip Stability",
-  4: "Thursday • Upper B — Machine Press / Pull + Shoulders and Arms",
+  4: "Thursday • Upper B — Chest Machine Press / Pull + Shoulders and Arms",
   5: "Friday • Upper Accessory + Arms + Core",
 };
 

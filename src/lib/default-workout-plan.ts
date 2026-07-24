@@ -25,10 +25,19 @@ export const ADJUSTED_WEEK_HEADER_COPY =
 export const LOWER_A_TAPER_TITLE = "Lower A — Leg Press + Quad/Hamstring Strength";
 export const UPPER_A_TITLE = "Upper A — Incline Push / Row / Trunk Stability";
 export const LOWER_B_TAPER_TITLE = "Lower B — Accessory Legs + Hip Stability";
-export const UPPER_B_TITLE = "Upper B — Machine Press / Pull + Shoulders and Arms";
+export const UPPER_B_TITLE = "Upper B — Chest Machine Press / Pull + Shoulders and Arms";
 export const UPPER_ACCESSORY_TITLE = "Upper Accessory + Arms + Core";
 export const LOWER_B_BACK_SAFE_TITLE = LOWER_B_TAPER_TITLE;
 export const FULL_BODY_CIRCUIT_TITLE = UPPER_ACCESSORY_TITLE;
+
+/**
+ * Overhead pressing of any kind is removed while lower-back pain is 3/10 or
+ * higher. Matches every overhead press variant in the template (dumbbell,
+ * machine shoulder press) so the lower-back gating cannot miss one.
+ */
+export function isOverheadPressExercise(exerciseName: string) {
+  return /overhead press|shoulder press/i.test(exerciseName);
+}
 
 export const LOWER_B_BACK_PAIN_READINESS_NOTE =
   "Lower-back rule: if lower back rises above 3/10, remove back hyperextensions and overhead press first. Pain 5/10 or higher means stop that movement.";
@@ -186,24 +195,24 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: UPPER_A_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Dumbbell Incline Press",
+        exerciseName: "A1 Dumbbell Incline Press or Machine Incline Press",
         sets: 3,
         reps: "8-12",
         tempo: "3-1-1",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_MAIN_CUE}Kg load. Bench 30-45 degrees, shoulder blades back/down, elbows slightly tucked, control bottom, no bounce, stop before shoulder pinch.`,
+        cues: `${WEEK4_MAIN_CUE}Kg load. Equipment alternates: Dumbbell Incline Press or Machine Incline Press — use whichever is free. Bench 30-45 degrees, shoulder blades back/down, elbows slightly tucked, control bottom, no bounce, stop before shoulder pinch.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "A2 Chest-Supported Row or Seated Cable Row or Machine Shoulder Press",
+        exerciseName: "A2 Chest-Supported Row or Seated Cable Row",
         sets: 3,
         reps: "8-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_MAIN_CUE}Kg load. Primary: Chest-Supported Row or Seated Cable Row — chest supported if possible, row smoothly, pause near ribs, return under control, no body swing. Substitute only if rows are unavailable: Machine Shoulder Press. The shoulder press is a press substitute, not row volume — choosing it leaves this day without a horizontal pull.`,
+        cues: `${WEEK4_MAIN_CUE}Kg load. Equipment alternates: Chest-Supported Row or Seated Cable Row — use whichever is free. Chest supported if possible, row smoothly, pause near ribs, return under control, no body swing.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
@@ -226,6 +235,17 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         restSeconds: 120,
         targetRPE: "6",
         cues: `${WEEK4_ACCESSORY_CUE}Kg load. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B3 Machine Shoulder Press",
+        sets: 3,
+        reps: "8-12",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use the back support. Seated and controlled, ribs down, no excessive arching, comfortable press path, stop before shoulder pinch, no grinding. Keep it light and controlled. Removed while lower-back pain is 3/10 or higher — it returns when pain clears. Stop immediately if pain shoots down the leg or nerve-like symptoms appear.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -347,12 +367,12 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "F1 Triceps Pushdown, bar (drop set)",
-        sets: 2,
+        sets: 3,
         reps: "10-15, then 2 controlled drops",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Two working sets of 10-15 reps. After each working set, reduce the load and complete 2 controlled drops, stopping 1-2 reps short of failure on every drop. This is a controlled drop, not training to failure — keep reps in reserve, keep form clean, and stop the drop early if the bar path breaks down. Elbows pinned, no leaning over the cable.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Three working sets of 10-15 reps. After each working set, reduce the load and complete 2 controlled drops, stopping 1-2 reps short of failure on every drop. This is a controlled drop, not training to failure — keep reps in reserve, keep form clean, and stop the drop early if the bar path breaks down. Elbows pinned, no leaning over the cable.`,
         supersetGroup: "F",
         exerciseType: "WORKING",
       },
@@ -363,7 +383,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: UPPER_B_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Machine Press",
+        exerciseName: "A1 Chest Machine Press",
         sets: 3,
         reps: "8-12",
         tempo: "2-1-2",
@@ -374,13 +394,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "A2 Seated Cable Row",
+        exerciseName: "A2 Chest-Supported Row or Seated Cable Row",
         sets: 3,
         reps: "8-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${CONTROLLED_STRENGTH_CUE}Kg load. Tall posture, feet planted, row to lower ribs, pause, return under control, no body swing.`,
+        cues: `${CONTROLLED_STRENGTH_CUE}Kg load. Equipment alternates: Chest-Supported Row or Seated Cable Row — use whichever is free. Tall posture, feet planted, row to lower ribs, pause, return under control, no body swing.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
@@ -409,7 +429,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       {
         exerciseName: "C1 Triceps Pressdown, bar",
         sets: 3,
-        reps: "10-15",
+        reps: "15-20",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
@@ -420,7 +440,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       {
         exerciseName: "C2 Reverse Cable Crossover",
         sets: 3,
-        reps: "12-15",
+        reps: "15-20",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
@@ -519,7 +539,7 @@ export const DEFAULT_WEEKLY_RHYTHM = [
   "Monday: Lower A — Leg Press + Quad/Hamstring Strength",
   "Tuesday: Upper A — Incline Push / Row / Trunk Stability",
   "Wednesday: Lower B — Accessory Legs + Hip Stability",
-  "Thursday: Upper B — Machine Press / Pull + Shoulders and Arms",
+  "Thursday: Upper B — Chest Machine Press / Pull + Shoulders and Arms",
   "Friday: Upper Accessory + Arms + Core",
   "Saturday: Complete Rest",
   "Sunday: Complete Rest",

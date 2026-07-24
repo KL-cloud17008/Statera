@@ -17,6 +17,7 @@ import {
   NEXT_WEEK_TAPER_TITLE,
   PROGRESSIVE_OVERLOAD_RULES,
   WEEKLY_SET_SUMMARY,
+  isOverheadPressExercise,
 } from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 
@@ -43,11 +44,11 @@ const WEEK_STRUCTURE = [
     note: "Upper-body strength with one incline chest slot, strong pulling work, rear delts, and arm work.",
     laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
     details: [
-      "Block A: Dumbbell Incline Press and Chest-Supported Row or Seated Cable Row (or Machine Shoulder Press only if rows are unavailable).",
-      "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
+      "Block A: Dumbbell Incline Press or Machine Incline Press, and Chest-Supported Row or Seated Cable Row.",
+      "Block B: Neutral-Grip Lat Pulldown, Dumbbell / Plate Lateral Raise, and Machine Shoulder Press.",
       "Block C: Triceps Extension Machine (downstairs) or Triceps Pushdown, bar (upstairs); Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs); Reverse Pec Deck (downstairs) or Dead Hang (upstairs).",
-      "Tuesday total working sets: 21.",
-      "Machine Shoulder Press is a press substitute, not row volume — choosing it leaves this day without a horizontal pull.",
+      "Tuesday total working sets: 24.",
+      "Machine Shoulder Press is overhead pressing: removed while lower-back pain is 3/10 or higher, and it returns when pain clears.",
     ],
   },
   {
@@ -62,23 +63,23 @@ const WEEK_STRUCTURE = [
       "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension).",
       "Block D: Hip Adduction Machine and Hip Abduction Machine (4 sets each).",
       "Block E: Single-Arm Seated Dumbbell Preacher Curl and Standing Dumbbell Reverse Curl. Neutral spine, no torso swing.",
-      "Block F: Triceps Pushdown, bar (drop set) — 2 working sets, then 2 controlled drops stopping 1-2 reps short of failure on each drop. Controlled drop, not training to failure.",
-      "Wednesday total working sets: 26.",
+      "Block F: Triceps Pushdown, bar (drop set) — 3 working sets, then 2 controlled drops stopping 1-2 reps short of failure on each drop. Controlled drop, not training to failure.",
+      "Wednesday total working sets: 27.",
     ],
   },
   {
     day: "Thursday",
-    title: "Upper B — Machine Press / Pull + Shoulders and Arms",
+    title: "Upper B — Chest Machine Press / Pull + Shoulders and Arms",
     protocol: "Strength Protocol",
     dayOfWeek: 4,
     note: "Balanced upper-body day with mid-chest machine press, rows, pulldown, shoulders, and arms.",
     laterRecovery: "Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.",
     details: [
-      "Block A: Machine Press and Seated Cable Row.",
+      "Block A: Chest Machine Press and Chest-Supported Row or Seated Cable Row.",
       "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
       "Block C: Triceps Pressdown, bar; Reverse Cable Crossover; and Face-Away Bayesian Cable Curl.",
       "Thursday total working sets: 21.",
-      "Machine Press balances repeated incline pressing with neutral mid-chest work.",
+      "Chest Machine Press balances repeated incline pressing with neutral mid-chest work.",
     ],
   },
   {
@@ -304,7 +305,7 @@ export default async function WorkoutPlanPage() {
                             {exercise.supersetGroup ? <Badge variant="outline">Block {exercise.supersetGroup}</Badge> : null}
                             {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
                             {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
-                            {backPainGateActive && /Overhead Press/i.test(exercise.exerciseName) ? (
+                            {backPainGateActive && isOverheadPressExercise(exercise.exerciseName) ? (
                               <span className="rounded-full border border-[color-mix(in_srgb,var(--copper)_42%,transparent)] bg-[color-mix(in_srgb,var(--copper)_10%,transparent)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
                                 Removed — lower-back ≥3/10
                               </span>

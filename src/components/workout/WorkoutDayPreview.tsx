@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
-import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
+import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE, isOverheadPressExercise } from "@/lib/default-workout-plan";
 import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
 import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
@@ -133,7 +133,7 @@ export function WorkoutDayPreview({
                     <div>
                       <div className="flex flex-wrap items-center gap-2.5">
                         <h3 className="text-[1.2rem] leading-snug">{exercise.exerciseName}</h3>
-                        {backPainGateActive && /Overhead Press/i.test(exercise.exerciseName) ? (
+                        {backPainGateActive && isOverheadPressExercise(exercise.exerciseName) ? (
                           <span className="rounded-full border border-[color-mix(in_srgb,var(--copper)_42%,transparent)] bg-[color-mix(in_srgb,var(--copper)_10%,transparent)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
                             Removed — lower-back ≥3/10
                           </span>

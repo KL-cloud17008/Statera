@@ -63,7 +63,7 @@ const WEEKLY_RHYTHM = [
   { day: "MON", label: "Lower A — Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 1 },
   { day: "TUE", label: "Upper A — Incline Push / Row / Trunk Stability", protocol: "Strength Protocol", dayOfWeek: 2 },
   { day: "WED", label: "Lower B — Accessory Legs + Hip Stability", protocol: "Strength Protocol", dayOfWeek: 3 },
-  { day: "THU", label: "Upper B — Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 4 },
+  { day: "THU", label: "Upper B — Chest Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 4 },
   { day: "FRI", label: "Upper Accessory + Arms + Core", protocol: "Strength Protocol", dayOfWeek: 5 },
   { day: "SAT", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 6 },
   { day: "SUN", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 0 },
@@ -74,7 +74,7 @@ const NEXT_BY_DAY = [
   "Lower A — Leg Press + Quad/Hamstring Strength",
   "Upper A — Incline Push / Row / Trunk Stability",
   "Lower B — Accessory Legs + Hip Stability",
-  "Upper B — Machine Press / Pull + Shoulders and Arms",
+  "Upper B — Chest Machine Press / Pull + Shoulders and Arms",
   "Upper Accessory + Arms + Core",
   "Complete Rest",
 ];
