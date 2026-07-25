@@ -1,17 +1,19 @@
-import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { SidebarRail } from "@/components/layout/SidebarRail";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-canvas">
-      <DesktopSidebar />
+      <SidebarRail />
       <MobileHeader />
 
-      {/* Bottom padding clears the fixed mobile tab bar plus its safe-area inset,
-          so no tap target is ever overlapped by the nav. */}
-      <main className="app-container pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pt-10 md:pb-16">
-        {children}
+      {/* The canvas is offset by the rail on desktop; on mobile the bottom
+          padding clears the tab bar and its safe-area inset. */}
+      <main className="md:pl-rail">
+        <div className="ledger py-8 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:py-10 md:pb-16">
+          {children}
+        </div>
       </main>
 
       <MobileNav />

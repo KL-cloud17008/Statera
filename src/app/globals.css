@@ -4,54 +4,57 @@
 @import "../styles/tokens.css";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Token → utility mapping.
-
-   Every value below resolves to a custom property defined in tokens.css.
-   This block is what lets components write `bg-card`, `text-secondary`,
-   `border-hairline`, `text-body`, `rounded-card` instead of arbitrary values.
-   Nothing here introduces a new value; it only names them.
+   Token → utility mapping. Nothing here introduces a value; it only names
+   values defined in tokens.css so components can write `bg-canvas`,
+   `text-secondary`, `border-rule`, `text-row`, `rounded-panel`.
    ═══════════════════════════════════════════════════════════════════════════ */
 @theme inline {
   /* Surfaces */
   --color-canvas: var(--surface-canvas);
-  --color-card: var(--surface-card);
-  --color-elevated: var(--surface-elevated);
+  --color-raised: var(--surface-raised);
   --color-sunken: var(--surface-sunken);
-  --color-surface-hover: var(--surface-hover);
-  --color-surface-active: var(--surface-active);
-  --color-inverse: var(--surface-inverse);
+  --color-row-hover: var(--surface-row-hover);
+  --color-overlay: var(--surface-overlay);
 
-  /* Borders */
-  --color-hairline: var(--border-hairline);
-  --color-strong: var(--border-strong);
-  --color-border-inverse: var(--border-inverse);
+  /* Obsidian chrome */
+  --color-obsidian: var(--obsidian-900);
+  --color-obsidian-800: var(--obsidian-800);
+  --color-obsidian-700: var(--obsidian-700);
+  --color-obsidian-line: var(--obsidian-line);
+  --color-obsidian-line-strong: var(--obsidian-line-strong);
+  --color-obsidian-text: var(--obsidian-text);
+  --color-obsidian-muted: var(--obsidian-text-muted);
+  --color-obsidian-dim: var(--obsidian-text-dim);
+
+  /* Rules — the structural device */
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
 
   /* Text */
   --color-primary: var(--text-primary);
   --color-secondary: var(--text-secondary);
   --color-tertiary: var(--text-tertiary);
-  --color-disabled: var(--text-disabled);
-  --color-on-inverse: var(--text-inverse);
+  --color-faint: var(--text-faint);
   --color-on-accent: var(--text-on-accent);
+  --color-on-status: var(--on-status);
 
-  /* Accent — one only */
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-active: var(--accent-active);
-  --color-accent-subtle: var(--accent-subtle);
-  --color-accent-border: var(--accent-border);
-
-  /* Status */
-  --color-attention: var(--status-attention);
-  --color-attention-surface: var(--status-attention-surface);
-  --color-attention-border: var(--status-attention-border);
-  --color-positive: var(--status-positive);
-  --color-positive-surface: var(--status-positive-surface);
-  --color-positive-border: var(--status-positive-border);
-  --color-critical: var(--status-critical);
-  --color-critical-surface: var(--status-critical-surface);
-  --color-critical-border: var(--status-critical-border);
-  --color-on-status: var(--status-on);
+  /* Accent + status */
+  --color-accent: var(--sky-accent);
+  --color-accent-hover: var(--sky-accent-hover);
+  --color-accent-active: var(--sky-accent-active);
+  --color-accent-bright: var(--sky-accent-bright);
+  --color-accent-subtle: var(--sky-accent-subtle);
+  --color-accent-line: var(--sky-accent-line);
+  --color-copper: var(--copper);
+  --color-copper-bright: var(--copper-bright);
+  --color-copper-surface: var(--copper-surface);
+  --color-copper-line: var(--copper-line);
+  --color-positive: var(--positive);
+  --color-positive-surface: var(--positive-surface);
+  --color-positive-line: var(--positive-line);
+  --color-critical: var(--critical);
+  --color-critical-surface: var(--critical-surface);
+  --color-critical-line: var(--critical-line);
 
   /* Charts */
   --color-chart-ink: var(--chart-ink);
@@ -63,24 +66,14 @@
   --color-chart-track: var(--chart-track);
 
   /* Fonts */
+  --font-display: var(--font-family-display);
   --font-sans: var(--font-family-sans);
   --font-mono: var(--font-family-mono);
 
-  /* Type scale — `text-body`, `text-micro`, `text-data-lg`, … */
-  --text-display: var(--font-size-display);
-  --text-display--line-height: var(--line-height-display);
-  --text-display--letter-spacing: var(--tracking-display);
-  --text-display--font-weight: var(--font-weight-semibold);
-
-  --text-title: var(--font-size-title);
-  --text-title--line-height: var(--line-height-title);
-  --text-title--letter-spacing: var(--tracking-title);
-  --text-title--font-weight: var(--font-weight-semibold);
-
-  --text-heading: var(--font-size-heading);
-  --text-heading--line-height: var(--line-height-heading);
-  --text-heading--letter-spacing: var(--tracking-heading);
-  --text-heading--font-weight: var(--font-weight-semibold);
+  /* Type scale */
+  --text-page-title: var(--font-size-page-title);
+  --text-page-title--line-height: var(--line-height-page-title);
+  --text-page-title--letter-spacing: var(--tracking-page-title);
 
   --text-body-lg: var(--font-size-body-lg);
   --text-body-lg--line-height: var(--line-height-body-lg);
@@ -88,16 +81,16 @@
   --text-body: var(--font-size-body);
   --text-body--line-height: var(--line-height-body);
 
-  --text-label: var(--font-size-label);
-  --text-label--line-height: var(--line-height-label);
+  --text-row: var(--font-size-row);
+  --text-row--line-height: var(--line-height-row);
 
   --text-caption: var(--font-size-caption);
   --text-caption--line-height: var(--line-height-caption);
 
-  --text-micro: var(--font-size-micro);
-  --text-micro--line-height: var(--line-height-micro);
-  --text-micro--letter-spacing: var(--tracking-micro);
-  --text-micro--font-weight: var(--font-weight-medium);
+  --text-label: var(--font-size-label);
+  --text-label--line-height: var(--line-height-label);
+  --text-label--letter-spacing: var(--tracking-label);
+  --text-label--font-weight: var(--font-weight-medium);
 
   --text-data-sm: var(--font-size-data-sm);
   --text-data-md: var(--font-size-data-md);
@@ -106,51 +99,39 @@
 
   /* Radii */
   --radius-control: var(--radius-sm);
-  --radius-card: var(--radius-md);
+  --radius-panel: var(--radius-md);
   --radius-pill: var(--radius-full);
 
-  /* Spacing additions used by layout utilities */
-  --spacing-gutter: var(--layout-gutter);
-  --spacing-section: var(--layout-section-rhythm);
+  /* Layout */
+  --spacing-rail: var(--layout-rail-width);
+  --spacing-row: var(--layout-row-height);
   --spacing-touch: var(--layout-touch-target);
+  --container-ledger: var(--layout-content-max);
 
-  /* Motion */
-  --animate-duration-fast: var(--duration-fast);
-  --animate-duration-base: var(--duration-base);
-
-  /* Shadows — overlays only */
-  --shadow-overlay: var(--shadow-overlay);
-
-  /* Max width */
-  --container-content: var(--layout-content-max);
-}
-
-/* shadcn/ui semantic aliases, remapped onto the token layer so vendored
-   primitives inherit the system without carrying their own palette. */
-@theme inline {
+  /* shadcn aliases */
   --color-background: var(--surface-canvas);
   --color-foreground: var(--text-primary);
   --color-muted: var(--surface-sunken);
   --color-muted-foreground: var(--text-secondary);
-  --color-popover: var(--surface-elevated);
+  --color-popover: var(--surface-overlay);
   --color-popover-foreground: var(--text-primary);
-  --color-input: var(--border-hairline);
+  --color-border: var(--rule);
+  --color-input: var(--rule);
   --color-ring: var(--focus-ring-color);
-  --color-destructive: var(--status-critical);
+  --color-destructive: var(--critical);
 }
 
 @layer base {
   *,
   *::before,
   *::after {
-    border-color: var(--border-hairline);
+    border-color: var(--rule);
   }
 
   html {
     color-scheme: light;
     scroll-behavior: smooth;
     background-color: var(--surface-canvas);
-    /* Prevent iOS text inflation without disabling user zoom. */
     -webkit-text-size-adjust: 100%;
   }
 
@@ -161,21 +142,34 @@
     font-family: var(--font-family-sans);
     font-size: var(--font-size-body);
     line-height: var(--line-height-body);
-    font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1,
+  /* Only page titles use the display face, and only at page-title size. */
+  h1 {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-page-title);
+    line-height: var(--line-height-page-title);
+    letter-spacing: var(--tracking-page-title);
+    /* Fraunces ships 400-700; staying under 500 keeps the editorial weight. */
+    font-weight: 450;
+    color: var(--text-primary);
+    text-wrap: balance;
+  }
+
+  /* Section headings are labels, not headlines — the rule separates, not size. */
   h2,
   h3,
   h4,
   h5,
   h6 {
-    color: var(--text-primary);
-    font-weight: var(--font-weight-semibold);
-    letter-spacing: var(--tracking-heading);
-    text-wrap: balance;
+    font-size: var(--font-size-label);
+    line-height: var(--line-height-label);
+    letter-spacing: var(--tracking-label);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    color: var(--text-tertiary);
   }
 
   a {
@@ -191,7 +185,6 @@
     color: inherit;
   }
 
-  /* Numeric inputs: no spinners, tabular figures. */
   input[type="number"] {
     appearance: textfield;
   }
@@ -203,11 +196,10 @@
   }
 
   ::selection {
-    background-color: var(--accent-subtle);
+    background-color: var(--sky-accent-subtle);
     color: var(--text-primary);
   }
 
-  /* One focus treatment for the whole system. */
   :focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
@@ -230,10 +222,11 @@
 }
 
 @layer components {
-  /* ── Layout primitives ─────────────────────────────────────────────────── */
+  /* ── The ledger canvas ─────────────────────────────────────────────────── */
 
-  /* The page container: one max width, gutters that respect safe areas. */
-  .app-container {
+  /* One continuous column of content. Sections are separated by rules, so
+     this carries no background, border, or radius of its own. */
+  .ledger {
     width: 100%;
     max-width: var(--layout-content-max);
     margin-inline: auto;
@@ -245,28 +238,87 @@
   }
 
   @media (min-width: 768px) {
-    .app-container {
+    .ledger {
       padding-inline: var(--layout-gutter);
     }
   }
 
-  /* Vertical rhythm between major page sections. */
-  .page-sections {
-    display: flex;
-    flex-direction: column;
-    gap: var(--layout-section-rhythm-mobile);
+  /* Sections divided by a hairline rule — the primary structural device.
+     No section is a floating panel. */
+  .ledger-section + .ledger-section {
+    margin-top: var(--layout-section-gap-mobile);
+    padding-top: var(--layout-section-gap-mobile);
+    border-top: 1px solid var(--rule);
   }
 
   @media (min-width: 768px) {
-    .page-sections {
-      gap: var(--layout-section-rhythm);
+    .ledger-section + .ledger-section {
+      margin-top: var(--layout-section-gap);
+      padding-top: var(--layout-section-gap);
     }
   }
 
-  /* Tabular numerals for every figure in the ledger. */
-  .tabular {
+  /* ── Ledger rows ──────────────────────────────────────────────────────── */
+
+  /* A run of rows separated by hairlines, flush to the canvas. */
+  .ledger-rows > * + * {
+    border-top: 1px solid var(--rule);
+  }
+
+  /* One record: aligned columns, min 44px tall, hairline separated. */
+  .ledger-row {
+    display: grid;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--layout-row-height);
+    padding-block: var(--space-2);
+    font-size: var(--font-size-row);
+    line-height: var(--line-height-row);
+  }
+
+  /* Row hover is a background wash only — rows never lift or gain borders. */
+  .ledger-row-interactive {
+    margin-inline: calc(var(--space-2) * -1);
+    padding-inline: var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  .ledger-row-interactive:hover {
+    background-color: var(--surface-row-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ledger-row-interactive {
+      transition: none;
+    }
+  }
+
+  /* Column head above a run of rows. */
+  .ledger-head {
+    display: grid;
+    align-items: center;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--rule-strong);
+    font-size: var(--font-size-label);
+    line-height: var(--line-height-label);
+    letter-spacing: var(--tracking-label);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  /* Every numeral in the ledger: mono, tabular, right-aligned by default. */
+  .num {
     font-family: var(--font-family-mono);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .num-left {
+    text-align: left;
   }
 }

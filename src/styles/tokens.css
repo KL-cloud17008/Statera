@@ -1,151 +1,149 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    ATHANOR DESIGN TOKENS — the single source of truth for the visual system.
 
-   This is the ONLY file in the codebase permitted to contain raw colour values,
-   font sizes, radii, spacing, or motion values. Every user-facing component
-   consumes these through semantic Tailwind utilities generated in globals.css
-   (bg-card, text-secondary, border-hairline, text-body, rounded-card, …).
+   This is the ONLY file permitted to contain raw colour values, font sizes,
+   radii, spacing, or motion values. Components consume them through semantic
+   Tailwind utilities generated in globals.css.
 
-   Swapping the palette is a one-file change: edit the ramp below, nothing else.
+   GRAMMAR (v3): the product is a ledger, not a dashboard of cards.
+     · one continuous light canvas; sections divided by hairline rules
+     · repeating data renders as ledger rows: aligned columns, right-aligned
+       mono numerals, hairline separators
+     · obsidian chrome (the sidebar rail) frames the canvas
+     · maximum one level of container nesting
+     · tight type: 14px body, 13px dense rows, 11px labels; only page titles
+       are large
 
-   Register: light editorial zinc. Near-monochrome surface ladder does ~95% of
-   the work; exactly one chromatic accent, reserved for the single primary
-   action per view. Hairline borders instead of shadows. 4px base grid.
-
-   Typography (open substitutes, loaded via next/font in src/app/layout.tsx):
-     Inter          — the single sans family for all UI text
-     JetBrains Mono — numerals, IDs, and tabular data only. It earns its place
-                      here because this is a training ledger: weights, reps,
-                      dates and set counts must align in columns and must not
-                      reflow width as values change.
+   Typography (next/font in src/app/layout.tsx):
+     Fraunces       — page titles only. One large editorial voice per screen.
+     Inter          — all other UI text.
+     JetBrains Mono — every numeral in the ledger. Tabular, so columns of
+                      weights, reps and dates align and never reflow.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
   color-scheme: light;
 
   /* ── Font families ────────────────────────────────────────────────────── */
+  --font-family-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-family-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
   --font-family-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular",
     Consolas, monospace;
 
-  /* ── Neutral ramp (zinc) — the near-monochrome spine of the system ────── */
+  /* ── Neutral ramp (zinc) ──────────────────────────────────────────────── */
   --zinc-0: #ffffff;
-  --zinc-25: #fcfcfd;
-  --zinc-50: #f7f7f8;
-  --zinc-100: #f1f1f3;
-  --zinc-150: #e9e9ec;
-  --zinc-200: #e2e2e5;
-  --zinc-300: #d1d1d6;
-  --zinc-400: #a0a0ab;
+  --zinc-50: #fafafa;
+  --zinc-100: #f4f4f5;
+  --zinc-150: #ececee;
+  --zinc-200: #e4e4e7;
+  --zinc-300: #d4d4d8;
+  --zinc-400: #a1a1aa;
   --zinc-500: #71717a;
   --zinc-600: #52525b;
   --zinc-700: #3f3f46;
   --zinc-800: #27272a;
   --zinc-900: #18181b;
-  --zinc-950: #09090b;
 
-  /* ── The one chromatic accent ─────────────────────────────────────────── */
-  /* Reserved for the single primary action per view. Never decoration,
-     never secondary buttons, never a whole-card fill. */
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-active: #3730a3;
-  --accent-subtle: #eef2ff; /* accent-tinted surface for selected rows only */
-  --accent-border: #c7d2fe;
-  --accent-on: #ffffff; /* text on accent fill — 6.4:1 */
+  /* ── Obsidian (the chrome: sidebar rail, mobile bar) ──────────────────── */
+  --obsidian-900: #0b0f14;
+  --obsidian-800: #121820;
+  --obsidian-700: #1b232d;
+  --obsidian-line: rgba(236, 244, 252, 0.1);
+  --obsidian-line-strong: rgba(236, 244, 252, 0.22);
+  --obsidian-text: #eef4fa;
+  --obsidian-text-muted: rgba(236, 244, 252, 0.62);
+  --obsidian-text-dim: rgba(236, 244, 252, 0.42);
 
-  /* ── Semantic status ──────────────────────────────────────────────────── */
-  /* These are signals, not decoration: they may appear ONLY on the sanctioned
-     coaching states (pain gating, streak-at-risk, pace guardrail, goal-met,
-     new-low, destructive actions, errors). They are not "the accent". */
-  --status-attention: #b45309; /* 5.9:1 on card — pain >=3, at-risk, guardrail */
-  --status-attention-surface: #fffbeb;
-  --status-attention-border: #fde68a;
-  --status-positive: #15803d; /* 5.0:1 on card — goal met, new low */
-  --status-positive-surface: #f0fdf4;
-  --status-positive-border: #bbf7d0;
-  --status-critical: #b91c1c; /* 6.4:1 on card — destructive, errors */
-  --status-critical-surface: #fef2f2;
-  --status-critical-border: #fecaca;
-  --status-on: #ffffff;
+  /* ── The one chromatic accent: sky ────────────────────────────────────── */
+  /* Reserved for the single primary action per view, the active nav item,
+     and the focused chart series. Never decoration. */
+  --sky-accent: #0369a1; /* 5.9:1 on canvas — safe for text and fills */
+  --sky-accent-hover: #075985;
+  --sky-accent-active: #0c4a6e;
+  --sky-accent-bright: #38bdf8; /* on obsidian only */
+  --sky-accent-subtle: #f0f9ff;
+  --sky-accent-line: #bae6fd;
+  --sky-accent-on: #ffffff;
 
-  /* ── Surface ladder ───────────────────────────────────────────────────── */
-  --surface-canvas: var(--zinc-50); /* the page */
-  --surface-card: var(--zinc-0); /* resting card */
-  --surface-elevated: var(--zinc-0); /* popover/dialog/sheet — border does the lift */
-  --surface-sunken: var(--zinc-100); /* wells, tracks, inputs, table headers */
-  --surface-hover: var(--zinc-50); /* interactive row hover */
-  --surface-active: var(--zinc-100); /* pressed */
-  --surface-inverse: var(--zinc-900); /* inverse chips, tooltips */
+  /* ── Copper: the four sanctioned attention states ─────────────────────── */
+  /* recovery flag · streak at-risk · pain >=3 · pace guardrail */
+  --copper: #9a5a32; /* 5.6:1 on canvas */
+  --copper-bright: #e8a878; /* on obsidian only */
+  --copper-surface: #fdf6f0;
+  --copper-line: #e8cdb4;
 
-  /* ── Borders (hairlines carry elevation; no drop shadows) ─────────────── */
-  --border-hairline: var(--zinc-200);
-  --border-strong: var(--zinc-300);
-  --border-inverse: var(--zinc-800);
+  /* ── Remaining semantics ──────────────────────────────────────────────── */
+  --positive: #15803d;
+  --positive-surface: #f0fdf4;
+  --positive-line: #bbf7d0;
+  --critical: #b91c1c;
+  --critical-surface: #fef2f2;
+  --critical-line: #fecaca;
+  --on-status: #ffffff;
+
+  /* ── Surfaces — deliberately few. The canvas does the work. ───────────── */
+  --surface-canvas: var(--zinc-50); /* the one continuous page surface */
+  --surface-raised: var(--zinc-0); /* the single permitted container level */
+  --surface-sunken: var(--zinc-100); /* input wells, chart tracks, table heads */
+  --surface-row-hover: var(--zinc-100);
+  --surface-overlay: var(--zinc-0); /* dialogs, popovers */
+
+  /* ── Rules — the primary structural device ────────────────────────────── */
+  --rule: var(--zinc-200); /* section + row separators */
+  --rule-strong: var(--zinc-300); /* column heads, emphasis */
 
   /* ── Text ─────────────────────────────────────────────────────────────── */
-  --text-primary: var(--zinc-900); /* 16.1:1 on card */
-  --text-secondary: var(--zinc-600); /* 7.6:1 on card */
-  --text-tertiary: var(--zinc-500); /* 4.9:1 on card — AA at all sizes */
-  --text-disabled: var(--zinc-400); /* non-informational only */
-  --text-inverse: var(--zinc-0);
-  --text-on-accent: var(--accent-on);
+  --text-primary: var(--zinc-900); /* 15.9:1 */
+  --text-secondary: var(--zinc-600); /* 7.4:1 */
+  --text-tertiary: var(--zinc-500); /* 4.8:1 — AA at all sizes */
+  --text-faint: var(--zinc-400); /* non-informational only */
+  --text-on-accent: var(--sky-accent-on);
 
   /* ── Data visualisation ───────────────────────────────────────────────── */
-  /* Charts read as ink first; the accent marks the series under focus. */
   --chart-ink: var(--zinc-900);
-  --chart-ink-muted: var(--zinc-400);
-  --chart-accent: var(--accent);
-  --chart-positive: var(--status-positive);
-  --chart-attention: var(--status-attention);
-  --chart-grid: var(--zinc-150);
+  --chart-ink-muted: var(--zinc-300);
+  --chart-accent: var(--sky-accent);
+  --chart-positive: var(--positive);
+  --chart-attention: var(--copper);
+  --chart-grid: var(--zinc-200);
   --chart-track: var(--zinc-150);
 
-  /* ── Type scale — size / line-height / weight / tracking ──────────────── */
-  /* Compact by design: this is a data-dense daily ledger. */
-  --font-size-display: 2rem; /* 32px — page title */
-  --line-height-display: 1.15;
-  --tracking-display: -0.02em;
+  /* ── Type scale — tight. Only page titles are large. ──────────────────── */
+  --font-size-page-title: 1.875rem; /* 30px — Fraunces, one per screen */
+  --line-height-page-title: 1.1;
+  --tracking-page-title: -0.02em;
 
-  --font-size-title: 1.5rem; /* 24px — section title */
-  --line-height-title: 1.25;
-  --tracking-title: -0.015em;
-
-  --font-size-heading: 1.125rem; /* 18px — card heading */
-  --line-height-heading: 1.35;
-  --tracking-heading: -0.01em;
-
-  --font-size-body-lg: 1rem; /* 16px — lead paragraph */
+  --font-size-body-lg: 0.9375rem; /* 15px — page lead only */
   --line-height-body-lg: 1.5;
 
-  --font-size-body: 0.875rem; /* 14px — default UI text */
+  --font-size-body: 0.875rem; /* 14px — default */
   --line-height-body: 1.45;
 
-  --font-size-label: 0.8125rem; /* 13px — form labels, dense rows */
-  --line-height-label: 1.35;
+  --font-size-row: 0.8125rem; /* 13px — ledger rows, dense lists */
+  --line-height-row: 1.35;
 
-  --font-size-caption: 0.75rem; /* 12px — hints, secondary detail */
+  --font-size-caption: 0.75rem; /* 12px — secondary detail */
   --line-height-caption: 1.35;
 
-  --font-size-micro: 0.6875rem; /* 11px — eyebrows / column headers */
-  --line-height-micro: 1.3;
-  --tracking-micro: 0.06em;
+  --font-size-label: 0.6875rem; /* 11px — section heads, column heads */
+  --line-height-label: 1.3;
+  --tracking-label: 0.07em;
 
-  /* Numeric sizes — always JetBrains Mono, always tabular */
-  --font-size-data-sm: 0.875rem; /* 14px — inline values */
-  --font-size-data-md: 1.25rem; /* 20px — stat block value */
-  --font-size-data-lg: 1.75rem; /* 28px — feature stat */
-  --font-size-data-xl: 2.5rem; /* 40px — hero figure */
+  /* Numerals — JetBrains Mono, tabular, right-aligned in ledgers */
+  --font-size-data-sm: 0.8125rem; /* 13px — inline row values */
+  --font-size-data-md: 1rem; /* 16px — row emphasis */
+  --font-size-data-lg: 1.375rem; /* 22px — summary figure */
+  --font-size-data-xl: 2rem; /* 32px — the one hero figure */
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
 
-  /* ── Radii — exactly three ────────────────────────────────────────────── */
-  --radius-sm: 0.375rem; /* 6px — inputs, chips, small controls */
-  --radius-md: 0.625rem; /* 10px — cards, panels, dialogs */
-  --radius-full: 9999px; /* pills, avatars, toggles */
+  /* ── Radii — small. Rules carry structure, not rounded panels. ────────── */
+  --radius-sm: 0.25rem; /* 4px — inputs, chips */
+  --radius-md: 0.5rem; /* 8px — the single container level, dialogs */
+  --radius-full: 9999px; /* pills, avatars */
 
   /* ── Spacing — 4px base ───────────────────────────────────────────────── */
   --space-1: 0.25rem;
@@ -158,32 +156,27 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
 
   /* ── Layout ───────────────────────────────────────────────────────────── */
-  --layout-content-max: 75rem; /* 1200px */
-  --layout-gutter: var(--space-6);
+  --layout-content-max: 68rem; /* 1088px of ledger inside the rail */
+  --layout-rail-width: 13.5rem; /* 216px obsidian sidebar */
+  --layout-gutter: var(--space-8);
   --layout-gutter-mobile: var(--space-4);
-  --layout-section-rhythm: var(--space-20); /* 80px desktop */
-  --layout-section-rhythm-mobile: var(--space-12); /* 48px mobile */
-  --layout-touch-target: 2.75rem; /* 44px minimum */
+  --layout-section-gap: var(--space-10); /* rules do the separating, not air */
+  --layout-section-gap-mobile: var(--space-8);
+  --layout-row-height: 2.75rem; /* 44px — ledger row = touch target */
+  --layout-touch-target: 2.75rem;
 
   /* ── Focus ────────────────────────────────────────────────────────────── */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --focus-ring-color: var(--accent);
+  --focus-ring-color: var(--sky-accent);
 
   /* ── Motion ───────────────────────────────────────────────────────────── */
   --duration-fast: 120ms;
   --duration-base: 180ms;
-  --duration-slow: 280ms;
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ── Elevation ────────────────────────────────────────────────────────── */
-  /* The system uses hairline borders for elevation. These two shadows exist
-     only for surfaces that float above the page and must detach from it. */
-  --shadow-overlay: 0 8px 24px -8px rgb(9 9 11 / 0.12), 0 2px 6px -2px rgb(9 9 11 / 0.06);
-  --shadow-sticky: 0 1px 0 0 var(--border-hairline);
+  /* ── Elevation — overlays only. Nothing else floats. ──────────────────── */
+  --shadow-overlay: 0 8px 24px -8px rgb(11 15 20 / 0.16), 0 2px 6px -2px rgb(11 15 20 / 0.08);
 }

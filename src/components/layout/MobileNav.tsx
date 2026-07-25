@@ -12,7 +12,7 @@ export function MobileNav() {
     <nav
       aria-label="Primary"
       data-mobile-nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-card/95 backdrop-blur-sm md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 bg-obsidian md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="hide-scrollbar flex items-stretch overflow-x-auto">
@@ -25,20 +25,20 @@ export function MobileNav() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex min-h-touch min-w-touch flex-col items-center justify-center gap-1 px-2 py-2",
+                  "relative flex min-h-touch min-w-touch flex-col items-center justify-center gap-1 px-1 py-2",
                   "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
-                  isActive ? "text-primary" : "text-tertiary hover:text-secondary"
+                  isActive ? "text-obsidian-text" : "text-obsidian-dim"
                 )}
               >
-                <item.icon className="size-5" strokeWidth={isActive ? 2.25 : 1.75} />
-                <span className="w-full truncate text-center text-micro">{item.label}</span>
                 <span
                   aria-hidden
                   className={cn(
-                    "h-0.5 w-6 rounded-pill",
-                    isActive ? "bg-accent" : "bg-transparent"
+                    "absolute inset-x-3 top-0 h-0.5 rounded-pill",
+                    isActive ? "bg-accent-bright" : "bg-transparent"
                   )}
                 />
+                <item.icon className="size-5" strokeWidth={isActive ? 2.25 : 1.75} />
+                <span className="w-full truncate text-center text-label">{item.label}</span>
               </Link>
             </li>
           );
