@@ -45,8 +45,8 @@ export function StepsHeatmap({
           <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant="outline"
-              size="icon-xs"
+              variant="secondary"
+              size="icon-sm"
               onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -57,8 +57,8 @@ export function StepsHeatmap({
             </p>
             <Button
               type="button"
-              variant="outline"
-              size="icon-xs"
+              variant="secondary"
+              size="icon-sm"
               onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}
             >
               <ChevronRight className="h-4 w-4" />

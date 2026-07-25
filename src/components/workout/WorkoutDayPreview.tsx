@@ -122,7 +122,7 @@ export function WorkoutDayPreview({
                     ? "Move through the pair or circuit cleanly, then take the programmed rest."
                     : "Use straight sets with the programmed rest. Do not rush."}
                 </p>
-                <Badge variant="outline">{restNote}s rest</Badge>
+                <Badge variant="secondary">{restNote}s rest</Badge>
                 </div>
               </div>
 

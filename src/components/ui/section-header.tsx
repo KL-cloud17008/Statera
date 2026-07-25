@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * The page masthead. One focal point: eyebrow, title, optional lead, and at
+ * most one primary action supplied by the caller.
+ */
 export function SectionHeader({
   eyebrow,
   title,
@@ -17,22 +21,20 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <section className={cn("page-hero", className)}>
-      <div className="relative z-10 grid gap-8 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
-        <div className="max-w-5xl space-y-4">
-          {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-          <div className="space-y-3">
-            <h1 className="max-w-4xl">{title}</h1>
-            {description ? (
-              <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                {description}
-              </p>
-            ) : null}
-          </div>
-          {children ? <div className="pt-2">{children}</div> : null}
+    <header className={cn("flex flex-col gap-4", className)}>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0 max-w-2xl">
+          {eyebrow ? (
+            <p className="text-micro uppercase text-tertiary">{eyebrow}</p>
+          ) : null}
+          <h1 className="mt-2 text-display text-primary">{title}</h1>
+          {description ? (
+            <p className="mt-2 text-body text-secondary">{description}</p>
+          ) : null}
         </div>
-        {action ? <div className="relative z-10 shrink-0">{action}</div> : null}
+        {action ? <div className="shrink-0">{action}</div> : null}
       </div>
-    </section>
+      {children}
+    </header>
   );
 }

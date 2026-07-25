@@ -1,25 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSettingsProvider } from "@/components/settings/AppSettingsProvider";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { Toaster } from "@/components/ui/sonner";
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  axes: ["opsz", "SOFT", "WONK"],
-});
-
+// One sans family for the whole product; mono is reserved for tabular figures.
+// Both are open substitutes for the licensed faces in the reference systems.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -40,10 +38,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0A1220",
+  // Matches --surface-canvas in tokens.css.
+  themeColor: "#f7f7f8",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -54,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`light ${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`light ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <meta name="color-scheme" content="light" />

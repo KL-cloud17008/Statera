@@ -415,7 +415,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                     }
                   }}
                 />
-                <Button type="button" variant="outline" onClick={handleStepGoalSave} className="h-12">
+                <Button type="button" variant="secondary" onClick={handleStepGoalSave} className="h-12">
                   Save Goal
                 </Button>
               </div>
@@ -451,7 +451,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                     }
                   }}
                 />
-                <Button type="button" variant="outline" onClick={handleGoalDateSave} className="h-12">
+                <Button type="button" variant="secondary" onClick={handleGoalDateSave} className="h-12">
                   Save Date
                 </Button>
               </div>
@@ -522,11 +522,11 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-3">
-            <Button type="button" variant="outline" onClick={handleExportJson} disabled={isExporting}>
+            <Button type="button" variant="secondary" onClick={handleExportJson} disabled={isExporting}>
               {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               Export JSON Backup
             </Button>
-            <Button type="button" variant="outline" onClick={handleExportCsv} disabled={isExporting}>
+            <Button type="button" variant="secondary" onClick={handleExportCsv} disabled={isExporting}>
               {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               Export CSV Files
             </Button>
@@ -575,7 +575,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </div>
           </CardHeader>
           <CardContent>
-            <Button type="button" variant="destructive" onClick={() => setIsClearOpen(true)}>
+            <Button type="button" variant="critical" onClick={() => setIsClearOpen(true)}>
               <Trash2 className="h-4 w-4" />
               Clear All Tracker Data
             </Button>
@@ -632,10 +632,10 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </div>
           ) : null}
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setPendingImport(null)} disabled={isImporting}>
+            <Button type="button" variant="secondary" onClick={() => setPendingImport(null)} disabled={isImporting}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleConfirmImport} disabled={isImporting || importConfirmation !== "REPLACE"}>
+            <Button type="button" variant="critical" onClick={handleConfirmImport} disabled={isImporting || importConfirmation !== "REPLACE"}>
               {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
               Replace and import
             </Button>
@@ -652,10 +652,10 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setIsClearOpen(false)} disabled={isClearing}>
+            <Button type="button" variant="secondary" onClick={() => setIsClearOpen(false)} disabled={isClearing}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleClearAllData} disabled={isClearing}>
+            <Button type="button" variant="critical" onClick={handleClearAllData} disabled={isClearing}>
               {isClearing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Clear Everything
             </Button>

@@ -181,7 +181,7 @@ export function WeightChart({
             {(["1W", "1M", "3M", "ALL"] as const).map((range) => (
               <Button
                 key={range}
-                variant={zoom === range ? "default" : "ghost"}
+                variant={zoom === range ? "primary" : "ghost"}
                 size="sm"
                 type="button"
                 onClick={() => setZoom(range)}

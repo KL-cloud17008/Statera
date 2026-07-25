@@ -155,7 +155,7 @@ export function WeightImportClient() {
         description="Preview the parsed rows before importing so you can confirm dates, status, and body-fat data."
         action={
           <Link href="/weight">
-            <Button variant="outline" className="gap-2">
+            <Button variant="secondary" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to weight
             </Button>
@@ -192,7 +192,7 @@ export function WeightImportClient() {
               <CardTitle>Preview: {state.fileName}</CardTitle>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">{validCount} valid</Badge>
-                {errorCount > 0 ? <Badge variant="destructive">{errorCount} invalid</Badge> : null}
+                {errorCount > 0 ? <Badge variant="critical">{errorCount} invalid</Badge> : null}
               </div>
             </div>
           </CardHeader>
@@ -221,7 +221,7 @@ export function WeightImportClient() {
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={() => {
                   setState({ step: "idle" });
                   if (fileInputRef.current) fileInputRef.current.value = "";

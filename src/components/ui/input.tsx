@@ -7,8 +7,16 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        "w-full min-w-0 rounded-[var(--radius)] border border-[var(--hairline)] bg-input px-4 py-3 text-sm text-foreground transition-[border-color,box-shadow,background-color] duration-[var(--duration-fast)] placeholder:text-muted-foreground/55 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "hover:border-[var(--hairline-strong)] focus-visible:border-[var(--hairline-strong)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_var(--ring)] motion-reduce:transition-none",
+        "h-11 w-full min-w-0 rounded-control border border-hairline bg-card px-3",
+        "text-body text-primary placeholder:text-disabled",
+        "transition-colors duration-(--duration-fast) ease-(--ease-out)",
+        "hover:border-strong",
+        "focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent",
+        "disabled:pointer-events-none disabled:bg-sunken disabled:text-disabled",
+        "aria-invalid:border-critical aria-invalid:outline-critical",
+        // Numeric fields align in columns like the rest of the ledger.
+        "[&[type=number]]:tabular-nums [&[type=number]]:font-mono",
+        "motion-reduce:transition-none",
         className
       )}
       {...props}

@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 export function StepsProgressRing({
   current,
   goal,
-  size = 188,
+  size = 148,
 }: {
   current: number;
   goal: number;
@@ -20,50 +20,37 @@ export function StepsProgressRing({
     <div
       className="relative"
       style={{ width: size, height: size }}
-      aria-label={`${current.toLocaleString()} of ${goal.toLocaleString()} steps`}
       role="progressbar"
+      aria-label={`${current.toLocaleString()} of ${goal.toLocaleString()} steps`}
       aria-valuemin={0}
       aria-valuemax={safeGoal}
       aria-valuenow={Math.min(current, safeGoal)}
     >
-      <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90">
-        <defs>
-          <linearGradient id="steps-progress" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="var(--color-chart-2)" />
-            <stop offset="100%" stopColor="var(--color-chart-1)" />
-          </linearGradient>
-        </defs>
+      <svg viewBox="0 0 200 200" className="size-full -rotate-90">
         <circle
           cx="100"
           cy="100"
           r={radius}
-          className="fill-none"
-          stroke="var(--hairline)"
-          strokeWidth="14"
+          className="fill-none stroke-chart-track"
+          strokeWidth="12"
         />
         <circle
           cx="100"
           cy="100"
           r={radius}
-          className="fill-none transition-all duration-500"
-          stroke="url(#steps-progress)"
-          strokeWidth="14"
+          className="fill-none stroke-chart-ink"
+          strokeWidth="12"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
         />
       </svg>
-      <div className="absolute inset-4 flex flex-col items-center justify-center overflow-hidden rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] px-5 text-center">
-        <p className="eyebrow">Today</p>
-        <p className="mt-1.5 text-3xl font-semibold leading-none text-foreground data-number">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 text-center">
+        <span className="tabular text-data-lg font-medium leading-none text-primary">
           {current.toLocaleString()}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Goal {goal.toLocaleString()}
-        </p>
-        <p className="warm-pill mt-2 whitespace-nowrap rounded-full px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
-          {percentage}% reached
-        </p>
+        </span>
+        <span className="text-caption text-tertiary">of {goal.toLocaleString()}</span>
+        <span className="tabular mt-1 text-micro text-tertiary">{percentage}%</span>
       </div>
     </div>
   );

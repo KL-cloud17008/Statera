@@ -175,8 +175,8 @@ export default async function WorkoutPlanPage() {
           </p>
           <div className="flex flex-wrap gap-2 md:justify-end">
             <Badge variant="secondary">5 Strength</Badge>
-            <Badge variant="outline">0 Recovery</Badge>
-            <Badge variant="outline">2 Full Rest</Badge>
+            <Badge variant="secondary">0 Recovery</Badge>
+            <Badge variant="secondary">2 Full Rest</Badge>
           </div>
         </div>
 
@@ -251,7 +251,7 @@ export default async function WorkoutPlanPage() {
                   <div>
                     <div className="flex flex-wrap items-center gap-3">
                       <h2 className="text-3xl">{plan?.sessionName ?? day.title}</h2>
-                      <Badge variant={day.protocol === "Strength Protocol" ? "default" : "outline"}>{day.protocol}</Badge>
+                      <Badge variant={day.protocol === "Strength Protocol" ? "accent" : "outline"}>{day.protocol}</Badge>
                     </div>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">{day.note}</p>
                     <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
@@ -302,9 +302,9 @@ export default async function WorkoutPlanPage() {
                         <div>
                           <div className="flex flex-wrap items-center gap-2.5">
                             <p className="font-medium text-foreground">{exercise.exerciseName}</p>
-                            {exercise.supersetGroup ? <Badge variant="outline">Block {exercise.supersetGroup}</Badge> : null}
-                            {exercise.exerciseType === "ACCESSORY" ? <Badge variant="outline">Low-dose accessory</Badge> : null}
-                            {exercise.exerciseType === "FINISHER" ? <Badge variant="outline">Finisher</Badge> : null}
+                            {exercise.supersetGroup ? <Badge variant="secondary">Block {exercise.supersetGroup}</Badge> : null}
+                            {exercise.exerciseType === "ACCESSORY" ? <Badge variant="secondary">Low-dose accessory</Badge> : null}
+                            {exercise.exerciseType === "FINISHER" ? <Badge variant="secondary">Finisher</Badge> : null}
                             {backPainGateActive && isOverheadPressExercise(exercise.exerciseName) ? (
                               <span className="rounded-full border border-[color-mix(in_srgb,var(--copper)_42%,transparent)] bg-[color-mix(in_srgb,var(--copper)_10%,transparent)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--attention)]">
                                 Removed — lower-back ≥3/10

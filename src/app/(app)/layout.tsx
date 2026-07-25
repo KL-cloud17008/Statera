@@ -4,14 +4,14 @@ import { MobileNav } from "@/components/layout/MobileNav";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app-atmosphere min-h-screen text-foreground">
+    <div className="min-h-dvh bg-canvas">
       <DesktopSidebar />
       <MobileHeader />
 
-      <main className="relative pb-32 md:pb-16">
-        <div className="mx-auto flex min-h-screen w-full max-w-[112rem] flex-col px-4 py-6 sm:px-6 md:px-8 lg:px-10">
-          {children}
-        </div>
+      {/* Bottom padding clears the fixed mobile tab bar plus its safe-area inset,
+          so no tap target is ever overlapped by the nav. */}
+      <main className="app-container pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pt-10 md:pb-16">
+        {children}
       </main>
 
       <MobileNav />

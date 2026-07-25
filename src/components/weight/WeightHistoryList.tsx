@@ -14,7 +14,7 @@ import type { SerializedWeightEntry } from "@/lib/weight";
 import { formatBodyweight } from "@/lib/units";
 
 const statusVariant = {
-  BASELINE: "default",
+  BASELINE: "accent",
   FASTING: "secondary",
   NORMAL: "outline",
 } as const;
@@ -143,7 +143,7 @@ export function WeightHistoryList({
                           <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
                             <Button
                               type="button"
-                              variant="outline"
+                              variant="secondary"
                               size="icon-sm"
                               onClick={() => setEditingId(entry.id)}
                               aria-label={`Edit weight entry for ${date}`}
@@ -181,10 +181,10 @@ export function WeightHistoryList({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>
+            <Button type="button" variant="secondary" onClick={() => setDeleteId(null)} disabled={isDeleting}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+            <Button type="button" variant="critical" onClick={handleDelete} disabled={isDeleting}>
               {isDeleting ? "Deleting..." : "Delete entry"}
             </Button>
           </DialogFooter>

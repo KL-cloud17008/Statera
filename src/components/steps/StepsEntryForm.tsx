@@ -94,7 +94,7 @@ export function StepsEntryForm({
           </div>
           <div className="flex gap-2 md:justify-end">
             {editEntry ? (
-              <Button type="button" variant="outline" onClick={onDone}>
+              <Button type="button" variant="secondary" onClick={onDone}>
                 Cancel
               </Button>
             ) : null}

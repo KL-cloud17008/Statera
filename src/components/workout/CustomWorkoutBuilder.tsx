@@ -165,7 +165,7 @@ export function CustomWorkoutBuilder({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button type="button" variant="outline" onClick={saveTemplate} disabled={selectedExercises.length === 0}>
+          <Button type="button" variant="secondary" onClick={saveTemplate} disabled={selectedExercises.length === 0}>
             <Save className="h-4 w-4" />
             Save Template
           </Button>
@@ -210,7 +210,7 @@ export function CustomWorkoutBuilder({
                 </optgroup>
               ))}
             </select>
-            <Button type="button" variant="outline" onClick={() => addExercise(selectedExerciseId)}>
+            <Button type="button" variant="secondary" onClick={() => addExercise(selectedExerciseId)}>
               <Plus className="h-4 w-4" />
               Add
             </Button>
@@ -386,7 +386,7 @@ export function CustomWorkoutBuilder({
                 <div className="flex gap-2">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => {
                       setLabel(template.name);
                       setSelectedExercises(template.exercises);

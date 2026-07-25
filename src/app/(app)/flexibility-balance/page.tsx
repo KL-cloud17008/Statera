@@ -141,7 +141,7 @@ function ProtocolBlock({
           <Icon className="h-4 w-4" />
         </div>
       </div>
-      <Badge variant="outline" className="self-start">{badge}</Badge>
+      <Badge variant="secondary" className="self-start">{badge}</Badge>
       <div className="flex flex-1 flex-col">{children}</div>
     </article>
   );

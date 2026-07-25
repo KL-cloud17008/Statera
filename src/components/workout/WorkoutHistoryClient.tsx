@@ -75,11 +75,11 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                   </CardTitle>
                 </div>
                 <div className="flex gap-2">
-                  <Button type="button" variant="outline" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}>
+                  <Button type="button" variant="secondary" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}>
                     <ChevronLeft className="h-4 w-4" />
                     <span className="sr-only">Previous month</span>
                   </Button>
-                  <Button type="button" variant="outline" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}>
+                  <Button type="button" variant="secondary" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}>
                     <ChevronRight className="h-4 w-4" />
                     <span className="sr-only">Next month</span>
                   </Button>

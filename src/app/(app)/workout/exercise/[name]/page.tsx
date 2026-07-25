@@ -71,7 +71,7 @@ export default async function ExerciseHistoryPage({
         description={`${sets.length} total sets across ${dates.length} logged sessions.`}
         action={
           <Link href="/workout/history">
-            <Button variant="outline" className="gap-2">
+            <Button variant="secondary" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to history
             </Button>

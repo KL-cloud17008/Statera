@@ -86,7 +86,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
                 <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
                     size="icon-sm"
                     onClick={() => setEditingId(entry.id)}
                     aria-label={`Edit ${label} step entry`}
@@ -119,10 +119,10 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>
+            <Button type="button" variant="secondary" onClick={() => setDeleteId(null)} disabled={isDeleting}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+            <Button type="button" variant="critical" onClick={handleDelete} disabled={isDeleting}>
               {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Delete entry
             </Button>

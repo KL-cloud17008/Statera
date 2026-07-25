@@ -284,7 +284,7 @@ export function SetInput({
         ) : null}
         <Button
           type="button"
-          variant={saved ? "outline" : "secondary"}
+          variant={saved ? "secondary" : "primary"}
           onClick={handleSave}
           disabled={!hasLoggableValue || isPending}
           className={cn("h-11 flex-1 md:flex-none md:min-w-36", isFinisher && "md:ml-auto")}

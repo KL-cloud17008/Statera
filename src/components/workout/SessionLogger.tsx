@@ -266,7 +266,7 @@ export function SessionLogger({
 
             <div className="flex flex-wrap gap-3 xl:justify-end">
               {isStale ? (
-                <Button type="button" variant="outline" size="lg" onClick={handleDiscard} disabled={isPending} className="gap-2">
+                <Button type="button" variant="secondary" size="lg" onClick={handleDiscard} disabled={isPending} className="gap-2">
                   {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                   Discard old incomplete session
                 </Button>
