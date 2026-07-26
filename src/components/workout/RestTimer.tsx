@@ -108,7 +108,7 @@ export function RestTimer({
           <span
             className={
               timeLeft === 0
-                ? "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-[var(--sky-accent)]"
+                ? "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-accent"
                 : "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-[var(--cream)]"
             }
           >

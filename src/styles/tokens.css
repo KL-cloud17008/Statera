@@ -1,24 +1,29 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    ATHANOR DESIGN TOKENS — the single source of truth for the visual system.
 
-   This is the ONLY file permitted to contain raw colour values, font sizes,
-   radii, spacing, or motion values. Components consume them through semantic
+   The ONLY file permitted to contain raw colour values, font sizes, radii,
+   spacing, or motion values. Components consume them through semantic
    Tailwind utilities generated in globals.css.
 
    GRAMMAR (v3): the product is a ledger, not a dashboard of cards.
-     · one continuous light canvas; sections divided by hairline rules
+     · one continuous warm-paper canvas; sections divided by hairline rules
      · repeating data renders as ledger rows: aligned columns, right-aligned
        mono numerals, hairline separators
-     · obsidian chrome (the sidebar rail) frames the canvas
+     · near-black warm ink chrome (sidebar rail, mobile bars) frames the canvas
      · maximum one level of container nesting
-     · tight type: 14px body, 13px dense rows, 11px labels; only page titles
-       are large
+     · tight type: 14px body, 13px rows, 11px labels; only page titles large
+
+   PALETTE B — warm paper, ink chrome, olive accent, ember attention.
+     There is no blue in this system. Verified: olive #4F5D2A reads 6.70:1 on
+     canvas, ember #A9451F reads 5.52:1 — both clear AA at 11px label size —
+     and they sit 71° apart in hue (ΔE 55.7), so they never read as the same
+     signal. Ember's meaning is load-bearing, so any future collision is
+     resolved by moving the olive.
 
    Typography (next/font in src/app/layout.tsx):
-     Fraunces       — page titles only. One large editorial voice per screen.
+     Fraunces       — page titles only, regular weight.
      Inter          — all other UI text.
-     JetBrains Mono — every numeral in the ledger. Tabular, so columns of
-                      weights, reps and dates align and never reflow.
+     JetBrains Mono — every numeral in the ledger, tabular.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -31,83 +36,76 @@
   --font-family-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular",
     Consolas, monospace;
 
-  /* ── Neutral ramp (zinc) ──────────────────────────────────────────────── */
-  --zinc-0: #ffffff;
-  --zinc-50: #fafafa;
-  --zinc-100: #f4f4f5;
-  --zinc-150: #ececee;
-  --zinc-200: #e4e4e7;
-  --zinc-300: #d4d4d8;
-  --zinc-400: #a1a1aa;
-  --zinc-500: #71717a;
-  --zinc-600: #52525b;
-  --zinc-700: #3f3f46;
-  --zinc-800: #27272a;
-  --zinc-900: #18181b;
+  /* ── Warm paper ramp — the canvas and its surfaces ────────────────────── */
+  --paper-0: #fffefb; /* warm white */
+  --paper-50: #faf7f2; /* bone — the canvas */
+  --paper-100: #f5f1ea;
+  --paper-150: #f2eee6;
+  --paper-200: #e6e0d5; /* hairline rule */
+  --paper-300: #d8d1c3; /* strong rule */
+  --paper-400: #b3a996;
+  --paper-500: #736a5b; /* tertiary text — 4.99:1 canvas, 4.60:1 on sunken */
+  --paper-600: #635b4f; /* secondary text — 6.26:1 */
+  --paper-900: #1f1a16; /* primary text — 16.14:1 */
 
-  /* ── Obsidian (the chrome: sidebar rail, mobile bar) ──────────────────── */
-  --obsidian-900: #0b0f14;
-  --obsidian-800: #121820;
-  --obsidian-700: #1b232d;
-  --obsidian-line: rgba(236, 244, 252, 0.1);
-  --obsidian-line-strong: rgba(236, 244, 252, 0.22);
-  --obsidian-text: #eef4fa;
-  --obsidian-text-muted: rgba(236, 244, 252, 0.62);
-  --obsidian-text-dim: rgba(236, 244, 252, 0.42);
+  /* ── Ink chrome — near-black, warm ────────────────────────────────────── */
+  --ink-900: #1a1613;
+  --ink-800: #262019;
+  --ink-700: #342c23;
+  --ink-line: rgba(250, 247, 242, 0.1);
+  --ink-line-strong: rgba(250, 247, 242, 0.22);
+  --ink-text: #faf7f2;
+  --ink-text-muted: rgba(250, 247, 242, 0.64);
+  --ink-text-dim: rgba(250, 247, 242, 0.44);
 
-  /* ── The one chromatic accent: sky ────────────────────────────────────── */
-  /* Reserved for the single primary action per view, the active nav item,
-     and the focused chart series. Never decoration. */
-  --sky-accent: #0369a1; /* 5.9:1 on canvas — safe for text and fills */
-  --sky-accent-hover: #075985;
-  --sky-accent-active: #0c4a6e;
-  --sky-accent-bright: #38bdf8; /* on obsidian only */
-  --sky-accent-subtle: #f0f9ff;
-  --sky-accent-line: #bae6fd;
-  --sky-accent-on: #ffffff;
+  /* ── The one chromatic accent: olive ──────────────────────────────────── */
+  /* Active nav, data emphasis, goal-met state. NOT spent on buttons — the
+     primary action is a solid ink button. */
+  --olive: #4f5d2a; /* 6.70:1 on canvas */
+  --olive-bright: #a8bd6a; /* on ink chrome only */
+  --olive-subtle: #f1f3e8;
+  --olive-line: #d5deba;
+  --olive-on: #fffefb;
 
-  /* ── Copper: the four sanctioned attention states ─────────────────────── */
+  /* ── Ember: the four sanctioned attention states ──────────────────────── */
   /* recovery flag · streak at-risk · pain >=3 · pace guardrail */
-  --copper: #9a5a32; /* 5.6:1 on canvas */
-  --copper-bright: #e8a878; /* on obsidian only */
-  --copper-surface: #fdf6f0;
-  --copper-line: #e8cdb4;
+  --ember: #a9451f; /* 5.52:1 on canvas */
+  --ember-bright: #e59366; /* on ink chrome only */
+  --ember-surface: #fdf3ee;
+  --ember-line: #f0d3c1;
 
-  /* ── Remaining semantics ──────────────────────────────────────────────── */
-  --positive: #15803d;
-  --positive-surface: #f0fdf4;
-  --positive-line: #bbf7d0;
-  --critical: #b91c1c;
-  --critical-surface: #fef2f2;
-  --critical-line: #fecaca;
-  --on-status: #ffffff;
+  /* ── Critical — destructive actions and errors only ───────────────────── */
+  /* Pushed toward true red (hue 33°) so it never reads as ember (47°). */
+  --critical: #921f24;
+  --critical-surface: #fdf0ef;
+  --critical-line: #f2c9c5;
+  --on-status: #fffefb;
 
   /* ── Surfaces — deliberately few. The canvas does the work. ───────────── */
-  --surface-canvas: var(--zinc-50); /* the one continuous page surface */
-  --surface-raised: var(--zinc-0); /* the single permitted container level */
-  --surface-sunken: var(--zinc-100); /* input wells, chart tracks, table heads */
-  --surface-row-hover: var(--zinc-100);
-  --surface-overlay: var(--zinc-0); /* dialogs, popovers */
+  --surface-canvas: var(--paper-50);
+  --surface-raised: var(--paper-0); /* the single permitted container level */
+  --surface-sunken: var(--paper-150); /* input wells, chart tracks, table heads */
+  --surface-row-hover: var(--paper-100);
+  --surface-overlay: var(--paper-0);
 
   /* ── Rules — the primary structural device ────────────────────────────── */
-  --rule: var(--zinc-200); /* section + row separators */
-  --rule-strong: var(--zinc-300); /* column heads, emphasis */
+  --rule: var(--paper-200);
+  --rule-strong: var(--paper-300);
 
   /* ── Text ─────────────────────────────────────────────────────────────── */
-  --text-primary: var(--zinc-900); /* 15.9:1 */
-  --text-secondary: var(--zinc-600); /* 7.4:1 */
-  --text-tertiary: var(--zinc-500); /* 4.8:1 — AA at all sizes */
-  --text-faint: var(--zinc-400); /* non-informational only */
-  --text-on-accent: var(--sky-accent-on);
+  --text-primary: var(--paper-900);
+  --text-secondary: var(--paper-600);
+  --text-tertiary: var(--paper-500);
+  --text-faint: var(--paper-400);
+  --text-on-accent: var(--olive-on);
 
   /* ── Data visualisation ───────────────────────────────────────────────── */
-  --chart-ink: var(--zinc-900);
-  --chart-ink-muted: var(--zinc-300);
-  --chart-accent: var(--sky-accent);
-  --chart-positive: var(--positive);
-  --chart-attention: var(--copper);
-  --chart-grid: var(--zinc-200);
-  --chart-track: var(--zinc-150);
+  --chart-ink: var(--paper-900);
+  --chart-ink-muted: var(--paper-300);
+  --chart-accent: var(--olive);
+  --chart-attention: var(--ember);
+  --chart-grid: var(--paper-200);
+  --chart-track: var(--paper-150);
 
   /* ── Type scale — tight. Only page titles are large. ──────────────────── */
   --font-size-page-title: 1.875rem; /* 30px — Fraunces, one per screen */
@@ -131,19 +129,19 @@
   --tracking-label: 0.07em;
 
   /* Numerals — JetBrains Mono, tabular, right-aligned in ledgers */
-  --font-size-data-sm: 0.8125rem; /* 13px — inline row values */
-  --font-size-data-md: 1rem; /* 16px — row emphasis */
-  --font-size-data-lg: 1.375rem; /* 22px — summary figure */
-  --font-size-data-xl: 2rem; /* 32px — the one hero figure */
+  --font-size-data-sm: 0.8125rem;
+  --font-size-data-md: 1rem;
+  --font-size-data-lg: 1.375rem;
+  --font-size-data-xl: 2rem;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
 
   /* ── Radii — small. Rules carry structure, not rounded panels. ────────── */
-  --radius-sm: 0.25rem; /* 4px — inputs, chips */
-  --radius-md: 0.5rem; /* 8px — the single container level, dialogs */
-  --radius-full: 9999px; /* pills, avatars */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-full: 9999px;
 
   /* ── Spacing — 4px base ───────────────────────────────────────────────── */
   --space-1: 0.25rem;
@@ -158,11 +156,11 @@
   --space-16: 4rem;
 
   /* ── Layout ───────────────────────────────────────────────────────────── */
-  --layout-content-max: 68rem; /* 1088px of ledger inside the rail */
-  --layout-rail-width: 13.5rem; /* 216px obsidian sidebar */
+  --layout-content-max: 68rem;
+  --layout-rail-width: 13.5rem;
   --layout-gutter: var(--space-8);
   --layout-gutter-mobile: var(--space-4);
-  --layout-section-gap: var(--space-10); /* rules do the separating, not air */
+  --layout-section-gap: var(--space-10);
   --layout-section-gap-mobile: var(--space-8);
   --layout-row-height: 2.75rem; /* 44px — ledger row = touch target */
   --layout-touch-target: 2.75rem;
@@ -170,7 +168,7 @@
   /* ── Focus ────────────────────────────────────────────────────────────── */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --focus-ring-color: var(--sky-accent);
+  --focus-ring-color: var(--olive);
 
   /* ── Motion ───────────────────────────────────────────────────────────── */
   --duration-fast: 120ms;
@@ -178,5 +176,45 @@
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
 
   /* ── Elevation — overlays only. Nothing else floats. ──────────────────── */
-  --shadow-overlay: 0 8px 24px -8px rgb(11 15 20 / 0.16), 0 2px 6px -2px rgb(11 15 20 / 0.08);
+  --shadow-overlay: 0 8px 24px -8px rgb(31 26 22 / 0.18), 0 2px 6px -2px rgb(31 26 22 / 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MIGRATION BRIDGE — TEMPORARY.
+
+   The 33 not-yet-restructured surfaces still reference v2 variable names.
+   Mapping them onto Palette B here means every page renders in the new
+   palette immediately, while its LAYOUT is converted to the ledger grammar
+   page by page. Each entry is deleted as its last consumer is migrated; the
+   block must be empty (and removed) before this work is called done.
+
+   Nothing new is defined here — every value is an alias of a token above.
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --cream: var(--text-primary);
+  --cream-2: var(--text-secondary);
+  --cream-3: var(--text-tertiary);
+  --basalt-0: var(--surface-canvas);
+  --basalt-1: var(--surface-raised);
+  --basalt-2: var(--surface-sunken);
+  --basalt-3: var(--surface-row-hover);
+  --hairline: var(--rule);
+  --hairline-strong: var(--rule-strong);
+  --veil-1: var(--surface-sunken);
+  --veil-2: var(--surface-row-hover);
+  --attention: var(--ember);
+  --copper: var(--ember);
+  --radius-card: var(--radius-md);
+  --radius-panel: var(--radius-md);
+  --radius-tight: var(--radius-sm);
+  --duration-fast: 120ms;
+  --duration-medium: 180ms;
+  --ease-standard: var(--ease-out);
+  --ease-glide: var(--ease-out);
+  --ring: var(--olive);
+  --primary: var(--ink-900);
+  --primary-foreground: var(--ink-text);
+  --border: var(--rule);
+  --foreground: var(--text-primary);
+  --muted-foreground: var(--text-secondary);
 }

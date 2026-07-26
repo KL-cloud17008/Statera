@@ -1,11 +1,11 @@
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { MobileNav } from "@/components/layout/MobileNav";
-import { SidebarRail } from "@/components/layout/SidebarRail";
+import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh bg-canvas">
-      <SidebarRail />
+      <DesktopSidebar />
       <MobileHeader />
 
       {/* The canvas is offset by the rail on desktop; on mobile the bottom

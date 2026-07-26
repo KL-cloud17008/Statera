@@ -5,8 +5,8 @@ type StatTone = "neutral" | "attention" | "positive";
 
 const toneClass: Record<StatTone, string> = {
   neutral: "text-primary",
-  attention: "text-attention",
-  positive: "text-positive",
+  attention: "text-ember",
+  positive: "text-accent",
 };
 
 /**
@@ -42,7 +42,7 @@ export function StatBlock({
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       <div className="flex items-center justify-between gap-2">
-        <span className="text-micro uppercase text-tertiary">{label}</span>
+        <span className="text-label uppercase text-tertiary">{label}</span>
         {icon ? <span className="text-tertiary">{icon}</span> : null}
       </div>
       <span className={cn("tabular font-medium leading-none", valueSize, toneClass[tone])}>

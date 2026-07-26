@@ -50,7 +50,7 @@ export function StepsProgressRing({
           {current.toLocaleString()}
         </span>
         <span className="text-caption text-tertiary">of {goal.toLocaleString()}</span>
-        <span className="tabular mt-1 text-micro text-tertiary">{percentage}%</span>
+        <span className="tabular mt-1 text-label text-tertiary">{percentage}%</span>
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ export function MobileNav() {
     <nav
       aria-label="Primary"
       data-mobile-nav
-      className="fixed inset-x-0 bottom-0 z-40 bg-obsidian md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 bg-ink md:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="hide-scrollbar flex items-stretch overflow-x-auto">
@@ -27,7 +27,7 @@ export function MobileNav() {
                 className={cn(
                   "relative flex min-h-touch min-w-touch flex-col items-center justify-center gap-1 px-1 py-2",
                   "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
-                  isActive ? "text-obsidian-text" : "text-obsidian-dim"
+                  isActive ? "text-ink-text" : "text-ink-dim"
                 )}
               >
                 <span

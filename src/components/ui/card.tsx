@@ -15,9 +15,9 @@ function Card({
     <div
       data-slot="card"
       className={cn(
-        "rounded-card border border-hairline bg-card",
+        "rounded-panel border border-rule bg-raised",
         interactive &&
-          "transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-surface-hover hover:border-strong motion-reduce:transition-none",
+          "transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:border-rule-strong motion-reduce:transition-none",
         className
       )}
       {...props}
@@ -39,7 +39,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
       data-slot="card-title"
-      className={cn("text-heading text-primary", className)}
+      className={cn("text-body text-primary", className)}
       {...props}
     />
   );
@@ -69,7 +69,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex items-center gap-3 border-t border-hairline px-5 py-4", className)}
+      className={cn("flex items-center gap-3 border-t border-rule px-5 py-4", className)}
       {...props}
     />
   );
@@ -81,7 +81,7 @@ function CardDivider({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-divider"
       role="presentation"
-      className={cn("h-px bg-hairline", className)}
+      className={cn("h-px bg-rule", className)}
       {...props}
     />
   );

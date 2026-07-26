@@ -85,14 +85,14 @@ export function Num({
   className,
 }: {
   children: ReactNode;
-  tone?: "primary" | "secondary" | "copper" | "positive";
+  tone?: "primary" | "secondary" | "ember" | "accent";
   className?: string;
 }) {
   const toneClass =
-    tone === "copper"
-      ? "text-copper"
-      : tone === "positive"
-        ? "text-positive"
+    tone === "ember"
+      ? "text-ember"
+      : tone === "accent"
+        ? "text-accent"
         : tone === "secondary"
           ? "text-secondary"
           : "text-primary";
@@ -114,14 +114,14 @@ export function Figure({
   label: string;
   value: ReactNode;
   detail?: ReactNode;
-  tone?: "primary" | "copper" | "positive";
+  tone?: "primary" | "ember" | "accent";
   size?: "md" | "lg" | "xl";
   className?: string;
 }) {
   const valueSize =
     size === "xl" ? "text-data-xl" : size === "lg" ? "text-data-lg" : "text-data-md";
   const toneClass =
-    tone === "copper" ? "text-copper" : tone === "positive" ? "text-positive" : "text-primary";
+    tone === "ember" ? "text-ember" : tone === "accent" ? "text-accent" : "text-primary";
 
   return (
     <div className={cn("min-w-0", className)}>
@@ -168,20 +168,20 @@ export function PageTitle({
 
 /** A one-line notice for the sanctioned attention states. Not a card. */
 export function Notice({
-  tone = "copper",
+  tone = "ember",
   children,
   className,
 }: {
-  tone?: "copper" | "critical" | "positive";
+  tone?: "ember" | "critical" | "accent";
   children: ReactNode;
   className?: string;
 }) {
   const toneClass =
     tone === "critical"
       ? "border-critical-line bg-critical-surface text-critical"
-      : tone === "positive"
-        ? "border-positive-line bg-positive-surface text-positive"
-        : "border-copper-line bg-copper-surface text-copper";
+      : tone === "accent"
+        ? "border-accent-line bg-accent-subtle text-accent"
+        : "border-ember-line bg-ember-surface text-ember";
 
   return (
     <p

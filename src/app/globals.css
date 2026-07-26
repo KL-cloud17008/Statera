@@ -17,14 +17,14 @@
   --color-overlay: var(--surface-overlay);
 
   /* Obsidian chrome */
-  --color-obsidian: var(--obsidian-900);
-  --color-obsidian-800: var(--obsidian-800);
-  --color-obsidian-700: var(--obsidian-700);
-  --color-obsidian-line: var(--obsidian-line);
-  --color-obsidian-line-strong: var(--obsidian-line-strong);
-  --color-obsidian-text: var(--obsidian-text);
-  --color-obsidian-muted: var(--obsidian-text-muted);
-  --color-obsidian-dim: var(--obsidian-text-dim);
+  --color-ink: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-line: var(--ink-line);
+  --color-ink-line-strong: var(--ink-line-strong);
+  --color-ink-text: var(--ink-text);
+  --color-ink-muted: var(--ink-text-muted);
+  --color-ink-dim: var(--ink-text-dim);
 
   /* Rules — the structural device */
   --color-rule: var(--rule);
@@ -36,22 +36,18 @@
   --color-tertiary: var(--text-tertiary);
   --color-faint: var(--text-faint);
   --color-on-accent: var(--text-on-accent);
+  --color-on-ink: var(--ink-text);
   --color-on-status: var(--on-status);
 
   /* Accent + status */
-  --color-accent: var(--sky-accent);
-  --color-accent-hover: var(--sky-accent-hover);
-  --color-accent-active: var(--sky-accent-active);
-  --color-accent-bright: var(--sky-accent-bright);
-  --color-accent-subtle: var(--sky-accent-subtle);
-  --color-accent-line: var(--sky-accent-line);
-  --color-copper: var(--copper);
-  --color-copper-bright: var(--copper-bright);
-  --color-copper-surface: var(--copper-surface);
-  --color-copper-line: var(--copper-line);
-  --color-positive: var(--positive);
-  --color-positive-surface: var(--positive-surface);
-  --color-positive-line: var(--positive-line);
+  --color-accent: var(--olive);
+      --color-accent-bright: var(--olive-bright);
+  --color-accent-subtle: var(--olive-subtle);
+  --color-accent-line: var(--olive-line);
+  --color-ember: var(--ember);
+  --color-ember-bright: var(--ember-bright);
+  --color-ember-surface: var(--ember-surface);
+  --color-ember-line: var(--ember-line);
   --color-critical: var(--critical);
   --color-critical-surface: var(--critical-surface);
   --color-critical-line: var(--critical-line);
@@ -60,7 +56,6 @@
   --color-chart-ink: var(--chart-ink);
   --color-chart-ink-muted: var(--chart-ink-muted);
   --color-chart-accent: var(--chart-accent);
-  --color-chart-positive: var(--chart-positive);
   --color-chart-attention: var(--chart-attention);
   --color-chart-grid: var(--chart-grid);
   --color-chart-track: var(--chart-track);
@@ -196,7 +191,7 @@
   }
 
   ::selection {
-    background-color: var(--sky-accent-subtle);
+    background-color: var(--olive-subtle);
     color: var(--text-primary);
   }
 
@@ -255,6 +250,20 @@
     .ledger-section + .ledger-section {
       margin-top: var(--layout-section-gap);
       padding-top: var(--layout-section-gap);
+    }
+  }
+
+  /* Transitional: unmigrated pages still use .page-shell. Same tokens as the
+     ledger stack; removed page by page as each is migrated. */
+  .page-shell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--layout-section-gap-mobile);
+  }
+
+  @media (min-width: 768px) {
+    .page-shell {
+      gap: var(--layout-section-gap);
     }
   }
 

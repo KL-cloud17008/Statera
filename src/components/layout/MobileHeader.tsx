@@ -18,19 +18,19 @@ export function MobileHeader() {
 
   return (
     <header
-      className="sticky top-0 z-30 bg-obsidian md:hidden"
+      className="sticky top-0 z-30 bg-ink md:hidden"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="flex h-12 items-center justify-between gap-3 px-4">
         <div className="flex min-w-0 items-center gap-2">
-          <BrandMark className="size-4 shrink-0 text-obsidian-text" />
-          <span className="truncate text-row text-obsidian-text">{activeLabel}</span>
+          <BrandMark className="size-4 shrink-0 text-ink-text" />
+          <span className="truncate text-row text-ink-text">{activeLabel}</span>
         </div>
         <form action={signOut}>
           <button
             type="submit"
             aria-label="Sign out"
-            className="flex size-touch items-center justify-center text-obsidian-dim transition-colors duration-(--duration-fast) hover:text-obsidian-text motion-reduce:transition-none"
+            className="flex size-touch items-center justify-center text-ink-dim transition-colors duration-(--duration-fast) hover:text-ink-text motion-reduce:transition-none"
           >
             <LogOut className="size-4" />
           </button>

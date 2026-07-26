@@ -4,8 +4,10 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 /**
- * The accent fill is the single primary action per view. Everything else is
- * neutral: outline for secondary, ghost for tertiary, critical for destructive.
+ * The primary action is a solid ink button. The olive accent is NOT spent on
+ * buttons — it marks position in the nav, data emphasis, and the goal-met
+ * state. Ember is reserved for the four sanctioned attention states and never
+ * appears on a control.
  */
 const buttonVariants = cva(
   [
@@ -20,23 +22,21 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          "border-transparent bg-accent text-on-accent hover:bg-accent-hover active:bg-accent-active",
+        primary: "border-transparent bg-ink text-on-ink hover:bg-ink-800 active:bg-ink-700",
         secondary:
-          "border-hairline bg-card text-primary hover:bg-surface-hover active:bg-surface-active",
+          "border-rule bg-raised text-primary hover:bg-row-hover hover:border-rule-strong",
         ghost:
-          "border-transparent bg-transparent text-secondary hover:bg-surface-hover hover:text-primary",
+          "border-transparent bg-transparent text-secondary hover:bg-row-hover hover:text-primary",
         critical:
           "border-transparent bg-critical text-on-status hover:opacity-90 active:opacity-100",
         link: "border-transparent bg-transparent p-0 text-secondary underline-offset-4 hover:text-primary hover:underline",
       },
       size: {
-        // Every interactive size meets the 44px touch target on coarse pointers.
-        sm: "h-9 px-3 text-label",
-        md: "h-11 px-4 text-body",
-        lg: "h-12 px-5 text-body",
-        icon: "size-11",
-        "icon-sm": "size-9",
+        sm: "h-8 px-2.5 text-row",
+        md: "h-10 px-3.5 text-body",
+        lg: "h-11 px-4 text-body",
+        icon: "size-10",
+        "icon-sm": "size-8",
       },
     },
     defaultVariants: {

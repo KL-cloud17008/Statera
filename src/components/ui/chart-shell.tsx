@@ -34,12 +34,12 @@ export function ChartShell({
 }) {
   return (
     <section
-      className={cn("rounded-card border border-hairline bg-card", className)}
+      className={cn("rounded-panel border border-rule bg-raised", className)}
       aria-label={title}
     >
       <header className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5">
         <div className="min-w-0">
-          <h2 className="text-heading text-primary">{title}</h2>
+          <h2 className="text-body text-primary">{title}</h2>
           {description ? (
             <p className="mt-0.5 text-caption text-tertiary">{description}</p>
           ) : null}
@@ -58,7 +58,7 @@ export function ChartShell({
       </div>
 
       {footnote ? (
-        <div className="border-t border-hairline px-5 py-3 text-caption text-tertiary">
+        <div className="border-t border-rule px-5 py-3 text-caption text-tertiary">
           {footnote}
         </div>
       ) : null}

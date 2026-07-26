@@ -186,7 +186,7 @@ export function DashboardPageClient({
           <Figure
             label="Readiness"
             value={recoveryFlagActive ? "Recovery" : "Clear"}
-            tone={recoveryFlagActive ? "copper" : "primary"}
+            tone={recoveryFlagActive ? "ember" : "primary"}
             detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"}
           />
           <Figure
@@ -312,12 +312,12 @@ export function DashboardPageClient({
               label="Streak"
               value={stepStats.currentStreak}
               size="lg"
-              tone={stepStats.streakUnloggedDays > 0 ? "copper" : "primary"}
+              tone={stepStats.streakUnloggedDays > 0 ? "ember" : "primary"}
               detail={
                 stepStats.streakUnloggedDays > 0 && stepStats.streakBackfillDate ? (
                   <Link
                     href={`/steps?backfill=${stepStats.streakBackfillDate}#quick-add`}
-                    className="text-copper underline-offset-2 hover:underline"
+                    className="text-ember underline-offset-2 hover:underline"
                   >
                     At risk — backfill {stepStats.streakUnloggedDays}{" "}
                     {stepStats.streakUnloggedDays === 1 ? "day" : "days"}
@@ -482,7 +482,7 @@ function StepMiniBars({
     <div>
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-label text-secondary">Last 7 days</span>
-        <span className="text-micro uppercase text-tertiary">
+        <span className="text-label uppercase text-tertiary">
           Goal {goal.toLocaleString()}
         </span>
       </div>
@@ -518,7 +518,7 @@ function StepMiniBars({
               </div>
               <p
                 className={cn(
-                  "text-micro uppercase",
+                  "text-label uppercase",
                   isToday ? "text-primary" : "text-tertiary"
                 )}
               >

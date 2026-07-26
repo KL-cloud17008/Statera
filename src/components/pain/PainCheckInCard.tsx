@@ -95,7 +95,7 @@ export function PainCheckInCard({
     <div className={cn("", className)}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-micro uppercase text-tertiary">Pain check-in</p>
+          <p className="text-label uppercase text-tertiary">Pain check-in</p>
           <p className="mt-1 text-caption text-tertiary">
             Feet / soles and lower back, 0-10. One tap logs today.
           </p>
@@ -103,7 +103,7 @@ export function PainCheckInCard({
         {isPending ? <Loader2 className="size-4 animate-spin text-tertiary" aria-label="Saving" /> : null}
       </div>
 
-      <p className="mt-3 text-micro uppercase text-tertiary">
+      <p className="mt-3 text-label uppercase text-tertiary">
         Feet / soles
       </p>
       <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Foot pain 0 to 10">
@@ -123,14 +123,14 @@ export function PainCheckInCard({
         <p
           className={cn(
             "mt-2 text-caption",
-            footValue >= 3 ? "text-attention" : "text-tertiary"
+            footValue >= 3 ? "text-ember" : "text-tertiary"
           )}
         >
           {footGuidance(footValue)}
         </p>
       ) : null}
 
-      <p className="mt-4 text-micro uppercase text-tertiary">
+      <p className="mt-4 text-label uppercase text-tertiary">
         Lower back
       </p>
       <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Lower-back pain 0 to 10">
@@ -154,7 +154,7 @@ export function PainCheckInCard({
           <p
             className={cn(
               "mt-2 text-caption",
-              backValue >= 3 ? "text-attention" : "text-tertiary"
+              backValue >= 3 ? "text-ember" : "text-tertiary"
             )}
           >
             {backGuidance(backValue)}
@@ -167,7 +167,7 @@ export function PainCheckInCard({
 
       <p
         className={cn(
-          "mt-3 border-t border-hairline pt-3 text-caption",
+          "mt-3 border-t border-rule pt-3 text-caption",
           latest && !loggedToday ? "font-medium text-primary" : "text-tertiary"
         )}
       >
@@ -207,8 +207,8 @@ function PainChip({
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         "disabled:cursor-not-allowed disabled:opacity-45",
         selected
-          ? "border-inverse bg-inverse text-on-inverse"
-          : "border-hairline bg-card text-secondary hover:border-strong hover:text-primary"
+          ? "border-transparent bg-ink text-on-ink"
+          : "border-rule bg-raised text-secondary hover:border-rule-strong hover:text-primary"
       )}
     >
       {value}

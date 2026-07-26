@@ -510,7 +510,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               Appearance is fixed to the Athanor ledger system for visual consistency.
             </p>
             <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
-              Obsidian command navigation, sky-mist surfaces, glacier accents, and restrained copper remain consistent across the app.
+              Warm paper canvas, ink chrome, a single olive accent, and ember reserved for attention states remain consistent across the app.
             </div>
           </CardContent>
         </Card>
