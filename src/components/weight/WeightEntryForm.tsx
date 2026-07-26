@@ -1,9 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronDown, ChevronUp, Loader2, Scale } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -61,21 +60,9 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
   }
 
   return (
-    <Card className={editEntry ? "border-primary/35" : ""}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center gap-3">
-          <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-primary">
-            <Scale className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="eyebrow">Bodyweight</p>
-            <CardTitle className="text-foreground">
-              {editEntry ? "Edit weigh-in" : "Log a weigh-in"}
-            </CardTitle>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
+    /* No card. Editing inline replaces a ledger row, so the form is marked
+       by an accent edge on the canvas rather than a nested panel. */
+    <div className={editEntry ? "border-l-2 border-accent py-2 pl-3" : ""}>
         <form ref={formRef} action={handleSubmit} className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,0.9fr)_auto] xl:items-start">
             <div className="space-y-1.5">
@@ -155,7 +142,6 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
             </Button>
           ) : null}
         </form>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -13,14 +13,16 @@ export function Section({
   action,
   children,
   className,
+  id,
 }: {
   title?: string;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  id?: string;
 }) {
   return (
-    <section className={cn("ledger-section", className)}>
+    <section id={id} className={cn("ledger-section", className)}>
       {title || action ? (
         <div className="mb-3 flex items-baseline justify-between gap-4">
           {title ? <h2>{title}</h2> : <span />}

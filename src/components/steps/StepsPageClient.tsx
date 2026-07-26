@@ -1,9 +1,8 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { CalendarCheck, Flame, Target, TrendingUp } from "lucide-react";
-import { SectionHeader } from "@/components/ui/section-header";
-import { StatCard } from "@/components/ui/stat-card";
+import { Button } from "@/components/ui/button";
+import { Figure, Num, PageTitle, Row, Rows, Section } from "@/components/ui/ledger";
 import { StepsChart } from "@/components/steps/StepsChart";
 import { StepsEntryForm } from "@/components/steps/StepsEntryForm";
 import { StepsHeatmap } from "@/components/steps/StepsHeatmap";
@@ -37,102 +36,108 @@ export function StepsPageClient({
     (entry) => entry.date.slice(0, 7) === monthPrefix && (entry.steps ?? 0) >= settings.stepGoal
   ).length;
 
+  const streakAtRisk = stats.streakUnloggedDays > 0;
+
   return (
-    <div className="page-shell">
-      <SectionHeader
+    <>
+      <PageTitle
         eyebrow="Steps"
         title="Foot load and daily movement."
-        description="Daily step signal, streak pressure, weekly rhythm, and monthly load."
-      >
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <span className="warm-pill rounded-full px-3 py-1.5">Goal {settings.stepGoal.toLocaleString()} steps</span>
-          <span className="warm-pill rounded-full px-3 py-1.5">{formatDistance(stats.todaySteps, settings.distanceUnit)}</span>
-        </div>
-      </SectionHeader>
+        lead="Daily step signal, streak pressure, weekly rhythm, and monthly load."
+        action={
+          <Button asChild variant="primary" size="sm">
+            <Link href="#quick-add">Log steps</Link>
+          </Button>
+        }
+      />
 
-      <section className="command-deck grid gap-8 p-6 sm:p-8 xl:grid-cols-[minmax(18rem,0.38fr)_minmax(0,0.62fr)] xl:items-center" data-animated="true">
-        <div className="flex justify-center">
+      {/* Today reads as one figure on the canvas, with the goal ring beside it.
+          The streak/average figures appear once here — the previous build
+          printed Streak and 7-Day Average twice, in the deck and again in the
+          card row below it. */}
+      <Section className="mt-6">
+        <div className="flex flex-wrap items-center gap-x-10 gap-y-6">
           <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
-        </div>
-
-        <div>
-          <p className="eyebrow">Today</p>
-          <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
-            <p className="data-number value-reveal text-6xl font-medium leading-none text-[var(--cream)] sm:text-7xl">
-              {stats.todaySteps.toLocaleString()}
-            </p>
-            <p className="pb-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
-              steps logged
-            </p>
-          </div>
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <CommandMetric label="Goal Days" value={stats.goalDaysTotal.toLocaleString()} detail={`${stats.completionRate}% of days since first entry`} />
-            <CommandMetric
+          <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+            <Figure
+              label="Today"
+              size="xl"
+              value={stats.todaySteps.toLocaleString()}
+              detail={`of ${settings.stepGoal.toLocaleString()} · ${formatDistance(stats.todaySteps, settings.distanceUnit)}`}
+            />
+            <Figure
               label="Streak"
+              size="lg"
+              tone={streakAtRisk ? "ember" : "accent"}
               value={stats.currentStreak.toLocaleString()}
               detail={
-                stats.streakUnloggedDays > 0
-                  ? `At risk — ${stats.streakUnloggedDays} unlogged ${stats.streakUnloggedDays === 1 ? "day" : "days"}`
-                  : "Consecutive goal days"
+                streakAtRisk && stats.streakBackfillDate ? (
+                  <>
+                    {stats.streakUnloggedDays} unlogged{" "}
+                    {stats.streakUnloggedDays === 1 ? "day" : "days"} —{" "}
+                    <Link
+                      href={`/steps?backfill=${stats.streakBackfillDate}#quick-add`}
+                      className="text-ember underline underline-offset-2"
+                    >
+                      backfill {formatBackfillDate(stats.streakBackfillDate)}
+                    </Link>
+                  </>
+                ) : (
+                  "Consecutive goal days"
+                )
               }
             />
-            <CommandMetric label="7-Day Avg" value={stats.sevenDayAverage.toLocaleString()} detail={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`} />
-          </div>
+            <Figure
+              label="7-day avg"
+              size="lg"
+              value={stats.sevenDayAverage.toLocaleString()}
+              detail={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`}
+            />
+            <Figure
+              label="Best day"
+              size="lg"
+              value={stats.bestDay?.steps?.toLocaleString() ?? "--"}
+              detail={stats.bestDay?.date ?? "No data yet"}
+            />
+          </dl>
         </div>
-      </section>
+      </Section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            label="Goal Days This Month"
-            value={goalDaysThisMonth.toLocaleString()}
-            hint={`Of ${daysIntoMonth} ${daysIntoMonth === 1 ? "day" : "days"} so far`}
-            icon={<CalendarCheck className="h-5 w-5" />}
-          />
-          <StatCard
-            label="7-Day Average"
-            value={stats.sevenDayAverage.toLocaleString()}
-            hint={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`}
-            icon={<TrendingUp className="h-5 w-5" />}
-          />
-          <StatCard
-            label="Streak"
-            value={`${stats.currentStreak}`}
-            hint={
-              stats.streakUnloggedDays > 0 && stats.streakBackfillDate ? (
-                <span className="text-[var(--attention)]">
-                  Streak at risk: {stats.streakUnloggedDays} unlogged{" "}
-                  {stats.streakUnloggedDays === 1 ? "day" : "days"} —{" "}
-                  <Link
-                    href={`/steps?backfill=${stats.streakBackfillDate}#quick-add`}
-                    className="font-semibold underline-offset-2 hover:underline"
-                  >
-                    backfill {formatBackfillDate(stats.streakBackfillDate)}
-                  </Link>
-                </span>
-              ) : (
-                "Consecutive goal days"
-              )
-            }
-            icon={<Flame className="h-5 w-5" />}
-          />
-          <StatCard
-            label="Best Day"
-            value={stats.bestDay?.steps?.toLocaleString() ?? "--"}
-            hint={stats.bestDay?.date ?? "No data yet"}
-            icon={<Target className="h-5 w-5" />}
-          />
-      </section>
+      <Section title="Consistency">
+        <Rows columns="minmax(0,1fr) auto">
+          <Row columns="minmax(0,1fr) auto">
+            <span className="text-secondary">Goal days this month</span>
+            <Num>
+              {goalDaysThisMonth} / {daysIntoMonth}
+            </Num>
+          </Row>
+          <Row columns="minmax(0,1fr) auto">
+            <span className="text-secondary">Goal days all time</span>
+            <Num>{stats.goalDaysTotal.toLocaleString()}</Num>
+          </Row>
+          <Row columns="minmax(0,1fr) auto">
+            <span className="text-secondary">Completion rate since first entry</span>
+            <Num tone="accent">{stats.completionRate}%</Num>
+          </Row>
+        </Rows>
+      </Section>
 
-      <StepsChart entries={entries} goal={settings.stepGoal} timezone={timezone} />
+      <Section title="Daily steps">
+        <StepsChart entries={entries} goal={settings.stepGoal} timezone={timezone} />
+      </Section>
 
-      <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-        <div id="quick-add" className="space-y-4">
-          <StepsEntryForm key={backfillDate ?? "today"} timezone={timezone} initialDate={backfillDate} />
-          <StepsHeatmap entries={entries} goal={settings.stepGoal} />
-        </div>
+      <Section title="Month">
+        <StepsHeatmap entries={entries} goal={settings.stepGoal} />
+      </Section>
+
+      <Section title="Log an entry" className="scroll-mt-20" id="quick-add">
+        <StepsEntryForm key={backfillDate ?? "today"} timezone={timezone} initialDate={backfillDate} />
+      </Section>
+
+      <Section title="Recent entries">
         <StepsHistoryList entries={entries} />
-      </div>
-    </div>
+      </Section>
+    </>
   );
 }
 
@@ -143,20 +148,3 @@ function formatBackfillDate(dateString: string) {
   });
 }
 
-function CommandMetric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="black-glass rounded-[var(--radius-card)] p-4">
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="data-number value-reveal mt-3 text-2xl font-medium text-[var(--cream)]">{value}</p>
-      <p className="mt-1 text-xs leading-relaxed text-[var(--cream-3)]">{detail}</p>
-    </div>
-  );
-}
