@@ -432,7 +432,7 @@ export function DashboardPageClient({
                       prominent={isToday}
                     />
                   ) : (
-                    <span className="text-caption text-faint">Rest</span>
+                    <span className="text-caption text-tertiary">Rest</span>
                   )}
                 </span>
               </Row>

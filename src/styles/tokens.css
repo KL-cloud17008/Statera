@@ -96,6 +96,8 @@
   --text-primary: var(--paper-900);
   --text-secondary: var(--paper-600);
   --text-tertiary: var(--paper-500);
+  /* Non-text only — 2.18:1 on canvas. Use for empty-state marks and disabled
+     controls (WCAG-exempt), never for content. Tertiary is the quiet text. */
   --text-faint: var(--paper-400);
   --text-on-accent: var(--olive-on);
 
