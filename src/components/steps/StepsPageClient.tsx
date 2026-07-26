@@ -56,15 +56,23 @@ export function StepsPageClient({
           printed Streak and 7-Day Average twice, in the deck and again in the
           card row below it. */}
       <Section className="mt-6">
+        {/* The ring and the figures sit side by side only when there is room.
+            Below sm the figures take the full width — sharing the row left
+            each cell ~95px, and the 2rem Today numeral overran into Streak. */}
         <div className="flex flex-wrap items-center gap-x-10 gap-y-6">
-          <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
-          <dl className="grid min-w-0 flex-1 grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+          <div className="mx-auto shrink-0 sm:mx-0">
+            <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
+          </div>
+          {/* Today keeps its own line: sharing a 4-up row with the ring beside
+              it left 61px cells for a 115px numeral, and .num is nowrap. */}
+          <dl className="w-full min-w-0 sm:w-auto sm:flex-1">
             <Figure
               label="Today"
               size="xl"
               value={stats.todaySteps.toLocaleString()}
               detail={`of ${settings.stepGoal.toLocaleString()} · ${formatDistance(stats.todaySteps, settings.distanceUnit)}`}
             />
+            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
             <Figure
               label="Streak"
               size="lg"
@@ -99,6 +107,7 @@ export function StepsPageClient({
               value={stats.bestDay?.steps?.toLocaleString() ?? "--"}
               detail={stats.bestDay?.date ?? "No data yet"}
             />
+            </div>
           </dl>
         </div>
       </Section>

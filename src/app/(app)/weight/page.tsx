@@ -53,7 +53,10 @@ export default async function WeightPage() {
       />
 
       <Section className="mt-6">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+        {/* The xl figure gets its own line. Sharing a 4-up grid gave it a
+            108px cell for a 154px numeral, and since .num is nowrap it
+            overran into Start rather than wrapping. */}
+        <dl>
           <Figure
             label="Current"
             size="xl"
@@ -63,15 +66,17 @@ export default async function WeightPage() {
               "Log a weigh-in to unlock kg and stone conversion."
             }
           />
-          <Figure label="Start" size="lg" value={formatBodyweight(stats.startWeight)} detail="Baseline" />
-          <Figure
-            label="Change"
-            size="lg"
-            tone="accent"
-            value={formatBodyweightDelta(stats.totalChange)}
-            detail="From start weight"
-          />
-          <Figure label="7-day" size="lg" value={formatBodyweight(stats.avg7Day)} detail="Smoothed trend" />
+          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
+            <Figure label="Start" size="lg" value={formatBodyweight(stats.startWeight)} detail="Baseline" />
+            <Figure
+              label="Change"
+              size="lg"
+              tone="accent"
+              value={formatBodyweightDelta(stats.totalChange)}
+              detail="From start weight"
+            />
+            <Figure label="7-day" size="lg" value={formatBodyweight(stats.avg7Day)} detail="Smoothed trend" />
+          </div>
         </dl>
 
         {/* Progress to goal reads as a rule that fills, not a floating bar. */}

@@ -47,11 +47,16 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
 
   /* Six metrics that used to be six cards. As ledger rows they share one
      numeral column, so the values line up and can be read down. */
+  /* `numeric: false` opts a value out of the mono tabular treatment. Tabular
+     numerals exist so digits align down the column; a categorical word gains
+     nothing from it and starts to read as a measurement. Dates keep it —
+     they are mostly digits and do line up. */
   const metrics: Array<{
     label: string;
     value: string;
     hint: string;
     tone?: "primary" | "accent" | "ember";
+    numeric?: boolean;
   }> = [
     {
       label: "Projected goal date",
@@ -82,6 +87,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
       label: "Direction",
       value: stats.trend === "stable" ? "Holding" : stats.trend === "down" ? "Cutting" : "Rising",
       hint: "Based on recent change velocity",
+      numeric: false,
     },
   ];
 
@@ -114,7 +120,13 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
               <Sub className="mt-0.5 block">{metric.hint}</Sub>
             </span>
             <span className="hidden truncate text-tertiary md:block">{metric.hint}</span>
-            <Num tone={metric.tone === "ember" ? "ember" : "primary"}>{metric.value}</Num>
+            {metric.numeric === false ? (
+              /* Right-aligned to hold the column edge, but sans — it is a
+                 state, not a figure. */
+              <span className="text-right text-primary">{metric.value}</span>
+            ) : (
+              <Num tone={metric.tone === "ember" ? "ember" : "primary"}>{metric.value}</Num>
+            )}
           </Row>
         ))}
       </Rows>

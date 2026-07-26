@@ -13,7 +13,6 @@ import {
   YAxis,
 } from "recharts";
 import { PeriodToggle } from "@/components/ui/period-toggle";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { BarChart3 } from "lucide-react";
 import {
@@ -61,12 +60,11 @@ export function StepsChart({
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="eyebrow">Movement Trends</p>
-          <CardTitle className="mt-2">Daily, weekly, monthly</CardTitle>
-        </div>
+    /* No card: the chart sits on the canvas under its section rule. The
+       period toggle is the only chrome, and the section head already names
+       this, so the duplicate "Movement Trends" title is gone. */
+    <div>
+      <div className="mb-4 flex justify-end">
         <PeriodToggle
           value={view}
           onChange={setView}
@@ -76,9 +74,8 @@ export function StepsChart({
             { label: "Month", value: "monthly" },
           ]}
         />
-      </CardHeader>
-      <CardContent>
-        <div className="chart-frame h-[320px]">
+      </div>
+        <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={config.data} margin={{ top: 12, right: 10, left: -18, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.45} />
@@ -124,7 +121,6 @@ export function StepsChart({
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
