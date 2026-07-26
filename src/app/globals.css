@@ -274,15 +274,37 @@
     border-top: 1px solid var(--rule);
   }
 
-  /* One record: aligned columns, min 44px tall, hairline separated. */
+  /* One record: aligned columns, min 44px tall, hairline separated.
+
+     Columns come from --cols (mobile) and --cols-md (>=768px). Mobile is
+     authored as its own shape, never as the desktop grid degrading: a row
+     that needs four columns on the desktop ledger declares two or three
+     here and folds the remainder onto a second line (.ledger-sub). */
   .ledger-row {
     display: grid;
+    grid-template-columns: var(--cols, minmax(0, 1fr));
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2) var(--space-3);
     min-height: var(--layout-row-height);
     padding-block: var(--space-2);
     font-size: var(--font-size-row);
     line-height: var(--line-height-row);
+  }
+
+  @media (min-width: 768px) {
+    .ledger-row {
+      grid-template-columns: var(--cols-md, var(--cols, minmax(0, 1fr)));
+      gap: var(--space-3);
+    }
+  }
+
+  /* The folded second line: secondary detail that owns a column on desktop.
+     Sits under the primary cell, tighter and quieter, and never adds height
+     to the desktop row because it is removed from the grid there. */
+  .ledger-sub {
+    font-size: var(--font-size-caption);
+    line-height: var(--line-height-caption);
+    color: var(--text-tertiary);
   }
 
   /* Row hover is a background wash only — rows never lift or gain borders. */
@@ -303,9 +325,12 @@
     }
   }
 
-  /* Column head above a run of rows. */
+  /* Column head above a run of rows. Persists on mobile — the columns stay
+     named at every width, which is what makes a narrow screen read as a
+     ledger rather than as a stack of text. */
   .ledger-head {
     display: grid;
+    grid-template-columns: var(--cols, minmax(0, 1fr));
     align-items: center;
     gap: var(--space-3);
     padding-bottom: var(--space-2);
@@ -316,6 +341,28 @@
     font-weight: var(--font-weight-medium);
     text-transform: uppercase;
     color: var(--text-tertiary);
+  }
+
+  @media (min-width: 768px) {
+    .ledger-head {
+      grid-template-columns: var(--cols-md, var(--cols, minmax(0, 1fr)));
+    }
+  }
+
+  /* For long runs, the head stays put so the columns remain identified while
+     scrolling. Offset by the mobile app bar; the canvas colour prevents rows
+     showing through. */
+  .ledger-head-sticky {
+    position: sticky;
+    top: calc(3rem + env(safe-area-inset-top));
+    z-index: 10;
+    background-color: var(--surface-canvas);
+  }
+
+  @media (min-width: 768px) {
+    .ledger-head-sticky {
+      top: 0;
+    }
   }
 
   /* Every numeral in the ledger: mono, tabular, right-aligned by default. */

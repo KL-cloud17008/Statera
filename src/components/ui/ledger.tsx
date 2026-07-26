@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -32,22 +32,45 @@ export function Section({
   );
 }
 
+/**
+ * The responsive column contract. `columns` is the mobile shape and is
+ * authored first; `mdColumns` is the wider shape from 768px up. A row that
+ * omits `mdColumns` keeps one shape at every width.
+ *
+ * These are custom properties rather than an inline `grid-template-columns`
+ * because a media query cannot be expressed in an inline style — the actual
+ * switch lives in globals.css.
+ */
+function columnVars(columns: string, mdColumns?: string) {
+  return {
+    "--cols": columns,
+    ...(mdColumns ? { "--cols-md": mdColumns } : {}),
+  } as CSSProperties;
+}
+
 /** A run of ledger rows, hairline-separated. `columns` is a grid template. */
 export function Rows({
   columns,
+  mdColumns,
   head,
+  stickyHead = false,
   children,
   className,
 }: {
   columns: string;
+  mdColumns?: string;
   head?: ReactNode;
+  stickyHead?: boolean;
   children: ReactNode;
   className?: string;
 }) {
   return (
     <div className={className}>
       {head ? (
-        <div className="ledger-head" style={{ gridTemplateColumns: columns }}>
+        <div
+          className={cn("ledger-head", stickyHead && "ledger-head-sticky")}
+          style={columnVars(columns, mdColumns)}
+        >
           {head}
         </div>
       ) : null}
@@ -59,11 +82,13 @@ export function Rows({
 /** One record. Cells are supplied by the caller and align to `columns`. */
 export function Row({
   columns,
+  mdColumns,
   interactive = false,
   children,
   className,
 }: {
   columns: string;
+  mdColumns?: string;
   interactive?: boolean;
   children: ReactNode;
   className?: string;
@@ -71,10 +96,34 @@ export function Row({
   return (
     <div
       className={cn("ledger-row", interactive && "ledger-row-interactive", className)}
-      style={{ gridTemplateColumns: columns }}
+      style={columnVars(columns, mdColumns)}
     >
       {children}
     </div>
+  );
+}
+
+/**
+ * A folded second line inside a row: detail that owns its own column on the
+ * desktop ledger but sits under the primary cell on mobile. Pass the grid
+ * placement so it spans the row rather than claiming a column.
+ */
+export function Sub({
+  hideOnDesktop = true,
+  children,
+  className,
+}: {
+  hideOnDesktop?: boolean;
+  children: ReactNode;
+  className?: string;
+}) {
+  /* `md:hidden` rather than a components-layer rule: Tailwind utilities
+     outrank the components layer, so a caller's `block` would otherwise
+     silently defeat a `display:none` declared there. */
+  return (
+    <span className={cn("ledger-sub", className, hideOnDesktop && "md:hidden")}>
+      {children}
+    </span>
   );
 }
 

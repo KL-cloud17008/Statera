@@ -7,7 +7,7 @@ import type { SerializedPainCheckIn } from "@/actions/pain";
 import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
-import { Figure, Notice, Num, PageTitle, Row, Rows, Section } from "@/components/ui/ledger";
+import { Figure, Notice, Num, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
 import {
@@ -371,12 +371,13 @@ export function DashboardPageClient({
       >
         <p className="mb-3 text-caption text-tertiary">5 Strength / 2 Full Rest.</p>
         <Rows
-          columns={RHYTHM_COLUMNS}
+          columns={RHYTHM_COLUMNS_MOBILE}
+          mdColumns={RHYTHM_COLUMNS}
           head={
             <>
               <span>Day</span>
               <span>Session</span>
-              <span className="hidden sm:block">Protocol</span>
+              <span className="hidden md:block">Protocol</span>
               <span />
             </>
           }
@@ -384,19 +385,45 @@ export function DashboardPageClient({
           {WEEKLY_RHYTHM.map((item) => {
             const isToday = item.dayOfWeek === trainingDayOfWeek;
             return (
-              <Row key={item.day} columns={RHYTHM_COLUMNS} interactive>
+              <Row
+                key={item.day}
+                columns={RHYTHM_COLUMNS_MOBILE}
+                mdColumns={RHYTHM_COLUMNS}
+                interactive
+              >
                 <span
                   className={cn(
-                    "num num-left text-label uppercase",
+                    "num num-left self-start pt-0.5 text-label uppercase md:self-center md:pt-0",
                     isToday ? "text-accent" : "text-tertiary"
                   )}
                 >
                   {item.day}
                 </span>
-                <span className={cn("truncate", isToday ? "text-primary" : "text-secondary")}>
-                  {item.label}
+                <span className="min-w-0">
+                  {/* Mobile shows the session name, which fits; the focus that
+                      follows the dash moves to the fold line. Desktop keeps the
+                      full label in one cell. */}
+                  <span
+                    className={cn(
+                      "block truncate md:hidden",
+                      isToday ? "text-primary" : "text-secondary"
+                    )}
+                  >
+                    {splitSessionLabel(item.label).name}
+                  </span>
+                  <span
+                    className={cn(
+                      "hidden truncate md:block",
+                      isToday ? "text-primary" : "text-secondary"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                  <Sub className="mt-0.5 block truncate">
+                    {splitSessionLabel(item.label).focus ?? item.protocol}
+                  </Sub>
                 </span>
-                <span className="hidden truncate text-tertiary sm:block">{item.protocol}</span>
+                <span className="hidden truncate text-tertiary md:block">{item.protocol}</span>
                 <span className="justify-self-end">
                   {item.protocol === "Strength Protocol" ? (
                     <WorkoutSessionActionButton
@@ -450,7 +477,22 @@ export function DashboardPageClient({
   );
 }
 
-const RHYTHM_COLUMNS = "3.5rem minmax(0,1fr) minmax(0,9rem) auto";
+/* Mobile drops the Protocol column and folds it under the session name; the
+   desktop ledger restores it as a real column. Authored separately rather
+   than letting the four-column grid degrade into 390px. */
+/* The action column is a fixed width, not `auto`: an auto column sizes from
+   its own content, so the empty head cell collapsed to 0 and the SESSION
+   label overhung the button column. A fixed track keeps head and rows on
+   one grid — which is the whole point of a ledger. */
+/* Display-only split of "Lower A — Leg Press + Quad/Hamstring Strength" into
+   its name and focus. Purely presentational: the plan data is untouched. */
+function splitSessionLabel(label: string): { name: string; focus?: string } {
+  const [name, ...rest] = label.split(" — ");
+  return { name, focus: rest.length > 0 ? rest.join(" — ") : undefined };
+}
+
+const RHYTHM_COLUMNS_MOBILE = "2.5rem minmax(0,1fr) 5.5rem";
+const RHYTHM_COLUMNS = "3.5rem minmax(0,1fr) minmax(0,9rem) 7rem";
 
 function StepMiniBars({
   entries,
