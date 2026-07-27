@@ -1,12 +1,23 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+/**
+ * Elevation comes from the hairline border and the surface step, never a
+ * drop shadow. `interactive` adds the hover/active affordance for cards that
+ * are themselves links or buttons.
+ */
+function Card({
+  className,
+  interactive = false,
+  ...props
+}: React.ComponentProps<"div"> & { interactive?: boolean }) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "surface-card flex flex-col gap-6 rounded-[var(--radius-card)] px-6 py-6 text-card-foreground",
+        "rounded-panel border border-rule bg-raised",
+        interactive &&
+          "transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:border-rule-strong motion-reduce:transition-none",
         className
       )}
       {...props}
@@ -18,30 +29,27 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-header"
-      className={cn(
-        "grid auto-rows-min gap-1.5 has-data-[slot=card-action]:grid-cols-[1fr_auto]",
-        className
-      )}
+      className={cn("flex items-start justify-between gap-4 px-5 pt-5", className)}
       {...props}
     />
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+function CardTitle({ className, ...props }: React.ComponentProps<"h2">) {
   return (
-    <div
+    <h2
       data-slot="card-title"
-      className={cn("text-[1.08rem] font-semibold tracking-normal text-foreground", className)}
+      className={cn("text-body text-primary", className)}
       {...props}
     />
   );
 }
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
-    <div
+    <p
       data-slot="card-description"
-      className={cn("text-sm leading-relaxed text-muted-foreground", className)}
+      className={cn("text-caption text-tertiary", className)}
       {...props}
     />
   );
@@ -49,23 +57,31 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
 
 function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      data-slot="card-action"
-      className={cn("self-start justify-self-end", className)}
-      {...props}
-    />
+    <div data-slot="card-action" className={cn("shrink-0", className)} {...props} />
   );
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="card-content" className={cn("", className)} {...props} />;
+  return <div data-slot="card-content" className={cn("p-5", className)} {...props} />;
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-footer"
-      className={cn("flex items-center gap-3 pt-2", className)}
+      className={cn("flex items-center gap-3 border-t border-rule px-5 py-4", className)}
+      {...props}
+    />
+  );
+}
+
+/** A full-bleed hairline divider inside a card, aligned to the card edges. */
+function CardDivider({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-divider"
+      role="presentation"
+      className={cn("h-px bg-rule", className)}
       {...props}
     />
   );
@@ -79,4 +95,5 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  CardDivider,
 };

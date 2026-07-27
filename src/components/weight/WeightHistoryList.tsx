@@ -7,14 +7,19 @@ import { deleteWeightEntry } from "@/actions/weight";
 import { WeightEntryForm } from "@/components/weight/WeightEntryForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Num, Row, Rows, Sub } from "@/components/ui/ledger";
+
+/* Entry, status, weight, controls. Fixed control track keeps head and rows
+   on one grid; mobile drops the status column into the entry cell. */
+const ENTRY_COLUMNS_MOBILE = "minmax(0,1fr) minmax(0,6rem) 4.5rem";
+const ENTRY_COLUMNS = "minmax(0,1fr) minmax(0,8rem) minmax(0,8rem) 4.5rem";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { SerializedWeightEntry } from "@/lib/weight";
 import { formatBodyweight } from "@/lib/units";
 
 const statusVariant = {
-  BASELINE: "default",
+  BASELINE: "accent",
   FASTING: "secondary",
   NORMAL: "outline",
 } as const;
@@ -81,96 +86,98 @@ export function WeightHistoryList({
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Entry history</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {entries.length === 0 ? (
-            <EmptyState
-              icon={CalendarClock}
-              title="No weigh-ins yet"
-              description="Add your first entry to unlock trend analysis, BMI, and projected goal pacing."
-              className="border-none bg-transparent px-0 py-6 shadow-none"
-            />
-          ) : (
-            <div className="max-h-[38rem] space-y-5 overflow-y-auto pr-1">
-              {Array.from(grouped.entries()).map(([date, dateEntries]) => (
-                <div key={date} className="space-y-2">
-                  <div className="warm-pill sticky top-0 z-10 -mx-2 rounded-full px-2 py-1 text-[11px] font-medium uppercase tracking-[0.12em] backdrop-blur-md">
-                    {formatGroupDate(date)}
-                  </div>
-                  <div className="space-y-3">
-                    {dateEntries.map((entry) =>
-                      editingId === entry.id ? (
-                        <WeightEntryForm
-                          key={entry.id}
-                          editEntry={entry}
-                          onDone={() => setEditingId(null)}
-                          timezone={timezone}
-                        />
-                      ) : (
-                        <div
-                          key={entry.id}
-                          className="interactive-row warm-row group flex items-start justify-between gap-3 rounded-[var(--radius-card)] p-4"
-                        >
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-lg font-semibold text-foreground data-number">
-                                {formatBodyweight(entry.weight)}
-                              </span>
-                              <Badge variant={statusVariant[entry.status]}>
-                                {statusLabel[entry.status]}
-                              </Badge>
-                              {newLowIds.has(entry.id) ? (
-                                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--copper)]">
-                                  <span className="h-1 w-1 rounded-full bg-[var(--copper)]" />
-                                  New low
-                                </span>
-                              ) : null}
-                              {entry.bodyFatPercent != null ? (
-                                <span className="text-xs text-muted-foreground">
-                                  {entry.bodyFatPercent}% bf
-                                </span>
-                              ) : null}
-                            </div>
-                            {entry.notes ? (
-                              <p className="mt-2 text-sm text-muted-foreground">
-                                {entry.notes}
-                              </p>
-                            ) : null}
-                          </div>
-                          <div className="flex gap-2 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon-sm"
-                              onClick={() => setEditingId(entry.id)}
-                              aria-label={`Edit weight entry for ${date}`}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon-sm"
-                              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                              onClick={() => setDeleteId(entry.id)}
-                              aria-label={`Delete weight entry for ${date}`}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {entries.length === 0 ? (
+        <EmptyState
+          icon={CalendarClock}
+          title="No weigh-ins yet"
+          description="Add your first entry to unlock trend analysis, BMI, and projected goal pacing."
+        />
+      ) : (
+        <Rows
+          columns={ENTRY_COLUMNS_MOBILE}
+          mdColumns={ENTRY_COLUMNS}
+          head={
+            <>
+              <span>Entry</span>
+              <span className="hidden md:block">Status</span>
+              <span className="text-right">Weight</span>
+              <span />
+            </>
+          }
+        >
+          {Array.from(grouped.entries()).flatMap(([date, dateEntries]) => [
+            /* The date is a rule-level marker in the run, not a pill floating
+               over its own scroll container. */
+            <div key={`group-${date}`} className="bg-sunken px-2 py-1 text-label uppercase text-tertiary">
+              {formatGroupDate(date)}
+            </div>,
+            ...dateEntries.map((entry) =>
+              editingId === entry.id ? (
+                <WeightEntryForm
+                  key={entry.id}
+                  editEntry={entry}
+                  onDone={() => setEditingId(null)}
+                  timezone={timezone}
+                />
+              ) : (
+                <Row
+                  key={entry.id}
+                  columns={ENTRY_COLUMNS_MOBILE}
+                  mdColumns={ENTRY_COLUMNS}
+                  interactive
+                  className="group"
+                >
+                  <span className="min-w-0">
+                    <span className="flex flex-wrap items-center gap-2">
+                      <Badge variant={statusVariant[entry.status]}>
+                        {statusLabel[entry.status]}
+                      </Badge>
+                      {newLowIds.has(entry.id) ? (
+                        <span className="text-label uppercase text-ember">New low</span>
+                      ) : null}
+                      {entry.bodyFatPercent != null ? (
+                        <span className="text-caption text-tertiary">
+                          {entry.bodyFatPercent}% bf
+                        </span>
+                      ) : null}
+                    </span>
+                    {entry.notes ? (
+                      <Sub hideOnDesktop={false} className="mt-1 block truncate">
+                        {entry.notes}
+                      </Sub>
+                    ) : null}
+                  </span>
+                  <span className="hidden truncate text-tertiary md:block">
+                    {statusLabel[entry.status]}
+                  </span>
+                  <Num>{formatBodyweight(entry.weight)}</Num>
+                  <span className="flex justify-end gap-1 opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100 motion-reduce:transition-none">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setEditingId(entry.id)}
+                      aria-label={`Edit weight entry for ${date}`}
+                    >
+                      <Pencil className="size-3.5" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-critical hover:text-critical"
+                      onClick={() => setDeleteId(entry.id)}
+                      aria-label={`Delete weight entry for ${date}`}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </Button>
+                  </span>
+                </Row>
+              )
+            ),
+          ])}
+        </Rows>
+      )}
 
       <Dialog open={deleteId != null} onOpenChange={() => setDeleteId(null)}>
         <DialogContent>
@@ -181,10 +188,10 @@ export function WeightHistoryList({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>
+            <Button type="button" variant="secondary" onClick={() => setDeleteId(null)} disabled={isDeleting}>
               Cancel
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+            <Button type="button" variant="critical" onClick={handleDelete} disabled={isDeleting}>
               {isDeleting ? "Deleting..." : "Delete entry"}
             </Button>
           </DialogFooter>

@@ -35,7 +35,7 @@ export function WorkoutPlanResetButton() {
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="secondary"
       onClick={handleReset}
       disabled={isPending}
       className="max-w-full whitespace-normal text-left sm:whitespace-nowrap"

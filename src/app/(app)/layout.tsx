@@ -1,15 +1,17 @@
-import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app-atmosphere min-h-screen text-foreground">
+    <div className="min-h-dvh bg-canvas">
       <DesktopSidebar />
       <MobileHeader />
 
-      <main className="relative pb-32 md:pb-16">
-        <div className="mx-auto flex min-h-screen w-full max-w-[112rem] flex-col px-4 py-6 sm:px-6 md:px-8 lg:px-10">
+      {/* The canvas is offset by the rail on desktop; on mobile the bottom
+          padding clears the tab bar and its safe-area inset. */}
+      <main className="md:pl-rail">
+        <div className="ledger py-8 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:py-10 md:pb-16">
           {children}
         </div>
       </main>

@@ -14,7 +14,7 @@ export function PeriodToggle<T extends string>({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] p-1",
+        "inline-flex items-center gap-0.5 rounded-pill border border-rule bg-sunken p-0.5",
         className
       )}
     >
@@ -24,12 +24,19 @@ export function PeriodToggle<T extends string>({
           <button
             key={option.value}
             type="button"
+            aria-pressed={active}
             onClick={() => onChange(option.value)}
             className={cn(
-              "min-h-10 rounded-full px-3 py-2 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)]",
+              "min-h-8 rounded-pill px-3 font-mono text-label uppercase",
+              "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+              /* The active chip is ink with paper text. The previous pairing
+                 was bg-primary/text-primary-foreground, and since
+                 primary-foreground has no mapping in the theme it inherited
+                 body colour — near-black on near-black, 1.00:1. */
               active
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-ink text-on-ink"
+                : "text-secondary hover:text-primary"
             )}
           >
             {option.label}

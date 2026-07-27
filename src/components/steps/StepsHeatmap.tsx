@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { buildMonthlyHeatmap, type SerializedStepsEntry } from "@/lib/steps";
 
@@ -18,11 +17,13 @@ function formatCellSteps(steps: number) {
 
 function getHeatLevel(steps: number, goal: number) {
   const ratio = goal > 0 ? steps / goal : 0;
-  if (ratio >= 1) return "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))] text-[#07111f] border-transparent";
-  if (ratio >= 0.75) return "bg-[rgba(112,199,255,0.22)] text-foreground border-[rgba(79,124,255,0.32)]";
-  if (ratio >= 0.5) return "bg-[rgba(112,199,255,0.12)] text-foreground border-[var(--hairline)]";
-  if (ratio > 0) return "bg-[var(--veil-1)] text-muted-foreground border-[var(--hairline)]";
-  return "bg-transparent text-muted-foreground/60 border-[var(--hairline)]";
+  if (ratio >= 1) return "bg-accent text-on-accent border-transparent";
+  if (ratio >= 0.75) return "bg-accent-subtle text-primary border-accent-line";
+  if (ratio >= 0.5) return "bg-accent-subtle text-primary border-rule";
+  if (ratio > 0) return "bg-sunken text-tertiary border-rule";
+  /* Tertiary, not faint: the day number and dash are content, and faint is
+     2.31:1 against the cell. */
+  return "bg-transparent text-tertiary border-rule";
 }
 
 export function StepsHeatmap({
@@ -38,59 +39,56 @@ export function StepsHeatmap({
   const startWeekday = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay();
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between gap-3">
-          <CardTitle>Monthly heatmap</CardTitle>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-xs"
-              onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Previous month</span>
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-xs"
-              onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}
-            >
-              <ChevronRight className="h-4 w-4" />
-              <span className="sr-only">Next month</span>
-            </Button>
+    <div>
+      {/* No card: the calendar sits on the canvas under the section rule. */}
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-row text-secondary">
+          {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+        </p>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}
+          >
+            <ChevronLeft className="size-4" />
+            <span className="sr-only">Previous month</span>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}
+          >
+            <ChevronRight className="size-4" />
+            <span className="sr-only">Next month</span>
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-1 pb-2 text-center text-label uppercase text-tertiary">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <span key={day}>{day}</span>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {Array.from({ length: startWeekday }).map((_, index) => (
+          <div key={`pad-${index}`} className="aspect-square rounded-control border border-transparent" />
+        ))}
+        {days.map((day) => (
+          <div
+            key={day.date}
+            className={`flex aspect-square min-w-0 flex-col justify-between overflow-hidden rounded-control border px-1 py-1 ${getHeatLevel(day.steps, goal)}`}
+            title={`${day.date}: ${day.steps.toLocaleString()} steps`}
+          >
+            <span className="text-[0.625rem] leading-none">{day.day}</span>
+            <span className="num num-left whitespace-nowrap text-[0.625rem] leading-none">
+              {formatCellSteps(day.steps)}
+            </span>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="grid grid-cols-7 gap-1.5 text-center text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <span key={day}>{day}</span>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-1.5">
-          {Array.from({ length: startWeekday }).map((_, index) => (
-            <div key={`pad-${index}`} className="h-14 rounded-[var(--radius-tight)] border border-transparent" />
-          ))}
-          {days.map((day) => (
-            <div
-              key={day.date}
-              className={`flex h-14 min-w-0 flex-col justify-between overflow-hidden rounded-[var(--radius-tight)] border px-1.5 py-1.5 ${getHeatLevel(day.steps, goal)}`}
-              title={`${day.date}: ${day.steps.toLocaleString()} steps`}
-            >
-              <span className="text-[11px] leading-none">{day.day}</span>
-              <span className="data-number whitespace-nowrap text-[10px] leading-none">
-                {formatCellSteps(day.steps)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+    </div>
   );
 }

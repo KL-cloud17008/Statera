@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function RestTimer({
   defaultSeconds = 90,
@@ -90,7 +91,12 @@ export function RestTimer({
   const seconds = timeLeft % 60;
   const display = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
+  /* The bar variant sits in the session dock, which is ink chrome — its tones
+     come from the ink ramp, not the paper ramp, or the controls vanish. */
   if (variant === "bar") {
+    const inkControl =
+      "text-ink-muted hover:bg-ink-700 hover:text-ink-text focus-visible:outline-accent-bright";
+
     return (
       <div className="flex shrink-0 items-center gap-0.5">
         <Button
@@ -99,18 +105,19 @@ export function RestTimer({
           size="icon-sm"
           onClick={() => adjustDuration(-15)}
           disabled={!isRunning && duration <= 15}
-          className="text-xs text-[var(--cream-3)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
+          className={cn("num text-caption", inkControl)}
           aria-label="Reduce rest timer by 15 seconds"
         >
           -15
         </Button>
         {isRunning ? (
           <span
-            className={
-              timeLeft === 0
-                ? "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-[var(--sky-accent)]"
-                : "data-number min-w-[3.25rem] text-center text-base font-semibold tracking-normal text-[var(--cream)]"
-            }
+            className={cn(
+              "num min-w-[3.25rem] text-center text-data-md font-medium",
+              /* Elapsed reads as the goal-met state; olive-bright is the only
+                 olive legible on ink. */
+              timeLeft === 0 ? "text-accent-bright" : "text-ink-text"
+            )}
           >
             {timeLeft === 0 ? "GO" : display}
           </span>
@@ -120,11 +127,11 @@ export function RestTimer({
             variant="ghost"
             size="sm"
             onClick={start}
-            className="gap-1.5 border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 text-[var(--cream)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
+            className="gap-1.5 border-ink-line bg-ink-800 px-2.5 text-ink-text hover:bg-ink-700 hover:text-ink-text focus-visible:outline-accent-bright"
             aria-label={`Start ${duration} second rest timer`}
           >
-            <Timer className="h-3.5 w-3.5" />
-            <span className="data-number">{duration}s</span>
+            <Timer className="size-3.5" />
+            <span className="num">{duration}s</span>
           </Button>
         )}
         <Button
@@ -132,7 +139,7 @@ export function RestTimer({
           variant="ghost"
           size="icon-sm"
           onClick={() => adjustDuration(15)}
-          className="text-xs text-[var(--cream-3)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
+          className={cn("num text-caption", inkControl)}
           aria-label="Increase rest timer by 15 seconds"
         >
           +15
@@ -143,7 +150,7 @@ export function RestTimer({
             variant="ghost"
             size="sm"
             onClick={stop}
-            className="px-2 text-xs text-[var(--cream-3)] hover:bg-[var(--veil-2)] hover:text-[var(--cream)]"
+            className={cn("px-2 text-caption", inkControl)}
             aria-label="Stop rest timer"
           >
             {timeLeft === 0 ? "Reset" : "Stop"}
@@ -153,44 +160,58 @@ export function RestTimer({
     );
   }
 
+  /* The inline variant sits on the paper canvas. */
   if (!isRunning) {
     return (
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        <span className="eyebrow">Rest</span>
-        <button
+      <div className="flex items-center gap-3">
+        <span className="text-label uppercase text-tertiary">Rest</span>
+        <Button
           type="button"
+          variant="link"
           onClick={() => adjustDuration(-15)}
           disabled={duration <= 15}
-          className="text-link disabled:cursor-not-allowed disabled:opacity-40"
+          className="num text-row"
           aria-label="Reduce rest timer by 15 seconds"
         >
           -15
-        </button>
-        <button type="button" onClick={start} className="inline-flex items-center gap-2 text-link">
-          <Timer className="h-3.5 w-3.5" />
-          {duration}s
-        </button>
-        <button
+        </Button>
+        <Button type="button" variant="link" onClick={start} className="gap-2 text-row">
+          <Timer className="size-3.5" />
+          <span className="num">{duration}s</span>
+        </Button>
+        <Button
           type="button"
+          variant="link"
           onClick={() => adjustDuration(15)}
-          className="text-link"
+          className="num text-row"
           aria-label="Increase rest timer by 15 seconds"
         >
           +15
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-3 text-sm">
-      <span className="eyebrow">Rest</span>
-      <span className="text-lg font-semibold tracking-normal text-foreground data-number">
+    <div className="flex items-center gap-3">
+      <span className="text-label uppercase text-tertiary">Rest</span>
+      <span
+        className={cn(
+          "num text-data-md font-medium",
+          timeLeft === 0 ? "text-accent" : "text-primary"
+        )}
+      >
         {timeLeft === 0 ? "GO" : display}
       </span>
-      <button type="button" onClick={stop} className="text-link" aria-label="Stop rest timer">
+      <Button
+        type="button"
+        variant="link"
+        onClick={stop}
+        className="text-row"
+        aria-label="Stop rest timer"
+      >
         {timeLeft === 0 ? "Reset" : "Stop"}
-      </button>
+      </Button>
     </div>
   );
 }

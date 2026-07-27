@@ -152,40 +152,62 @@ export function SetInput({
   }
 
   return (
-    <div ref={containerRef} className={cn("interactive-row grid gap-3 rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--basalt-2)] px-3 py-3 md:gap-4 md:py-4", completed && "completed-row opacity-85", className)}>
+    <div
+      ref={containerRef}
+      className={cn(
+        "grid gap-3 py-3 md:gap-4 md:py-4",
+        /* A logged set stays fully legible — it recedes by losing the ink of
+           its label, not by dropping the whole row's contrast. */
+        completed && "opacity-90",
+        className
+      )}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3 md:gap-4">
         <div className="flex items-start gap-3">
-          <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-1" />
+          <Checkbox checked={completed} onCheckedChange={(checked) => onCompletedChange(!!checked)} className="mt-0.5" />
           <div>
-            <p className="text-sm font-semibold tracking-normal text-foreground">Set {setNumber}</p>
+            <p
+              className={cn(
+                "text-row font-medium",
+                completed ? "text-secondary" : "text-primary"
+              )}
+            >
+              Set {setNumber}
+            </p>
             {previous ? (
-              <p className="mt-1 text-xs text-muted-foreground">
-                Last {previous.weightUsed != null ? `${previous.weightUsed.toFixed(1)} ${WORKOUT_LOAD_UNIT}` : "--"} x {previous.repsCompleted ?? "--"}
+              <p className="mt-0.5 text-caption text-tertiary">
+                Last{" "}
+                <span className="num">
+                  {previous.weightUsed != null ? `${previous.weightUsed.toFixed(1)} ${WORKOUT_LOAD_UNIT}` : "--"}
+                </span>{" "}
+                x <span className="num">{previous.repsCompleted ?? "--"}</span>
               </p>
             ) : null}
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-xs uppercase tracking-[0.12em] text-muted-foreground">
+        <div className="flex items-center gap-3 text-caption text-tertiary">
           {previous ? (
-            <button type="button" onClick={copyPrevious} className="text-link">
+            <Button type="button" variant="link" onClick={copyPrevious} className="text-caption">
               Copy last
-            </button>
+            </Button>
           ) : null}
           {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : saved ? (
-            <span className="inline-flex items-center gap-1 text-foreground/82">
-              <Check className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-1 text-accent">
+              <Check className="size-3.5" />
               Saved
             </span>
           ) : null}
         </div>
       </div>
 
+      {/* Three columns at every width: weight, reps, and RPE are entered in one
+          pass without scrolling between fields. */}
       <div className={cn("grid grid-cols-3 gap-2 md:gap-3", isFinisher ? "md:grid-cols-[1fr_1.2fr_0.55fr]" : "md:grid-cols-[1fr_1fr_0.5fr]")}>
         <label className="grid content-start gap-1">
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
+          <span className="text-label uppercase text-tertiary">
             {isFinisher ? "Score" : WORKOUT_LOAD_UNIT}
           </span>
           <Input
@@ -205,7 +227,7 @@ export function SetInput({
         </label>
         {isFinisher ? (
           <label className="grid content-start gap-1">
-            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Notes</span>
+            <span className="text-label uppercase text-tertiary">Notes</span>
             <Input
               aria-label={`${exerciseName} set ${setNumber} notes`}
               type="text"
@@ -221,7 +243,7 @@ export function SetInput({
           </label>
         ) : (
           <label className="grid content-start gap-1">
-            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Reps</span>
+            <span className="text-label uppercase text-tertiary">Reps</span>
             <Input
               aria-label={`${exerciseName} set ${setNumber} reps`}
               type="number"
@@ -238,7 +260,7 @@ export function SetInput({
           </label>
         )}
         <label className="grid content-start gap-1">
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">RPE</span>
+          <span className="text-label uppercase text-tertiary">RPE</span>
           <Input
             aria-label={`${exerciseName} set ${setNumber} RPE`}
             type="number"
@@ -274,17 +296,19 @@ export function SetInput({
 
       <div className="flex items-center gap-4">
         {!isFinisher ? (
-          <button
+          <Button
             type="button"
+            variant="link"
             onClick={() => setShowNotes((current) => !current)}
-            className="text-link whitespace-nowrap text-xs"
+            className="whitespace-nowrap text-caption"
+            aria-expanded={showNotes}
           >
             {showNotes ? "- note" : "+ note"}
-          </button>
+          </Button>
         ) : null}
         <Button
           type="button"
-          variant={saved ? "outline" : "secondary"}
+          variant={saved ? "secondary" : "primary"}
           onClick={handleSave}
           disabled={!hasLoggableValue || isPending}
           className={cn("h-11 flex-1 md:flex-none md:min-w-36", isFinisher && "md:ml-auto")}

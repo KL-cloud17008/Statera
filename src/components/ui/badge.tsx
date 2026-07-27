@@ -3,28 +3,32 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
+/**
+ * Badges are labels, never actions. Status variants are reserved for the
+ * sanctioned coaching states; `secondary` is the neutral default.
+ */
 const badgeVariants = cva(
-  "inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] transition-colors",
+  "inline-flex w-fit items-center gap-1 rounded-pill border px-2 py-0.5 text-label uppercase",
   {
     variants: {
       variant: {
-        default: "border-[var(--hairline-strong)] bg-[var(--basalt-2)] text-foreground",
-        secondary: "border-[var(--hairline)] bg-[var(--basalt-2)] text-muted-foreground",
-        destructive: "border-destructive/35 bg-destructive/12 text-destructive",
-        outline: "border-[var(--hairline)] bg-transparent text-muted-foreground",
-        ghost: "border-transparent bg-transparent text-muted-foreground",
-        link: "border-transparent bg-transparent px-0 text-foreground",
+        secondary: "border-rule bg-sunken text-secondary",
+        outline: "border-rule bg-transparent text-tertiary",
+        accent: "border-accent-line bg-accent-subtle text-accent",
+        ember: "border-ember-line bg-ember-surface text-ember",
+
+        critical: "border-critical-line bg-critical-surface text-critical",
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "secondary",
     },
   }
 );
 
 function Badge({
   className,
-  variant = "default",
+  variant,
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> &
@@ -34,7 +38,6 @@ function Badge({
   return (
     <Comp
       data-slot="badge"
-      data-variant={variant}
       className={cn(badgeVariants({ variant }), className)}
       {...props}
     />

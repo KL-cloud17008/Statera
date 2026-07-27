@@ -88,37 +88,30 @@ export function MobilityChecklist({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="micro-panel rounded-[var(--radius-card)] p-5">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow">{title}</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {allDone ? "Everything here is complete." : `${checkedCount} of ${totalCount} completed.`}
-            </p>
-          </div>
-          <div className="text-sm font-semibold text-muted-foreground">
-            {allDone ? (
-              <span className="inline-flex items-center gap-2 text-foreground">
-                <Check className="h-4 w-4" />
-                Complete
-              </span>
-            ) : (
-              `${progress}%`
-            )}
-          </div>
-        </div>
-        <Progress value={progress} className="mt-4" />
+    <div>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h3>{title}</h3>
+        <span className="num text-caption text-secondary">
+          {allDone ? (
+            <span className="inline-flex items-center gap-1.5 text-accent">
+              <Check className="size-3.5" />
+              Complete
+            </span>
+          ) : (
+            `${checkedCount}/${totalCount} · ${progress}%`
+          )}
+        </span>
       </div>
+      <Progress value={progress} className="mt-2" />
 
-      <div className="space-y-6">
+      <div className="mt-6 space-y-6">
         {blocks.map((block, blockIndex) => (
-          <section key={block.title} className="grid gap-5 border-t border-border pt-6 first:border-t-0 first:pt-0 lg:grid-cols-[14rem_minmax(0,1fr)]">
-            <div className="lg:sticky lg:top-28 lg:self-start">
-              <p className="eyebrow text-[10px]">Block {blockIndex + 1}</p>
-              <h3 className="mt-2 tracking-normal">{block.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{block.duration}</p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{block.purpose}</p>
+          <section key={block.title} className="grid gap-4 border-t border-rule pt-5 first:border-t-0 first:pt-0 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-6">
+            <div className="lg:sticky lg:top-24 lg:self-start">
+              <p className="text-label uppercase text-tertiary">Block {blockIndex + 1}</p>
+              <p className="mt-1 text-row font-medium text-primary">{block.title}</p>
+              <p className="num num-left mt-0.5 text-caption text-tertiary">{block.duration}</p>
+              <p className="mt-2 text-caption text-tertiary">{block.purpose}</p>
             </div>
 
             <div className="space-y-4">
@@ -132,7 +125,7 @@ export function MobilityChecklist({
                 />
               ) : null}
 
-              <div className="space-y-3">
+              <div className="ledger-rows">
                 {block.exercises.map((exercise, exerciseIndex) => {
                   const key = `${block.id}-${exercise.id}-${exerciseIndex}`;
                   const detailsId = `mobility-details-${key}`;
@@ -156,28 +149,26 @@ export function MobilityChecklist({
                   return (
                     <div
                       key={key}
-                      className={cn(
-                        "interactive-row grid w-full gap-3 rounded-[var(--radius-card)] border px-4 py-4 text-left",
-                        isDone ? "completed-row" : "bg-[var(--basalt-2)]"
-                      )}
+                      className={cn("w-full py-3 text-left", isDone && "opacity-90")}
                     >
                       <div className="flex items-start gap-3">
                         <Checkbox
                           checked={isDone}
                           onCheckedChange={() => toggle(key)}
                           className="mt-1 shrink-0"
+                          aria-label={exercise.name}
                         />
                         <div className="min-w-0 flex-1">
-                          <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
+                          <div className="flex flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-4">
                             <button
                               type="button"
                               onClick={() => toggle(key)}
-                              className="w-full min-w-0 text-left focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] sm:flex-1"
+                              className="w-full min-w-0 rounded-control text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-1"
                             >
-                              <p className={cn("text-sm font-semibold tracking-normal", isDone ? "text-muted-foreground line-through" : "text-foreground")}>
+                              <p className={cn("text-row font-medium", isDone ? "text-tertiary line-through" : "text-primary")}>
                                 {exercise.name}
                               </p>
-                              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                              <p className="mt-0.5 text-caption text-tertiary">
                                 {exercise.cues}
                               </p>
                             </button>
@@ -185,7 +176,7 @@ export function MobilityChecklist({
                             <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:flex-col sm:items-end sm:justify-start">
                               <p
                                 title={exercise.dose}
-                                className="whitespace-nowrap rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-3)]"
+                                className="num whitespace-nowrap rounded-pill border border-rule bg-sunken px-2 py-0.5 text-label uppercase text-secondary"
                               >
                                 {compactDose(exercise.dose)}
                               </p>
@@ -195,12 +186,12 @@ export function MobilityChecklist({
                                   aria-expanded={isExpanded}
                                   aria-controls={detailsId}
                                   onClick={() => toggleExpanded(key)}
-                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)] transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] motion-reduce:transition-none"
+                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-pill border border-control-border bg-raised px-2.5 py-1 text-label uppercase text-secondary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
                                 >
                                   <span>How to do it</span>
                                   <ChevronDown
                                     className={cn(
-                                      "h-3.5 w-3.5 transition-transform duration-150 motion-reduce:transition-none",
+                                      "size-3.5 transition-transform duration-(--duration-fast) motion-reduce:transition-none",
                                       isExpanded && "rotate-180"
                                     )}
                                   />
@@ -242,32 +233,34 @@ function RecoveryIntro({
       ];
 
   return (
-    <div className="micro-panel overflow-hidden rounded-[var(--radius-card)] p-0">
-      <div className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,0.72fr)]">
+    <div className="border-y border-rule py-4">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(13rem,0.72fr)]">
         <div>
-          <p className="eyebrow text-[10px]">Recovery intensity</p>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <p className="text-label uppercase text-tertiary">Recovery intensity</p>
+          <p className="mt-1 text-row text-secondary">
             {isFootFlare ? FOOT_FLARE_RECOVERY_INTRO : RECOVERY_INTRO}
           </p>
           {isFootFlare ? (
-            <p className="mt-3 text-sm font-semibold leading-relaxed text-foreground">
+            <p className="mt-2 text-row font-medium text-primary">
               {FOOT_FLARE_RECOVERY_NOT_WORKOUT}
             </p>
           ) : null}
         </div>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+        <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-1">
           {rules.map((rule) => (
             <p
               key={rule}
-              className="rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-2 text-xs font-semibold text-foreground"
+              className="rounded-control bg-sunken px-2.5 py-1.5 text-caption text-secondary"
             >
               {rule}
             </p>
           ))}
         </div>
       </div>
-      <p className="border-t border-border/70 px-5 py-4 text-sm leading-relaxed text-muted-foreground">
-        <span className="font-semibold text-foreground">Safety note: </span>
+      {/* The stop rule is a pain gate, so it takes the ember notice rather
+          than sitting as quiet footer copy. */}
+      <p className="mt-3 rounded-control border-l-2 border-ember-line bg-ember-surface px-3 py-2 text-row text-ember">
+        <span className="font-medium">Safety note: </span>
         {RECOVERY_STOP_NOTE}
       </p>
     </div>
@@ -292,7 +285,7 @@ function BlockContext({
   adaptationNote?: string;
 }) {
   return (
-    <div className="grid gap-3 rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--basalt-2)] p-5 md:grid-cols-2">
+    <div className="grid gap-4 border-y border-rule py-4 md:grid-cols-2">
       {previousDayReason ? (
         <DetailCopy label="Previous-day reset" value={previousDayReason} />
       ) : null}
@@ -313,7 +306,7 @@ function MovementDetails({
   return (
     <div
       id={detailsId}
-      className="mt-4 rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[var(--basalt-1)] p-4"
+      className="mt-3 rounded-control border border-rule bg-sunken p-4"
     >
       <div className="grid gap-5 xl:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)]">
         <div className="space-y-4">
@@ -347,7 +340,7 @@ function IntensityBox({
 }) {
   return (
     <div>
-      <p className="eyebrow text-[10px]">Intensity</p>
+      <p className="text-label uppercase text-tertiary">Intensity</p>
       <div className="mt-2 grid gap-2">
         {[
           exercise.intensity.effort,
@@ -357,7 +350,7 @@ function IntensityBox({
         ].map((item) => (
           <p
             key={item}
-            className="rounded-[var(--radius-tight)] border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-2 text-xs font-semibold leading-relaxed text-foreground"
+            className="rounded-control bg-raised px-2.5 py-1.5 text-caption text-secondary"
           >
             {item}
           </p>
@@ -376,8 +369,8 @@ function DetailCopy({
 }) {
   return (
     <div>
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{value}</p>
+      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="mt-1 text-row text-secondary">{value}</p>
     </div>
   );
 }
@@ -417,20 +410,20 @@ function NumberedSteps({
 
   return (
     <div>
-      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="text-label uppercase text-tertiary">{label}</p>
       <div className="mt-2 space-y-2">
         {rows.map((row) => {
           if (row.isSectionLabel) {
             return (
-              <p key={row.item} className="pt-1 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground">
+              <p key={row.item} className="pt-1 text-label uppercase text-primary">
                 {row.item.replace(/:$/, "")}
               </p>
             );
           }
 
           return (
-            <div key={`${row.stepNumber}-${row.item}`} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
-              <span className="data-number mt-0.5 flex h-5 w-5 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--veil-2)] text-[11px] text-foreground">
+            <div key={`${row.stepNumber}-${row.item}`} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-2 text-row text-secondary">
+              <span className="num mt-0.5 flex size-5 items-center justify-center rounded-pill border border-rule bg-sunken text-label text-primary">
                 {row.stepNumber}
               </span>
               <p>{row.item}</p>
@@ -455,11 +448,11 @@ function DetailList({
 
   return (
     <div>
-      <p className="eyebrow text-[10px]">{label}</p>
+      <p className="text-label uppercase text-tertiary">{label}</p>
       <ul className="mt-2 space-y-2">
         {items.map((item) => (
-          <li key={item} className="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-2 text-sm leading-relaxed text-muted-foreground">
-            <span className="mt-[0.65em] h-1 w-1 rounded-full bg-[var(--cream-3)]" />
+          <li key={item} className="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-2 text-row text-secondary">
+            <span className="mt-[0.65em] size-1 rounded-pill bg-accent" />
             <span>{item}</span>
           </li>
         ))}

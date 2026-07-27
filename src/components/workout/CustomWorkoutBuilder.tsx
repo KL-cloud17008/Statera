@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Row, Rows } from "@/components/ui/ledger";
 import {
   makeCustomExerciseId,
   type MuscleGroup,
@@ -151,46 +152,47 @@ export function CustomWorkoutBuilder({
   }
 
   return (
-    <section className={cn(compact ? "editorial-surface-quiet" : "document-panel", "space-y-8")}>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-        <div>
-          <p className="eyebrow">{compact ? "Custom session" : "Builder"}</p>
-          <h2 className={cn("mt-3", compact ? "text-2xl" : "")}>
-            {compact ? "Secondary custom work" : "Compose a session from scratch."}
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-            Pull from the exercise library, save your own movements, then either store the session
-            as a template or start training immediately.
-          </p>
-        </div>
+    <div>
+      <div className={cn(compact ? "" : "mb-6")}>
+        {!compact ? (
+          <>
+            <p className="text-label uppercase text-tertiary">Builder</p>
+            <p className="mt-1 text-body font-medium text-primary">
+              Compose a session from scratch.
+            </p>
+          </>
+        ) : null}
+        <p className={cn("max-w-2xl text-row text-secondary", !compact && "mt-2")}>
+          Pull from the exercise library, save your own movements, then either store the session
+          as a template or start training immediately.
+        </p>
 
-        <div className="flex flex-wrap gap-3">
-          <Button type="button" variant="outline" onClick={saveTemplate} disabled={selectedExercises.length === 0}>
-            <Save className="h-4 w-4" />
-            Save Template
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Button type="button" variant="primary" onClick={() => startSession("free")} disabled={hasActiveSession || isPending}>
+            {isPending ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
+            Start session
           </Button>
-          <Button type="button" onClick={() => startSession("free")} disabled={hasActiveSession || isPending}>
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-            Start Session
+          <Button type="button" variant="secondary" onClick={saveTemplate} disabled={selectedExercises.length === 0}>
+            <Save className="size-4" />
+            Save template
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="custom-session-label" className="eyebrow text-[11px] tracking-[0.18em] text-muted-foreground">
+      <div className="grid gap-4 border-t border-rule pt-6 md:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="custom-session-label" className="text-label uppercase text-tertiary">
             Session name
           </Label>
           <Input
             id="custom-session-label"
             value={label}
             onChange={(event) => setLabel(event.target.value)}
-            className="h-12"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="library-select" className="eyebrow text-[11px] tracking-[0.18em] text-muted-foreground">
+        <div className="space-y-1.5">
+          <Label htmlFor="library-select" className="text-label uppercase text-tertiary">
             Exercise library
           </Label>
           <div className="flex gap-2">
@@ -198,7 +200,7 @@ export function CustomWorkoutBuilder({
               id="library-select"
               value={selectedExerciseId}
               onChange={(event) => setSelectedExerciseId(event.target.value)}
-              className="refined-select h-12 flex-1"
+              className={cn(SELECT_CLASS, "flex-1")}
             >
               {Array.from(groupedLibrary.entries()).map(([group, exercises]) => (
                 <optgroup key={group} label={group}>
@@ -210,17 +212,17 @@ export function CustomWorkoutBuilder({
                 </optgroup>
               ))}
             </select>
-            <Button type="button" variant="outline" onClick={() => addExercise(selectedExerciseId)}>
-              <Plus className="h-4 w-4" />
+            <Button type="button" variant="secondary" onClick={() => addExercise(selectedExerciseId)}>
+              <Plus className="size-4" />
               Add
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-4 border-t border-border/70 pt-8 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_auto] md:items-end">
-        <div className="space-y-2">
-          <Label htmlFor="custom-exercise-name" className="eyebrow text-[11px] tracking-[0.18em] text-muted-foreground">
+      <div className="mt-6 grid gap-4 border-t border-rule pt-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_auto] md:items-end">
+        <div className="space-y-1.5">
+          <Label htmlFor="custom-exercise-name" className="text-label uppercase text-tertiary">
             Custom exercise
           </Label>
           <Input
@@ -228,19 +230,18 @@ export function CustomWorkoutBuilder({
             value={customName}
             onChange={(event) => setCustomName(event.target.value)}
             placeholder="Exercise name"
-            className="h-12"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="custom-exercise-group" className="eyebrow text-[11px] tracking-[0.18em] text-muted-foreground">
+        <div className="space-y-1.5">
+          <Label htmlFor="custom-exercise-group" className="text-label uppercase text-tertiary">
             Muscle group
           </Label>
           <select
             id="custom-exercise-group"
             value={customGroup}
             onChange={(event) => setCustomGroup(event.target.value as MuscleGroup)}
-            className="refined-select h-12"
+            className={SELECT_CLASS}
           >
             {MUSCLE_GROUPS.map((group) => (
               <option key={group} value={group}>
@@ -250,21 +251,19 @@ export function CustomWorkoutBuilder({
           </select>
         </div>
 
-        <Button type="button" variant="secondary" onClick={saveCustomExercise} className="md:mb-[1px]">
+        <Button type="button" variant="secondary" onClick={saveCustomExercise}>
           Save
         </Button>
       </div>
 
-      <div className="space-y-5 border-t border-border/70 pt-8">
-        <div className="labelled-row flex-col gap-2 sm:flex-row">
-          <div>
-            <p className="eyebrow">Selected exercises</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Adjust the working details directly in the list.
-            </p>
-          </div>
-          <p className="text-sm text-muted-foreground">{selectedExercises.length} queued</p>
+      <div className="mt-6 border-t border-rule pt-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h3>Selected exercises</h3>
+          <span className="num text-caption text-tertiary">{selectedExercises.length} queued</span>
         </div>
+        <p className="mt-1 text-caption text-tertiary">
+          Adjust the working details directly in the list.
+        </p>
 
         {selectedExercises.length === 0 ? (
           <EmptyState
@@ -274,15 +273,29 @@ export function CustomWorkoutBuilder({
             className="border-t-0 py-2"
           />
         ) : (
-          <div className="space-y-0 border-t border-border/70">
+          <Rows
+            className="mt-4"
+            columns={BUILDER_COLUMNS}
+            mdColumns={BUILDER_COLUMNS_MD}
+            head={
+              <>
+                <span>Exercise</span>
+                <span className="text-right">Sets</span>
+                <span className="text-right">Reps</span>
+                <span className="hidden text-right md:block">Rest</span>
+                <span />
+              </>
+            }
+          >
             {selectedExercises.map((exercise, index) => (
-              <div
+              <Row
                 key={`${exercise.exerciseId}-${index}`}
-                className="grid gap-3 border-b border-border/52 py-4 last:border-b-0 md:grid-cols-[minmax(0,1.4fr)_5rem_5.4rem_5.8rem_auto] md:items-center"
+                columns={BUILDER_COLUMNS}
+                mdColumns={BUILDER_COLUMNS_MD}
               >
-                <div>
-                  <p className="font-semibold tracking-normal text-foreground">{exercise.name}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{exercise.muscleGroup}</p>
+                <div className="min-w-0">
+                  <p className="truncate text-row font-medium text-primary">{exercise.name}</p>
+                  <p className="text-caption text-tertiary">{exercise.muscleGroup}</p>
                 </div>
 
                 <Input
@@ -299,7 +312,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11 rounded-[var(--radius)]"
+                  className="h-9 px-2 text-right"
                   aria-label={`${exercise.name} sets`}
                 />
                 <Input
@@ -311,9 +324,11 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11 rounded-[var(--radius)]"
+                  className="h-9 px-2 text-right"
                   aria-label={`${exercise.name} reps`}
                 />
+                {/* Rest is the least-used field, so it is the one that leaves
+                    the mobile row rather than shrinking all four to nothing. */}
                 <Input
                   type="number"
                   min="0"
@@ -328,7 +343,7 @@ export function CustomWorkoutBuilder({
                       )
                     )
                   }
-                  className="h-11 rounded-[var(--radius)]"
+                  className="hidden h-9 px-2 text-right md:block"
                   aria-label={`${exercise.name} rest seconds`}
                 />
 
@@ -336,6 +351,7 @@ export function CustomWorkoutBuilder({
                   type="button"
                   variant="ghost"
                   size="icon-sm"
+                  className="justify-self-end text-critical hover:text-critical"
                   onClick={() =>
                     setSelectedExercises((current) =>
                       current.filter((_, itemIndex) => itemIndex !== index)
@@ -343,24 +359,24 @@ export function CustomWorkoutBuilder({
                   }
                   aria-label={`Remove ${exercise.name}`}
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="size-3.5" />
                 </Button>
-              </div>
+              </Row>
             ))}
-          </div>
+          </Rows>
         )}
       </div>
 
-      <div className="space-y-5 border-t border-border/70 pt-8">
-        <div className="labelled-row flex-col gap-2 sm:flex-row">
-          <div>
-            <p className="eyebrow">Saved templates</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Reuse the sessions that deserve to come back.
-            </p>
-          </div>
-          <p className="text-sm text-muted-foreground">{settings.workoutTemplates.length} saved</p>
+      <div className="mt-6 border-t border-rule pt-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h3>Saved templates</h3>
+          <span className="num text-caption text-tertiary">
+            {settings.workoutTemplates.length} saved
+          </span>
         </div>
+        <p className="mt-1 text-caption text-tertiary">
+          Reuse the sessions that deserve to come back.
+        </p>
 
         {settings.workoutTemplates.length === 0 ? (
           <EmptyState
@@ -370,15 +386,15 @@ export function CustomWorkoutBuilder({
             className="border-t-0 py-2"
           />
         ) : (
-          <div className="space-y-0 border-t border-border/70">
+          <div className="ledger-rows mt-4 border-t border-rule">
             {settings.workoutTemplates.map((template) => (
               <div
                 key={template.id}
-                className="flex flex-wrap items-center justify-between gap-4 border-b border-border/52 py-4 last:border-b-0"
+                className="flex flex-wrap items-center justify-between gap-3 py-3"
               >
-                <div>
-                  <p className="font-semibold tracking-normal text-foreground">{template.name}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
+                <div className="min-w-0">
+                  <p className="truncate text-row font-medium text-primary">{template.name}</p>
+                  <p className="num num-left text-caption text-tertiary">
                     {template.exercises.length} exercises
                   </p>
                 </div>
@@ -386,7 +402,8 @@ export function CustomWorkoutBuilder({
                 <div className="flex gap-2">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="secondary"
+                    size="sm"
                     onClick={() => {
                       setLabel(template.name);
                       setSelectedExercises(template.exercises);
@@ -396,6 +413,8 @@ export function CustomWorkoutBuilder({
                   </Button>
                   <Button
                     type="button"
+                    variant="primary"
+                    size="sm"
                     onClick={() => {
                       setLabel(template.name);
                       setSelectedExercises(template.exercises);
@@ -403,7 +422,7 @@ export function CustomWorkoutBuilder({
                     }}
                     disabled={hasActiveSession || isPending}
                   >
-                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                    {isPending ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
                     Start
                   </Button>
                 </div>
@@ -412,6 +431,22 @@ export function CustomWorkoutBuilder({
           </div>
         )}
       </div>
-    </section>
+    </div>
   );
 }
+
+/* Exercise, sets, reps, [rest], remove. Rest joins the row from 768px up. */
+const BUILDER_COLUMNS = "minmax(0,1fr) 4rem 4.5rem 2rem";
+const BUILDER_COLUMNS_MD = "minmax(0,1fr) 4.5rem 5rem 5rem 2rem";
+
+/* These remain native <select> elements — they carry <optgroup>, which the
+   Radix Select in ui/select.tsx has no equivalent for. Styled to match Input
+   so they do not read as unstyled browser chrome. */
+const SELECT_CLASS = [
+  "h-11 w-full min-w-0 rounded-control border border-control-border bg-raised px-3",
+  "text-body text-primary",
+  "transition-colors duration-(--duration-fast) ease-(--ease-out)",
+  "hover:border-tertiary",
+  "focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent",
+  "motion-reduce:transition-none",
+].join(" ");

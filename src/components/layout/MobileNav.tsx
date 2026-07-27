@@ -5,32 +5,58 @@ import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { cn } from "@/lib/utils";
 
+/**
+ * Display-only label overrides for the bottom bar. Seven tabs across 390px
+ * leaves ~56px each, which truncated every label ("Flexib…", "Dashb…").
+ * NAV_ITEMS stays the source of truth for routes, icons, and order — this
+ * only shortens what is painted in the tab strip, where the header above
+ * already names the current page in full.
+ */
+const TAB_LABEL_OVERRIDES: Record<string, string> = {
+  "Flexibility & Balance": "Balance",
+};
+
 export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Primary navigation" data-mobile-nav className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden">
-      <div className="chrome-surface hide-scrollbar flex items-center gap-1 overflow-x-auto rounded-full border p-1.5">
+    <nav
+      aria-label="Primary"
+      data-mobile-nav
+      className="fixed inset-x-0 bottom-0 z-40 bg-ink md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <ul className="hide-scrollbar flex items-stretch overflow-x-auto">
         {NAV_ITEMS.map((item) => {
-          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          const isActive =
+            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive ? "page" : undefined}
-              className={cn(
-                "flex min-h-[3rem] min-w-[5rem] flex-col items-center justify-center gap-1 rounded-full border px-3 text-center text-[10px] font-semibold leading-[1.05] tracking-normal transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
-                isActive
-                  ? "border-[var(--hairline-strong)] bg-[var(--veil-2)] text-[var(--cream)]"
-                  : "border-transparent text-[var(--cream-3)] hover:bg-[var(--veil-1)] hover:text-[var(--cream)]"
-              )}
-            >
-              <item.icon className={cn("h-[1rem] w-[1rem]", isActive ? "text-[var(--ember-bright)]" : "text-[var(--cream-3)]")} strokeWidth={isActive ? 2 : 1.75} />
-              <span>{item.label}</span>
-            </Link>
+            <li key={item.href} className="min-w-0 flex-1">
+              <Link
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "relative flex min-h-touch min-w-touch flex-col items-center justify-center gap-1 px-0.5 py-2",
+                  "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
+                  isActive ? "text-ink-text" : "text-ink-dim"
+                )}
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute inset-x-3 top-0 h-0.5 rounded-pill",
+                    isActive ? "bg-accent-bright" : "bg-transparent"
+                  )}
+                />
+                <item.icon className="size-5" strokeWidth={isActive ? 2.25 : 1.75} />
+                <span className="w-full truncate text-center text-[0.625rem] leading-tight tracking-tight">
+                  {TAB_LABEL_OVERRIDES[item.label] ?? item.label}
+                </span>
+              </Link>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </nav>
   );
 }

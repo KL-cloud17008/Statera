@@ -36,31 +36,32 @@ export function LoginPageClient() {
   }
 
   return (
-    <div className="app-atmosphere flex min-h-screen items-center justify-center px-4 py-8 sm:px-6">
-      <div className="login-frame w-full max-w-6xl rounded-[var(--radius-panel)] p-2 sm:p-3">
-        <div className="grid gap-3 lg:grid-cols-[1.08fr_0.92fr]">
-          <section className="login-landscape flex min-h-[31rem] flex-col justify-between rounded-[var(--radius-card)] p-7 sm:p-9">
+    <div className="flex min-h-screen items-center justify-center bg-canvas px-4 py-8 sm:px-6">
+      <div className="w-full max-w-5xl">
+        <div className="grid gap-px overflow-hidden rounded-panel border border-rule bg-rule lg:grid-cols-[1.08fr_0.92fr]">
+          {/* The ink panel is the same chrome that frames the app canvas. */}
+          <section className="flex min-h-[28rem] flex-col justify-between bg-ink p-7 sm:p-9">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <span className="flex size-11 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] text-[var(--cream)]">
-                  <BrandMark className="h-6 w-6" />
+                <span className="flex size-10 items-center justify-center rounded-pill border border-ink-line bg-ink-800 text-ink-text">
+                  <BrandMark className="size-5" />
                 </span>
                 <div>
-                  <p className="[font-family:var(--font-display)] text-[1.12rem] font-[380] tracking-[-0.01em] text-[var(--cream)]">Athanor</p>
-                  <p className="mt-1 font-mono text-[0.6rem] font-medium uppercase tracking-[0.2em] text-[var(--cream-3)]">
-                    Prime ledger
-                  </p>
+                  <p className="font-display text-body text-ink-text">Athanor</p>
+                  <p className="mt-0.5 text-label uppercase text-ink-dim">Prime ledger</p>
                 </div>
               </div>
-              <span className="rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-1.5 font-mono text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
+              <span className="rounded-pill border border-ink-line bg-ink-800 px-3 py-1 text-label uppercase text-ink-muted">
                 Private OS
               </span>
             </div>
 
-            <div className="max-w-3xl py-12 sm:py-16">
-              <p className="eyebrow">Athanor Prime</p>
-              <h1 className="mt-5 max-w-3xl text-[var(--cream)]">Private performance operating system.</h1>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-[var(--cream-2)]">
+            <div className="max-w-xl py-12">
+              <p className="text-label uppercase text-ink-dim">Athanor Prime</p>
+              <p className="mt-4 font-display text-page-title leading-[1.1] tracking-[-0.02em] text-ink-text">
+                Private performance operating system.
+              </p>
+              <p className="mt-4 max-w-md text-body text-ink-muted">
                 Training, steps, bodyweight, and recovery signal in one precise ledger.
               </p>
             </div>
@@ -71,24 +72,20 @@ export function LoginPageClient() {
                 ["Weight", "Body trend"],
                 ["Training", "Output log"],
               ].map(([title, copy]) => (
-                <div key={title} className="rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--veil-1)] px-4 py-3">
-                  <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">{title}</p>
-                  <p className="mt-2 text-sm font-medium text-[var(--cream)]">{copy}</p>
+                <div key={title} className="border-t border-ink-line pt-3">
+                  <p className="text-label uppercase text-ink-dim">{title}</p>
+                  <p className="mt-1 text-row font-medium text-ink-text">{copy}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="login-auth-panel flex min-h-[31rem] flex-col justify-center rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10">
+          <section className="flex min-h-[28rem] flex-col justify-center bg-raised p-6 sm:p-8 lg:p-10">
             <div className="mx-auto w-full max-w-md">
-              <div className="mb-8 text-center">
-                <div className="duna-mark-surface mx-auto flex size-14 items-center justify-center rounded-full text-foreground">
-                  <BrandMark className="h-7 w-7" />
-                </div>
-                <h2 className="mt-5 text-3xl font-medium tracking-normal">
-                  {isSignUp ? "Create your account" : "Welcome back"}
-                </h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              <div className="mb-8">
+                {/* The page's one h1 lives here — the ink panel is decoration. */}
+                <h1>{isSignUp ? "Create your account" : "Welcome back"}</h1>
+                <p className="mt-2 text-body text-secondary">
                   {isSignUp ? "Create access to your private ledger." : "Sign in to continue your command ledger."}
                 </p>
               </div>
@@ -96,35 +93,35 @@ export function LoginPageClient() {
               <form action={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" placeholder="you@example.com" required autoComplete="email" autoCapitalize="none" className="h-12" />
+                  <Input id="email" name="email" type="email" placeholder="you@example.com" required autoComplete="email" autoCapitalize="none" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" name="password" type="password" placeholder="Password" required minLength={6} autoComplete={isSignUp ? "new-password" : "current-password"} className="h-12" />
-                  {isSignUp ? <p className="text-xs text-muted-foreground">Must be at least 6 characters.</p> : null}
+                  <Input id="password" name="password" type="password" placeholder="Password" required minLength={6} autoComplete={isSignUp ? "new-password" : "current-password"} />
+                  {isSignUp ? <p className="text-caption text-tertiary">Must be at least 6 characters.</p> : null}
                 </div>
 
                 {error ? (
-                  <div className="status-note status-note-error flex items-start gap-2 p-3 text-sm" role="alert" aria-live="polite">
-                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div className="flex items-start gap-2 rounded-control border-l-2 border-critical-line bg-critical-surface px-3 py-2 text-row text-critical" role="alert" aria-live="polite">
+                    <AlertCircle className="mt-0.5 size-4 shrink-0" />
                     <p>{error}</p>
                   </div>
                 ) : null}
 
                 {success ? (
-                  <div className="status-note status-note-success flex items-start gap-2 p-3 text-sm" role="status" aria-live="polite">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div className="flex items-start gap-2 rounded-control border-l-2 border-accent-line bg-accent-subtle px-3 py-2 text-row text-accent" role="status" aria-live="polite">
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
                     <p>{success}</p>
                   </div>
                 ) : null}
 
-                <Button type="submit" className="h-12 w-full" disabled={isPending}>
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isPending}>
+                  {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
                   {isSignUp ? "Create Account" : "Sign In"}
                 </Button>
               </form>
 
-              <div className="mt-6 text-center text-sm text-muted-foreground">
+              <div className="mt-6 text-row text-secondary">
                 {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
                 <button
                   type="button"
@@ -133,7 +130,7 @@ export function LoginPageClient() {
                     setError(null);
                     setSuccess(null);
                   }}
-                  className="font-semibold text-primary underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                  className="font-medium text-primary underline-offset-4 transition-colors duration-(--duration-fast) hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
                 >
                   {isSignUp ? "Sign In" : "Sign Up"}
                 </button>

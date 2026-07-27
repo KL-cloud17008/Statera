@@ -30,7 +30,9 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-[rgba(27,6,36,0.38)] backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        /* Was rgba(27,6,36,…) — a purple-black left over from v2. The scrim
+           is the warm ink of the chrome. */
+        "fixed inset-0 z-50 bg-[rgb(26_22_19_/_0.44)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         className
       )}
       {...props}
@@ -52,7 +54,9 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "surface-elevated fixed left-1/2 top-1/2 z-50 grid w-[calc(100vw_-_1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-[var(--radius-surface)] p-6 outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          /* An opaque fill and the overlay shadow are load-bearing here: a
+             modal without them renders as loose text over the page. */
+          "fixed left-1/2 top-1/2 z-50 grid w-[calc(100vw_-_1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-panel border border-rule bg-overlay p-6 text-primary shadow-[var(--shadow-overlay)] outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           className
         )}
         {...props}
@@ -61,7 +65,7 @@ function DialogContent({
         {showCloseButton ? (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="warm-pill absolute right-4 top-4 inline-flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_color-mix(in_srgb,var(--primary)_40%,transparent),0_0_0_5px_var(--ring)]"
+            className="absolute right-3 top-3 inline-flex size-touch items-center justify-center rounded-control text-secondary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
           >
             <XIcon className="size-4" />
             <span className="sr-only">Close</span>
@@ -99,7 +103,7 @@ function DialogFooter({
       {children}
       {showCloseButton ? (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
+          <Button variant="secondary">Close</Button>
         </DialogPrimitive.Close>
       ) : null}
     </div>
@@ -113,7 +117,10 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-xl font-semibold tracking-tight", className)}
+      /* Radix renders this as an h2, and the base stylesheet uppercases every
+         h2–h6 as a section label. A dialog title is a sentence, so the
+         transform has to be turned off explicitly. */
+      className={cn("text-body font-medium normal-case tracking-normal text-primary", className)}
       {...props}
     />
   );
@@ -126,7 +133,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-row text-secondary", className)}
       {...props}
     />
   );

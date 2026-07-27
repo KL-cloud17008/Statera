@@ -2,77 +2,75 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { signOut } from "@/actions/auth";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+/**
+ * The persistent desktop sidebar: a full-height ink rail that frames the light
+ * ledger canvas, replacing the previous centred top pill bar. Mobile keeps a
+ * bottom tab bar.
+ */
 export function DesktopSidebar() {
   const pathname = usePathname();
-  const todayLabel = new Date().toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
 
   return (
-    <header className="sticky top-0 z-40 hidden px-4 py-3 md:block">
-      <div className="chrome-surface mx-auto flex h-16 max-w-[112rem] items-center gap-3 rounded-full border px-3 lg:gap-4 lg:px-4">
-        <Link
-          href="/"
-          className="group flex min-w-[11rem] items-center gap-3 text-[var(--cream)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)]"
-        >
-          <span className="flex size-9 items-center justify-center rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] text-[var(--cream)] transition-colors group-hover:border-[var(--hairline-strong)]">
-            <BrandMark className="h-5 w-5" />
-          </span>
-          <div className="leading-none">
-            <p className="[font-family:var(--font-display)] text-[1.12rem] font-[380] tracking-[-0.01em]">Athanor</p>
-            <p className="mt-1.5 font-mono text-[0.6rem] font-medium uppercase tracking-[0.2em] text-[var(--cream-3)]">Prime ledger</p>
-          </div>
-        </Link>
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-rail flex-col bg-ink md:flex">
+      <Link
+        href="/"
+        className="flex h-14 shrink-0 items-center gap-2.5 border-b border-ink-line px-4 text-ink-text"
+        aria-label="Athanor — dashboard"
+      >
+        <BrandMark className="size-4 shrink-0" />
+        <span className="font-display text-body">Athanor</span>
+      </Link>
 
-        <nav aria-label="Primary navigation" className="hide-scrollbar flex flex-1 items-center justify-start gap-1 overflow-x-auto px-1 xl:justify-center">
+      <nav aria-label="Primary" className="flex-1 overflow-y-auto py-3">
+        <ul>
           {NAV_ITEMS.map((item) => {
-            const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            const isActive =
+              item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={isActive ? "page" : undefined}
-                className={cn(
-                  "group inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] transition-[background-color,border-color,color] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0",
-                  isActive
-                    ? "border-[var(--hairline-strong)] bg-[var(--veil-2)] text-[var(--cream)]"
-                    : "border-transparent text-[var(--cream-3)] hover:bg-[var(--veil-1)] hover:text-[var(--cream)]"
-                )}
-              >
-                <item.icon
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "h-3.5 w-3.5 shrink-0 transition-colors duration-[var(--duration-fast)] motion-reduce:transition-none",
-                    isActive ? "text-[var(--ember-bright)]" : "text-[var(--cream-3)] group-hover:text-[var(--cream-2)]"
+                    "relative flex min-h-touch items-center gap-3 px-4 text-row",
+                    "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
+                    isActive
+                      ? "bg-ink-800 text-ink-text"
+                      : "text-ink-muted hover:bg-ink-800 hover:text-ink-text"
                   )}
-                  strokeWidth={1.8}
-                />
-                <span>{item.label}</span>
-              </Link>
+                >
+                  {/* The accent marks exactly one thing in the chrome: where you are. */}
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "absolute inset-y-1 left-0 w-0.5 rounded-pill",
+                      isActive ? "bg-accent-bright" : "bg-transparent"
+                    )}
+                  />
+                  <item.icon className="size-4 shrink-0" strokeWidth={1.75} />
+                  <span className="truncate">{item.label}</span>
+                </Link>
+              </li>
             );
           })}
-        </nav>
+        </ul>
+      </nav>
 
-        <div className="flex min-w-[3rem] items-center justify-end gap-3 xl:min-w-[10.5rem]">
-          <div className="hidden items-center gap-2 rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-3 py-2 font-mono text-[0.65rem] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)] xl:flex">
-            <CalendarDays className="h-3.5 w-3.5" />
-            <span>{todayLabel}</span>
-          </div>
-          <form action={signOut}>
-            <Button variant="ghost" size="icon-sm" aria-label="Sign out" className="text-[var(--cream-3)] hover:text-[var(--cream)]">
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </form>
-        </div>
-      </div>
-    </header>
+      <form action={signOut} className="shrink-0 border-t border-ink-line">
+        <button
+          type="submit"
+          className="flex min-h-touch w-full items-center gap-3 px-4 text-row text-ink-dim transition-colors duration-(--duration-fast) ease-(--ease-out) hover:text-ink-text motion-reduce:transition-none"
+        >
+          <LogOut className="size-4 shrink-0" strokeWidth={1.75} />
+          <span>Sign out</span>
+        </button>
+      </form>
+    </aside>
   );
 }

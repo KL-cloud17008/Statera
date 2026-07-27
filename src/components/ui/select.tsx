@@ -30,14 +30,22 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-[var(--radius)] border border-[var(--hairline)] bg-input px-4 text-sm text-foreground transition-[border-color,box-shadow,background-color] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] focus-visible:border-[var(--hairline-strong)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_1px_var(--ring)] data-[size=default]:h-12 data-[size=sm]:h-10 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex w-full items-center justify-between gap-2 rounded-control border border-control-border bg-raised px-3",
+        "text-body text-primary",
+        "transition-colors duration-(--duration-fast) ease-(--ease-out)",
+        "hover:border-tertiary",
+        "focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent",
+        "data-[size=default]:h-11 data-[size=sm]:h-9",
+        "data-[placeholder]:text-tertiary",
+        "disabled:pointer-events-none disabled:bg-sunken disabled:text-faint",
+        "motion-reduce:transition-none",
         className
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 text-muted-foreground" />
+        <ChevronDownIcon className="size-4 shrink-0 text-tertiary" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -55,7 +63,10 @@ function SelectContent({
         data-slot="select-content"
         position={position}
         className={cn(
-          "surface-elevated z-50 max-h-80 min-w-[12rem] overflow-hidden rounded-[var(--radius-card)] p-1.5 text-popover-foreground",
+          /* An overlay is the one thing permitted to float, so it carries the
+             only shadow in the system plus an opaque fill — without both it
+             renders as text over the page beneath it. */
+          "z-50 max-h-80 min-w-[12rem] overflow-hidden rounded-panel border border-rule bg-overlay p-1 text-primary shadow-[var(--shadow-overlay)]",
           className
         )}
         {...props}
@@ -75,7 +86,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
-      className={cn("px-3 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground", className)}
+      className={cn("px-3 py-2 text-label uppercase text-tertiary", className)}
       {...props}
     />
   );
@@ -90,14 +101,21 @@ function SelectItem({
     <SelectPrimitive.Item
         data-slot="select-item"
         className={cn(
-        "relative flex w-full cursor-default items-center gap-2 rounded-[var(--radius-tight)] px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:bg-accent/80 data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
+        /* The highlighted row is a background wash, matching ledger row hover.
+           The previous build used `focus:bg-accent/80` while leaving the text
+           near-black, which put dark ink on solid olive. */
+        "relative flex min-h-touch w-full cursor-default items-center gap-2 rounded-control py-2 pr-9 pl-3",
+        "text-row text-primary outline-none",
+        "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
+        "focus:bg-row-hover data-[state=checked]:font-medium",
+        "data-[disabled]:pointer-events-none data-[disabled]:text-faint",
         className
       )}
       {...props}
     >
       <span className="absolute right-3 flex size-4 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <CheckIcon className="size-4 text-primary" />
+          <CheckIcon className="size-4 text-accent" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -112,7 +130,7 @@ function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
-      className={cn("mx-2 my-1 h-px bg-border", className)}
+      className={cn("mx-2 my-1 h-px bg-rule", className)}
       {...props}
     />
   );
@@ -125,7 +143,7 @@ function SelectScrollUpButton({
   return (
     <SelectPrimitive.ScrollUpButton
       data-slot="select-scroll-up-button"
-      className={cn("flex items-center justify-center py-1.5 text-muted-foreground", className)}
+      className={cn("flex items-center justify-center py-1.5 text-tertiary", className)}
       {...props}
     >
       <ChevronUpIcon className="size-4" />
@@ -140,7 +158,7 @@ function SelectScrollDownButton({
   return (
     <SelectPrimitive.ScrollDownButton
       data-slot="select-scroll-down-button"
-      className={cn("flex items-center justify-center py-1.5 text-muted-foreground", className)}
+      className={cn("flex items-center justify-center py-1.5 text-tertiary", className)}
       {...props}
     >
       <ChevronDownIcon className="size-4" />

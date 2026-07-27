@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  CalendarClock,
-  Flag,
-  Gauge,
-  HeartPulse,
-  Minus,
-  Target,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { StatCard } from "@/components/ui/stat-card";
+import { Notice, Num, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { normalizeGoalTargetDate } from "@/lib/app-settings";
 import { computeRequiredWeeklyLossPace, type WeightStats } from "@/lib/weight";
 import { formatBodyweight } from "@/lib/units";
@@ -25,15 +15,6 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
     stats.lastEntryDate,
     targetDate
   );
-
-  const trendIcon =
-    stats.trend === "down" ? (
-      <TrendingDown className="h-5 w-5" />
-    ) : stats.trend === "up" ? (
-      <TrendingUp className="h-5 w-5" />
-    ) : (
-      <Minus className="h-5 w-5" />
-    );
 
   const weeklyRate =
     stats.weeklyRate != null
@@ -64,57 +45,97 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
         ? `No further loss required by ${formatGoalDate(targetDate)}`
         : "Set a target date in settings to compare";
 
+  /* Six metrics that used to be six cards. As ledger rows they share one
+     numeral column, so the values line up and can be read down. */
+  /* `numeric: false` opts a value out of the mono tabular treatment. Tabular
+     numerals exist so digits align down the column; a categorical word gains
+     nothing from it and starts to read as a measurement. Dates keep it —
+     they are mostly digits and do line up. */
+  const metrics: Array<{
+    label: string;
+    value: string;
+    hint: string;
+    tone?: "primary" | "accent" | "ember";
+    numeric?: boolean;
+  }> = [
+    {
+      label: "Projected goal date",
+      value: stats.projectedGoalDate ? formatGoalDate(stats.projectedGoalDate) : "--",
+      hint: projectedHint,
+    },
+    {
+      label: "Weekly pace",
+      value: weeklyRate,
+      hint: paceHint,
+      tone: paceGuardrailActive ? "ember" : "primary",
+    },
+    {
+      label: "Remaining to goal",
+      value: remainingToGoal != null ? formatBodyweight(Math.abs(remainingToGoal)) : "--",
+      hint:
+        stats.goalWeight != null
+          ? `To go — goal ${formatBodyweight(stats.goalWeight)}`
+          : "Set a goal weight in settings",
+    },
+    { label: "BMI", value: stats.bmi?.toFixed(1) ?? "--", hint: "Based on height set in profile" },
+    {
+      label: "Goal weight",
+      value: formatBodyweight(stats.goalWeight),
+      hint: "Target set in profile settings",
+    },
+    {
+      label: "Direction",
+      value: stats.trend === "stable" ? "Holding" : stats.trend === "down" ? "Cutting" : "Rising",
+      hint: "Based on recent change velocity",
+      numeric: false,
+    },
+  ];
+
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      <StatCard
-        label="Projected Goal Date"
-        value={stats.projectedGoalDate ? formatGoalDate(stats.projectedGoalDate) : "--"}
-        hint={projectedHint}
-        icon={<CalendarClock className="h-5 w-5" />}
-      />
-      <StatCard
-        label="Weekly Pace"
-        value={weeklyRate}
-        hint={paceHint}
-        icon={<Gauge className="h-5 w-5" />}
-      >
-        {paceGuardrailActive ? (
-          <p className="text-xs leading-relaxed text-[var(--attention)]">
-            Pace above ~1% of bodyweight/wk — consider easing to protect muscle.
-          </p>
-        ) : null}
-      </StatCard>
-      <StatCard
-        label="Remaining to Goal"
-        value={remainingToGoal != null ? formatBodyweight(Math.abs(remainingToGoal)) : "--"}
-        hint={
-          stats.goalWeight != null
-            ? `To go — goal ${formatBodyweight(stats.goalWeight)}`
-            : "Set a goal weight in settings"
+    <Section title="Projection">
+      {paceGuardrailActive ? (
+        <Notice className="mb-4">
+          Pace above ~1% of bodyweight/wk — consider easing to protect muscle.
+        </Notice>
+      ) : null}
+      <Rows
+        columns={STAT_COLUMNS_MOBILE}
+        mdColumns={STAT_COLUMNS}
+        head={
+          <>
+            <span>Metric</span>
+            <span className="hidden md:block">Basis</span>
+            <span className="text-right">Value</span>
+          </>
         }
-        icon={<Flag className="h-5 w-5" />}
-      />
-      <StatCard
-        label="BMI"
-        value={stats.bmi?.toFixed(1) ?? "--"}
-        hint="Based on height set in profile"
-        icon={<HeartPulse className="h-5 w-5" />}
-      />
-      <StatCard
-        label="Goal Weight"
-        value={formatBodyweight(stats.goalWeight)}
-        hint="Target set in profile settings"
-        icon={<Target className="h-5 w-5" />}
-      />
-      <StatCard
-        label="Direction"
-        value={stats.trend === "stable" ? "Holding" : stats.trend === "down" ? "Cutting" : "Rising"}
-        hint="Based on recent change velocity"
-        icon={trendIcon}
-      />
-    </div>
+      >
+        {metrics.map((metric) => (
+          <Row
+            key={metric.label}
+            columns={STAT_COLUMNS_MOBILE}
+            mdColumns={STAT_COLUMNS}
+          >
+            <span className="min-w-0">
+              <span className="block truncate text-secondary">{metric.label}</span>
+              <Sub className="mt-0.5 block">{metric.hint}</Sub>
+            </span>
+            <span className="hidden truncate text-tertiary md:block">{metric.hint}</span>
+            {metric.numeric === false ? (
+              /* Right-aligned to hold the column edge, but sans — it is a
+                 state, not a figure. */
+              <span className="text-right text-primary">{metric.value}</span>
+            ) : (
+              <Num tone={metric.tone === "ember" ? "ember" : "primary"}>{metric.value}</Num>
+            )}
+          </Row>
+        ))}
+      </Rows>
+    </Section>
   );
 }
+
+const STAT_COLUMNS_MOBILE = "minmax(0,1fr) minmax(0,7rem)";
+const STAT_COLUMNS = "minmax(0,14rem) minmax(0,1fr) minmax(0,9rem)";
 
 function formatGoalDate(dateString: string) {
   return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {

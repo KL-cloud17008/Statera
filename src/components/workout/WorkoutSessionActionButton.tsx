@@ -46,21 +46,13 @@ export function WorkoutSessionActionButton({
   const [isPending, startTransition] = useTransition();
   const copy = ACTION_COPY[status];
   const Icon = copy.icon;
-  const buttonClassName = cn(
-    "min-h-11 text-center",
-    fullWidth && "w-full",
-    className
-  );
+  const buttonClassName = cn(fullWidth && "w-full", className);
 
   if (status === "view") {
     return (
-      <Button
-        asChild
-        variant={prominent ? "default" : "secondary"}
-        className={buttonClassName}
-      >
+      <Button asChild variant="secondary" size="sm" className={buttonClassName}>
         <Link href="/workout/history">
-          <Icon className="h-4 w-4" />
+          <Icon className="size-4" aria-hidden />
           {copy.label}
         </Link>
       </Button>
@@ -90,12 +82,17 @@ export function WorkoutSessionActionButton({
   return (
     <Button
       type="button"
-      variant={prominent ? "default" : "secondary"}
+      variant={prominent ? "primary" : "secondary"}
+      size="sm"
       onClick={handleStart}
       disabled={isPending}
       className={buttonClassName}
     >
-      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
+      {isPending ? (
+        <Loader2 className="size-4 animate-spin" aria-hidden />
+      ) : (
+        <Icon className="size-4" aria-hidden />
+      )}
       {isPending ? copy.loadingLabel : copy.label}
     </Button>
   );

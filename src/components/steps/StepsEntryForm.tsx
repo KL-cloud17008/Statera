@@ -1,11 +1,10 @@
 ﻿"use client";
 
 import { useRef, useState } from "react";
-import { Footprints, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logSteps, updateStepsEntry } from "@/actions/steps";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getTodayDateString } from "@/lib/dates";
@@ -52,21 +51,14 @@ export function StepsEntryForm({
     onDone?.();
   }
 
+  /* No card. When editing inline the form replaces a ledger row, so it sits
+     on the canvas and is marked by an accent edge rather than a panel. */
   return (
-    <Card className={editEntry ? "border-primary/35" : ""}>
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] bg-primary/12 text-primary">
-            <Footprints className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="eyebrow">Quick Add</p>
-            <CardTitle>{editEntry ? "Edit step entry" : "Log today or backfill a day"}</CardTitle>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <form ref={formRef} action={handleSubmit} className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
+    <div className={editEntry ? "border-l-2 border-accent pl-3" : ""}>
+      {editEntry ? null : (
+        <p className="mb-3 text-caption text-tertiary">Log today or backfill a day.</p>
+      )}
+      <form ref={formRef} action={handleSubmit} className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
           <div className="space-y-2">
             <Label htmlFor={editEntry ? `edit-date-${editEntry.id}` : "steps-date"}>Date</Label>
             <Input
@@ -94,17 +86,16 @@ export function StepsEntryForm({
           </div>
           <div className="flex gap-2 md:justify-end">
             {editEntry ? (
-              <Button type="button" variant="outline" onClick={onDone}>
+              <Button type="button" variant="secondary" onClick={onDone}>
                 Cancel
               </Button>
             ) : null}
-            <Button type="submit" className="min-w-32" disabled={isPending}>
-              {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            <Button type="submit" variant="primary" className="min-w-32" disabled={isPending}>
+              {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
               {editEntry ? "Save changes" : "Save steps"}
             </Button>
           </div>
         </form>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

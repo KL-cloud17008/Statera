@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { Notice } from "@/components/ui/ledger";
 import { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -14,7 +15,6 @@ import {
 } from "recharts";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { normalizeGoalTargetDate } from "@/lib/app-settings";
 import {
   buildChartData,
@@ -147,19 +147,12 @@ export function WeightChart({
 
   if (entries.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-foreground">Weight trend</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[var(--radius-card)]">
-            <span className="text-muted-foreground">
-              Add weight entries to see your trend
-            </span>
-          </div>
-          <TargetDateNote summary={targetSummary} />
-        </CardContent>
-      </Card>
+      <div>
+        <div className="flex h-40 items-center justify-center border border-dashed border-rule bg-sunken">
+          <span className="text-row text-tertiary">Add weight entries to see your trend</span>
+        </div>
+        <TargetDateNote summary={targetSummary} />
+      </div>
     );
   }
 
@@ -173,30 +166,25 @@ export function WeightChart({
   const goalLine = goalWeight;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between gap-3">
-          <CardTitle className="text-foreground">Trend and goal line</CardTitle>
-          <div className="flex gap-1">
-            {(["1W", "1M", "3M", "ALL"] as const).map((range) => (
-              <Button
-                key={range}
-                variant={zoom === range ? "default" : "ghost"}
-                size="sm"
-                type="button"
-                onClick={() => setZoom(range)}
-                className="h-7 px-2.5 text-xs"
-              >
-                {range}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="chart-frame relative">
+    <div>
+      <div className="mb-4 flex justify-end gap-1">
+        {(["1W", "1M", "3M", "ALL"] as const).map((range) => (
+          <Button
+            key={range}
+            variant={zoom === range ? "primary" : "ghost"}
+            size="sm"
+            type="button"
+            aria-pressed={zoom === range}
+            onClick={() => setZoom(range)}
+            className="h-7 px-2.5"
+          >
+            {range}
+          </Button>
+        ))}
+      </div>
+        <div className="relative">
         {!showFullGoal && goalWeight != null ? (
-          <span className="absolute bottom-4 right-5 z-10 rounded-full border border-[var(--hairline)] bg-[var(--basalt-2)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-[var(--cream-2)]">
+          <span className="absolute bottom-4 right-5 z-10 rounded-pill border border-rule bg-sunken px-2.5 py-1 font-mono text-label uppercase text-secondary">
             Goal {goalWeight.toFixed(1)} lb{goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
           </span>
         ) : null}
@@ -232,7 +220,7 @@ export function WeightChart({
                 border: "1px solid var(--color-border)",
                 borderRadius: "1rem",
                 fontSize: "0.8125rem",
-                boxShadow: "var(--shadow-soft)",
+                boxShadow: "var(--shadow-overlay)",
               }}
               labelFormatter={(label) => {
                 const [y, m, d] = String(label).split("-").map(Number);
@@ -286,8 +274,7 @@ export function WeightChart({
         </ResponsiveContainer>
         </div>
         <TargetDateNote summary={targetSummary} />
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 
@@ -305,10 +292,14 @@ function TargetDateNote({ summary }: { summary: TargetDateSummary | null }) {
         }`
       : "Log current weight and goal weight to estimate the required pace.";
 
+  // The pace guardrail is one of the sanctioned attention states, so an
+  // aggressive target takes ember rather than reading as neutral copy.
+  const isAggressive = summary.requiredPace != null && summary.requiredPace >= 2;
+
   return (
-    <p className="status-note mt-4 px-3 py-2 text-xs">
+    <Notice tone={isAggressive ? "ember" : "accent"} className="mt-4">
       Target date: {formatTargetDate(summary.targetDate)}. {paceCopy}
-    </p>
+    </Notice>
   );
 }
 

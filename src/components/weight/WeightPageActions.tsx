@@ -38,7 +38,7 @@ export function WeightPageActions() {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Button variant="outline" type="button" onClick={handleExport} disabled={exporting}>
+      <Button variant="secondary" type="button" onClick={handleExport} disabled={exporting}>
         {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
         Export CSV
       </Button>

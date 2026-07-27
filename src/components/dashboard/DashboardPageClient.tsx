@@ -1,22 +1,13 @@
 "use client";
 
-import type { ReactNode } from "react";
+
 import Link from "next/link";
-import {
-  Activity,
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  CheckCircle2,
-  Dumbbell,
-  Footprints,
-  Scale,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import type { SerializedPainCheckIn } from "@/actions/pain";
 import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
+import { Button } from "@/components/ui/button";
+import { Figure, Notice, Num, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
 import {
@@ -155,12 +146,6 @@ export function DashboardPageClient({
     workoutDayStatuses.map((status) => [status.dayOfWeek, status])
   );
 
-  const TrendIcon =
-    weightStats.trend === "down"
-      ? ArrowDown
-      : weightStats.trend === "up"
-        ? ArrowUp
-        : ArrowRight;
   const recoveryFlagActive =
     mobilitySummary.footFlareLogged ||
     (todayFootPain != null && todayFootPain >= 5) ||
@@ -170,320 +155,344 @@ export function DashboardPageClient({
   const stepGoalSuspended = !todayPlanDay || recoveryFlagActive;
 
   return (
-    <div className="page-shell">
-      <section data-animated="true">
-        <div>
-          <p className="eyebrow">{greeting} — {heroDateLabel}</p>
-          <h1 className="mt-6">Private performance command.</h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
-            Today&apos;s protocol, movement load, recovery flag, and bodyweight signal.
-          </p>
-        </div>
+    <>
+      {/* ── Masthead ─────────────────────────────────────────────────────── */}
+      <PageTitle
+        eyebrow={`${greeting} · ${heroDateLabel}`}
+        title={decision.title}
+        lead={decision.description}
+        action={
+          <Button asChild variant="primary" size="sm">
+            <Link href={decision.href}>
+              Open next action
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </Button>
+        }
+      />
 
-        <div className="mt-10 border-t border-dashed border-[var(--hairline)] pt-8">
-          <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.34fr)] xl:items-start">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 xl:grid-cols-4">
-              <SignalTile
-                icon={<Footprints className="h-4 w-4" />}
-                label="Today status"
-                value={stepGoalSuspended ? (!todayPlanDay ? "Rest" : "Recovery") : `${stepCompletion}%`}
-                detail={
-                  stepGoalSuspended
-                    ? `Step goal suspended · ${todaySteps.toLocaleString()} steps logged`
-                    : `${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()}`
-                }
-              />
-              <SignalTile
-                icon={<ShieldCheck className="h-4 w-4" />}
-                label="Readiness flag"
-                value={recoveryFlagActive ? "Recovery" : "Clear"}
-                detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"}
-                tone={recoveryFlagActive ? "attention" : "default"}
-              />
-              <SignalTile icon={<Dumbbell className="h-4 w-4" />} label="Current phase" value={nextProtocol} detail={`${workoutSummary.weeklySessions} sessions this week`} />
-              <SignalTile icon={<Scale className="h-4 w-4" />} label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={getTrendCopy(weightStats.trend)} />
-            </div>
+      {/* ── Summary strip: figures printed on the canvas, no tiles ───────── */}
+      <div className="mt-6 border-t border-rule pt-5">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 lg:grid-cols-4">
+          <Figure
+            label="Today status"
+            value={stepGoalSuspended ? (!todayPlanDay ? "Rest" : "Recovery") : `${stepCompletion}%`}
+            detail={
+              stepGoalSuspended
+                ? `Step goal suspended · ${todaySteps.toLocaleString()} steps logged`
+                : `${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()} steps`
+            }
+          />
+          <Figure
+            label="Readiness"
+            value={recoveryFlagActive ? "Recovery" : "Clear"}
+            tone={recoveryFlagActive ? "ember" : "primary"}
+            detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"}
+          />
+          <Figure
+            label="Bodyweight"
+            value={formatBodyweight(weightStats.currentWeight)}
+            detail={getTrendCopy(weightStats.trend)}
+          />
+          <Figure
+            label="Training output"
+            value={weeklyVolume}
+            detail={
+              <>
+                {volumeWeekOverWeek != null ? (
+                  <span className="num num-left">
+                    {volumeWeekOverWeek >= 0 ? "+" : ""}
+                    {volumeWeekOverWeek}% vs last week ·{" "}
+                  </span>
+                ) : null}
+                {workoutSummary.weeklySessions} sessions this week
+              </>
+            }
+          />
+        </dl>
+      </div>
 
-            <div className="surface-card flex flex-col justify-between gap-8 rounded-[var(--radius-panel)] p-6">
-              <div>
-                <p className="eyebrow">Today&apos;s Protocol</p>
-                <p className="mt-4 [font-family:var(--font-display)] text-3xl font-[380] leading-[1.05] tracking-[-0.01em] text-[var(--cream)]">{nextProtocol}</p>
-                <div className="copper-rule mt-5" />
-                {todayPlanStats ? (
-                  <>
-                    <div className="mt-5 grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="data-number text-2xl font-medium leading-tight text-[var(--cream)]">{todayPlanStats.exerciseCount}</p>
-                        <p className="mt-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Exercises</p>
-                      </div>
-                      <div>
-                        <p className="data-number text-2xl font-medium leading-tight text-[var(--cream)]">~{todayPlanStats.estimatedMinutes}m</p>
-                        <p className="mt-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">Est. duration</p>
-                      </div>
-                    </div>
-                    <ul className="mt-5 space-y-2">
-                      {todayPlanStats.topMovements.map((movement) => (
-                        <li key={movement} className="flex items-center gap-2.5 text-sm leading-snug text-[var(--cream-2)]">
-                          <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--cream-3)]" />
-                          {movement}
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : (
-                  <>
-                    <p className="mt-5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
-                      {recoveryFlagActive ? "Recovery flag active" : "Full rest — recovery only"}
-                    </p>
-                    <ul className="mt-3 space-y-2">
-                      {getRestDayFocus(recoveryFlagActive).map((item) => (
-                        <li key={item} className="flex items-center gap-2.5 text-sm leading-snug text-[var(--cream-2)]">
-                          <span className="h-1 w-1 shrink-0 rounded-full bg-[var(--cream-3)]" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    {nextTrainingDay && nextTrainingStats ? (
-                      <div className="mt-5 border-t border-[var(--hairline)] pt-4">
-                        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
-                          Next session · {nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}
-                        </p>
-                        <p className="mt-2 text-sm font-semibold leading-snug text-[var(--cream)]">
-                          {nextTrainingDay.day.sessionName}
-                        </p>
-                        <p className="mt-1 text-xs text-[var(--cream-3)]">
-                          {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m est.
-                        </p>
-                      </div>
-                    ) : null}
-                  </>
-                )}
-                <p className="mt-5 text-sm leading-relaxed text-[var(--cream-2)]">
-                  {decision.title}
-                </p>
-              </div>
-              <Link href={decision.href} className="group inline-flex items-center justify-between gap-4 rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-4 py-3 text-sm font-semibold text-[var(--cream)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] hover:border-[var(--hairline-strong)] hover:bg-[var(--veil-2)] active:translate-y-px motion-reduce:transition-none motion-reduce:active:translate-y-0">
-                Open next action
-                <ArrowRight className="h-4 w-4 transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── Today's protocol ─────────────────────────────────────────────── */}
+      <Section
+        title="Today · Protocol"
+        action={
+          <Link
+            href="/workout"
+            className="text-caption text-secondary underline-offset-2 hover:text-primary hover:underline"
+          >
+            Open session
+          </Link>
+        }
+      >
+        <p className="text-body text-primary">{nextProtocol}</p>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,0.66fr)_minmax(22rem,0.34fr)]">
-        <div className="prime-panel p-6 sm:p-7">
-          <p className="eyebrow">Step Progress</p>
-          <div className="mt-6 grid items-center gap-7 sm:grid-cols-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)_16rem]">
-            <div className="justify-self-center sm:justify-self-start">
-              <StepsProgressRing current={todaySteps} goal={settings.stepGoal} size={176} />
-            </div>
-            <StepMiniBars entries={stepsEntries} goal={settings.stepGoal} todaySteps={todaySteps} timezone={timezone} />
-            <div className="space-y-3 sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Daily movement</span>
-                <span className="data-number font-semibold text-foreground">
-                  {stepGoalSuspended ? "Suspended" : `${stepCompletion}%`}
+        {todayPlanStats ? (
+          <>
+            <dl className="mt-4 flex gap-8">
+              <Figure label="Exercises" value={todayPlanStats.exerciseCount} />
+              <Figure label="Est. duration" value={`${todayPlanStats.estimatedMinutes}m`} />
+            </dl>
+            <Rows columns="minmax(0,1fr) auto" className="mt-4">
+              {todayPlanStats.topMovements.map((movement) => (
+                <Row key={movement} columns="minmax(0,1fr) auto">
+                  <span className="truncate text-secondary">{movement}</span>
+                </Row>
+              ))}
+            </Rows>
+          </>
+        ) : (
+          <>
+            <p className="mt-3 text-label uppercase text-tertiary">
+              {recoveryFlagActive ? "Recovery flag active" : "Full rest — recovery only"}
+            </p>
+            <Rows columns="minmax(0,1fr)" className="mt-2">
+              {getRestDayFocus(recoveryFlagActive).map((item) => (
+                <Row key={item} columns="minmax(0,1fr)">
+                  <span className="text-secondary">{item}</span>
+                </Row>
+              ))}
+            </Rows>
+            {nextTrainingDay && nextTrainingStats ? (
+              <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-row">
+                <span className="text-label uppercase text-tertiary">
+                  Next ·{" "}
+                  {nextTrainingDay.isTomorrow
+                    ? "Tomorrow"
+                    : DAY_NAMES[nextTrainingDay.dayOfWeek]}
+                </span>
+                <span className="text-primary">{nextTrainingDay.day.sessionName}</span>
+                <span className="text-tertiary">
+                  {nextTrainingStats.exerciseCount} exercises · ~
+                  {nextTrainingStats.estimatedMinutes}m
                 </span>
               </div>
-              {stepGoalSuspended ? (
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  Step goal suspended — recovery day. {todaySteps.toLocaleString()} steps logged, not scored.
-                </p>
-              ) : (
-                <div className="h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[var(--veil-2)]">
-                  <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--primary),var(--electric-blue),var(--sky-accent))]" style={{ width: `${stepCompletion}%` }} />
-                </div>
-              )}
-              <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="micro-panel">
-                  <p className="eyebrow text-[10px]">Streak</p>
-                  <p className="data-number mt-2 text-3xl font-semibold text-foreground">{stepStats.currentStreak}</p>
-                  {stepStats.streakUnloggedDays > 0 && stepStats.streakBackfillDate ? (
-                    <Link
-                      href={`/steps?backfill=${stepStats.streakBackfillDate}#quick-add`}
-                      className="mt-1 block text-[11px] font-semibold leading-snug text-[var(--attention)] hover:underline"
-                    >
-                      At risk — backfill {stepStats.streakUnloggedDays}{" "}
-                      {stepStats.streakUnloggedDays === 1 ? "day" : "days"}
-                    </Link>
-                  ) : null}
-                </div>
-                <div className="micro-panel">
-                  <p className="eyebrow text-[10px]">Goal Days</p>
-                  <p className="data-number mt-2 text-3xl font-semibold text-foreground">{stepStats.goalDaysTotal}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+            ) : null}
+          </>
+        )}
+      </Section>
 
-        <div className="prime-panel p-6 sm:p-7">
-          <p className="eyebrow">Today&apos;s Decision</p>
-          <h2 className="mt-3 text-3xl">{decision.title}</h2>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{decision.description}</p>
-          <div className="mt-5 grid gap-2">
-            {decision.signals.map((signal) => (
-              <p key={signal} className="status-note flex items-start gap-2 px-3 py-2 text-xs leading-relaxed">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-foreground/70" />
-                <span>{signal}</span>
-              </p>
-            ))}
-          </div>
-          <PainCheckInCard latest={painCheckIn} timezone={timezone} className="mt-5" />
+      {/* ── Signals + pain check-in ──────────────────────────────────────── */}
+      <Section title="Signals">
+        <Rows columns="minmax(0,1fr)">
+          {decision.signals.map((signal) => (
+            <Row key={signal} columns="auto minmax(0,1fr)">
+              <CheckCircle2 className="size-3.5 text-tertiary" aria-hidden />
+              <span className="text-secondary">{signal}</span>
+            </Row>
+          ))}
+        </Rows>
+        <div className="mt-5">
+          <PainCheckInCard latest={painCheckIn} timezone={timezone} />
         </div>
-      </section>
+      </Section>
 
-      <section className="document-panel">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="eyebrow">Weekly Rhythm</p>
-            <h2 className="mt-2 text-3xl">5 Strength / 2 Full Rest.</h2>
-          </div>
-          <Link href="/workout/plan" className="text-link inline-flex items-center gap-2 text-sm font-semibold">
-            Full plan
-            <ArrowRight className="h-4 w-4" />
+      {/* ── Steps ────────────────────────────────────────────────────────── */}
+      <Section
+        title="Steps"
+        action={
+          <Link
+            href="/steps"
+            className="text-caption text-secondary underline-offset-2 hover:text-primary hover:underline"
+          >
+            All steps
           </Link>
+        }
+      >
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <dl className="flex flex-wrap gap-8">
+            <Figure
+              label="Today"
+              value={todaySteps.toLocaleString()}
+              size="xl"
+              detail={`of ${settings.stepGoal.toLocaleString()} · ${
+                stepGoalSuspended ? "not scored" : `${stepCompletion}%`
+              }`}
+            />
+            <Figure
+              label="Streak"
+              value={stepStats.currentStreak}
+              size="lg"
+              tone={stepStats.streakUnloggedDays > 0 ? "ember" : "primary"}
+              detail={
+                stepStats.streakUnloggedDays > 0 && stepStats.streakBackfillDate ? (
+                  <Link
+                    href={`/steps?backfill=${stepStats.streakBackfillDate}#quick-add`}
+                    className="text-ember underline-offset-2 hover:underline"
+                  >
+                    At risk — backfill {stepStats.streakUnloggedDays}{" "}
+                    {stepStats.streakUnloggedDays === 1 ? "day" : "days"}
+                  </Link>
+                ) : (
+                  "Consecutive goal days"
+                )
+              }
+            />
+            <Figure label="Goal days" value={stepStats.goalDaysTotal} size="lg" />
+          </dl>
+
+          <StepMiniBars
+            entries={stepsEntries}
+            goal={settings.stepGoal}
+            todaySteps={todaySteps}
+            timezone={timezone}
+          />
         </div>
 
-        <div className="mt-6 grid gap-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7">
+        {stepGoalSuspended ? (
+          <Notice className="mt-4">
+            Step goal suspended — recovery day. {todaySteps.toLocaleString()} steps logged, not
+            scored.
+          </Notice>
+        ) : (
+          <div
+            className="mt-4 h-1 overflow-hidden rounded-pill bg-chart-track"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={stepCompletion}
+            aria-label="Daily step goal progress"
+          >
+            <div className="h-full rounded-pill bg-chart-ink" style={{ width: `${stepCompletion}%` }} />
+          </div>
+        )}
+      </Section>
+
+      {/* ── Weekly rhythm as a ledger, not a 7-card grid ─────────────────── */}
+      <Section
+        title="Weekly rhythm"
+        action={
+          <Link
+            href="/workout/plan"
+            className="text-caption text-secondary underline-offset-2 hover:text-primary hover:underline"
+          >
+            Full plan
+          </Link>
+        }
+      >
+        <p className="mb-3 text-caption text-tertiary">5 Strength / 2 Full Rest.</p>
+        <Rows
+          columns={RHYTHM_COLUMNS_MOBILE}
+          mdColumns={RHYTHM_COLUMNS}
+          head={
+            <>
+              <span>Day</span>
+              <span>Session</span>
+              <span className="hidden md:block">Protocol</span>
+              <span />
+            </>
+          }
+        >
           {WEEKLY_RHYTHM.map((item) => {
             const isToday = item.dayOfWeek === trainingDayOfWeek;
             return (
-              <div
+              <Row
                 key={item.day}
-                className={cn(
-                  "interactive-row flex min-h-48 flex-col rounded-[var(--radius-card)] border border-[var(--hairline)] bg-[var(--basalt-1)] p-4",
-                  isToday && "border-[var(--hairline-strong)] bg-[var(--basalt-2)]"
-                )}
+                columns={RHYTHM_COLUMNS_MOBILE}
+                mdColumns={RHYTHM_COLUMNS}
+                interactive
               >
-                <div className="flex items-center justify-between gap-2">
-                  <p className="eyebrow text-[10px]">{item.day}</p>
-                  {isToday ? (
-                    <span className="rounded-full border border-[rgba(79,124,255,0.3)] bg-[rgba(79,124,255,0.08)] px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-foreground">
-                      Today
-                    </span>
-                  ) : null}
-                </div>
-                <p className="mt-4 text-sm font-semibold leading-snug text-foreground">{item.label}</p>
-                <p className="mt-5 inline-flex rounded-full border border-[var(--hairline)] bg-[var(--veil-1)] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cream-3)]">
-                  {item.protocol}
-                </p>
-                {item.protocol === "Strength Protocol" ? (
-                  <div className="mt-auto pt-5">
+                <span
+                  className={cn(
+                    "num num-left self-start pt-0.5 text-label uppercase md:self-center md:pt-0",
+                    isToday ? "text-accent" : "text-tertiary"
+                  )}
+                >
+                  {item.day}
+                </span>
+                <span className="min-w-0">
+                  {/* Mobile shows the session name, which fits; the focus that
+                      follows the dash moves to the fold line. Desktop keeps the
+                      full label in one cell. */}
+                  <span
+                    className={cn(
+                      "block truncate md:hidden",
+                      isToday ? "text-primary" : "text-secondary"
+                    )}
+                  >
+                    {splitSessionLabel(item.label).name}
+                  </span>
+                  <span
+                    className={cn(
+                      "hidden truncate md:block",
+                      isToday ? "text-primary" : "text-secondary"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                  <Sub className="mt-0.5 block truncate">
+                    {splitSessionLabel(item.label).focus ?? item.protocol}
+                  </Sub>
+                </span>
+                <span className="hidden truncate text-tertiary md:block">{item.protocol}</span>
+                <span className="justify-self-end">
+                  {item.protocol === "Strength Protocol" ? (
                     <WorkoutSessionActionButton
                       planId={workoutStatusByDay.get(item.dayOfWeek)?.planId}
                       status={workoutStatusByDay.get(item.dayOfWeek)?.status ?? "start"}
                       prominent={isToday}
-                      fullWidth
                     />
-                  </div>
-                ) : null}
-              </div>
+                  ) : (
+                    <span className="text-caption text-tertiary">Rest</span>
+                  )}
+                </span>
+              </Row>
             );
           })}
-        </div>
+        </Rows>
+      </Section>
 
-        <div className="quiet-rule" />
-
-        <div className="grid gap-4 lg:grid-cols-3">
-          <Link href="/weight" className="surface-card interactive-row block rounded-[var(--radius-card)] p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow">Bodyweight Trend</p>
-                <p className="data-number mt-4 text-4xl font-semibold text-foreground">{formatBodyweight(weightStats.currentWeight)}</p>
-              </div>
-              <TrendIcon className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{getTrendCopy(weightStats.trend)}</p>
+      {/* ── Last session ─────────────────────────────────────────────────── */}
+      <Section
+        title="Last session"
+        action={
+          <Link
+            href="/workout/history"
+            className="text-caption text-secondary underline-offset-2 hover:text-primary hover:underline"
+          >
+            History
           </Link>
-
-          <Link href="/workout/history" className="surface-card interactive-row block rounded-[var(--radius-card)] p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow">Training Output</p>
-                <p className="data-number mt-4 text-4xl font-semibold text-foreground">{weeklyVolume}</p>
-                {volumeWeekOverWeek != null ? (
-                  <p className="data-number mt-1 text-xs font-semibold text-muted-foreground">
-                    {volumeWeekOverWeek >= 0 ? "+" : ""}
-                    {volumeWeekOverWeek}% vs last week
-                  </p>
-                ) : null}
-              </div>
-              <Dumbbell className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{workoutSummary.weeklySessions} completed sessions this week.</p>
-          </Link>
-
-          <Link href="/mobility" className="surface-card interactive-row block rounded-[var(--radius-card)] p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow">Movement Quality</p>
-                <p className="data-number mt-4 text-3xl font-semibold text-foreground">5 train + 2 rest</p>
-              </div>
-              <Activity className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Five training-day resets plus full rest on Saturday and Sunday.</p>
-          </Link>
-        </div>
-
-        <div className="ledger-row pt-0">
-          <div>
-            <p className="eyebrow">Last Session</p>
-          </div>
-          {workoutSummary.lastWorkout ? (
-            <>
-              <div>
-                <p className="text-2xl font-semibold text-foreground">{workoutSummary.lastWorkout.label}</p>
-                <p className="mt-2 text-sm text-muted-foreground">{lastWorkoutDate}</p>
-              </div>
-              <div className="space-y-2 text-sm text-muted-foreground md:text-right">
-                <p><span className="data-number text-foreground">{workoutSummary.lastWorkout.setCount}</span> sets logged</p>
-                <p><span className="data-number text-foreground">{lastWorkoutVolume}</span> moved</p>
-              </div>
-            </>
-          ) : (
-            <div className="md:col-span-2">
-              <p className="text-sm leading-relaxed text-muted-foreground">No completed training sessions yet.</p>
-            </div>
-          )}
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function SignalTile({
-  icon,
-  label,
-  value,
-  detail,
-  tone = "default",
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  detail: string;
-  tone?: "default" | "attention";
-}) {
-  return (
-    <div className="border-l border-[var(--hairline)] pl-5">
-      <div className="flex items-center justify-between gap-3 pr-2 text-[var(--cream-3)]">
-        <p className="eyebrow text-[10px]">{label}</p>
-        {icon}
-      </div>
-      <p
-        className={cn(
-          "data-number value-reveal mt-4 text-2xl font-medium leading-tight",
-          tone === "attention" ? "text-[var(--attention)]" : "text-[var(--cream)]"
-        )}
+        }
       >
-        {value}
-      </p>
-      <p className="mt-2.5 text-xs leading-relaxed text-[var(--cream-3)]">{detail}</p>
-    </div>
+        {workoutSummary.lastWorkout ? (
+          <Rows columns="minmax(0,1fr) auto auto">
+            <Row columns="minmax(0,1fr) auto auto">
+              <span className="truncate text-primary">{workoutSummary.lastWorkout.label}</span>
+              <Num tone="secondary">{workoutSummary.lastWorkout.setCount} sets</Num>
+              <Num>{lastWorkoutVolume}</Num>
+            </Row>
+            <Row columns="minmax(0,1fr) auto auto">
+              <span className="text-tertiary">{lastWorkoutDate}</span>
+            </Row>
+          </Rows>
+        ) : (
+          <div className="flex flex-wrap items-center gap-4">
+            <p className="text-body text-secondary">No completed training sessions yet.</p>
+            <Button asChild variant="secondary" size="sm">
+              <Link href="/workout">Start a session</Link>
+            </Button>
+          </div>
+        )}
+      </Section>
+    </>
   );
 }
+
+/* Mobile drops the Protocol column and folds it under the session name; the
+   desktop ledger restores it as a real column. Authored separately rather
+   than letting the four-column grid degrade into 390px. */
+/* The action column is a fixed width, not `auto`: an auto column sizes from
+   its own content, so the empty head cell collapsed to 0 and the SESSION
+   label overhung the button column. A fixed track keeps head and rows on
+   one grid — which is the whole point of a ledger. */
+/* Display-only split of "Lower A — Leg Press + Quad/Hamstring Strength" into
+   its name and focus. Purely presentational: the plan data is untouched. */
+function splitSessionLabel(label: string): { name: string; focus?: string } {
+  const [name, ...rest] = label.split(" — ");
+  return { name, focus: rest.length > 0 ? rest.join(" — ") : undefined };
+}
+
+const RHYTHM_COLUMNS_MOBILE = "2.5rem minmax(0,1fr) 5.5rem";
+const RHYTHM_COLUMNS = "3.5rem minmax(0,1fr) minmax(0,9rem) 7rem";
 
 function StepMiniBars({
   entries,
@@ -513,14 +522,14 @@ function StepMiniBars({
 
   return (
     <div>
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-muted-foreground">Last 7 days</span>
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-label text-secondary">Last 7 days</span>
+        <span className="text-label uppercase text-tertiary">
           Goal {goal.toLocaleString()}
         </span>
       </div>
       <div className="mt-3 flex items-end gap-2">
-        {days.map(({ date, steps }, index) => {
+        {days.map(({ date, steps }) => {
           const isToday = date === today;
           const metGoal = goal > 0 && steps >= goal;
           const barHeight = steps > 0
@@ -537,22 +546,22 @@ function StepMiniBars({
               >
                 <div
                   className={cn(
-                    "bar-rise w-full rounded-t-[0.3rem] rounded-b-[0.14rem]",
+                    "w-full rounded-t-sm",
                     metGoal
-                      ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))]"
+                      ? "bg-chart-ink"
                       : isToday
-                        ? "bg-[linear-gradient(180deg,var(--sky-accent),var(--electric-blue))] opacity-65"
+                        ? "bg-chart-ink-muted"
                         : steps > 0
-                          ? "bg-[rgba(7,17,31,0.16)]"
-                          : "bg-[rgba(7,17,31,0.07)]"
+                          ? "bg-chart-ink-muted"
+                          : "bg-chart-track"
                   )}
-                  style={{ height: barHeight, animationDelay: `${index * 45}ms` }}
+                  style={{ height: barHeight }}
                 />
               </div>
               <p
                 className={cn(
-                  "text-[10px] font-bold uppercase tracking-[0.1em]",
-                  isToday ? "text-foreground" : "text-muted-foreground"
+                  "text-label uppercase",
+                  isToday ? "text-primary" : "text-tertiary"
                 )}
               >
                 {formatWeekdayInitial(date)}

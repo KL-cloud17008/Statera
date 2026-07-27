@@ -92,18 +92,18 @@ export function PainCheckInCard({
   }
 
   return (
-    <div className={cn("micro-panel rounded-[var(--radius-card)] p-4", className)}>
+    <div className={cn("", className)}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="eyebrow text-[10px]">Pain check-in</p>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          <p className="text-label uppercase text-tertiary">Pain check-in</p>
+          <p className="mt-1 text-caption text-tertiary">
             Feet / soles and lower back, 0-10. One tap logs today.
           </p>
         </div>
-        {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" /> : null}
+        {isPending ? <Loader2 className="size-4 animate-spin text-tertiary" aria-label="Saving" /> : null}
       </div>
 
-      <p className="mt-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="mt-3 text-label uppercase text-tertiary">
         Feet / soles
       </p>
       <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Foot pain 0 to 10">
@@ -122,15 +122,15 @@ export function PainCheckInCard({
       {footValue != null ? (
         <p
           className={cn(
-            "mt-2 text-xs leading-relaxed",
-            footValue >= 3 ? "text-[var(--attention)]" : "text-muted-foreground"
+            "mt-2 text-caption",
+            footValue >= 3 ? "text-ember" : "text-tertiary"
           )}
         >
           {footGuidance(footValue)}
         </p>
       ) : null}
 
-      <p className="mt-4 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="mt-4 text-label uppercase text-tertiary">
         Lower back
       </p>
       <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Lower-back pain 0 to 10">
@@ -146,29 +146,29 @@ export function PainCheckInCard({
         ))}
       </div>
       {footValue == null ? (
-        <p className="mt-2 text-xs text-muted-foreground">Log feet first, then lower back.</p>
+        <p className="mt-2 text-caption text-tertiary">Log feet first, then lower back.</p>
       ) : null}
 
       {backValue != null ? (
         <>
           <p
             className={cn(
-              "mt-2 text-xs leading-relaxed",
-              backValue >= 3 ? "text-[var(--attention)]" : "text-muted-foreground"
+              "mt-2 text-caption",
+              backValue >= 3 ? "text-ember" : "text-tertiary"
             )}
           >
             {backGuidance(backValue)}
           </p>
           {backValue >= 3 ? (
-            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{BACK_RED_FLAG}</p>
+            <p className="mt-1.5 text-caption text-tertiary">{BACK_RED_FLAG}</p>
           ) : null}
         </>
       ) : null}
 
       <p
         className={cn(
-          "mt-3 border-t border-border/70 pt-3 text-xs leading-relaxed",
-          latest && !loggedToday ? "font-semibold text-foreground" : "text-muted-foreground"
+          "mt-3 border-t border-rule pt-3 text-caption",
+          latest && !loggedToday ? "font-medium text-primary" : "text-tertiary"
         )}
       >
         {latest
@@ -202,10 +202,16 @@ function PainChip({
       disabled={disabled}
       onClick={() => onSelect(value)}
       className={cn(
-        "data-number flex h-9 w-9 items-center justify-center rounded-full border text-sm font-medium transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] disabled:cursor-not-allowed disabled:opacity-45 motion-reduce:transition-none",
+        /* `tabular` is not a utility — the numerals were never tabular. */
+        "flex size-touch items-center justify-center rounded-control border font-mono text-row font-medium tabular-nums",
+        "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+        "disabled:cursor-not-allowed disabled:opacity-45",
         selected
-          ? "border-transparent bg-primary text-primary-foreground"
-          : "border-[var(--hairline)] bg-[var(--veil-1)] text-[var(--cream-2)] hover:border-[var(--hairline-strong)] hover:text-[var(--cream)]"
+          ? "border-transparent bg-ink text-on-ink"
+          /* Control edge, not a rule: --rule reads 1.30:1 here and fails the
+             3:1 the boundary needs. */
+          : "border-control-border bg-raised text-secondary hover:bg-row-hover hover:text-primary"
       )}
     >
       {value}

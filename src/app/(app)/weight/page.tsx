@@ -5,7 +5,7 @@ import { WeightEntryForm } from "@/components/weight/WeightEntryForm";
 import { WeightHistoryList } from "@/components/weight/WeightHistoryList";
 import { WeightPageActions } from "@/components/weight/WeightPageActions";
 import { WeightStatsCards } from "@/components/weight/WeightStatsCards";
-import { SectionHeader } from "@/components/ui/section-header";
+import { Figure, PageTitle, Section } from "@/components/ui/ledger";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { computeWeightStats } from "@/lib/weight";
 import { formatBodyweight, formatBodyweightConversion, formatBodyweightDelta } from "@/lib/units";
@@ -41,66 +41,70 @@ export default async function WeightPage() {
     goalWeight: user.goalWeight,
   });
 
+  const progress = getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight);
+
   return (
-    <div className="page-shell">
-      <SectionHeader
+    <>
+      <PageTitle
         eyebrow="Weight"
         title="Body-composition ledger."
-        description="Pounds remain canonical, with kg and stone available at the point of entry."
+        lead="Pounds remain canonical, with kg and stone available at the point of entry."
         action={<WeightPageActions />}
       />
 
-      <section className="command-deck grid gap-8 p-6 sm:p-8 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.34fr)] xl:items-end" data-animated="true">
-        <div>
-          <p className="eyebrow">Current Bodyweight</p>
-          <div className="mt-4 flex flex-wrap items-end gap-x-5 gap-y-3">
-            <p className="data-number value-reveal text-6xl font-medium leading-none text-[var(--cream)] sm:text-7xl">
-              {formatBodyweight(stats.currentWeight)}
-            </p>
-            <p className="pb-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
-              Goal {formatBodyweight(stats.goalWeight)}
-            </p>
+      <Section className="mt-6">
+        {/* The xl figure gets its own line. Sharing a 4-up grid gave it a
+            108px cell for a 154px numeral, and since .num is nowrap it
+            overran into Start rather than wrapping. */}
+        <dl>
+          <Figure
+            label="Current"
+            size="xl"
+            value={formatBodyweight(stats.currentWeight)}
+            detail={
+              formatBodyweightConversion(stats.currentWeight) ||
+              "Log a weigh-in to unlock kg and stone conversion."
+            }
+          />
+          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
+            <Figure label="Start" size="lg" value={formatBodyweight(stats.startWeight)} detail="Baseline" />
+            <Figure
+              label="Change"
+              size="lg"
+              tone="accent"
+              value={formatBodyweightDelta(stats.totalChange)}
+              detail="From start weight"
+            />
+            <Figure label="7-day" size="lg" value={formatBodyweight(stats.avg7Day)} detail="Smoothed trend" />
           </div>
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-[var(--cream-2)]">
-            {formatBodyweightConversion(stats.currentWeight) || "Log a weigh-in to unlock kg and stone conversion."}
-          </p>
-          <div className="mt-8 h-1.5 overflow-hidden rounded-full border border-[var(--hairline)] bg-[var(--veil-2)]">
-            <div className="track-fill h-full rounded-full bg-[linear-gradient(90deg,var(--copper),var(--electric-blue),var(--sky-accent))]" style={{ width: `${getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight)}%` }} />
-          </div>
-        </div>
+        </dl>
 
-        <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-          <WeightHeroMetric label="Start" value={formatBodyweight(stats.startWeight)} detail="Baseline" />
-          <WeightHeroMetric label="Change" value={formatBodyweightDelta(stats.totalChange)} detail="From start weight" />
-          <WeightHeroMetric label="7-Day" value={formatBodyweight(stats.avg7Day)} detail="Smoothed trend" />
+        {/* Progress to goal reads as a rule that fills, not a floating bar. */}
+        <div className="mt-8">
+          <div className="flex items-baseline justify-between gap-4 text-label uppercase text-tertiary">
+            <span>Progress to goal {formatBodyweight(stats.goalWeight)}</span>
+            <span className="num text-accent">{progress}%</span>
+          </div>
+          <div className="mt-2 h-1 overflow-hidden bg-sunken">
+            <div className="h-full bg-accent" style={{ width: `${progress}%` }} />
+          </div>
         </div>
-      </section>
+      </Section>
 
       <WeightStatsCards stats={stats} />
-      <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
-      <div className="grid gap-4 xl:grid-cols-2">
-        <WeightEntryForm timezone={user.timezone} />
-        <WeightHistoryList entries={serializedEntries} timezone={user.timezone} />
-      </div>
-    </div>
-  );
-}
 
-function WeightHeroMetric({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="black-glass rounded-[var(--radius-card)] p-4">
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="data-number value-reveal mt-3 text-2xl font-medium text-[var(--cream)]">{value}</p>
-      <p className="mt-1 text-xs text-[var(--cream-3)]">{detail}</p>
-    </div>
+      <Section title="Trend">
+        <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
+      </Section>
+
+      <Section title="Log a weigh-in">
+        <WeightEntryForm timezone={user.timezone} />
+      </Section>
+
+      <Section title="History">
+        <WeightHistoryList entries={serializedEntries} timezone={user.timezone} />
+      </Section>
+    </>
   );
 }
 
