@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, CircleDot, Footprints, RotateCcw, ShieldCheck, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { SectionHeader } from "@/components/ui/section-header";
+import { Button } from "@/components/ui/button";
+import { Figure, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import {
   getAllMobilityPrograms,
   getRequiredLaterRecoveryBlocks,
@@ -38,28 +39,32 @@ export default function FlexibilityBalancePage() {
   const footAnkleBlock = getRequiredLaterRecoveryBlocks("footFlare", 1)[0] ?? dailyMinimum;
 
   return (
-    <div className="page-shell">
-      <SectionHeader
+    <>
+      <PageTitle
         eyebrow="Flexibility & Balance"
         title="Movement quality map."
-        description="Daily lower-leg base, supported balance, recovery-day blocks, and foot/ankle resilience."
+        lead="Daily lower-leg base, supported balance, recovery-day blocks, and foot/ankle resilience."
         action={
-          <Link href="/mobility" className="text-link inline-flex items-center gap-2 text-sm font-semibold">
-            Open Mobility logging
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/mobility">
+              Open Mobility logging
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
         }
       />
 
-      <section className="document-panel">
-        <div className="command-deck grid gap-5 rounded-[var(--radius-panel)] p-6 md:grid-cols-4" data-animated="true">
-          <OverviewMetric label="Daily Minimum" value={dailyMinimum.duration} />
-          <OverviewMetric label="Balance" value={`${balanceDrills.length} drills`} />
-          <OverviewMetric label="Recovery" value="Weekdays" />
-          <OverviewMetric label="Foot Load" value={footAnkleBlock.duration} />
-        </div>
+      <Section className="mt-6">
+        <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <Figure label="Daily Minimum" value={dailyMinimum.duration} />
+          <Figure label="Balance" value={`${balanceDrills.length} drills`} />
+          <Figure label="Recovery" value="Weekdays" />
+          <Figure label="Foot Load" value={footAnkleBlock.duration} />
+        </dl>
+      </Section>
 
-        <div className="grid gap-5 lg:grid-cols-2">
+      <Section>
+        <div className="grid gap-8 lg:grid-cols-2">
           <ProtocolBlock
             icon={CircleDot}
             eyebrow="Daily minimum block"
@@ -80,8 +85,10 @@ export default function FlexibilityBalancePage() {
             <MovementList exercises={balanceDrills.slice(0, 4)} />
           </ProtocolBlock>
         </div>
+      </Section>
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+      <Section>
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
           <ProtocolBlock
             icon={RotateCcw}
             eyebrow="Required later recovery"
@@ -109,8 +116,8 @@ export default function FlexibilityBalancePage() {
             <MovementList exercises={footAnkleBlock.exercises.slice(0, 6)} />
           </ProtocolBlock>
         </div>
-      </section>
-    </div>
+      </Section>
+    </>
   );
 }
 
@@ -130,56 +137,58 @@ function ProtocolBlock({
   children: ReactNode;
 }) {
   return (
-    <article className="prime-panel flex flex-col gap-5 rounded-[var(--radius-card)] p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-3">
-          <p className="eyebrow">{eyebrow}</p>
-          <h2 className="text-3xl">{title}</h2>
-          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
+    <article className="flex flex-col">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-label uppercase text-tertiary">{eyebrow}</p>
+          <p className="mt-1 text-body font-medium text-primary">{title}</p>
         </div>
-        <div className="duna-mark-surface flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground/82">
-          <Icon className="h-4 w-4" />
-        </div>
+        {/* Decorative: the eyebrow already names the block. */}
+        <Icon aria-hidden className="mt-0.5 size-4 shrink-0 text-faint" strokeWidth={1.5} />
       </div>
-      <Badge variant="secondary" className="self-start">{badge}</Badge>
-      <div className="flex flex-1 flex-col">{children}</div>
+      <p className="mt-2 max-w-2xl text-row text-secondary">{summary}</p>
+      <Badge variant="secondary" className="mt-3 self-start">{badge}</Badge>
+      <div className="mt-4 flex flex-1 flex-col">{children}</div>
     </article>
   );
 }
 
+/* Movement, then dose. The dose folds onto a second line below sm. */
+const MOVEMENT_COLUMNS = "minmax(0,1fr)";
+const MOVEMENT_COLUMNS_MD = "minmax(0,1fr) minmax(8rem,auto)";
+
 function MovementList({ exercises }: { exercises: MobilityExercise[] }) {
   return (
-    <div className="flex flex-1 flex-col divide-y divide-border border-y border-border">
+    <Rows className="flex-1" columns={MOVEMENT_COLUMNS} mdColumns={MOVEMENT_COLUMNS_MD}>
       {exercises.map((exercise) => (
-        <div key={exercise.id} className="interactive-row grid flex-1 content-center gap-3 px-2 py-3 sm:grid-cols-[minmax(0,1fr)_minmax(9rem,auto)]">
-          <div>
-            <p className="font-medium text-foreground">{exercise.name}</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{exercise.goal}</p>
+        <Row
+          key={exercise.id}
+          columns={MOVEMENT_COLUMNS}
+          mdColumns={MOVEMENT_COLUMNS_MD}
+          className="items-start"
+        >
+          <div className="min-w-0">
+            <p className="text-row font-medium text-primary">{exercise.name}</p>
+            <p className="mt-0.5 text-caption text-tertiary">{exercise.goal}</p>
+            <Sub className="mt-0.5 block">{exercise.dose}</Sub>
           </div>
-          <p className="text-xs leading-relaxed text-muted-foreground sm:text-right">{exercise.dose}</p>
-        </div>
+          <span className="hidden text-caption text-secondary md:block md:text-right">
+            {exercise.dose}
+          </span>
+        </Row>
       ))}
-    </div>
+    </Rows>
   );
 }
 
 function BlockSummary({ block }: { block: MobilityBlock }) {
   return (
-    <div className="micro-panel rounded-[var(--radius-card)] p-4">
+    <div className="border-t border-rule pt-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="font-medium text-foreground">{block.title}</p>
+        <p className="text-row font-medium text-primary">{block.title}</p>
         <Badge variant="secondary">{block.duration}</Badge>
       </div>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{block.purpose}</p>
-    </div>
-  );
-}
-
-function OverviewMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="black-glass rounded-[var(--radius-card)] p-4">
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="value-reveal mt-3 text-2xl font-medium text-[var(--cream)] data-number">{value}</p>
+      <p className="mt-1 text-caption text-tertiary">{block.purpose}</p>
     </div>
   );
 }

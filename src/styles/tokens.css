@@ -56,7 +56,11 @@
   --ink-line-strong: rgba(250, 247, 242, 0.22);
   --ink-text: #faf7f2;
   --ink-text-muted: rgba(250, 247, 242, 0.64);
-  --ink-text-dim: rgba(250, 247, 242, 0.44);
+  /* The quietest tone that still carries text on the chrome: inactive nav
+     labels and the session dock's set counter both use it. At 0.44 it read
+     4.16:1 on ink-900 and 3.98:1 on ink-700 — under AA — so it sits at 0.52,
+     which clears 4.5 on all three ink surfaces (5.31 / 5.07 / 4.65). */
+  --ink-text-dim: rgba(250, 247, 242, 0.52);
 
   /* ── The one chromatic accent: olive ──────────────────────────────────── */
   /* Active nav, data emphasis, goal-met state. NOT spent on buttons — the
@@ -89,8 +93,17 @@
   --surface-overlay: var(--paper-0);
 
   /* ── Rules — the primary structural device ────────────────────────────── */
+  /* These delimit content, not controls. A separator is decorative and WCAG
+     exempt, so they stay light enough to read as hairlines on paper. */
   --rule: var(--paper-200);
   --rule-strong: var(--paper-300);
+
+  /* The edge of an interactive control — input, select, checkbox, secondary
+     button. WCAG 1.4.11 wants 3:1 against the adjacent surface, and the
+     hairline rules above only reach 1.14–1.51, so a control bounded by them
+     is not perceivably a control. Clears 3:1 on all four paper surfaces
+     (raised 3.67, canvas 3.46, row-hover 3.29, sunken 3.20). */
+  --control-border: #8d8471;
 
   /* ── Text ─────────────────────────────────────────────────────────────── */
   --text-primary: var(--paper-900);
@@ -108,6 +121,14 @@
   --chart-attention: var(--ember);
   --chart-grid: var(--paper-200);
   --chart-track: var(--paper-150);
+
+  /* The numbered series vocabulary the Recharts components already speak.
+     These were never defined, so every fill and stroke resolved to the SVG
+     initial value — solid black — which flattened "today" against every other
+     bar and the goal line against the data. */
+  --chart-series-1: var(--paper-900); /* raw observations: bars, scatter */
+  --chart-series-2: var(--olive); /* trend line, today, goal reference */
+  --chart-series-3: var(--paper-500); /* projection and goal lines, 4.99:1 */
 
   /* ── Type scale — tight. Only page titles are large. ──────────────────── */
   --font-size-page-title: 1.875rem; /* 30px — Fraunces, one per screen */
@@ -179,44 +200,4 @@
 
   /* ── Elevation — overlays only. Nothing else floats. ──────────────────── */
   --shadow-overlay: 0 8px 24px -8px rgb(31 26 22 / 0.18), 0 2px 6px -2px rgb(31 26 22 / 0.1);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   MIGRATION BRIDGE — TEMPORARY.
-
-   The 33 not-yet-restructured surfaces still reference v2 variable names.
-   Mapping them onto Palette B here means every page renders in the new
-   palette immediately, while its LAYOUT is converted to the ledger grammar
-   page by page. Each entry is deleted as its last consumer is migrated; the
-   block must be empty (and removed) before this work is called done.
-
-   Nothing new is defined here — every value is an alias of a token above.
-   ═══════════════════════════════════════════════════════════════════════════ */
-:root {
-  --cream: var(--text-primary);
-  --cream-2: var(--text-secondary);
-  --cream-3: var(--text-tertiary);
-  --basalt-0: var(--surface-canvas);
-  --basalt-1: var(--surface-raised);
-  --basalt-2: var(--surface-sunken);
-  --basalt-3: var(--surface-row-hover);
-  --hairline: var(--rule);
-  --hairline-strong: var(--rule-strong);
-  --veil-1: var(--surface-sunken);
-  --veil-2: var(--surface-row-hover);
-  --attention: var(--ember);
-  --copper: var(--ember);
-  --radius-card: var(--radius-md);
-  --radius-panel: var(--radius-md);
-  --radius-tight: var(--radius-sm);
-  --duration-fast: 120ms;
-  --duration-medium: 180ms;
-  --ease-standard: var(--ease-out);
-  --ease-glide: var(--ease-out);
-  --ring: var(--olive);
-  --primary: var(--ink-900);
-  --primary-foreground: var(--ink-text);
-  --border: var(--rule);
-  --foreground: var(--text-primary);
-  --muted-foreground: var(--text-secondary);
 }

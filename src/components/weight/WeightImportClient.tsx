@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { SectionHeader } from "@/components/ui/section-header";
+import { PageTitle } from "@/components/ui/ledger";
 import { parseCSV, getDataRows, getHeaders } from "@/lib/csv";
 import { parseCSVDate } from "@/lib/weight";
 
@@ -148,11 +148,11 @@ export function WeightImportClient() {
   const errorCount = state.step === "preview" ? state.rows.filter((r) => !r.valid).length : 0;
 
   return (
-    <div className="page-shell">
-      <SectionHeader
+    <>
+      <PageTitle
         eyebrow="Weight Import"
         title="Bring in past weigh-ins"
-        description="Preview the parsed rows before importing so you can confirm dates, status, and body-fat data."
+        lead="Preview the parsed rows before importing so you can confirm dates, status, and body-fat data."
         action={
           <Link href="/weight">
             <Button variant="secondary" className="gap-2">
@@ -161,6 +161,7 @@ export function WeightImportClient() {
             </Button>
           </Link>
         }
+        className="mb-6"
       />
 
       {state.step === "idle" && (
@@ -169,12 +170,12 @@ export function WeightImportClient() {
             <CardTitle>Choose CSV file</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-row text-secondary">
               Expected columns: Status, Date (M/D/YYYY), Weight, and optional Body Fat %.
             </p>
-            <div className="warm-dashed-panel rounded-[var(--radius-panel)] p-10 text-center">
-              <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-              <p className="mt-4 text-sm text-muted-foreground">Drag a file here or browse from your device.</p>
+            <div className="rounded-panel border border-dashed border-control-border p-10 text-center">
+              <FileText className="mx-auto size-8 text-faint" />
+              <p className="mt-4 text-row text-secondary">Drag a file here or browse from your device.</p>
               <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
               <Button className="mt-5" onClick={() => fileInputRef.current?.click()}>
                 <Upload className="h-4 w-4" />
@@ -197,9 +198,9 @@ export function WeightImportClient() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="max-h-80 overflow-auto rounded-[var(--radius-card)] border border-border">
+            <div className="max-h-80 overflow-auto rounded-control border border-rule">
               <div className="min-w-[34rem]">
-                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-[var(--basalt-2)] px-4 py-3 font-mono text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-sunken px-4 py-2.5 text-label uppercase text-tertiary">
                   <span>Date</span>
                   <span>Weight</span>
                   <span>Status</span>
@@ -208,7 +209,7 @@ export function WeightImportClient() {
                 {state.rows.map((row, i) => (
                   <div
                     key={i}
-                    className={`grid grid-cols-4 gap-2 border-t border-border px-4 py-3 text-sm ${!row.valid ? "bg-destructive/10 text-destructive" : "text-foreground"}`}
+                    className={`grid grid-cols-4 gap-2 border-t border-rule px-4 py-2.5 text-row ${!row.valid ? "bg-critical-surface text-critical" : "text-primary"}`}
                   >
                     <span className="truncate">{row.date}</span>
                     <span>{row.valid ? `${row.weight} lb` : "Invalid"}</span>
@@ -241,7 +242,7 @@ export function WeightImportClient() {
         <Card>
           <CardContent className="space-y-4 py-12 text-center">
             <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Importing entries...</p>
+            <p className="text-row text-secondary">Importing entries...</p>
             <Progress className="mx-auto max-w-xs" value={66} />
           </CardContent>
         </Card>
@@ -252,13 +253,13 @@ export function WeightImportClient() {
           <CardContent className="space-y-4 py-12 text-center">
             <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
             <div>
-              <p className="text-xl font-semibold text-foreground">Import complete</p>
-              <p className="text-sm text-muted-foreground">Successfully imported {state.imported} entries.</p>
+              <p className="text-body font-medium text-primary">Import complete</p>
+              <p className="text-row text-secondary">Successfully imported {state.imported} entries.</p>
             </div>
             {state.errors.length > 0 ? (
-              <div className="warm-row mx-auto max-w-lg rounded-[var(--radius-card)] p-4 text-left">
-                <p className="eyebrow">Skipped Rows</p>
-                <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
+              <div className="mx-auto max-w-lg rounded-control bg-sunken p-4 text-left">
+                <p className="text-label uppercase text-tertiary">Skipped Rows</p>
+                <ul className="mt-2 space-y-1 text-caption text-secondary">
                   {state.errors.slice(0, 10).map((err, i) => (
                     <li key={i}>{err}</li>
                   ))}
@@ -270,6 +271,6 @@ export function WeightImportClient() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </>
   );
 }

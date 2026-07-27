@@ -1,7 +1,13 @@
 import type { ReactNode } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
+/**
+ * A single figure on the canvas. The ledger has no card grid, so this is a
+ * label/value/hint stack separated by rules like everything else — the same
+ * shape as `Figure` in ui/ledger, with room for an icon and an accent strip.
+ *
+ * Nothing renders this today; `Figure` is what the converted routes use.
+ */
 export function StatCard({
   label,
   value,
@@ -20,21 +26,19 @@ export function StatCard({
   children?: ReactNode;
 }) {
   return (
-    <Card className={cn("relative overflow-hidden", className)}>
-      <CardContent className="space-y-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="space-y-3">
-            <p className="eyebrow">{label}</p>
-            <div className="text-4xl font-semibold tracking-normal text-foreground data-number sm:text-5xl">
-              {value}
-            </div>
+    <div className={cn("relative min-w-0", className)}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-label uppercase text-tertiary">{label}</p>
+          <div className="num num-left mt-1.5 text-data-lg font-medium leading-none text-primary">
+            {value}
           </div>
-          {icon ? <div className="duna-mark-surface mt-1 flex size-10 items-center justify-center rounded-full text-muted-foreground">{icon}</div> : null}
         </div>
-        {hint ? <p className="text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
-        {children}
-        {accent ? <div className="absolute inset-x-0 bottom-0 h-1">{accent}</div> : null}
-      </CardContent>
-    </Card>
+        {icon ? <div className="mt-0.5 shrink-0 text-faint">{icon}</div> : null}
+      </div>
+      {hint ? <p className="mt-1.5 text-caption text-tertiary">{hint}</p> : null}
+      {children}
+      {accent ? <div className="mt-3 h-0.5">{accent}</div> : null}
+    </div>
   );
 }

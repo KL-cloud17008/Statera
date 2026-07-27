@@ -88,7 +88,7 @@ export function WeightEntryForm({ editEntry, onDone, timezone }: Props) {
                 className="h-10"
               />
               {bodyweightConversion ? (
-                <p className="status-note mt-2 px-3 py-2 text-xs">{bodyweightConversion}</p>
+                <p className="mt-1.5 text-caption text-tertiary">{bodyweightConversion}</p>
               ) : null}
             </div>
             <div className="space-y-1.5">

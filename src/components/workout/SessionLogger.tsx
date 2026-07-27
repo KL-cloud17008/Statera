@@ -7,10 +7,12 @@ import { toast } from "sonner";
 import { completeSession, discardWorkoutSession } from "@/actions/workout";
 import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
+import { SessionPrepStrip } from "./SessionPrepStrip";
 import { Button } from "@/components/ui/button";
+import { Figure, Notice, Section } from "@/components/ui/ledger";
 import { Progress } from "@/components/ui/progress";
 import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
-import { SESSION_PREP_ITEMS, isLoggableTrainingExercise } from "@/lib/training-session";
+import { isLoggableTrainingExercise } from "@/lib/training-session";
 
 type PlanExercise = {
   id: string;
@@ -218,167 +220,135 @@ export function SessionLogger({
   }
 
   return (
-    <div className="space-y-8">
-      <section className="command-deck space-y-8 p-6 sm:p-8" data-animated="true">
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] xl:items-end">
-          <div>
-            <p className="eyebrow">Live session</p>
-            <h2 className="mt-3 text-4xl">{sessionName}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--cream-2)]">
-              Log working sets only. Ramp-up sets stay outside the ledger.
-            </p>
-            {showLowerBReadiness ? (
-              <p className="black-glass mt-4 inline-flex max-w-2xl rounded-[var(--radius-tight)] px-4 py-3 text-sm font-semibold leading-relaxed text-[var(--cream-2)]">
-                {LOWER_B_BACK_PAIN_READINESS_NOTE}
-              </p>
-            ) : null}
-            {isStale ? (
-              <div className="black-glass mt-5 flex max-w-2xl items-start gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm leading-relaxed text-[var(--cream-2)]">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--attention)]" />
-                <p>
-                  Resume previous open session from {formatSessionDate(trainingDate)}. Discard it to return to today&apos;s programmed session.
-                </p>
-              </div>
-            ) : null}
-          </div>
+    <div>
+      {/* The session name is already the page title above; repeating it here
+          would put two mastheads on one screen. */}
+      <Section>
+        {isStale ? (
+          <Notice className="mb-4 flex items-start gap-2">
+            <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+            <span>
+              Resume previous open session from {formatSessionDate(trainingDate)}. Discard it to
+              return to today&apos;s programmed session.
+            </span>
+          </Notice>
+        ) : null}
 
-          <div className="space-y-5 xl:text-right">
-            <div className="grid gap-3 text-sm text-[var(--cream-3)] sm:grid-cols-3 xl:grid-cols-3">
-              <div className="black-glass rounded-[var(--radius-card)] p-4">
-                <p className="eyebrow">Elapsed</p>
-                <p className="value-reveal mt-2 text-2xl font-medium tracking-normal text-[var(--cream)] data-number">
-                  {elapsedMinutes}m
-                </p>
-              </div>
-              <div className="black-glass rounded-[var(--radius-card)] p-4">
-                <p className="eyebrow">Saved</p>
-                <p className="value-reveal mt-2 text-2xl font-medium tracking-normal text-[var(--cream)] data-number">
-                  {savedSetKeys.size}
-                </p>
-              </div>
-              <div className="black-glass rounded-[var(--radius-card)] p-4">
-                <p className="eyebrow">Complete</p>
-                <p className="value-reveal mt-2 text-2xl font-medium tracking-normal text-[var(--cream)] data-number">
-                  {completedCount}/{totalExercises}
-                </p>
-              </div>
-            </div>
+        {showLowerBReadiness ? (
+          <Notice tone="accent" className="mb-4">
+            {LOWER_B_BACK_PAIN_READINESS_NOTE}
+          </Notice>
+        ) : null}
 
-            <div className="flex flex-wrap gap-3 xl:justify-end">
-              {isStale ? (
-                <Button type="button" variant="secondary" size="lg" onClick={handleDiscard} disabled={isPending} className="gap-2">
-                  {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                  Discard old incomplete session
-                </Button>
-              ) : null}
-              <Button type="button" size="lg" onClick={handleComplete} disabled={isPending} className="gap-2">
-                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-                Complete session
-              </Button>
-            </div>
-          </div>
-        </div>
+        <dl className="grid grid-cols-3 gap-4">
+          <Figure label="Elapsed" value={`${elapsedMinutes}m`} size="lg" />
+          <Figure label="Saved" value={savedSetKeys.size} size="lg" />
+          <Figure
+            label="Complete"
+            value={`${completedCount}/${totalExercises}`}
+            size="lg"
+            tone={completedCount === totalExercises && totalExercises > 0 ? "accent" : "primary"}
+          />
+        </dl>
 
-        <SessionPrepStrip />
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm text-[var(--cream-3)]">
-            <span>{completedCount}/{totalExercises} exercises logged</span>
-            <span className="data-number text-[var(--cream)]">{progressPercent}%</span>
+        <div className="mt-5 space-y-2">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="text-caption text-tertiary">
+              {completedCount}/{totalExercises} exercises logged
+            </span>
+            <span className="num text-caption text-secondary">{progressPercent}%</span>
           </div>
           <Progress value={progressPercent} />
         </div>
-      </section>
 
-      <section className="editorial-surface px-0 py-0">
-        {exerciseGroups.map((group, groupIndex) => {
-          const isGroupedBlock = group.length > 1 && group[0].supersetGroup;
-          const restSeconds = group[0].restSeconds ?? 90;
-
-          return (
-            <div key={groupIndex} className="border-t border-border/70 px-6 py-8 first:border-t-0 sm:px-8">
-              {isGroupedBlock ? (
-                <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="eyebrow">Block</p>
-                    <p className="mt-2 text-lg font-semibold tracking-normal">
-                      Block {group[0].supersetGroup}
-                    </p>
-                  </div>
-                  <div className="hidden md:block">
-                    <RestTimer defaultSeconds={restSeconds} />
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="space-y-8">
-                {group.map((exercise) => (
-                  <ExerciseCard
-                    key={exercise.id}
-                    exercise={exercise}
-                    sessionId={sessionId}
-                    loggedSets={existingSets.filter((set) => set.exerciseName === exercise.exerciseName)}
-                    previousSets={previousSets}
-                    onSetLogged={(setKey) => {
-                      setSavedSetKeys((current) => new Set([...current, setKey]));
-                      setCompletedSets((current) => new Set([...current, setKey]));
-                    }}
-                    exerciseComplete={completedExercises.has(exercise.exerciseName)}
-                    onExerciseCompleteChange={(complete) => handleExerciseCompleteChange(exercise.exerciseName, complete)}
-                    completedSetNumbers={getCompletedSetNumbers(exercise.exerciseName)}
-                    onSetCompleteChange={handleSetCompleteChange}
-                  />
-                ))}
-              </div>
-
-              {!isGroupedBlock && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
-                <div className="mt-6 hidden justify-end md:flex">
-                  <RestTimer defaultSeconds={group[0].restSeconds} />
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
-      </section>
-
-      <div className="fixed inset-x-0 bottom-0 z-50 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden">
-        <div className="chrome-surface rounded-[var(--radius-panel)] border px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold tracking-normal text-[var(--cream)]">
-                {currentTarget ? currentTarget.exercise.exerciseName : "All sets logged"}
-              </p>
-              <p className="mt-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream-3)]">
-                {currentTarget
-                  ? `Set ${currentTarget.setNumber} of ${currentTarget.totalSets}`
-                  : "Ready to complete session"}
-              </p>
-            </div>
-            <RestTimer variant="bar" defaultSeconds={currentTarget?.exercise.restSeconds || 90} />
-          </div>
-          <Progress value={progressPercent} className="mt-2.5 h-1" />
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Button type="button" variant="primary" size="lg" onClick={handleComplete} disabled={isPending}>
+            {isPending ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}
+            Complete session
+          </Button>
+          {isStale ? (
+            <Button type="button" variant="secondary" size="lg" onClick={handleDiscard} disabled={isPending}>
+              {isPending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+              Discard old incomplete session
+            </Button>
+          ) : null}
         </div>
-      </div>
-    </div>
-  );
-}
+      </Section>
 
-function SessionPrepStrip() {
-  return (
-    <div className="session-prep-strip">
-      <div>
-        <p className="eyebrow">Session prep</p>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Arrival only. No Weight/Reps/RPE rows.
-        </p>
-      </div>
-      <div className="grid gap-3 md:grid-cols-4">
-        {SESSION_PREP_ITEMS.map((item) => (
-          <div key={item.label} className="border-t border-border/70 pt-3">
-            <p className="text-sm font-semibold text-foreground">{item.label}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+      <Section title="Session prep">
+        <SessionPrepStrip note="Arrival only. No Weight/Reps/RPE rows." />
+      </Section>
+
+      {exerciseGroups.map((group, groupIndex) => {
+        const isGroupedBlock = group.length > 1 && group[0].supersetGroup;
+        const restSeconds = group[0].restSeconds ?? 90;
+
+        return (
+          <Section key={groupIndex}>
+            {isGroupedBlock ? (
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+                <h2>Block {group[0].supersetGroup}</h2>
+                {/* On mobile the dock carries the timer, so it is not repeated
+                    inline — it must stay visible while the page scrolls. */}
+                <div className="hidden md:block">
+                  <RestTimer defaultSeconds={restSeconds} />
+                </div>
+              </div>
+            ) : null}
+
+            <div className="space-y-6">
+              {group.map((exercise) => (
+                <ExerciseCard
+                  key={exercise.id}
+                  exercise={exercise}
+                  sessionId={sessionId}
+                  loggedSets={existingSets.filter((set) => set.exerciseName === exercise.exerciseName)}
+                  previousSets={previousSets}
+                  onSetLogged={(setKey) => {
+                    setSavedSetKeys((current) => new Set([...current, setKey]));
+                    setCompletedSets((current) => new Set([...current, setKey]));
+                  }}
+                  exerciseComplete={completedExercises.has(exercise.exerciseName)}
+                  onExerciseCompleteChange={(complete) => handleExerciseCompleteChange(exercise.exerciseName, complete)}
+                  completedSetNumbers={getCompletedSetNumbers(exercise.exerciseName)}
+                  onSetCompleteChange={handleSetCompleteChange}
+                />
+              ))}
+            </div>
+
+            {!isGroupedBlock && group[0].restSeconds != null && group[0].restSeconds > 0 ? (
+              <div className="mt-5 hidden justify-end md:flex">
+                <RestTimer defaultSeconds={group[0].restSeconds} />
+              </div>
+            ) : null}
+          </Section>
+        );
+      })}
+
+      {/* The session dock. Ink chrome, and it replaces the app nav for the
+          lifetime of the session (see globals.css) rather than stacking on it,
+          so the rest timer stays reachable at every scroll position. */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-50 bg-ink md:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <Progress
+          value={progressPercent}
+          className="h-0.5 rounded-none border-0 bg-ink-700 [&_[data-slot=progress-indicator]]:rounded-none [&_[data-slot=progress-indicator]]:bg-accent-bright"
+        />
+        <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-row font-medium text-ink-text">
+              {currentTarget ? currentTarget.exercise.exerciseName : "All sets logged"}
+            </p>
+            <p className="mt-0.5 text-label uppercase text-ink-dim">
+              {currentTarget
+                ? `Set ${currentTarget.setNumber} of ${currentTarget.totalSets}`
+                : "Ready to complete session"}
+            </p>
           </div>
-        ))}
+          <RestTimer variant="bar" defaultSeconds={currentTarget?.exercise.restSeconds || 90} />
+        </div>
       </div>
     </div>
   );

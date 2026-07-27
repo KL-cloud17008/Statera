@@ -2,6 +2,11 @@ import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * The absence of records, stated on the canvas. It is not a panel — a dashed
+ * box would be the only floating container in the ledger. The rule above it
+ * is the same device that separates every other section.
+ */
 export function EmptyState({
   icon: Icon,
   title,
@@ -16,17 +21,12 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "warm-dashed-panel flex flex-col items-start gap-3 rounded-[var(--radius-surface)] px-6 py-8 text-left",
-        className
-      )}
-    >
-      <div className="duna-mark-surface flex h-10 w-10 items-center justify-center rounded-[var(--radius-tight)] text-foreground/82">
-        <Icon className="h-[1.125rem] w-[1.125rem]" />
-      </div>
-      <h3 className="text-lg font-semibold tracking-normal text-foreground">{title}</h3>
-      <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p>
+    <div className={cn("flex flex-col items-start gap-2 border-t border-rule py-8", className)}>
+      {/* Decorative: the title carries the meaning, so this takes the faint
+          tone that is WCAG-exempt for non-text. */}
+      <Icon aria-hidden className="size-5 text-faint" strokeWidth={1.5} />
+      <p className="text-body font-medium text-primary">{title}</p>
+      <p className="max-w-md text-row text-tertiary">{description}</p>
       {action ? <div className="pt-2">{action}</div> : null}
     </div>
   );

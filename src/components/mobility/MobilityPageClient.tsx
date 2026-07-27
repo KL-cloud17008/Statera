@@ -19,7 +19,7 @@ import {
   type RecoveryMode,
 } from "@/lib/mobility";
 import { Button } from "@/components/ui/button";
-import { SectionHeader } from "@/components/ui/section-header";
+import { Figure, Notice, PageTitle, Section } from "@/components/ui/ledger";
 import { cn } from "@/lib/utils";
 
 export function MobilityPageClient({
@@ -101,28 +101,32 @@ export function MobilityPageClient({
   }
 
   return (
-    <div className="page-shell">
-      <SectionHeader
-        className="page-hero-muted"
+    <>
+      <PageTitle
         eyebrow="Mobility protocol"
         title={`${program.dayName} — ${program.trainingRole}`}
-        description={program.todayPurpose}
-      >
-        <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
-          <span>Session: {sessionCompleted ? "logged" : "open"}</span>
-          <span>Duration: {program.totalDuration}</span>
-          <span>Desk resets: {undoCount}</span>
-        </div>
-      </SectionHeader>
+        lead={program.todayPurpose}
+      />
 
-      <section className="document-panel">
-        <div className="grid gap-4 border-b border-border pb-7 md:grid-cols-3">
+      <Section className="mt-6">
+        <dl className="grid grid-cols-3 gap-4">
+          <Figure label="Session" value={sessionCompleted ? "Logged" : "Open"} tone={sessionCompleted ? "accent" : "primary"} />
+          <Figure label="Duration" value={program.totalDuration} />
+          <Figure label="Desk resets" value={undoCount} />
+        </dl>
+      </Section>
+
+      <Section title="Today's focus">
+        <div className="grid gap-x-6 gap-y-4 md:grid-cols-3">
           {program.focus.map((item) => (
             <FocusCell key={item.label} label={item.label} value={item.value} note={item.note} />
           ))}
         </div>
+      </Section>
 
+      <Section>
         <PainCheckInCard latest={painCheckIn} timezone={timezone} />
+      </Section>
 
         <RoutineSection
           title={program.sessionTitle}
@@ -155,9 +159,9 @@ export function MobilityPageClient({
           {sessionBlocks.length > 0 ? (
             <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
           ) : (
-            <div className="micro-panel rounded-[var(--radius-card)] p-5">
-              <p className="eyebrow">Complete rest</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            <div>
+              <h3>Complete rest</h3>
+              <p className="mt-1 text-row text-secondary">
                 No mobility block is scheduled today.
               </p>
             </div>
@@ -214,8 +218,7 @@ export function MobilityPageClient({
         >
           <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
         </RoutineSection>
-      </section>
-    </div>
+    </>
   );
 }
 
@@ -229,10 +232,10 @@ function FocusCell({
   note: string;
 }) {
   return (
-    <div className="micro-panel rounded-[var(--radius-card)] p-4">
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="mt-2 text-2xl font-medium text-foreground">{value}</p>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{note}</p>
+    <div className="border-t border-rule pt-3">
+      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="mt-1 text-row font-medium text-primary">{value}</p>
+      <p className="mt-1 text-caption text-tertiary">{note}</p>
     </div>
   );
 }
@@ -265,33 +268,32 @@ function RoutineSection({
   hideAction?: boolean;
 }) {
   return (
-    <section className="prime-panel p-5 sm:p-6">
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-        <div className="space-y-3">
-          <p className="eyebrow">{completed ? "Completed today" : "Ready protocol"}</p>
-          <h2 className="text-3xl">{title}</h2>
-          <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">{summary}</p>
-          {meta ? <p className="text-sm text-muted-foreground">{meta}</p> : null}
-          {contextNote ? (
-            <p className="status-note status-note-attention inline-flex max-w-3xl px-3 py-2 text-xs font-semibold leading-relaxed">
-              {contextNote}
-            </p>
-          ) : null}
+    <Section>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+        <div className="min-w-0">
+          <p className="text-label uppercase text-tertiary">
+            {completed ? "Completed today" : "Ready protocol"}
+          </p>
+          <p className="mt-1 text-body font-medium text-primary">{title}</p>
+          <p className="mt-2 max-w-2xl text-row text-secondary">{summary}</p>
+          {meta ? <p className="mt-1 max-w-2xl text-caption text-tertiary">{meta}</p> : null}
+          {/* Foot-load state: high step load, sole pain >=5, or foot pain >=3. */}
+          {contextNote ? <Notice className="mt-3 max-w-2xl">{contextNote}</Notice> : null}
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           {headerAside}
           {hideAction ? null : completed ? (
-            <span className="completed-row inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-foreground">
-              <CheckCircle2 className="h-4 w-4" />
+            <span className="inline-flex items-center gap-2 rounded-control border border-accent-line bg-accent-subtle px-3 py-2 text-row font-medium text-accent">
+              <CheckCircle2 className="size-4" />
               Logged
             </span>
           ) : (
-            <Button type="button" onClick={onLog} disabled={isPending} className="gap-2">
+            <Button type="button" variant="primary" onClick={onLog} disabled={isPending}>
               {isPending && isCurrentAction ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className="size-4" />
               )}
               {actionLabel}
             </Button>
@@ -299,8 +301,8 @@ function RoutineSection({
         </div>
       </div>
 
-      <div className="mt-7">{children}</div>
-    </section>
+      <div className="mt-6">{children}</div>
+    </Section>
   );
 }
 
@@ -325,10 +327,10 @@ function RecoveryModeControl({
   ];
 
   return (
-    <div className="micro-panel w-full min-w-0 rounded-[var(--radius-card)] p-3 sm:w-auto sm:min-w-[21rem]">
-      <p className="eyebrow text-[10px]">Recovery mode</p>
+    <div className="w-full min-w-0 sm:w-auto sm:min-w-[19rem]">
+      <p className="text-label uppercase text-tertiary">Recovery mode</p>
       <div
-        className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-[var(--hairline)] bg-[var(--basalt-1)] p-1"
+        className="mt-1.5 grid grid-cols-2 gap-0.5 rounded-pill border border-rule bg-sunken p-0.5"
         aria-label="Recovery mode"
       >
         {options.map((option) => {
@@ -340,10 +342,13 @@ function RecoveryModeControl({
               aria-pressed={isActive}
               onClick={() => onChange(option.value)}
               className={cn(
-                "min-h-9 rounded-full px-3 py-2 text-xs font-semibold leading-tight transition-[background-color,border-color,color,box-shadow] duration-[var(--duration-fast)] focus-visible:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--basalt-0),0_0_0_4px_var(--ring)] motion-reduce:transition-none",
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-[var(--veil-2)] hover:text-foreground"
+                "min-h-9 rounded-pill px-3 py-2 text-caption font-medium leading-tight",
+                "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
+                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+                /* Was bg-primary/text-primary-foreground; primary-foreground
+                   has no theme mapping, so the active label inherited body
+                   colour — near-black on near-black. */
+                isActive ? "bg-ink text-on-ink" : "text-secondary hover:text-primary"
               )}
             >
               {option.label}
@@ -351,7 +356,7 @@ function RecoveryModeControl({
           );
         })}
       </div>
-      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+      <p className="mt-1.5 text-caption text-tertiary">
         {options.find((option) => option.value === value)?.note}
       </p>
     </div>

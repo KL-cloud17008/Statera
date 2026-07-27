@@ -94,12 +94,12 @@ export function StepsChart({
                 }
               />
               <Tooltip
-                cursor={{ fill: "color-mix(in srgb, var(--foreground) 8%, transparent)" }}
+                cursor={{ fill: "var(--surface-row-hover)" }}
                 contentStyle={{
                   backgroundColor: "var(--color-popover)",
                   border: "1px solid var(--color-border)",
                   borderRadius: "1rem",
-                  boxShadow: "var(--shadow-soft)",
+                  boxShadow: "var(--shadow-overlay)",
                 }}
                 formatter={(value) => [Number(value).toLocaleString(), "Steps"]}
               />

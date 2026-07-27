@@ -1,25 +1,35 @@
-﻿import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * The loading shape of a ledger page: masthead, a summary strip of figures,
+ * then a run of rows. It mirrors the real layout so the page does not jump
+ * when content arrives.
+ */
 export function PageSkeleton() {
   return (
-    <div className="page-shell">
-      <div className="page-hero">
-        <div className="space-y-3">
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="h-10 w-64 max-w-full" />
-          <Skeleton className="h-4 w-full max-w-2xl" />
-        </div>
+    <div>
+      <div className="space-y-2">
+        <Skeleton className="h-3 w-24" />
+        <Skeleton className="h-8 w-72 max-w-full" />
+        <Skeleton className="h-4 w-full max-w-xl" />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="ledger-section mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <Skeleton key={index} className="h-36 rounded-[var(--radius-card)]" />
+          <div key={index} className="space-y-2">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-7 w-20" />
+          </div>
         ))}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <Skeleton className="h-[22rem] rounded-[var(--radius-panel)]" />
-        <Skeleton className="h-[22rem] rounded-[var(--radius-panel)]" />
+      <div className="ledger-section">
+        <Skeleton className="h-3 w-28" />
+        <div className="mt-4 space-y-px">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton key={index} className="h-row w-full rounded-none" />
+          ))}
+        </div>
       </div>
     </div>
   );

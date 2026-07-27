@@ -3,9 +3,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getExerciseHistory } from "@/actions/workout";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { SectionHeader } from "@/components/ui/section-header";
+import { Figure, Num, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { calculateSetVolume } from "@/lib/workout-stats";
@@ -64,75 +63,80 @@ export default async function ExerciseHistoryPage({
   }
 
   return (
-    <div className="page-shell">
-      <SectionHeader
+    <>
+      <PageTitle
         eyebrow="Exercise History"
         title={exerciseName}
-        description={`${sets.length} total sets across ${dates.length} logged sessions.`}
+        lead={`${sets.length} total sets across ${dates.length} logged sessions.`}
         action={
-          <Link href="/workout/history">
-            <Button variant="secondary" className="gap-2">
-              <ArrowLeft className="h-4 w-4" />
+          <Button asChild variant="secondary" size="sm">
+            <Link href="/workout/history">
+              <ArrowLeft className="size-4" />
               Back to history
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         }
       />
 
       {bestSet ? (
-        <Card className="border-primary/30">
-          <CardContent className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <p className="eyebrow">Best Set</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{formatWorkoutLoad(bestSet.weightUsed, bestSetLoadUnit)}</p>
-            </div>
-            <div>
-              <p className="eyebrow">Reps</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{bestSet.repsCompleted ?? "--"}</p>
-            </div>
-            <div>
-              <p className="eyebrow">Volume</p>
-              <p className="mt-2 text-2xl font-semibold text-foreground data-number">{formatWorkoutVolume(bestVolume)}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <Section className="mt-6" title="Best set">
+          <dl className="grid grid-cols-3 gap-4">
+            <Figure label="Load" value={formatWorkoutLoad(bestSet.weightUsed, bestSetLoadUnit)} size="lg" tone="accent" />
+            <Figure label="Reps" value={bestSet.repsCompleted ?? "--"} size="lg" />
+            <Figure label="Volume" value={formatWorkoutVolume(bestVolume)} size="lg" />
+          </dl>
+        </Section>
       ) : null}
 
       {dates.length === 0 ? (
-        <EmptyState
-          icon={Dumbbell}
-          title="No history for this exercise"
-          description="Log a session with this movement and the detailed set history will appear here."
-        />
+        <Section className="mt-6">
+          <EmptyState
+            icon={Dumbbell}
+            title="No history for this exercise"
+            description="Log a session with this movement and the detailed set history will appear here."
+          />
+        </Section>
       ) : null}
 
       {dates.map((date) => {
         const dateSets = byDate.get(date) ?? [];
         return (
-          <Card key={date}>
-            <CardHeader>
-              <CardTitle>
-                {new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
+          <Section
+            key={date}
+            title={new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            })}
+          >
+            <Rows
+              columns={SET_COLUMNS}
+              head={
+                <>
+                  <span>Set</span>
+                  <span className="text-right">Load</span>
+                  <span className="text-right">Reps</span>
+                  <span className="text-right">RPE</span>
+                </>
+              }
+            >
               {dateSets.sort((a, b) => a.setNumber - b.setNumber).map((set) => (
-                <div key={set.id} className="interactive-row warm-row flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] px-4 py-3 text-sm">
-                  <span className="text-muted-foreground">Set {set.setNumber}</span>
-                  <span className="font-semibold text-foreground data-number">{formatWorkoutLoad(set.weightUsed, getWorkoutSessionLoadUnit(set.workoutSession.notes))}</span>
-                  <span className="text-muted-foreground">x {set.repsCompleted ?? "--"}</span>
-                  {set.actualRPE ? <span className="text-muted-foreground">RPE {set.actualRPE}</span> : null}
-                  {set.notes ? <span className="text-muted-foreground">{set.notes}</span> : null}
-                </div>
+                <Row key={set.id} columns={SET_COLUMNS} interactive>
+                  <span className="num num-left text-secondary">{set.setNumber}</span>
+                  <Num>{formatWorkoutLoad(set.weightUsed, getWorkoutSessionLoadUnit(set.workoutSession.notes))}</Num>
+                  <Num tone="secondary">{set.repsCompleted ?? "--"}</Num>
+                  <Num tone="secondary">{set.actualRPE ?? "--"}</Num>
+                  {set.notes ? <Sub hideOnDesktop={false} className="col-span-full">{set.notes}</Sub> : null}
+                </Row>
               ))}
-            </CardContent>
-          </Card>
+            </Rows>
+          </Section>
         );
       })}
-    </div>
+    </>
   );
 }
+
+/* Set, load, reps, RPE — four narrow columns fit at 375px because every cell
+   is a tabular numeral. Notes fold onto a full-width second line. */
+const SET_COLUMNS = "2.5rem minmax(0,1fr) minmax(0,3.5rem) minmax(0,3rem)";

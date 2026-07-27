@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { Notice } from "@/components/ui/ledger";
 import { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -219,7 +220,7 @@ export function WeightChart({
                 border: "1px solid var(--color-border)",
                 borderRadius: "1rem",
                 fontSize: "0.8125rem",
-                boxShadow: "var(--shadow-soft)",
+                boxShadow: "var(--shadow-overlay)",
               }}
               labelFormatter={(label) => {
                 const [y, m, d] = String(label).split("-").map(Number);
@@ -291,10 +292,14 @@ function TargetDateNote({ summary }: { summary: TargetDateSummary | null }) {
         }`
       : "Log current weight and goal weight to estimate the required pace.";
 
+  // The pace guardrail is one of the sanctioned attention states, so an
+  // aggressive target takes ember rather than reading as neutral copy.
+  const isAggressive = summary.requiredPace != null && summary.requiredPace >= 2;
+
   return (
-    <p className="status-note mt-4 px-3 py-2 text-xs">
+    <Notice tone={isAggressive ? "ember" : "accent"} className="mt-4">
       Target date: {formatTargetDate(summary.targetDate)}. {paceCopy}
-    </p>
+    </Notice>
   );
 }
 

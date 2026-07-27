@@ -13,7 +13,11 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "peer flex size-4 shrink-0 items-center justify-center rounded-control border border-rule-strong bg-raised text-on-accent",
+      "peer relative flex size-4 shrink-0 items-center justify-center rounded-control border border-control-border bg-raised text-on-accent",
+      /* The box stays 16px so it reads as a checkbox in a dense ledger row,
+         but the hit area is expanded to 44px. In the session cockpit this is
+         the control that marks a set done, mid-workout, one-handed. */
+      "before:absolute before:-inset-3.5 before:content-['']",
       "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
       "hover:border-tertiary",
       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",

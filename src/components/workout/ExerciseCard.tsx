@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SetInput } from "./SetInput";
 import { isLoggableTrainingExercise } from "@/lib/training-session";
@@ -72,68 +73,67 @@ export function ExerciseCard({
   }
 
   return (
-    <section className={cn("surface-card space-y-6 rounded-[var(--radius-card)] p-5", exerciseComplete && "opacity-75")}>
-      <div className="flex items-start gap-4">
+    <section>
+      <div className="flex items-start gap-3">
         <Checkbox
           checked={exerciseComplete}
           onCheckedChange={(checked) => onExerciseCompleteChange(!!checked)}
           className="mt-1"
+          aria-label={`Mark ${exercise.exerciseName} complete`}
         />
 
-        <div className="min-w-0 flex-1 space-y-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="space-y-2">
-              <p className="eyebrow">{getExerciseLabel(exercise)}</p>
-              <h3
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
+            <div className="min-w-0">
+              <p className="text-label uppercase text-tertiary">{getExerciseLabel(exercise)}</p>
+              <p
                 className={cn(
-                  "line-clamp-2 tracking-normal max-md:text-base max-md:leading-snug",
-                  exerciseComplete ? "text-muted-foreground line-through" : "text-foreground"
+                  "mt-1 text-body font-medium",
+                  exerciseComplete ? "text-tertiary line-through" : "text-primary"
                 )}
               >
                 {exercise.exerciseName}
-              </h3>
-              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                {getExerciseMeta(exercise)}
               </p>
+              <p className="mt-0.5 text-caption text-tertiary">{getExerciseMeta(exercise)}</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              <span className="data-number text-foreground/80">
+            <div className="flex shrink-0 flex-wrap items-center gap-4">
+              <span className="num text-row text-secondary">
                 {setCount} {setCount === 1 ? "set" : "sets"}
               </span>
               {exercise.cues ? (
-                <button
+                <Button
                   type="button"
+                  variant="link"
                   onClick={() => setShowCues((current) => !current)}
-                  className="text-link inline-flex items-center gap-1"
+                  className="gap-1 text-caption"
+                  aria-expanded={showCues}
                 >
-                  {showCues ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {showCues ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
                   {showCues ? "Hide cues" : "Show cues"}
-                </button>
+                </Button>
               ) : null}
             </div>
           </div>
 
           {showCues && exercise.cues ? (
-            <p className="max-w-2xl rounded-[var(--radius-tight)] border-l-2 border-[var(--hairline-strong)] bg-[var(--veil-1)] px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-3 max-w-2xl rounded-control border-l-2 border-rule-strong bg-sunken px-3 py-2 text-row text-secondary">
               {exercise.cues}
             </p>
           ) : null}
 
           {exercisePrevSets.length > 0 ? (
-            <div className="space-y-3 border-t border-border/70 pt-4">
-              <p className="eyebrow">Last session</p>
-              <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-                {exercisePrevSets.map((set) => (
-                  <span key={set.setNumber}>
-                    S{set.setNumber}: {formatWorkoutLoad(set.weightUsed)} x {set.repsCompleted ?? "--"}
-                  </span>
-                ))}
-              </div>
+            <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+              <span className="text-label uppercase text-tertiary">Last session</span>
+              {exercisePrevSets.map((set) => (
+                <span key={set.setNumber} className="num text-caption text-secondary">
+                  S{set.setNumber} {formatWorkoutLoad(set.weightUsed)} x {set.repsCompleted ?? "--"}
+                </span>
+              ))}
             </div>
           ) : null}
 
-          <div className="space-y-2 border-t border-border/70 pt-3">
+          <div className="ledger-rows mt-3 border-t border-rule">
             {Array.from({ length: setCount }, (_, index) => {
               const setNum = index + 1;
               const logged = loggedSets.find((set) => set.setNumber === setNum);

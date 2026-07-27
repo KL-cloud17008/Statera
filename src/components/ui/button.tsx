@@ -24,7 +24,7 @@ const buttonVariants = cva(
       variant: {
         primary: "border-transparent bg-ink text-on-ink hover:bg-ink-800 active:bg-ink-700",
         secondary:
-          "border-rule bg-raised text-primary hover:bg-row-hover hover:border-rule-strong",
+          "border-control-border bg-raised text-primary hover:bg-row-hover hover:border-tertiary",
         ghost:
           "border-transparent bg-transparent text-secondary hover:bg-row-hover hover:text-primary",
         critical:

@@ -26,17 +26,21 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "surface-elevated rounded-[var(--radius-panel)] border px-4 py-3 text-sm shadow-[0_18px_42px_rgba(27,6,36,0.12)]",
-          title: "text-sm font-semibold text-foreground",
-          description: "text-sm text-muted-foreground",
+            "rounded-panel border border-rule bg-overlay px-4 py-3 text-row text-primary shadow-[var(--shadow-overlay)]",
+          title: "text-row font-medium text-primary",
+          description: "text-caption text-secondary",
         },
       }}
+      /* Sonner reads these from its own inline scope. They previously pointed
+         at --popover/--popover-foreground/--border, none of which exist as
+         custom properties here (only the --color-* theme keys do), so every
+         toast fell back to Sonner's stock white. */
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "1rem",
+          "--normal-bg": "var(--surface-overlay)",
+          "--normal-text": "var(--text-primary)",
+          "--normal-border": "var(--rule)",
+          "--border-radius": "var(--radius-md)",
         } as React.CSSProperties
       }
       {...props}

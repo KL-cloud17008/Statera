@@ -29,7 +29,7 @@ export function DashboardWeightChart({
 
   if (chartData.length === 0) {
     return (
-      <div className="warm-empty-panel flex h-48 items-center justify-center rounded-[var(--radius-card)]">
+      <div className="flex h-48 items-center justify-center rounded-panel border border-rule bg-sunken">
         <span className="text-sm text-muted-foreground">
           No weight data yet
         </span>
@@ -88,7 +88,7 @@ export function DashboardWeightChart({
             border: "1px solid var(--color-border)",
             borderRadius: "1rem",
             fontSize: "0.75rem",
-            boxShadow: "var(--shadow-soft)",
+            boxShadow: "var(--shadow-overlay)",
           }}
           labelFormatter={(label) => {
             const [y, m, d] = String(label).split("-").map(Number);

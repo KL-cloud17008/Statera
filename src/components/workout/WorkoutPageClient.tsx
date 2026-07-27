@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ArrowRight, ClipboardList, History } from "lucide-react";
-import { SectionHeader } from "@/components/ui/section-header";
 import { Button } from "@/components/ui/button";
+import { Notice, PageTitle, Section } from "@/components/ui/ledger";
 import { BACK_PAIN_RULES } from "@/lib/default-workout-plan";
 import { DAY_NAMES, buildPlanDayStats, findNextTrainingDay } from "@/lib/plan-preview";
 import { SessionLogger } from "./SessionLogger";
@@ -83,55 +83,62 @@ export function WorkoutPageClient({
   const nextTrainingStats = nextTrainingDay ? buildPlanDayStats(nextTrainingDay.day) : null;
 
   return (
-    <div className="page-shell">
-      <SectionHeader
-        eyebrow={activeSession ? "Session in progress" : "Training Ledger"}
-        title={
-          activeSession
-            ? activeSession.sessionName
-            : todayPlan
-              ? "Today's protocol"
+    <>
+      {/* WorkoutDayPreview prints its own masthead, so the page-level title is
+          suppressed in that branch rather than printing two. */}
+      {todayPlan && !activeSession ? null : (
+        <PageTitle
+          eyebrow={
+            activeSession
+              ? "Session in progress"
+              : /* On a rest day the eyebrow carries the "Full Rest" framing. */
+                (dayGuidance?.eyebrow ?? "Training Ledger")
+          }
+          title={
+            activeSession
+              ? activeSession.sessionName
               : dayGuidance
                 ? dayGuidance.title
                 : "Custom training"
-        }
-        description={
-          activeSession
-            ? "Log working sets only. Ramp-up sets stay outside the ledger."
-            : todayPlan
-              ? "Session prep is non-loggable. Working sets start the ledger."
+          }
+          lead={
+            activeSession
+              ? "Log working sets only. Ramp-up sets stay outside the ledger."
               : dayGuidance
                 ? dayGuidance.description
                 : "Build or reuse a focused session."
-        }
-        action={
-          <div className="flex flex-wrap items-center gap-4 text-sm">
-            <WorkoutPlanResetButton />
-            <Button asChild variant="secondary">
-              <Link href="/workout/history">
-                <History className="h-4 w-4" />
-                History
-              </Link>
-            </Button>
-            <Button asChild variant="secondary">
-              <Link href="/workout/plan">
-                <ClipboardList className="h-4 w-4" />
-                Full plan
-              </Link>
-            </Button>
-          </div>
-        }
-      />
+          }
+          action={
+            <div className="flex flex-wrap items-center gap-2">
+              <WorkoutPlanResetButton />
+              <Button asChild variant="secondary" size="sm">
+                <Link href="/workout/history">
+                  <History className="size-4" />
+                  History
+                </Link>
+              </Button>
+              <Button asChild variant="secondary" size="sm">
+                <Link href="/workout/plan">
+                  <ClipboardList className="size-4" />
+                  Full plan
+                </Link>
+              </Button>
+            </div>
+          }
+        />
+      )}
 
+      {/* Back-care block: the gate itself is enforced in the plan data; this
+          states why, and escalates its wording at 5/10. */}
       {backPainGateActive ? (
-        <div className="status-note status-note-attention px-4 py-3 text-sm leading-relaxed">
-          <p className="font-semibold">
+        <Notice className="mt-6">
+          <span className="font-medium">
             {todayBackPain != null && todayBackPain >= 5
               ? `Lower-back pain ${todayBackPain}/10 logged. Pain 5/10 or higher means stop that movement — back hyperextensions and overhead press stay removed.`
               : `Lower-back pain ${todayBackPain}/10 logged. Remove back hyperextensions and overhead press first.`}
-          </p>
-          <p className="mt-1 text-xs leading-relaxed opacity-90">{BACK_PAIN_RULES[5]}</p>
-        </div>
+          </span>
+          <span className="mt-1 block text-caption">{BACK_PAIN_RULES[5]}</span>
+        </Notice>
       ) : null}
 
       {activeSession ? (
@@ -146,84 +153,73 @@ export function WorkoutPageClient({
           isStale={activeSession.isStale}
         />
       ) : todayPlan ? (
-        <div className="grid gap-8">
+        <>
           <WorkoutDayPreview plan={todayPlan} backPainGateActive={backPainGateActive} />
-          <details className="group ledger-divider pt-6">
-            <summary className="warm-pill flex cursor-pointer list-none items-center justify-between gap-4 rounded-full px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:text-foreground">
-              <span>Custom session builder</span>
-              <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:hidden">Open</span>
-              <span className="hidden text-xs uppercase tracking-[0.12em] text-muted-foreground group-open:inline">Close</span>
-            </summary>
-            <div className="mt-5">
-              <CustomWorkoutBuilder hasActiveSession={false} compact />
-            </div>
-          </details>
-        </div>
+          <Section>
+            <details className="group">
+              <summary className="flex min-h-touch cursor-pointer list-none items-center justify-between gap-4 text-body font-medium text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                <span>Custom session builder</span>
+                <span className="text-label uppercase text-tertiary group-open:hidden">Open</span>
+                <span className="hidden text-label uppercase text-tertiary group-open:inline">Close</span>
+              </summary>
+              <div className="mt-4">
+                <CustomWorkoutBuilder hasActiveSession={false} compact />
+              </div>
+            </details>
+          </Section>
+        </>
       ) : dayGuidance ? (
-        <section className="document-panel">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start">
-            <div>
-              <p className="eyebrow">{dayGuidance.eyebrow}</p>
-              <h2 className="mt-3 text-3xl">{dayGuidance.title}</h2>
-              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                {dayGuidance.description}
-              </p>
-            </div>
+        <>
+          <Section className="mt-6">
             {dayGuidance.actionHref && dayGuidance.actionLabel ? (
-              <Button asChild variant="secondary" className="w-full">
+              <Button asChild variant="secondary" className="mb-5 w-full sm:w-auto">
                 <Link href={dayGuidance.actionHref}>
                   {dayGuidance.actionLabel}
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="size-4" />
                 </Link>
               </Button>
             ) : null}
-          </div>
 
-          <div className="mt-6 divide-y divide-border border-y border-border">
-            {dayGuidance.details.map((detail) => (
-              <p key={detail} className="py-3 text-sm leading-relaxed text-muted-foreground">
-                {detail}
-              </p>
-            ))}
-          </div>
+            <div className="ledger-rows border-t border-rule">
+              {dayGuidance.details.map((detail) => (
+                <p key={detail} className="py-3 text-row text-secondary">
+                  {detail}
+                </p>
+              ))}
+            </div>
+          </Section>
 
           {nextTrainingDay && nextTrainingStats ? (
-            <div className="surface-card mt-6 rounded-[var(--radius-card)] p-5">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="eyebrow">
-                    Next session · {nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}
-                  </p>
-                  <p className="mt-3 text-lg font-semibold leading-snug tracking-normal text-foreground">
-                    {nextTrainingDay.day.sessionName}
-                  </p>
-                </div>
-                <p className="data-number text-sm text-muted-foreground">
+            <Section
+              title={`Next session · ${nextTrainingDay.isTomorrow ? "Tomorrow" : DAY_NAMES[nextTrainingDay.dayOfWeek]}`}
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <span className="text-body font-medium text-primary">
+                  {nextTrainingDay.day.sessionName}
+                </span>
+                <span className="num text-caption text-tertiary">
                   {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m
-                </p>
+                </span>
               </div>
-              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-border/70 pt-4 text-sm text-muted-foreground">
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-rule pt-3">
                 {nextTrainingStats.topMovements.map((movement) => (
-                  <span key={movement}>{movement}</span>
+                  <span key={movement} className="text-caption text-tertiary">{movement}</span>
                 ))}
               </div>
-            </div>
+            </Section>
           ) : null}
-        </section>
+        </>
       ) : (
-        <div className="grid gap-8 xl:grid-cols-[minmax(16rem,0.72fr)_minmax(0,1.28fr)] xl:items-start">
-          <section className="editorial-surface-quiet space-y-6">
-            <p className="eyebrow">Today</p>
-            <p className="text-3xl font-semibold tracking-normal">
-              No programmed session is queued.
-            </p>
-            <p className="subtle-copy">Use templates or compose a working session.</p>
-          </section>
-
-          <CustomWorkoutBuilder hasActiveSession={false} />
-        </div>
+        <Section className="mt-6">
+          <p className="text-body text-secondary">
+            No programmed session is queued. Use templates or compose a working session.
+          </p>
+          <div className="mt-6">
+            <CustomWorkoutBuilder hasActiveSession={false} />
+          </div>
+        </Section>
       )}
-    </div>
+    </>
   );
 }
 

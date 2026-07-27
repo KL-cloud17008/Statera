@@ -30,6 +30,9 @@
   --color-rule: var(--rule);
   --color-rule-strong: var(--rule-strong);
 
+  /* Control edges — see tokens.css; not interchangeable with the rules above */
+  --color-control-border: var(--control-border);
+
   /* Text */
   --color-primary: var(--text-primary);
   --color-secondary: var(--text-secondary);
@@ -59,6 +62,9 @@
   --color-chart-attention: var(--chart-attention);
   --color-chart-grid: var(--chart-grid);
   --color-chart-track: var(--chart-track);
+  --color-chart-1: var(--chart-series-1);
+  --color-chart-2: var(--chart-series-2);
+  --color-chart-3: var(--chart-series-3);
 
   /* Fonts */
   --font-display: var(--font-family-display);
@@ -363,6 +369,26 @@
     .ledger-head-sticky {
       top: 0;
     }
+  }
+
+  /* ── Session cockpit ──────────────────────────────────────────────────── */
+
+  /* A live session owns the bottom of the screen: the session dock replaces
+     the app nav rather than stacking on top of it. SessionLogger sets the
+     attribute on <body> for its lifetime. */
+  body[data-active-workout-session="true"] [data-mobile-nav] {
+    display: none;
+  }
+
+  /* The nav tab strip scrolls horizontally on narrow screens; the scrollbar
+     itself would sit on top of the tab labels. */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   /* Every numeral in the ledger: mono, tabular, right-aligned by default. */

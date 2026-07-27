@@ -35,7 +35,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SectionHeader } from "@/components/ui/section-header";
+import { PageTitle } from "@/components/ui/ledger";
 import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload, unwrapBackupEnvelope, type BackupPreview } from "@/lib/backup";
 import { normalizeGoalTargetDate, parseAppSettings } from "@/lib/app-settings";
 import { BODYWEIGHT_UNIT, WORKOUT_LOAD_UNIT, formatBodyweightConversion, inchesToCm } from "@/lib/units";
@@ -312,17 +312,18 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   }
 
   return (
-    <div className="page-shell">
-      <SectionHeader
+    <>
+      <PageTitle
         eyebrow="Settings"
         title="Control panel."
-        description="Profile values, unit locks, goals, backup, and data safety."
+        lead="Profile values, unit locks, goals, backup, and data safety."
+        className="mb-6"
       />
 
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-primary">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
               <UserRound className="h-5 w-5" />
             </div>
             <CardTitle>Profile</CardTitle>
@@ -349,7 +350,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 className="h-12"
               />
               {startWeightConversion ? (
-                <p className="text-xs text-muted-foreground">{startWeightConversion}</p>
+                <p className="text-caption text-tertiary">{startWeightConversion}</p>
               ) : null}
             </Field>
             <Field label="Goal Weight (lb)" htmlFor="goalWeight">
@@ -365,7 +366,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 className="h-12"
               />
               {goalWeightConversion ? (
-                <p className="text-xs text-muted-foreground">{goalWeightConversion}</p>
+                <p className="text-caption text-tertiary">{goalWeightConversion}</p>
               ) : null}
             </Field>
             <div className="md:col-span-2">
@@ -382,14 +383,14 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-secondary-foreground">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
                 <Paintbrush className="h-5 w-5" />
               </div>
               <CardTitle>Units & Goals</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
+            <div className="rounded-control bg-sunken px-3 py-2.5 text-row text-secondary">
               Local preferences. JSON backup includes them.
             </div>
             <Field label="Daily Step Goal" htmlFor="stepGoal">
@@ -423,7 +424,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 <p
                   id="stepGoalStatus"
                   role={stepGoalStatus.type === "error" ? "alert" : "status"}
-                  className={`status-note ${stepGoalStatus.type === "error" ? "status-note-error" : "status-note-success"} flex items-start gap-2 px-3 py-2 text-xs`}
+                  className={`flex items-start gap-2 rounded-control border-l-2 px-3 py-2 text-caption ${stepGoalStatus.type === "error" ? "border-critical-line bg-critical-surface text-critical" : "border-accent-line bg-accent-subtle text-accent"}`}
                 >
                   {stepGoalStatus.type === "saved" ? <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : null}
                   <span>{stepGoalStatus.message}</span>
@@ -459,7 +460,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 <p
                   id="goalDateStatus"
                   role={goalDateStatus.type === "error" ? "alert" : "status"}
-                  className={`status-note ${goalDateStatus.type === "error" ? "status-note-error" : "status-note-success"} flex items-start gap-2 px-3 py-2 text-xs`}
+                  className={`flex items-start gap-2 rounded-control border-l-2 px-3 py-2 text-caption ${goalDateStatus.type === "error" ? "border-critical-line bg-critical-surface text-critical" : "border-accent-line bg-accent-subtle text-accent"}`}
                 >
                   {goalDateStatus.type === "saved" ? <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" /> : null}
                   <span>{goalDateStatus.message}</span>
@@ -499,7 +500,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="duna-mark-surface flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] text-primary">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
                 <Palette className="h-5 w-5" />
               </div>
               <CardTitle>Appearance</CardTitle>
@@ -509,7 +510,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <p className="text-sm leading-relaxed text-muted-foreground">
               Appearance is fixed to the Athanor ledger system for visual consistency.
             </p>
-            <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm leading-relaxed text-muted-foreground">
+            <div className="rounded-control bg-sunken px-3 py-2.5 text-row text-secondary">
               Warm paper canvas, ink chrome, a single olive accent, and ember reserved for attention states remain consistent across the app.
             </div>
           </CardContent>
@@ -548,7 +549,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             />
           </div>
 
-          <div className="warm-row rounded-[var(--radius-card)] border-l-2 border-l-[color-mix(in_srgb,var(--ember)_52%,var(--border)_48%)] p-4 text-sm text-muted-foreground">
+          <div className="rounded-control border-l-2 border-ember-line bg-ember-surface px-3 py-2.5 text-row text-ember">
             JSON includes tracker data and local preferences. CSV exports split weight, steps, and training sessions.
           </div>
         </CardContent>
@@ -565,10 +566,10 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-        <Card className="border-destructive/30 bg-[color-mix(in_srgb,var(--basalt-1)_90%,var(--destructive)_10%)]">
+        <Card className="border-critical-line">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-card)] bg-destructive/12 text-destructive">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-critical-surface text-critical">
                 <ShieldAlert className="h-5 w-5" />
               </div>
               <CardTitle>Danger Zone</CardTitle>
@@ -593,7 +594,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </DialogHeader>
           {pendingImport ? (
             <div className="space-y-4">
-              <div className="warm-row rounded-[var(--radius-card)] p-4 text-sm">
+              <div className="rounded-control bg-sunken px-3 py-2.5 text-row text-secondary">
                 <p className="font-semibold text-foreground">{pendingImport.fileName}</p>
                 <p className="mt-1 text-muted-foreground">
                   Version {pendingImport.preview.version ?? "unknown"} / {pendingImport.preview.exportedAt ? new Date(pendingImport.preview.exportedAt).toLocaleString() : "export date unavailable"}
@@ -613,7 +614,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 <ImportCount label="Pain check-ins" value={pendingImport.preview.counts.painCheckIns} />
               </div>
 
-              <div className="status-note status-note-error px-4 py-3 text-sm leading-relaxed">
+              <div className="rounded-control border-l-2 border-critical-line bg-critical-surface px-3 py-2 text-row text-critical">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                   <p>This import replaces steps, weight entries, training sessions, mobility logs, nutrition records, saved foods, saved meals, progress photos, and pain check-ins.</p>
@@ -662,7 +663,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }
 
@@ -685,9 +686,9 @@ function Field({
 
 function ImportCount({ label, value }: { label: string; value: number }) {
   return (
-    <div className="metric-panel">
-      <p className="eyebrow text-[10px]">{label}</p>
-      <p className="data-number mt-1 text-2xl text-foreground">{value.toLocaleString()}</p>
+    <div className="border-t border-rule pt-3">
+      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="num num-left mt-1 text-data-md font-medium text-primary">{value.toLocaleString()}</p>
     </div>
   );
 }

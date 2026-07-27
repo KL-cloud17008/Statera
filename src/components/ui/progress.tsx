@@ -17,7 +17,7 @@ function Progress({
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className="h-full w-full rounded-full bg-chart-ink transition-transform duration-[var(--duration-medium)] ease-[var(--ease-standard)] motion-reduce:transition-none"
+        className="h-full w-full rounded-full bg-chart-ink transition-transform duration-(--duration-base) ease-(--ease-out) motion-reduce:transition-none"
         style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>
