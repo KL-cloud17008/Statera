@@ -17,10 +17,21 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "next-week-progressive-overload-v1";
+/**
+ * TEMPORARY WEEK STRUCTURE — revisit before the next block.
+ *
+ * This week runs four training days shifted one weekday later (Tue-Fri), with
+ * Saturday, Sunday and Monday as full rest. Upper Accessory + Arms + Core is
+ * dropped for this week only.
+ *
+ * The version is bumped because the day mapping moved. Sessions started against
+ * the previous mapping must not be treated as current, or a resumed session
+ * would keep serving its old training day — and the mobility protocol with it.
+ */
+export const DEFAULT_WORKOUT_PLAN_VERSION = "temp-four-day-tue-fri-v1";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
-  "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
+  "Temporary week: four training days, Tuesday to Friday, with balanced chest, back, legs, hips, and arms. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
 
 export const LOWER_A_TAPER_TITLE = "Lower A — Leg Press + Quad/Hamstring Strength";
 export const UPPER_A_TITLE = "Upper A — Incline Push / Row / Trunk Stability";
@@ -82,20 +93,20 @@ export const WEEKLY_SET_SUMMARY = [
   "Hamstrings: good.",
   "Glutes/hips: good.",
   "Hip abductors/adductors: improved.",
-  "Chest: balanced between incline, mid-chest press, and fly/accessory work.",
+  "Chest: incline and mid-chest press only this week; the fly/accessory slot sat on the dropped Friday session.",
   "Back/lats: strong.",
   "Rear delts: good.",
   "Side delts: good.",
   "Front delts: enough from pressing; do not add more.",
   "Triceps: good.",
   "Biceps: good.",
-  "Core/trunk: covered through controlled anti-rotation holds.",
+  "Core/trunk: no direct trunk work this week — the anti-rotation hold was the dropped Friday session’s only core slot.",
   "Calves/feet: mobility only; no loaded calf raises yet.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   ADJUSTED_WEEK_HEADER_COPY,
-  "5 Strength / 0 Recovery / 2 Full Rest.",
+  "4 Strength / 0 Recovery / 3 Full Rest.",
   "Work steps count as primary load. Foot pain controls walking volume.",
   "Training loads are logged in kg. Bodyweight remains logged in lb.",
   "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, no failure training, and no direct loaded calf raises.",
@@ -119,7 +130,7 @@ const CONTROLLED_STRENGTH_CUE =
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
-    dayOfWeek: 1,
+    dayOfWeek: 2,
     sessionName: LOWER_A_TAPER_TITLE,
     exercises: [
       {
@@ -191,7 +202,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 2,
+    dayOfWeek: 3,
     sessionName: UPPER_A_TITLE,
     exercises: [
       {
@@ -285,7 +296,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 3,
+    dayOfWeek: 4,
     sessionName: LOWER_B_TAPER_TITLE,
     exercises: [
       {
@@ -379,7 +390,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 4,
+    dayOfWeek: 5,
     sessionName: UPPER_B_TITLE,
     exercises: [
       {
@@ -461,86 +472,15 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
     ],
   },
-  {
-    dayOfWeek: 5,
-    sessionName: UPPER_ACCESSORY_TITLE,
-    exercises: [
-      {
-        exerciseName: "A1 Pec Deck or High-to-Low Cable Fly",
-        sets: 2,
-        reps: "12-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled stretch, smooth squeeze, no shoulder pain, do not go heavy. Reason: chest balance without adding more incline pressing.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "A2 Chest-Supported Row or Seated Cable Row",
-        sets: 3,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled row, pause near ribs, no body swing, smooth return.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B1 Cable Curl",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Elbows controlled, no swinging, shoulders quiet.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B2 Rope Triceps Pressdown",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Elbows pinned, finish with control, no leaning over cable.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C1 Face Pull",
-        sets: 3,
-        reps: "12-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Pull to eye level, elbows high, neck relaxed, no swinging.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "D1 Supported Cable Anti-Rotation Hold",
-        sets: 2,
-        reps: "10-20 seconds per side",
-        tempo: "steady hold",
-        restSeconds: 90,
-        targetRPE: "4-5",
-        cues: "Kg load. Tall posture, ribs down, hips square, resist rotation, no twisting, no heavy bracing.",
-        supersetGroup: "D",
-        exerciseType: "WORKING",
-      },
-    ],
-  },
 ];
 
+/* Temporary week structure — see DEFAULT_WORKOUT_PLAN_VERSION. */
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Lower A — Leg Press + Quad/Hamstring Strength",
-  "Tuesday: Upper A — Incline Push / Row / Trunk Stability",
-  "Wednesday: Lower B — Accessory Legs + Hip Stability",
-  "Thursday: Upper B — Chest Machine Press / Pull + Shoulders and Arms",
-  "Friday: Upper Accessory + Arms + Core",
+  "Monday: Complete Rest",
+  "Tuesday: Lower A — Leg Press + Quad/Hamstring Strength",
+  "Wednesday: Upper A — Incline Push / Row / Trunk Stability",
+  "Thursday: Lower B — Accessory Legs + Hip Stability",
+  "Friday: Upper B — Chest Machine Press / Pull + Shoulders and Arms",
   "Saturday: Complete Rest",
   "Sunday: Complete Rest",
 ] as const;

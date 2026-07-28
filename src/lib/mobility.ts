@@ -2443,6 +2443,81 @@ export function getMobilityProgram(dayOfWeek: number): MobilityDayProgram {
   return MOBILITY_PROGRAMS[dayOfWeek] ?? MOBILITY_PROGRAMS[0];
 }
 
+/**
+ * Which training session a mobility protocol belongs to.
+ *
+ * MOBILITY_PROGRAMS is indexed by calendar weekday, and each entry was authored
+ * against whichever session sat on that weekday when it was written. That made
+ * the index do two unrelated jobs at once, so the moment training days moved
+ * the protocol stopped matching the session — and a session resumed on a later
+ * day always showed the wrong protocol. This key is the stable link: the
+ * protocol follows the session, never the calendar.
+ */
+export type TrainingSessionKey =
+  | "LOWER_A"
+  | "UPPER_A"
+  | "LOWER_B"
+  | "UPPER_B"
+  | "UPPER_ACCESSORY"
+  | "REST";
+
+/** The weekday each program was authored for — an index, not a schedule. */
+const MOBILITY_PROGRAM_INDEX_BY_SESSION: Record<TrainingSessionKey, number> = {
+  LOWER_A: 1,
+  UPPER_A: 2,
+  LOWER_B: 3,
+  UPPER_B: 4,
+  UPPER_ACCESSORY: 5,
+  REST: 0,
+};
+
+/** Classify a plan's session name. Matching is on the session, not the day. */
+export function getTrainingSessionKey(
+  sessionName: string | null | undefined
+): TrainingSessionKey {
+  if (!sessionName) {
+    return "REST";
+  }
+
+  const name = sessionName.toLowerCase();
+  if (/^lower a\b|lower a —|lower a -/.test(name)) return "LOWER_A";
+  if (/^upper a\b|upper a —|upper a -/.test(name)) return "UPPER_A";
+  if (/^lower b\b|lower b —|lower b -/.test(name)) return "LOWER_B";
+  if (/^upper b\b|upper b —|upper b -/.test(name)) return "UPPER_B";
+  if (/upper accessory/.test(name)) return "UPPER_ACCESSORY";
+  return "REST";
+}
+
+/**
+ * The mobility program for a session. Rest resolves to the calendar weekday's
+ * program only when that weekday is itself a rest day, so a rest day never
+ * surfaces a training-day protocol — including a weekday whose training session
+ * was dropped from the current week.
+ */
+export function getMobilityProgramForSession(
+  sessionKey: TrainingSessionKey,
+  calendarDayOfWeek?: number
+): MobilityDayProgram {
+  if (sessionKey === "REST") {
+    const calendarProgram =
+      calendarDayOfWeek != null ? MOBILITY_PROGRAMS[calendarDayOfWeek] : undefined;
+    if (calendarProgram && calendarProgram.logType === "POST_WORKOUT") {
+      return calendarProgram;
+    }
+    return MOBILITY_PROGRAMS[0];
+  }
+
+  return getMobilityProgram(MOBILITY_PROGRAM_INDEX_BY_SESSION[sessionKey]);
+}
+
+/** The program index to feed the day-keyed helpers below. */
+export function getMobilityProgramDay(
+  sessionKey: TrainingSessionKey,
+  calendarDayOfWeek?: number
+): number {
+  return getMobilityProgramForSession(sessionKey, calendarDayOfWeek).dayOfWeek;
+}
+
 export function getRecoverySessionBlocks(
   dayOfWeek: number,
   mode: RecoveryMode = "standard"

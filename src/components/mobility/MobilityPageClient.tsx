@@ -24,6 +24,9 @@ import { cn } from "@/lib/utils";
 
 export function MobilityPageClient({
   dayOfWeek,
+  dayLabel,
+  sessionName = null,
+  isResumedSession = false,
   completedTypes,
   highStepLoad,
   recentStepTotal,
@@ -31,7 +34,16 @@ export function MobilityPageClient({
   todayFootPain = null,
   timezone,
 }: {
+  /**
+   * The mobility program index, already resolved from the active or next
+   * session by the server. It is deliberately NOT the calendar weekday.
+   */
   dayOfWeek: number;
+  /** Today's actual weekday, for display only. */
+  dayLabel?: string;
+  /** The session this protocol belongs to, when one is active or programmed. */
+  sessionName?: string | null;
+  isResumedSession?: boolean;
   completedTypes: string[];
   highStepLoad?: boolean;
   recentStepTotal?: number;
@@ -102,11 +114,21 @@ export function MobilityPageClient({
 
   return (
     <>
+      {/* The title names the real weekday and the session the protocol serves.
+          program.dayName is the weekday the program was authored for, which is
+          not the same thing once training days move or a session is resumed. */}
       <PageTitle
         eyebrow="Mobility protocol"
-        title={`${program.dayName} — ${program.trainingRole}`}
+        title={`${dayLabel ?? program.dayName} — ${program.trainingRole}`}
         lead={program.todayPurpose}
       />
+
+      {isResumedSession && sessionName ? (
+        <Notice className="mt-4">
+          Showing the mobility protocol for the open session you are resuming
+          ({sessionName}), not for today&apos;s calendar day.
+        </Notice>
+      ) : null}
 
       <Section className="mt-6">
         <dl className="grid grid-cols-3 gap-4">
