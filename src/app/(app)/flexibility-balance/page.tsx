@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, CircleDot, Footprints, RotateCcw, ShieldCheck, type LucideIcon } from "lucide-react";
+import { ArrowRight, CircleDot, Footprints, RotateCcw, ShieldCheck, Spline, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Figure, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
+import { PageTitle, Section } from "@/components/ui/ledger";
 import {
+  BACK_CARE_DECOMPRESSION,
+  FOOT_FLARE_RECOVERY_INTRO,
+  FOOT_FLARE_RECOVERY_NOT_WORKOUT,
+  FOOT_FLARE_RECOVERY_RULES,
+  RECOVERY_INTRO,
+  RECOVERY_STOP_NOTE,
+  REQUIRED_LATER_RECOVERY,
   getAllMobilityPrograms,
   getRequiredLaterRecoveryBlocks,
   type MobilityBlock,
@@ -14,183 +19,282 @@ import {
 
 export const metadata: Metadata = {
   title: "Flexibility & Balance | Athanor",
-  description: "Review the daily minimum, balance drills, recovery-day work, and foot/ankle resilience protocol.",
+  description:
+    "The reference for each mobility block — its purpose, standards, and progression logic. Perform the work on the Mobility page.",
 };
 
+/**
+ * The reference/system surface.
+ *
+ * This page explains what each block is FOR and how it progresses. It
+ * deliberately does not reproduce per-drill dosage — that lives on Mobility,
+ * which is the working surface — and it carries no logging controls. Every
+ * block links into the matching Mobility section to actually perform it.
+ */
 export default function FlexibilityBalancePage() {
   const programs = getAllMobilityPrograms();
   const allBlocks = programs.flatMap((program) => program.blocks);
-  const dailyMinimum =
-    allBlocks.find((block) => block.id === "daily-lower-leg-base") ??
-    allBlocks[0];
+  const dailyMinimum = allBlocks.find((block) => block.id === "daily-lower-leg-base") ?? allBlocks[0];
 
   if (!dailyMinimum) {
     return null;
   }
+
   const balanceDrills = uniqueExercises(
-    programs
-      .flatMap((program) => program.blocks)
+    allBlocks
       .flatMap((block) => block.exercises)
-      .filter((exercise) => /balance/i.test(`${exercise.category ?? ""} ${exercise.name} ${exercise.goal}`))
+      .filter((exercise) =>
+        /balance/i.test(`${exercise.category ?? ""} ${exercise.name} ${exercise.goal}`)
+      )
   );
-  const recoveryDayBlocks = [
-    ...getRequiredLaterRecoveryBlocks("standard", 5).slice(0, 1),
-  ];
-  const footAnkleBlock = getRequiredLaterRecoveryBlocks("footFlare", 1)[0] ?? dailyMinimum;
+  const footFlareBlock = getRequiredLaterRecoveryBlocks("footFlare", 1)[0] ?? dailyMinimum;
 
   return (
     <>
       <PageTitle
         eyebrow="Flexibility & Balance"
-        title="Movement quality map."
-        lead="Daily lower-leg base, supported balance, recovery-day blocks, and foot/ankle resilience."
-        action={
-          <Button asChild variant="secondary" size="sm">
-            <Link href="/mobility">
-              Open Mobility logging
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        }
+        title="Movement quality system."
+        lead="What each block is for, the standard it holds to, and how it progresses. Doses and logging live on the Mobility page."
       />
 
+      {/* The overview strip stays on ink — the one dark surface on this page. */}
       <Section className="mt-6">
-        <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <Figure label="Daily Minimum" value={dailyMinimum.duration} />
-          <Figure label="Balance" value={`${balanceDrills.length} drills`} />
-          <Figure label="Recovery" value="Weekdays" />
-          <Figure label="Foot Load" value={footAnkleBlock.duration} />
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-panel bg-ink-line md:grid-cols-4">
+          <MetricCell label="Daily minimum" value={dailyMinimum.duration} note="Lower-leg base" />
+          <MetricCell label="Balance" value={`${balanceDrills.length}`} note="Supported drills" />
+          <MetricCell label="Later recovery" value="8-16 min" note="Every training day" />
+          <MetricCell label="Foot flare" value={footFlareBlock.duration} note="When soles flare" />
         </dl>
       </Section>
 
-      <Section>
-        <div className="grid gap-8 lg:grid-cols-2">
-          <ProtocolBlock
-            icon={CircleDot}
-            eyebrow="Daily minimum block"
-            title={dailyMinimum.title}
-            summary={dailyMinimum.purpose}
-            badge={dailyMinimum.duration}
-          >
-            <MovementList exercises={dailyMinimum.exercises.slice(0, 7)} />
-          </ProtocolBlock>
+      <ReferenceBlock
+        icon={CircleDot}
+        eyebrow="Daily minimum"
+        title={dailyMinimum.title}
+        purpose={dailyMinimum.purpose}
+        standards={[
+          "Runs every day, training or rest.",
+          "Comfort work, not training — it should never add fatigue.",
+          `Time budget: ${dailyMinimum.duration}.`,
+        ]}
+        progression={collectProgression(dailyMinimum)}
+        drillCount={dailyMinimum.exercises.length}
+        href="/mobility#session"
+        hrefLabel="Run today's protocol"
+      />
 
-          <ProtocolBlock
-            icon={ShieldCheck}
-            eyebrow="Balance drills"
-            title="Supported control before challenge"
-            summary="Balance work stays supported, low risk, and repeatable. Progress support and duration before instability."
-            badge={`${balanceDrills.length} drills`}
-          >
-            <MovementList exercises={balanceDrills.slice(0, 4)} />
-          </ProtocolBlock>
-        </div>
-      </Section>
+      <ReferenceBlock
+        icon={ShieldCheck}
+        eyebrow="Balance"
+        title="Supported control before challenge"
+        purpose="Balance work stays supported, low risk, and repeatable. It builds ankle and hip control for walking load, not a wobble-board challenge."
+        standards={[
+          "Always within reach of support.",
+          "Progress support first, then duration — never instability first.",
+          "Stop on any sharp pain, dizziness, or loss of control.",
+        ]}
+        progression={[
+          "Two hands on support, then one hand, then fingertips.",
+          "Hold longer at a given level before removing support.",
+          "Eyes open throughout; do not close the eyes to add difficulty.",
+        ]}
+        drillCount={balanceDrills.length}
+        href="/mobility#session"
+        hrefLabel="Run today's protocol"
+      />
 
-      <Section>
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-          <ProtocolBlock
-            icon={RotateCcw}
-            eyebrow="Required later recovery"
-            title="Weekday recovery blocks"
-            summary="Each strength day has a low-intensity later block. Saturday and Sunday stay full rest."
-            badge="8-16 min"
-          >
-            <div className="flex flex-1 flex-col gap-4">
-              {recoveryDayBlocks.map((block) => (
-                <div key={block.id} className="flex flex-1 flex-col gap-4">
-                  <BlockSummary block={block} />
-                  <MovementList exercises={block.exercises.slice(0, 6)} />
-                </div>
-              ))}
-            </div>
-          </ProtocolBlock>
+      <ReferenceBlock
+        icon={RotateCcw}
+        eyebrow="Required later recovery"
+        /* Pinned copy: tests/workout-plan.test.mjs asserts this exact heading. */
+        title="Weekday recovery blocks"
+        purpose={RECOVERY_INTRO}
+        standards={[
+          "Separate same-day block — not immediately after training.",
+          "Effort 1-3/10, pain 0-2/10 maximum, no fatigue.",
+          "Required means consistently completed, not intense.",
+        ]}
+        safety={RECOVERY_STOP_NOTE}
+        progression={collectProgression(REQUIRED_LATER_RECOVERY)}
+        drillCount={REQUIRED_LATER_RECOVERY.exercises.length}
+        href="/mobility#later-recovery"
+        hrefLabel="Open later recovery"
+      />
 
-          <ProtocolBlock
-            icon={Footprints}
-            eyebrow="Foot/ankle resilience"
-            title={footAnkleBlock.title}
-            summary={footAnkleBlock.purpose}
-            badge={footAnkleBlock.duration}
-          >
-            <MovementList exercises={footAnkleBlock.exercises.slice(0, 6)} />
-          </ProtocolBlock>
-        </div>
-      </Section>
+      <ReferenceBlock
+        icon={Footprints}
+        eyebrow="Required foot-flare recovery"
+        title={footFlareBlock.title}
+        purpose={FOOT_FLARE_RECOVERY_INTRO}
+        standards={[...FOOT_FLARE_RECOVERY_RULES]}
+        safety={FOOT_FLARE_RECOVERY_NOT_WORKOUT}
+        trigger="Activates when recent step load is high or logged sole pain reaches 5/10. Foot pain at 3/10 already reduces step load."
+        progression={collectProgression(footFlareBlock)}
+        drillCount={footFlareBlock.exercises.length}
+        href="/mobility#later-recovery"
+        hrefLabel="Open later recovery"
+      />
+
+      <ReferenceBlock
+        icon={Spline}
+        eyebrow="Back care"
+        title={BACK_CARE_DECOMPRESSION.title}
+        purpose={BACK_CARE_DECOMPRESSION.purpose}
+        standards={[
+          "Available every day, including full rest days.",
+          "Relief work, not training — gentle effort only.",
+          "No schedule and no required dose.",
+        ]}
+        safety={BACK_CARE_DECOMPRESSION.adaptationNote}
+        progression={[
+          "Stop any movement that increases pain or moves symptoms down the leg.",
+          "Scale range and support before adding time.",
+        ]}
+        drillCount={BACK_CARE_DECOMPRESSION.exercises.length}
+        href="/mobility#back-care"
+        hrefLabel="Open back care"
+      />
     </>
   );
 }
 
-function ProtocolBlock({
+/** A figure on the ink strip. Ink chrome needs the ink text ramp, not paper. */
+function MetricCell({
+  label,
+  value,
+  note,
+}: {
+  label: string;
+  value: string;
+  note: string;
+}) {
+  return (
+    <div className="bg-ink px-4 py-4">
+      <dt className="text-label uppercase text-ink-dim">{label}</dt>
+      <dd className="num num-left mt-1.5 text-data-md font-medium leading-none text-ink-text">
+        {value}
+      </dd>
+      <p className="mt-1.5 text-caption text-ink-muted">{note}</p>
+    </div>
+  );
+}
+
+function ReferenceBlock({
   icon: Icon,
   eyebrow,
   title,
-  summary,
-  badge,
-  children,
+  purpose,
+  standards,
+  progression,
+  safety,
+  trigger,
+  drillCount,
+  href,
+  hrefLabel,
 }: {
   icon: LucideIcon;
   eyebrow: string;
   title: string;
-  summary: string;
-  badge: string;
-  children: ReactNode;
+  purpose: string;
+  standards: string[];
+  progression: string[];
+  safety?: string;
+  trigger?: string;
+  drillCount: number;
+  href: string;
+  hrefLabel: string;
 }) {
   return (
-    <article className="flex flex-col">
+    <Section>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-label uppercase text-tertiary">{eyebrow}</p>
-          <p className="mt-1 text-body font-medium text-primary">{title}</p>
+          <h2 className="mt-1 normal-case tracking-normal text-body font-medium text-primary">
+            {title}
+          </h2>
         </div>
         {/* Decorative: the eyebrow already names the block. */}
         <Icon aria-hidden className="mt-0.5 size-4 shrink-0 text-faint" strokeWidth={1.5} />
       </div>
-      <p className="mt-2 max-w-2xl text-row text-secondary">{summary}</p>
-      <Badge variant="secondary" className="mt-3 self-start">{badge}</Badge>
-      <div className="mt-4 flex flex-1 flex-col">{children}</div>
-    </article>
-  );
-}
 
-/* Movement, then dose. The dose folds onto a second line below sm. */
-const MOVEMENT_COLUMNS = "minmax(0,1fr)";
-const MOVEMENT_COLUMNS_MD = "minmax(0,1fr) minmax(8rem,auto)";
+      <p className="mt-2 max-w-2xl text-row text-secondary">{purpose}</p>
 
-function MovementList({ exercises }: { exercises: MobilityExercise[] }) {
-  return (
-    <Rows className="flex-1" columns={MOVEMENT_COLUMNS} mdColumns={MOVEMENT_COLUMNS_MD}>
-      {exercises.map((exercise) => (
-        <Row
-          key={exercise.id}
-          columns={MOVEMENT_COLUMNS}
-          mdColumns={MOVEMENT_COLUMNS_MD}
-          className="items-start"
-        >
-          <div className="min-w-0">
-            <p className="text-row font-medium text-primary">{exercise.name}</p>
-            <p className="mt-0.5 text-caption text-tertiary">{exercise.goal}</p>
-            <Sub className="mt-0.5 block">{exercise.dose}</Sub>
-          </div>
-          <span className="hidden text-caption text-secondary md:block md:text-right">
-            {exercise.dose}
-          </span>
-        </Row>
-      ))}
-    </Rows>
-  );
-}
+      {trigger ? (
+        <p className="mt-3 max-w-2xl rounded-control border-l-2 border-ember-line bg-ember-surface px-3 py-2 text-row text-ember">
+          {trigger}
+        </p>
+      ) : null}
 
-function BlockSummary({ block }: { block: MobilityBlock }) {
-  return (
-    <div className="border-t border-rule pt-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-row font-medium text-primary">{block.title}</p>
-        <Badge variant="secondary">{block.duration}</Badge>
+      <div className="mt-5 grid gap-x-8 gap-y-5 md:grid-cols-2">
+        <PrincipleList title="Standard" items={standards} />
+        <PrincipleList title="Progression" items={progression} />
       </div>
-      <p className="mt-1 text-caption text-tertiary">{block.purpose}</p>
+
+      {safety ? (
+        <p className="mt-4 max-w-2xl border-t border-rule pt-3 text-caption text-tertiary">
+          <span className="font-medium text-primary">Safety: </span>
+          {safety}
+        </p>
+      ) : null}
+
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-rule pt-3">
+        <Badge variant="secondary">
+          {drillCount} {drillCount === 1 ? "drill" : "drills"}
+        </Badge>
+        {/* Doses and logging live on Mobility; this is the way in. */}
+        <Link
+          href={href}
+          className="inline-flex min-h-touch items-center gap-1.5 text-row font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {hrefLabel}
+          <ArrowRight aria-hidden className="size-4" />
+        </Link>
+      </div>
+    </Section>
+  );
+}
+
+function PrincipleList({ title, items }: { title: string; items: string[] }) {
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <div>
+      <h3>{title}</h3>
+      <ul className="mt-2 space-y-1.5">
+        {items.map((item) => (
+          <li key={item} className="flex items-start gap-2 text-row text-secondary">
+            <span aria-hidden className="mt-1.5 size-1 shrink-0 rounded-pill bg-accent" />
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
+}
+
+/**
+ * Block-level progression logic, gathered from the drills' own progression and
+ * scale-down notes. This is the principle, not the prescription — no dose is
+ * carried across.
+ */
+function collectProgression(block: MobilityBlock): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+
+  for (const exercise of block.exercises) {
+    for (const note of [...(exercise.progression ?? []), ...exercise.scaleDown]) {
+      const trimmed = note.trim();
+      if (!trimmed || seen.has(trimmed)) {
+        continue;
+      }
+      seen.add(trimmed);
+      out.push(trimmed);
+    }
+  }
+
+  return out.slice(0, 4);
 }
 
 function uniqueExercises(exercises: MobilityExercise[]) {

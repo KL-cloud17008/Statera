@@ -146,11 +146,12 @@ export function MobilityPageClient({
         </div>
       </Section>
 
-      <Section>
+      <Section id="pain-check-in">
         <PainCheckInCard latest={painCheckIn} timezone={timezone} />
       </Section>
 
         <RoutineSection
+          id="session"
           title={program.sessionTitle}
           summary={
             program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
@@ -192,6 +193,7 @@ export function MobilityPageClient({
 
         {showLaterRecovery ? (
           <RoutineSection
+            id="later-recovery"
             title={laterRecoveryTitle}
             summary={
               recoveryMode === "footFlare"
@@ -216,6 +218,7 @@ export function MobilityPageClient({
         ) : null}
 
         <RoutineSection
+          id="back-care"
           title="Back care — decompression routine"
           summary="Personal relief routine — available every day, including full rest days. Relief work, not training: gentle effort only, and stop any movement that increases pain or moves symptoms down the leg."
           completed={false}
@@ -229,6 +232,7 @@ export function MobilityPageClient({
         </RoutineSection>
 
         <RoutineSection
+          id="desk-reset"
           title="Optional desk reset"
           summary="Use this short reset when long sitting blocks stack up during the day."
           completed={false}
@@ -263,6 +267,7 @@ function FocusCell({
 }
 
 function RoutineSection({
+  id,
   title,
   summary,
   completed,
@@ -276,6 +281,7 @@ function RoutineSection({
   contextNote,
   hideAction = false,
 }: {
+  id?: string;
   title: string;
   summary: string;
   completed: boolean;
@@ -290,7 +296,7 @@ function RoutineSection({
   hideAction?: boolean;
 }) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
         <div className="min-w-0">
           <p className="text-label uppercase text-tertiary">
