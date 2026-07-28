@@ -13,20 +13,25 @@ export const DEFAULT_FAT_TARGET = 83;
 
 // Training schedule — dayOfWeek values stored in DB (next-week progressive block)
 // Day 1 = Sunday night (training date Mon), Day 2 = Monday night (Tue), etc.
-export const DEFAULT_TRAINING_DAYS = [1, 2, 3, 4, 5];
-export const DEFAULT_REST_DAYS = [0, 6]; // Sat and Sun training dates = full rest
+export const DEFAULT_TRAINING_DAYS = [2, 3, 4, 5];
+export const DEFAULT_REST_DAYS = [0, 1, 6]; // Sun, Mon, and Sat training dates = full rest this week
 export const DEFAULT_RECOVERY_DAYS: number[] = [];
 
 // Training day boundary (hour in TRAINING_TIMEZONE)
 export const TRAINING_DAY_BOUNDARY_HOUR = 12; // noon
 
-/** Labels for training days — keyed by dayOfWeek (DB value 1-5). */
+/**
+ * Labels for training days — keyed by dayOfWeek (DB value 2-5 this week).
+ *
+ * Temporary week structure: sessions run Tuesday to Friday and Upper Accessory
+ * is dropped, so Monday no longer carries a session. Revisit with
+ * DEFAULT_WORKOUT_PLAN_VERSION.
+ */
 export const TRAINING_DAY_LABELS: Record<number, string> = {
-  1: "Monday • Lower A — Leg Press + Quad/Hamstring Strength",
-  2: "Tuesday • Upper A — Incline Push / Row / Trunk Stability",
-  3: "Wednesday • Lower B — Accessory Legs + Hip Stability",
-  4: "Thursday • Upper B — Chest Machine Press / Pull + Shoulders and Arms",
-  5: "Friday • Upper Accessory + Arms + Core",
+  2: "Tuesday • Lower A — Leg Press + Quad/Hamstring Strength",
+  3: "Wednesday • Upper A — Incline Push / Row / Trunk Stability",
+  4: "Thursday • Lower B — Accessory Legs + Hip Stability",
+  5: "Friday • Upper B — Chest Machine Press / Pull + Shoulders and Arms",
 };
 
 // Navigation items
