@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CircleDot, Footprints, RotateCcw, ShieldCheck, Spline, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { PageTitle, Section } from "@/components/ui/ledger";
+import { Figure, PageTitle, Section } from "@/components/ui/ledger";
 import {
   BACK_CARE_DECOMPRESSION,
   FOOT_FLARE_RECOVERY_INTRO,
@@ -57,13 +57,15 @@ export default function FlexibilityBalancePage() {
         lead="What each block is for, the standard it holds to, and how it progresses. Doses and logging live on the Mobility page."
       />
 
-      {/* The overview strip stays on ink — the one dark surface on this page. */}
+      {/* Figures print directly on the canvas. Ink chrome is reserved for the
+          rail and the masthead — a dark block mid-page is the card-era idiom
+          the ledger grammar removed. */}
       <Section className="mt-6">
-        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-panel bg-ink-line md:grid-cols-4">
-          <MetricCell label="Daily minimum" value={dailyMinimum.duration} note="Lower-leg base" />
-          <MetricCell label="Balance" value={`${balanceDrills.length}`} note="Supported drills" />
-          <MetricCell label="Later recovery" value="8-16 min" note="Every training day" />
-          <MetricCell label="Foot flare" value={footFlareBlock.duration} note="When soles flare" />
+        <dl className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <Figure label="Daily minimum" value={dailyMinimum.duration} detail="Lower-leg base" />
+          <Figure label="Balance" value={balanceDrills.length} detail="Supported drills" />
+          <Figure label="Later recovery" value="8-16 min" detail="Every training day" />
+          <Figure label="Foot flare" value={footFlareBlock.duration} detail="When soles flare" />
         </dl>
       </Section>
 
@@ -155,27 +157,6 @@ export default function FlexibilityBalancePage() {
         hrefLabel="Open back care"
       />
     </>
-  );
-}
-
-/** A figure on the ink strip. Ink chrome needs the ink text ramp, not paper. */
-function MetricCell({
-  label,
-  value,
-  note,
-}: {
-  label: string;
-  value: string;
-  note: string;
-}) {
-  return (
-    <div className="bg-ink px-4 py-4">
-      <dt className="text-label uppercase text-ink-dim">{label}</dt>
-      <dd className="num num-left mt-1.5 text-data-md font-medium leading-none text-ink-text">
-        {value}
-      </dd>
-      <p className="mt-1.5 text-caption text-ink-muted">{note}</p>
-    </div>
   );
 }
 
