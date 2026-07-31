@@ -51,24 +51,23 @@ type WorkoutDayStatus = {
 };
 
 const WEEKLY_RHYTHM = [
-  { day: "MON", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 1 },
-  { day: "TUE", label: "Lower A — Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 2 },
-  { day: "WED", label: "Upper A — Incline Push / Row / Trunk Stability", protocol: "Strength Protocol", dayOfWeek: 3 },
-  { day: "THU", label: "Lower B — Accessory Legs + Hip Stability", protocol: "Strength Protocol", dayOfWeek: 4 },
-  { day: "FRI", label: "Upper B — Chest Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 5 },
+  { day: "MON", label: "Lower A — Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 1 },
+  { day: "TUE", label: "Upper A — Incline Push / Row / Trunk Stability", protocol: "Strength Protocol", dayOfWeek: 2 },
+  { day: "WED", label: "Lower B — Accessory Legs + Hip Stability", protocol: "Strength Protocol", dayOfWeek: 3 },
+  { day: "THU", label: "Upper B — Chest Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 4 },
+  { day: "FRI", label: "Upper Accessory + Arms + Core", protocol: "Strength Protocol", dayOfWeek: 5 },
   { day: "SAT", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 6 },
   { day: "SUN", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 0 },
 ];
 
-/* Indexed by calendar weekday (0=Sunday). Temporary week: Monday is rest and
-   the four sessions sit Tuesday to Friday. */
+/* Indexed by calendar weekday (0=Sunday). */
 const NEXT_BY_DAY = [
-  "Complete Rest",
   "Complete Rest",
   "Lower A — Leg Press + Quad/Hamstring Strength",
   "Upper A — Incline Push / Row / Trunk Stability",
   "Lower B — Accessory Legs + Hip Stability",
   "Upper B — Chest Machine Press / Pull + Shoulders and Arms",
+  "Upper Accessory + Arms + Core",
   "Complete Rest",
 ];
 
@@ -371,7 +370,7 @@ export function DashboardPageClient({
           </Link>
         }
       >
-        <p className="mb-3 text-caption text-tertiary">4 Strength / 3 Full Rest.</p>
+        <p className="mb-3 text-caption text-tertiary">5 Strength / 2 Full Rest.</p>
         <Rows
           columns={RHYTHM_COLUMNS_MOBILE}
           mdColumns={RHYTHM_COLUMNS}
@@ -662,7 +661,7 @@ function buildDecision({
   const highStepLoad =
     (recentStepEntries.length >= 3 && recentStepAverage >= stepGoal * 1.15) ||
     todaySteps >= stepGoal * 1.35;
-  const isStrengthDay = [2, 3, 4, 5].includes(trainingDayOfWeek);
+  const isStrengthDay = [1, 2, 3, 4, 5].includes(trainingDayOfWeek);
   const expectedMobilityType = isStrengthDay ? "PRE_WORKOUT" : "POST_WORKOUT";
   const mobilityDone = mobilitySummary.completedTypes.includes(expectedMobilityType);
   const weightStale = !latestWeightDate || daysSince(latestWeightDate) >= 4;
