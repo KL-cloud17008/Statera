@@ -177,10 +177,10 @@ export function SetInput({
             {previous ? (
               <p className="mt-0.5 text-caption text-tertiary">
                 Last{" "}
-                <span className="num">
+                <span className="num text-right">
                   {previous.weightUsed != null ? `${previous.weightUsed.toFixed(1)} ${WORKOUT_LOAD_UNIT}` : "--"}
                 </span>{" "}
-                x <span className="num">{previous.repsCompleted ?? "--"}</span>
+                x <span className="num text-right">{previous.repsCompleted ?? "--"}</span>
               </p>
             ) : null}
           </div>

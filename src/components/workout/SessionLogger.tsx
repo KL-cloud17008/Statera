@@ -256,7 +256,7 @@ export function SessionLogger({
             <span className="text-caption text-tertiary">
               {completedCount}/{totalExercises} exercises logged
             </span>
-            <span className="num text-caption text-secondary">{progressPercent}%</span>
+            <span className="num text-right text-caption text-secondary">{progressPercent}%</span>
           </div>
           <Progress value={progressPercent} />
         </div>

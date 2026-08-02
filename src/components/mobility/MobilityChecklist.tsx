@@ -91,7 +91,7 @@ export function MobilityChecklist({
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h3>{title}</h3>
-        <span className="num text-caption text-secondary">
+        <span className="num text-right text-caption text-secondary">
           {allDone ? (
             <span className="inline-flex items-center gap-1.5 text-accent">
               <Check className="size-3.5" />
@@ -176,7 +176,7 @@ export function MobilityChecklist({
                             <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:flex-col sm:items-end sm:justify-start">
                               <p
                                 title={exercise.dose}
-                                className="num whitespace-nowrap rounded-pill border border-rule bg-sunken px-2 py-0.5 text-label uppercase text-secondary"
+                                className="num text-right whitespace-nowrap rounded-pill border border-rule bg-sunken px-2 py-0.5 text-label uppercase text-secondary"
                               >
                                 {compactDose(exercise.dose)}
                               </p>
@@ -423,7 +423,7 @@ function NumberedSteps({
 
           return (
             <div key={`${row.stepNumber}-${row.item}`} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-2 text-row text-secondary">
-              <span className="num mt-0.5 flex size-5 items-center justify-center rounded-pill border border-rule bg-sunken text-label text-primary">
+              <span className="num text-right mt-0.5 flex size-5 items-center justify-center rounded-pill border border-rule bg-sunken text-label text-primary">
                 {row.stepNumber}
               </span>
               <p>{row.item}</p>

@@ -83,7 +83,7 @@ export default async function WeightPage() {
         <div className="mt-8">
           <div className="flex items-baseline justify-between gap-4 text-label uppercase text-tertiary">
             <span>Progress to goal {formatBodyweight(stats.goalWeight)}</span>
-            <span className="num text-accent">{progress}%</span>
+            <span className="num text-right text-accent">{progress}%</span>
           </div>
           <div className="mt-2 h-1 overflow-hidden bg-sunken">
             <div className="h-full bg-accent" style={{ width: `${progress}%` }} />

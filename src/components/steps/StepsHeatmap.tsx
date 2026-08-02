@@ -82,7 +82,9 @@ export function StepsHeatmap({
             className={`flex aspect-square min-w-0 flex-col justify-between overflow-hidden rounded-control border px-1 py-1 ${getHeatLevel(day.steps, goal)}`}
             title={`${day.date}: ${day.steps.toLocaleString()} steps`}
           >
-            <span className="text-[0.625rem] leading-none">{day.day}</span>
+            {/* Day-of-month in a fixed grid — the column only reads as a grid
+                if the figures are the same width. */}
+            <span className="num text-[0.625rem] leading-none">{day.day}</span>
             <span className="num num-left whitespace-nowrap text-[0.625rem] leading-none">
               {formatCellSteps(day.steps)}
             </span>
