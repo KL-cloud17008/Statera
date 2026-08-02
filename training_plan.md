@@ -50,10 +50,10 @@ Required later recovery: Lower-Body Flush + Sole Care, 10-14 minutes.
 
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
-| B1 | Leg Press | 3 | 8-12 | 5-7 |
+| A1 | Lying Leg Curl | 3 | 10-12 | 6-7 |
+| B1 | Leg Press or Pendulum Squat (if available) | 3 | 8-12 leg press / 6-8 pendulum squat | 5-7 |
 | B2 | Walking Lunges (dumbbells 16 kg) | 4 | 12-20 steps total (6-10 per leg) | 5-6 |
-| C1 | Lying Leg Curl | 3 | 10-12 | 6-7 |
-| C2 | Seated Leg Extension | 3 | 10-15 | 6-7 |
+| C1 | Seated Leg Extension | 3 | 10-15 | 6-7 |
 | D1 | Hip Abduction Machine | 3 | 12-20 | 6 |
 | D2 | Hip Adduction Machine | 3 | 12-20 | 5-6 |
 
@@ -86,7 +86,8 @@ Required later recovery: Lower-Body Flush + Back Care, 10-14 minutes.
 
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
-| A1 | Supported Stationary Bulgarian Split Squat | 3 | 8-10 per leg | 5-6 |
+| A1 | Lying Leg Curl (warm-up) | 2 | 12-15 | 4-5 |
+| B1 | Supported Stationary Bulgarian Split Squat | 3 | 8-10 per leg | 5-6 |
 | C1 | Seated Leg Extension | 3 | 10-15 | 6 |
 | C2 | Seated Leg Curl | 4 | 10-12 | 6 |
 | D1 | Hip Adduction Machine | 4 | 12-20 | 5-6 |
@@ -94,7 +95,7 @@ Required later recovery: Lower-Body Flush + Back Care, 10-14 minutes.
 
 Arm work has moved off Wednesday: Tuesday, Thursday, and Friday already carry the biceps and triceps volume. Wednesday is legs and hips only.
 
-Wednesday total working sets: 18.
+Wednesday total working sets: 20.
 
 ## Thursday - Upper B
 
@@ -135,10 +136,10 @@ Friday total working sets: 16.
 
 - Monday: 19 sets
 - Tuesday: 24 sets
-- Wednesday: 18 sets
+- Wednesday: 20 sets
 - Thursday: 21 sets
 - Friday: 16 sets
-- Weekly total: 98 sets
+- Weekly total: 100 sets
 
 ## Muscle-Group Balance
 

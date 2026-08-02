@@ -31,8 +31,9 @@ const WEEK_STRUCTURE = [
     note: "Primary lower-body strength day. Leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
     laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
     details: [
-      "Block B: Leg Press and Walking Lunges (weighted, dumbbells 16 kg). Rest 180-300 seconds; this is not conditioning.",
-      "Block C: Lying Leg Curl and Seated Leg Extension. Rest 120 seconds after C2.",
+      "Block A: Lying Leg Curl opens the session — it warms the knees and hamstrings without axial loading. First set is deliberately easy, then work at the assigned RPE.",
+      "Block B: Leg Press or Pendulum Squat (if available), and Walking Lunges (weighted, dumbbells 16 kg). Rest 180-300 seconds; this is not conditioning. Keep 1-3 reps in reserve on every set, including the last.",
+      "Block C: Seated Leg Extension. Rest 120 seconds after C2.",
       "Block D: Hip Abduction Machine and Hip Adduction Machine. Rest 120 seconds after D2.",
       "Monday total working sets: 19.",
     ],
@@ -60,11 +61,12 @@ const WEEK_STRUCTURE = [
     note: "Lower accessory day — legs and hips only. Supports Monday without turning into another max-effort leg session.",
     laterRecovery: "Lower-Body Flush + Back Care, 10-14 minutes.",
     details: [
-      "Block A: Supported Stationary Bulgarian Split Squat.",
-      "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension).",
+      "Block A: Lying Leg Curl (warm-up) — 2 light sets to open the knees and hamstrings. Not a working hamstring set.",
+      "Block B: Supported Stationary Bulgarian Split Squat.",
+      "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension). The working hamstring volume stays here.",
       "Block D: Hip Adduction Machine and Hip Abduction Machine (4 sets each).",
       "Arm work has moved off Wednesday: Tuesday, Thursday, and Friday already carry the biceps and triceps volume.",
-      "Wednesday total working sets: 18.",
+      "Wednesday total working sets: 20.",
     ],
   },
   {

@@ -54,7 +54,7 @@ const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts
 
 test("canonical workout plan is the next-week progressive overload block", () => {
   assert.equal(workoutPlan.NEXT_WEEK_TAPER_TITLE, "Next Week Progressive Overload Block");
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "five-day-mon-fri-v2");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "five-day-mon-fri-v3");
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.dayOfWeek), [1, 2, 3, 4, 5]);
   assert.deepEqual(Array.from(workoutPlan.DEFAULT_WEEKLY_RHYTHM), [
     "Monday: Lower A — Leg Press + Quad/Hamstring Strength",
@@ -71,10 +71,10 @@ test("canonical workout plan is the next-week progressive overload block", () =>
   assert.match(workoutPlanPageSource, /2 Full Rest/);
   assert.match(workoutPlanPageSource, /Monday total working sets: 19/);
   assert.match(workoutPlanPageSource, /Tuesday total working sets: 24/);
-  assert.match(workoutPlanPageSource, /Wednesday total working sets: 18/);
+  assert.match(workoutPlanPageSource, /Wednesday total working sets: 20/);
   assert.match(workoutPlanPageSource, /Thursday total working sets: 21/);
   assert.match(workoutPlanPageSource, /Friday total working sets: 16/);
-  assert.match(trainingPlanSource, /Weekly total: 98 sets/);
+  assert.match(trainingPlanSource, /Weekly total: 100 sets/);
   assert.doesNotMatch(workoutPlanPageSource, /Completed \/ View Session|Completed Monday session/i);
   assert.match(planSource, /Five training days with balanced chest, back, legs, hips, arms, and trunk stability/);
 });
@@ -82,14 +82,20 @@ test("canonical workout plan is the next-week progressive overload block", () =>
 test("strength days use the requested exercise selection and set balance", () => {
   const byDay = new Map(workoutPlan.DEFAULT_WORKOUT_PLAN.map((day) => [day.dayOfWeek, day]));
 
+  // Lying Leg Curl now opens the session (warms knees/hamstrings without axial
+  // loading); Leg Press carries the pendulum-squat alternate. Volume unchanged.
   assertDay(byDay.get(1), "Lower A", 19, [
-    ["B1 Leg Press", 3, "8-12", "5-7"],
+    ["A1 Lying Leg Curl", 3, "10-12", "6-7"],
+    ["B1 Leg Press or Pendulum Squat (if available)", 3, "8-12 leg press / 6-8 pendulum squat", "5-7"],
     ["B2 Walking Lunges", 4, "12-20 steps total (6-10 per leg)", "5-6"],
-    ["C1 Lying Leg Curl", 3, "10-12", "6-7"],
-    ["C2 Seated Leg Extension", 3, "10-15", "6-7"],
+    ["C1 Seated Leg Extension", 3, "10-15", "6-7"],
     ["D1 Hip Abduction Machine", 3, "12-20", "6"],
     ["D2 Hip Adduction Machine", 3, "12-20", "5-6"],
   ]);
+  // Order matters: the hamstring opener must come before the squat/press slot.
+  assert.equal(byDay.get(1).exercises[0].exerciseName, "A1 Lying Leg Curl");
+  assert.ok(/first set is deliberately easy/i.test(byDay.get(1).exercises[0].cues));
+  assert.ok(/without axial loading/i.test(byDay.get(1).exercises[0].cues));
   assertDay(byDay.get(2), "Upper A", 24, [
     ["A1 Dumbbell Incline Press or Machine Incline Press", 3, "8-12", "6-7"],
     ["A2 Chest-Supported Row or Seated Cable Row", 3, "8-12", "6-7"],
@@ -102,14 +108,20 @@ test("strength days use the requested exercise selection and set balance", () =>
   ]);
   // Wednesday returns to legs and hips only; the arm superset and the triceps
   // drop set moved off this day.
-  assertDay(byDay.get(3), "Lower B", 18, [
-    ["A1 Supported Stationary Bulgarian Split Squat", 3, "8-10 per leg", "5-6"],
+  assertDay(byDay.get(3), "Lower B", 20, [
+    ["A1 Lying Leg Curl (warm-up)", 2, "12-15", "4-5"],
+    ["B1 Supported Stationary Bulgarian Split Squat", 3, "8-10 per leg", "5-6"],
     ["C1 Seated Leg Extension", 3, "10-15", "6"],
     ["C2 Seated Leg Curl", 4, "10-12", "6"],
     ["D1 Hip Adduction Machine", 4, "12-20", "5-6"],
     ["D2 Hip Abduction Machine", 4, "12-20", "5-6"],
   ]);
-  assert.equal(byDay.get(3).exercises.length, 5);
+  assert.equal(byDay.get(3).exercises.length, 6);
+  // The warm-up opens the day and does not replace the working hamstring slot.
+  assert.equal(byDay.get(3).exercises[0].exerciseName, "A1 Lying Leg Curl (warm-up)");
+  assert.equal(byDay.get(3).exercises[0].exerciseType, "WORKING");
+  assert.equal(countMovement(byDay.get(3), /C2 Seated Leg Curl/), 1);
+  assert.equal(byDay.get(3).exercises.find((e) => /C2 Seated Leg Curl/.test(e.exerciseName)).sets, 4);
   for (const gone of [
     /Single-Arm Seated Dumbbell Preacher Curl/,
     /Standing Dumbbell Reverse Curl/,
@@ -171,7 +183,7 @@ test("active plan excludes prohibited and removed strength work", () => {
   }
 
   const monday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 1);
-  assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "B1 Leg Press"));
+  assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "B1 Leg Press or Pendulum Squat (if available)"));
   assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "B2 Walking Lunges"));
   assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "D1 Hip Abduction Machine"));
   assert.ok(monday.exercises.some((exercise) => exercise.exerciseName === "D2 Hip Adduction Machine"));
@@ -185,7 +197,7 @@ test("active plan excludes prohibited and removed strength work", () => {
 
   const wednesday = workoutPlan.DEFAULT_WORKOUT_PLAN.find((day) => day.dayOfWeek === 3);
   assert.ok(!wednesday.exercises.some((exercise) => /Leg Press/i.test(exercise.exerciseName)));
-  assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "A1 Supported Stationary Bulgarian Split Squat"));
+  assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "B1 Supported Stationary Bulgarian Split Squat"));
   assert.ok(!wednesday.exercises.some((exercise) => /Back Hyperextension|Back Extension/i.test(exercise.exerciseName)));
   assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "C1 Seated Leg Extension"));
   assert.ok(wednesday.exercises.some((exercise) => exercise.exerciseName === "C2 Seated Leg Curl"));

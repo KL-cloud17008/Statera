@@ -24,7 +24,7 @@ export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
  * against it invalidate — a resumed session must not keep serving its old
  * training day, and the mobility protocol follows the session.
  */
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v2";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v3";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
@@ -130,13 +130,24 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: LOWER_A_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "B1 Leg Press",
+        exerciseName: "A1 Lying Leg Curl",
         sets: 3,
-        reps: "8-12",
+        reps: "10-12",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Opens the session: it warms the knees and hamstrings without axial loading, so the spine and hips are not loaded before the squat/press movement. First set is deliberately easy as a warm-up, then work at the assigned RPE. Hips heavy on pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Leg Press or Pendulum Squat (if available)",
+        sets: 3,
+        reps: "8-12 leg press / 6-8 pendulum squat",
         tempo: "controlled lowering",
         restSeconds: 180,
         targetRPE: "5-7",
-        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. Both feet full on the platform, knees track over middle toes, control the lowering, stop before hip/back/foot irritation, and do not chase deep range if the torso compresses. Pain rule: if soles/ankles feel worse than 3/10, reduce load/range or regress to supported stationary split squat.`,
+        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. Equipment alternates: Leg Press or Pendulum Squat (if available) — use whichever is free. Keep 1-3 reps in reserve on every set, including the last; no failure training on either variation, and that rule overrides any protocol attached to this movement elsewhere. Leg press: both feet full on the platform, knees track over middle toes, control the lowering, stop before hip/back/foot irritation, and do not chase deep range if the torso compresses. Pendulum squat: back supported against the pad, descend to maximum comfortable depth, knees track over middle toes, controlled tempo. Pain rule: if soles/ankles feel worse than 3/10, reduce load/range or regress to supported stationary split squat.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -152,18 +163,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Lying Leg Curl",
-        sets: 3,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Hips heavy on pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C2 Seated Leg Extension",
+        exerciseName: "C1 Seated Leg Extension",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
@@ -296,14 +296,25 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: LOWER_B_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Supported Stationary Bulgarian Split Squat",
+        exerciseName: "A1 Lying Leg Curl (warm-up)",
+        sets: 2,
+        reps: "12-15",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "4-5",
+        cues: `Warm-up for the knees and hamstrings, kept deliberately light. This is not a working hamstring set — the working hamstring volume is the Seated Leg Curl later in the session. Kg load. Hips heavy on the pad, smooth curl, slow return, no jerking, and no lower-back arching. Keep 1-3 reps in reserve; no failure training.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Supported Stationary Bulgarian Split Squat",
         sets: 3,
         reps: "8-10 per leg",
         tempo: "controlled",
         restSeconds: 180,
         targetRPE: "5-6",
         cues: `${WEEK4_MAIN_CUE}Bodyweight only. Use support as needed, controlled range, front foot flat, knee tracks over middle toes, do not chase depth, no bouncing. Pain rule: skip if sole pain, ankle pain, knee pain, hip pinch, lower-back irritation, or balance loss appears.`,
-        supersetGroup: "A",
+        supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
@@ -508,6 +519,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
     ],
   },
+
 
 ];
 
