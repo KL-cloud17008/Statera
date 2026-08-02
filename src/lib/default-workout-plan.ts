@@ -23,8 +23,12 @@ export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
  * The version is bumped off the temporary four-day mapping so sessions started
  * against it invalidate — a resumed session must not keep serving its old
  * training day, and the mobility protocol follows the session.
+ *
+ * v4 revamps Friday: direct loaded calf raises enter the program for the first
+ * time (seated default, standing progression), shoulders gain a lateral raise
+ * alongside the existing face pull, and forearms gain wrist and reverse curls.
  */
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v3";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v4";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
@@ -58,7 +62,7 @@ export const PROGRESSIVE_OVERLOAD_RULES = [
   "No failure training.",
   "No grinding.",
   "If form breaks, keep load the same next session.",
-  "If feet/ankles rise above 3/10, remove walking lunges first.",
+  "If feet/ankles rise above 3/10, remove walking lunges and loaded calf raises first.",
   "If lower back rises above 3/10, remove back hyperextensions and overhead press first.",
   "Pain 5/10 or higher means stop that movement.",
 ] as const;
@@ -92,12 +96,13 @@ export const WEEKLY_SET_SUMMARY = [
   "Chest: balanced between incline, mid-chest press, and fly/accessory work.",
   "Back/lats: strong.",
   "Rear delts: good.",
-  "Side delts: good.",
+  "Side delts: strong — lateral raises on Tuesday, Thursday, and Friday.",
   "Front delts: enough from pressing; do not add more.",
   "Triceps: good.",
   "Biceps: good — Tuesday, Thursday, and Friday carry the arm volume.",
+  "Forearms/grip: covered by Friday wrist curls and reverse curls.",
   "Core/trunk: covered through controlled anti-rotation holds.",
-  "Calves/feet: mobility only; no loaded calf raises yet.",
+  "Calves/feet: direct loaded calf raises on Friday only, seated by default; removed whenever sole/plantar pain reaches 3/10.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
@@ -105,7 +110,8 @@ export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "5 Strength / 0 Recovery / 2 Full Rest.",
   "Work steps count as primary load. Foot pain controls walking volume.",
   "Training loads are logged in kg. Bodyweight remains logged in lb.",
-  "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, no failure training, and no direct loaded calf raises.",
+  "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, and no failure training.",
+  "Calf raise rule (reversed from the earlier no-direct-loaded-calf-raise rule): Friday now carries one loaded calf raise slot. Seated (knee bent) is the default; standing is the progression and only when the soles are quiet. Skip it entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges it is the first movement removed under the foot-load rule.",
   "Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking.",
   "Ramp-up sets stay outside the ledger: Set 1 very easy x 8-10 reps at RPE 3-4; Set 2 easy/moderate x 5-8 reps at RPE 4-5 only if needed.",
   "Required later recovery is separate same-day work and stays easy: effort 1-3/10, pain 0-2/10 maximum.",
@@ -507,6 +513,17 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
+        exerciseName: "C2 Dumbbell / Plate Lateral Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging. Adds side-delt volume without overhead pressing — overhead work stays removed under the lower-back rule.`,
+        supersetGroup: "C",
+        exerciseType: "WORKING",
+      },
+      {
         exerciseName: "D1 Supported Cable Anti-Rotation Hold",
         sets: 2,
         reps: "10-20 seconds per side",
@@ -515,6 +532,39 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         targetRPE: "4-5",
         cues: "Kg load. Tall posture, ribs down, hips square, resist rotation, no twisting, no heavy bracing.",
         supersetGroup: "D",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E1 Cable or Dumbbell Wrist Curl",
+        sets: 2,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Cable Wrist Curl or Dumbbell Wrist Curl — use whichever is free. Forearms supported on the bench or thighs, wrists just past the edge, smooth curl up, slow lower into a comfortable stretch, no bouncing at the bottom. Light load; stop if the wrist or elbow complains.`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E2 Reverse Curl",
+        sets: 2,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Overhand grip, elbows pinned to the sides, tall posture with ribs down, no torso swing, no wrist flicking. Lighter than the cable curl — this is forearm and brachialis work, not a second biceps slot.`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "F1 Seated Calf Raise or Standing Calf Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. This slot reverses the earlier program rule of no direct loaded calf raises — it is deliberate, and it is conditional. Equipment alternates: Seated Calf Raise (knee bent) is the lower-tension default — choose it when the soles feel at all irritated. Standing Calf Raise is the progression and only when the soles are quiet. Controlled tempo throughout, full range without forcing the end range, no bouncing out of the bottom, no chasing load. Foot-load gate: skip this exercise entirely if sole or plantar pain is 3/10 or higher. Alongside walking lunges it is the first movement removed under the foot-load rule. Stop immediately on sharp pain, and placed last on purpose so dropping it costs nothing else in the session.`,
+        supersetGroup: "F",
         exerciseType: "WORKING",
       },
     ],

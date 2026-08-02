@@ -29,7 +29,8 @@ Five training days with balanced chest, back, legs, hips, arms, and trunk stabil
 - If feet/ankles rise above 3/10, remove walking lunges first.
 - If lower back rises above 3/10, remove back hyperextensions and overhead press first.
 - Pain 5/10 or higher means stop that movement.
-- No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, no direct loaded calf raises.
+- No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers.
+- Calf raise rule (reversed): Friday carries one loaded calf raise slot. Seated (knee bent) is the default, standing is the progression and only when the soles are quiet. Skip entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges it is the first movement removed under the foot-load rule.
 - Walk to gym - general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking.
 - Ramp-up sets stay outside the ledger: Set 1 very easy x 8-10 reps at RPE 3-4; Set 2 easy/moderate x 5-8 reps at RPE 4-5 only if needed.
 - Required later recovery is separate same-day work and stays easy: effort 1-3/10, pain 0-2/10 maximum.
@@ -128,9 +129,17 @@ Required later recovery: Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.
 | B1 | Cable Curl | 3 | 10-15 | 6-7 |
 | B2 | Rope Triceps Pressdown | 3 | 10-15 | 6-7 |
 | C1 | Face Pull | 3 | 12-15 | 5-6 |
+| C2 | Dumbbell / Plate Lateral Raise | 3 | 12-20 | 6 |
 | D1 | Supported Cable Anti-Rotation Hold | 2 | 10-20 seconds per side | 4-5 |
+| E1 | Cable or Dumbbell Wrist Curl | 2 | 12-20 | 5-6 |
+| E2 | Reverse Curl | 2 | 10-15 | 5-6 |
+| F1 | Seated Calf Raise or Standing Calf Raise | 3 | 12-20 | 5-6 |
 
-Friday total working sets: 16.
+No overhead pressing on this day — it stays removed under the lower-back rule.
+
+Calf raise gate: this reverses the earlier no-direct-loaded-calf-raise rule. Seated (knee bent) is the lower-tension default; standing is the progression and only when the soles are quiet. Skip entirely if sole or plantar pain is 3/10 or higher — alongside walking lunges it is the first movement removed under the foot-load rule.
+
+Friday total working sets: 26.
 
 ## Weekly Set Summary
 
@@ -138,8 +147,8 @@ Friday total working sets: 16.
 - Tuesday: 24 sets
 - Wednesday: 20 sets
 - Thursday: 21 sets
-- Friday: 16 sets
-- Weekly total: 100 sets
+- Friday: 26 sets
+- Weekly total: 110 sets
 
 ## Muscle-Group Balance
 
@@ -150,9 +159,10 @@ Friday total working sets: 16.
 - Chest: balanced between incline, mid-chest press, and fly/accessory work.
 - Back/lats: strong.
 - Rear delts: good.
-- Side delts: good.
+- Side delts: strong — lateral raises on Tuesday, Thursday, and Friday.
 - Front delts: enough from pressing; do not add more.
 - Triceps: good.
 - Biceps: good — Tuesday, Thursday, and Friday carry the arm volume.
+- Forearms/grip: covered by Friday wrist curls and reverse curls.
 - Core/trunk: covered through controlled anti-rotation holds.
-- Calves/feet: mobility only; no loaded calf raises yet.
+- Calves/feet: direct loaded calf raises on Friday only, seated by default; removed whenever sole/plantar pain reaches 3/10.
