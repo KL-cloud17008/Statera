@@ -53,7 +53,12 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "leg-press", name: "Leg Press", muscleGroup: "Legs", defaultSets: 4, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "back-extension-machine", name: "Back Extension Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "10-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "leg-curl", name: "Leg Curl", muscleGroup: "Legs", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 75, source: "builtin" },
-  { id: "standing-calf-raise", name: "Standing Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 60, source: "builtin" },
+  // No standing calf raise: the gym has no standing calf machine. Both seated
+  // machines are listed, plus the fallbacks used when one is out of service.
+  { id: "seated-straight-leg-calf-machine", name: "Seated Straight-Leg Calf Machine", muscleGroup: "Legs", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 90, source: "builtin" },
+  { id: "seated-bent-leg-calf-raise", name: "Seated Bent-Leg Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 90, source: "builtin" },
+  { id: "leg-press-calf-press", name: "Leg Press Calf Press", muscleGroup: "Legs", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 90, source: "builtin" },
+  { id: "seated-dumbbell-calf-raise", name: "Seated Dumbbell Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 90, source: "builtin" },
   { id: "machine-lateral-raise", name: "Machine Lateral Raise", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-15", defaultRestSeconds: 90, source: "builtin" },
   { id: "lateral-raise", name: "Lateral Raise", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-15", defaultRestSeconds: 60, source: "builtin" },
   { id: "rear-delt-fly", name: "Rear Delt Fly", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-15", defaultRestSeconds: 60, source: "builtin" },
