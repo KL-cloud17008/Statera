@@ -18,20 +18,20 @@ export type DefaultWorkoutDay = {
 
 export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
 /**
- * TEMPORARY WEEK STRUCTURE — revisit before the next block.
+ * Standard five-day block: Monday to Friday, Saturday and Sunday full rest.
  *
- * This week runs four training days shifted one weekday later (Tue-Fri), with
- * Saturday, Sunday and Monday as full rest. Upper Accessory + Arms + Core is
- * dropped for this week only.
+ * The version is bumped off the temporary four-day mapping so sessions started
+ * against it invalidate — a resumed session must not keep serving its old
+ * training day, and the mobility protocol follows the session.
  *
- * The version is bumped because the day mapping moved. Sessions started against
- * the previous mapping must not be treated as current, or a resumed session
- * would keep serving its old training day — and the mobility protocol with it.
+ * v4 revamps Friday: direct loaded calf raises enter the program for the first
+ * time (seated default, standing progression), shoulders gain a lateral raise
+ * alongside the existing face pull, and forearms gain wrist and reverse curls.
  */
-export const DEFAULT_WORKOUT_PLAN_VERSION = "temp-four-day-tue-fri-v1";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v4";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
-  "Temporary week: four training days, Tuesday to Friday, with balanced chest, back, legs, hips, and arms. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
+  "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
 
 export const LOWER_A_TAPER_TITLE = "Lower A — Leg Press + Quad/Hamstring Strength";
 export const UPPER_A_TITLE = "Upper A — Incline Push / Row / Trunk Stability";
@@ -62,7 +62,7 @@ export const PROGRESSIVE_OVERLOAD_RULES = [
   "No failure training.",
   "No grinding.",
   "If form breaks, keep load the same next session.",
-  "If feet/ankles rise above 3/10, remove walking lunges first.",
+  "If feet/ankles rise above 3/10, remove walking lunges and loaded calf raises first.",
   "If lower back rises above 3/10, remove back hyperextensions and overhead press first.",
   "Pain 5/10 or higher means stop that movement.",
 ] as const;
@@ -93,23 +93,25 @@ export const WEEKLY_SET_SUMMARY = [
   "Hamstrings: good.",
   "Glutes/hips: good.",
   "Hip abductors/adductors: improved.",
-  "Chest: incline and mid-chest press only this week; the fly/accessory slot sat on the dropped Friday session.",
+  "Chest: balanced between incline, mid-chest press, and fly/accessory work.",
   "Back/lats: strong.",
   "Rear delts: good.",
-  "Side delts: good.",
+  "Side delts: strong — lateral raises on Tuesday, Thursday, and Friday.",
   "Front delts: enough from pressing; do not add more.",
   "Triceps: good.",
-  "Biceps: good.",
-  "Core/trunk: no direct trunk work this week — the anti-rotation hold was the dropped Friday session’s only core slot.",
-  "Calves/feet: mobility only; no loaded calf raises yet.",
+  "Biceps: good — Tuesday, Thursday, and Friday carry the arm volume.",
+  "Forearms/grip: covered by Friday wrist curls and reverse curls.",
+  "Core/trunk: covered through controlled anti-rotation holds.",
+  "Calves/feet: direct loaded calf raises on Friday only, seated by default; removed whenever sole/plantar pain reaches 3/10.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   ADJUSTED_WEEK_HEADER_COPY,
-  "4 Strength / 0 Recovery / 3 Full Rest.",
+  "5 Strength / 0 Recovery / 2 Full Rest.",
   "Work steps count as primary load. Foot pain controls walking volume.",
   "Training loads are logged in kg. Bodyweight remains logged in lb.",
-  "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, no failure training, and no direct loaded calf raises.",
+  "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, and no failure training.",
+  "Calf raise rule (reversed from the earlier no-direct-loaded-calf-raise rule): Friday now carries one loaded calf raise slot. Seated (knee bent) is the default; standing is the progression and only when the soles are quiet. Skip it entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges it is the first movement removed under the foot-load rule.",
   "Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking.",
   "Ramp-up sets stay outside the ledger: Set 1 very easy x 8-10 reps at RPE 3-4; Set 2 easy/moderate x 5-8 reps at RPE 4-5 only if needed.",
   "Required later recovery is separate same-day work and stays easy: effort 1-3/10, pain 0-2/10 maximum.",
@@ -130,17 +132,28 @@ const CONTROLLED_STRENGTH_CUE =
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
-    dayOfWeek: 2,
+    dayOfWeek: 1,
     sessionName: LOWER_A_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "B1 Leg Press",
+        exerciseName: "A1 Lying Leg Curl",
         sets: 3,
-        reps: "8-12",
+        reps: "10-12",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Opens the session: it warms the knees and hamstrings without axial loading, so the spine and hips are not loaded before the squat/press movement. First set is deliberately easy as a warm-up, then work at the assigned RPE. Hips heavy on pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Leg Press or Pendulum Squat (if available)",
+        sets: 3,
+        reps: "8-12 leg press / 6-8 pendulum squat",
         tempo: "controlled lowering",
         restSeconds: 180,
         targetRPE: "5-7",
-        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. Both feet full on the platform, knees track over middle toes, control the lowering, stop before hip/back/foot irritation, and do not chase deep range if the torso compresses. Pain rule: if soles/ankles feel worse than 3/10, reduce load/range or regress to supported stationary split squat.`,
+        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. Equipment alternates: Leg Press or Pendulum Squat (if available) — use whichever is free. Keep 1-3 reps in reserve on every set, including the last; no failure training on either variation, and that rule overrides any protocol attached to this movement elsewhere. Leg press: both feet full on the platform, knees track over middle toes, control the lowering, stop before hip/back/foot irritation, and do not chase deep range if the torso compresses. Pendulum squat: back supported against the pad, descend to maximum comfortable depth, knees track over middle toes, controlled tempo. Pain rule: if soles/ankles feel worse than 3/10, reduce load/range or regress to supported stationary split squat.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -156,18 +169,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Lying Leg Curl",
-        sets: 3,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Hips heavy on pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C2 Seated Leg Extension",
+        exerciseName: "C1 Seated Leg Extension",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
@@ -202,7 +204,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 3,
+    dayOfWeek: 2,
     sessionName: UPPER_A_TITLE,
     exercises: [
       {
@@ -296,18 +298,29 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     ],
   },
   {
-    dayOfWeek: 4,
+    dayOfWeek: 3,
     sessionName: LOWER_B_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Supported Stationary Bulgarian Split Squat",
+        exerciseName: "A1 Lying Leg Curl (warm-up)",
+        sets: 2,
+        reps: "12-15",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "4-5",
+        cues: `Warm-up for the knees and hamstrings, kept deliberately light. This is not a working hamstring set — the working hamstring volume is the Seated Leg Curl later in the session. Kg load. Hips heavy on the pad, smooth curl, slow return, no jerking, and no lower-back arching. Keep 1-3 reps in reserve; no failure training.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Supported Stationary Bulgarian Split Squat",
         sets: 3,
         reps: "8-10 per leg",
         tempo: "controlled",
         restSeconds: 180,
         targetRPE: "5-6",
         cues: `${WEEK4_MAIN_CUE}Bodyweight only. Use support as needed, controlled range, front foot flat, knee tracks over middle toes, do not chase depth, no bouncing. Pain rule: skip if sole pain, ankle pain, knee pain, hip pinch, lower-back irritation, or balance loss appears.`,
-        supersetGroup: "A",
+        supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
@@ -354,43 +367,10 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
-      {
-        exerciseName: "E1 Single-Arm Seated Dumbbell Preacher Curl",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. One arm at a time, upper arm supported on the pad, no shrugging, smooth full range, slow lowering.`,
-        supersetGroup: "E",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "E2 Standing Dumbbell Reverse Curl",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Overhand grip, elbows pinned to the ribs, wrists neutral. Neutral spine and no torso swing — do not lean back or drive the weight with the hips. Lower-back rule: stop the set if lower-back irritation appears.`,
-        supersetGroup: "E",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "F1 Triceps Pushdown, bar (drop set)",
-        sets: 3,
-        reps: "10-15, then 2 controlled drops",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Three working sets of 10-15 reps. After each working set, reduce the load and complete 2 controlled drops, stopping 1-2 reps short of failure on every drop. This is a controlled drop, not training to failure — keep reps in reserve, keep form clean, and stop the drop early if the bar path breaks down. Elbows pinned, no leaning over the cable.`,
-        supersetGroup: "F",
-        exerciseType: "WORKING",
-      },
     ],
   },
   {
-    dayOfWeek: 5,
+    dayOfWeek: 4,
     sessionName: UPPER_B_TITLE,
     exercises: [
       {
@@ -472,15 +452,133 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
     ],
   },
+
+  {
+    dayOfWeek: 5,
+    sessionName: UPPER_ACCESSORY_TITLE,
+    exercises: [
+      {
+        exerciseName: "A1 Pec Deck or High-to-Low Cable Fly",
+        sets: 2,
+        reps: "12-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled stretch, smooth squeeze, no shoulder pain, do not go heavy. Reason: chest balance without adding more incline pressing.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "A2 Chest-Supported Row or Seated Cable Row",
+        sets: 3,
+        reps: "10-12",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled row, pause near ribs, no body swing, smooth return.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Cable Curl",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Elbows controlled, no swinging, shoulders quiet.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B2 Rope Triceps Pressdown",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Elbows pinned, finish with control, no leaning over cable.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "C1 Face Pull",
+        sets: 3,
+        reps: "12-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Pull to eye level, elbows high, neck relaxed, no swinging.`,
+        supersetGroup: "C",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "C2 Dumbbell / Plate Lateral Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging. Adds side-delt volume without overhead pressing — overhead work stays removed under the lower-back rule.`,
+        supersetGroup: "C",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "D1 Supported Cable Anti-Rotation Hold",
+        sets: 2,
+        reps: "10-20 seconds per side",
+        tempo: "steady hold",
+        restSeconds: 90,
+        targetRPE: "4-5",
+        cues: "Kg load. Tall posture, ribs down, hips square, resist rotation, no twisting, no heavy bracing.",
+        supersetGroup: "D",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E1 Cable or Dumbbell Wrist Curl",
+        sets: 2,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Cable Wrist Curl or Dumbbell Wrist Curl — use whichever is free. Forearms supported on the bench or thighs, wrists just past the edge, smooth curl up, slow lower into a comfortable stretch, no bouncing at the bottom. Light load; stop if the wrist or elbow complains.`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E2 Reverse Curl",
+        sets: 2,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Overhand grip, elbows pinned to the sides, tall posture with ribs down, no torso swing, no wrist flicking. Lighter than the cable curl — this is forearm and brachialis work, not a second biceps slot.`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "F1 Seated Calf Raise or Standing Calf Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. This slot reverses the earlier program rule of no direct loaded calf raises — it is deliberate, and it is conditional. Equipment alternates: Seated Calf Raise (knee bent) is the lower-tension default — choose it when the soles feel at all irritated. Standing Calf Raise is the progression and only when the soles are quiet. Controlled tempo throughout, full range without forcing the end range, no bouncing out of the bottom, no chasing load. Foot-load gate: skip this exercise entirely if sole or plantar pain is 3/10 or higher. Alongside walking lunges it is the first movement removed under the foot-load rule. Stop immediately on sharp pain, and placed last on purpose so dropping it costs nothing else in the session.`,
+        supersetGroup: "F",
+        exerciseType: "WORKING",
+      },
+    ],
+  },
+
+
 ];
 
-/* Temporary week structure — see DEFAULT_WORKOUT_PLAN_VERSION. */
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Complete Rest",
-  "Tuesday: Lower A — Leg Press + Quad/Hamstring Strength",
-  "Wednesday: Upper A — Incline Push / Row / Trunk Stability",
-  "Thursday: Lower B — Accessory Legs + Hip Stability",
-  "Friday: Upper B — Chest Machine Press / Pull + Shoulders and Arms",
+  "Monday: Lower A — Leg Press + Quad/Hamstring Strength",
+  "Tuesday: Upper A — Incline Push / Row / Trunk Stability",
+  "Wednesday: Lower B — Accessory Legs + Hip Stability",
+  "Thursday: Upper B — Chest Machine Press / Pull + Shoulders and Arms",
+  "Friday: Upper Accessory + Arms + Core",
   "Saturday: Complete Rest",
   "Sunday: Complete Rest",
 ] as const;

@@ -22,77 +22,83 @@ import {
 } from "@/lib/default-workout-plan";
 import { isLoggableTrainingExercise } from "@/lib/training-session";
 
-/**
- * TEMPORARY WEEK STRUCTURE — four training days, Tuesday to Friday.
- * Monday joins Saturday and Sunday as full rest and Upper Accessory + Arms +
- * Core is dropped for this week. Revisit with DEFAULT_WORKOUT_PLAN_VERSION.
- */
 const WEEK_STRUCTURE = [
   {
     day: "Monday",
-    title: "Complete Rest",
-    protocol: "Full Rest",
-    note: "Full rest this week. The training block starts Tuesday.",
-    laterRecovery: "No required block. Optional recovery only if it improves foot, ankle, hip, or lower-back comfort.",
-  },
-  {
-    day: "Tuesday",
     title: "Lower A — Leg Press + Quad/Hamstring Strength",
     protocol: "Strength Protocol",
-    dayOfWeek: 2,
+    dayOfWeek: 1,
     note: "Primary lower-body strength day. Leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
     laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
     details: [
-      "Block B: Leg Press and Walking Lunges (weighted, dumbbells 16 kg). Rest 180-300 seconds; this is not conditioning.",
-      "Block C: Lying Leg Curl and Seated Leg Extension. Rest 120 seconds after C2.",
+      "Block A: Lying Leg Curl opens the session — it warms the knees and hamstrings without axial loading. First set is deliberately easy, then work at the assigned RPE.",
+      "Block B: Leg Press or Pendulum Squat (if available), and Walking Lunges (weighted, dumbbells 16 kg). Rest 180-300 seconds; this is not conditioning. Keep 1-3 reps in reserve on every set, including the last.",
+      "Block C: Seated Leg Extension. Rest 120 seconds after C2.",
       "Block D: Hip Abduction Machine and Hip Adduction Machine. Rest 120 seconds after D2.",
-      "Tuesday total working sets: 19.",
+      "Monday total working sets: 19.",
     ],
   },
   {
-    day: "Wednesday",
+    day: "Tuesday",
     title: "Upper A — Incline Push / Row / Trunk Stability",
     protocol: "Strength Protocol",
-    dayOfWeek: 3,
+    dayOfWeek: 2,
     note: "Upper-body strength with one incline chest slot, strong pulling work, rear delts, and arm work.",
     laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
     details: [
       "Block A: Dumbbell Incline Press or Machine Incline Press, and Chest-Supported Row or Seated Cable Row.",
       "Block B: Neutral-Grip Lat Pulldown, Dumbbell / Plate Lateral Raise, and Machine Shoulder Press.",
       "Block C: Triceps Extension Machine (downstairs) or Triceps Pushdown, bar (upstairs); Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs); Reverse Pec Deck (downstairs) or Dead Hang (upstairs).",
-      "Wednesday total working sets: 24.",
+      "Tuesday total working sets: 24.",
       "Machine Shoulder Press is overhead pressing: removed while lower-back pain is 3/10 or higher, and it returns when pain clears.",
     ],
   },
   {
-    day: "Thursday",
+    day: "Wednesday",
     title: "Lower B — Accessory Legs + Hip Stability",
     protocol: "Strength Protocol",
-    dayOfWeek: 4,
-    note: "Lower accessory day. Supports Tuesday without turning into another max-effort leg session.",
+    dayOfWeek: 3,
+    note: "Lower accessory day — legs and hips only. Supports Monday without turning into another max-effort leg session.",
     laterRecovery: "Lower-Body Flush + Back Care, 10-14 minutes.",
     details: [
-      "Block A: Supported Stationary Bulgarian Split Squat.",
-      "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension).",
+      "Block A: Lying Leg Curl (warm-up) — 2 light sets to open the knees and hamstrings. Not a working hamstring set.",
+      "Block B: Supported Stationary Bulgarian Split Squat.",
+      "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension). The working hamstring volume stays here.",
       "Block D: Hip Adduction Machine and Hip Abduction Machine (4 sets each).",
-      "Block E: Single-Arm Seated Dumbbell Preacher Curl and Standing Dumbbell Reverse Curl. Neutral spine, no torso swing.",
-      "Block F: Triceps Pushdown, bar (drop set) — 3 working sets, then 2 controlled drops stopping 1-2 reps short of failure on each drop. Controlled drop, not training to failure.",
-      "Thursday total working sets: 27.",
+      "Arm work has moved off Wednesday: Tuesday, Thursday, and Friday already carry the biceps and triceps volume.",
+      "Wednesday total working sets: 20.",
     ],
   },
   {
-    day: "Friday",
+    day: "Thursday",
     title: "Upper B — Chest Machine Press / Pull + Shoulders and Arms",
     protocol: "Strength Protocol",
-    dayOfWeek: 5,
-    note: "Balanced upper-body day with mid-chest machine press, rows, pulldown, shoulders, and arms. Last training day of this week.",
+    dayOfWeek: 4,
+    note: "Balanced upper-body day with mid-chest machine press, rows, pulldown, shoulders, and arms.",
     laterRecovery: "Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.",
     details: [
       "Block A: Chest Machine Press and Chest-Supported Row or Seated Cable Row.",
       "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
       "Block C: Triceps Pressdown, bar; Reverse Cable Crossover; and Face-Away Bayesian Cable Curl.",
-      "Friday total working sets: 21.",
+      "Thursday total working sets: 21.",
       "Chest Machine Press balances repeated incline pressing with neutral mid-chest work.",
+    ],
+  },
+  {
+    day: "Friday",
+    title: "Upper Accessory + Arms + Core",
+    protocol: "Strength Protocol",
+    dayOfWeek: 5,
+    note: "Accessory upper-body day with chest balance, rows, arms, shoulders, forearms, direct trunk stability, and the week's only loaded calf work.",
+    laterRecovery: "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.",
+    details: [
+      "Block A: Pec Deck or High-to-Low Cable Fly and Chest-Supported Row or Seated Cable Row.",
+      "Block B: Cable Curl and Rope Triceps Pressdown.",
+      "Block C: Face Pull and Dumbbell / Plate Lateral Raise. No overhead pressing — it stays removed under the lower-back rule.",
+      "Block D: Supported Cable Anti-Rotation Hold.",
+      "Block E: Cable or Dumbbell Wrist Curl and Reverse Curl. Rest 90 seconds each.",
+      "Block F: Seated Calf Raise or Standing Calf Raise. Seated (knee bent) is the default; standing only when the soles are quiet. Skip entirely if sole/plantar pain is 3/10 or higher — with walking lunges it is the first movement removed under the foot-load rule.",
+      "Friday total working sets: 26.",
     ],
   },
   {
@@ -164,18 +170,17 @@ export default async function WorkoutPlanPage() {
 
       <Section className="mt-6" title="Week structure">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <p className="num num-left text-data-xl font-medium text-primary">4 / 0 / 3</p>
+          <p className="num num-left text-data-xl font-medium text-primary">5 / 0 / 2</p>
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">4 Strength</Badge>
+            <Badge variant="secondary">5 Strength</Badge>
             <Badge variant="secondary">0 Recovery</Badge>
-            <Badge variant="secondary">3 Full Rest</Badge>
+            <Badge variant="secondary">2 Full Rest</Badge>
           </div>
         </div>
         <p className="mt-3 max-w-2xl text-body text-secondary">
-          Temporary week: four training days, Tuesday to Friday, with balanced chest, back,
-          legs, hips, and arms. Progress by clean reps before load. Monday, Saturday, and Sunday
-          are full rest. Ramp-up sets stay outside the ledger. Required later recovery remains
-          separate.
+          Five training days with balanced chest, back, legs, hips, arms, and trunk stability.
+          Progress by clean reps before load. Saturday and Sunday are full rest. Ramp-up sets
+          stay outside the ledger. Required later recovery remains separate.
         </p>
       </Section>
 
