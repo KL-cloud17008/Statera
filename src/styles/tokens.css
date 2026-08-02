@@ -91,6 +91,9 @@
   --surface-sunken: var(--paper-150); /* input wells, chart tracks, table heads */
   --surface-row-hover: var(--paper-100);
   --surface-overlay: var(--paper-0);
+  /* The one scrim behind every overlay — dialog and sheet both resolve here.
+     Warm ink, matching the chrome; there is no purple in this system. */
+  --surface-scrim: rgb(26 22 19 / 0.44);
 
   /* ── Rules — the primary structural device ────────────────────────────── */
   /* These delimit content, not controls. A separator is decorative and WCAG

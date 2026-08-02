@@ -26,7 +26,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "rounded-panel border border-rule bg-overlay px-4 py-3 text-row text-primary shadow-[var(--shadow-overlay)]",
+            "rounded-panel border border-rule bg-overlay px-4 py-3 text-row text-primary shadow-overlay",
           title: "text-row font-medium text-primary",
           description: "text-caption text-secondary",
         },
