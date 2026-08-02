@@ -27,8 +27,15 @@ export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
  * v4 revamps Friday: direct loaded calf raises enter the program for the first
  * time (seated default, standing progression), shoulders gain a lateral raise
  * alongside the existing face pull, and forearms gain wrist and reverse curls.
+ *
+ * v5 rebuilds Friday around supersets and adds calf work to Monday and
+ * Wednesday. There is no standing calf work at all — the gym has no standing
+ * calf machine, so every calf slot is seated (straight-leg gastrocnemius or
+ * bent-leg soleus) and every slot carries a fallback because the bent-leg
+ * machine has been unreliable. Friday D1 reintroduces overhead pressing, which
+ * remains gated by the lower-back rule.
  */
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v4";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v5";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
@@ -44,7 +51,14 @@ export const FULL_BODY_CIRCUIT_TITLE = UPPER_ACCESSORY_TITLE;
 /**
  * Overhead pressing of any kind is removed while lower-back pain is 3/10 or
  * higher. Matches every overhead press variant in the template (dumbbell,
- * machine shoulder press) so the lower-back gating cannot miss one.
+ * machine shoulder press, seated machine shoulder press) so the lower-back
+ * gating cannot miss one.
+ *
+ * Deliberately matches the two-word movement phrases "overhead press" and
+ * "shoulder press" — NOT the bare fragment "overhead". Widening this to
+ * /overhead/ would wrongly gate "Overhead Cable Triceps Extension" (Tuesday C1
+ * and Friday F2), which is an elbow-extension accessory, not overhead pressing,
+ * and must stay in the session while lower-back pain is elevated.
  */
 export function isOverheadPressExercise(exerciseName: string) {
   return /overhead press|shoulder press/i.test(exerciseName);
@@ -62,7 +76,7 @@ export const PROGRESSIVE_OVERLOAD_RULES = [
   "No failure training.",
   "No grinding.",
   "If form breaks, keep load the same next session.",
-  "If feet/ankles rise above 3/10, remove walking lunges and loaded calf raises first.",
+  "If feet/ankles rise above 3/10, remove walking lunges and all three calf slots (Monday E1, Wednesday E1, Friday E1) first.",
   "If lower back rises above 3/10, remove back hyperextensions and overhead press first.",
   "Pain 5/10 or higher means stop that movement.",
 ] as const;
@@ -96,13 +110,13 @@ export const WEEKLY_SET_SUMMARY = [
   "Chest: balanced between incline, mid-chest press, and fly/accessory work.",
   "Back/lats: strong.",
   "Rear delts: good.",
-  "Side delts: strong — lateral raises on Tuesday, Thursday, and Friday.",
+  "Side delts: strong — lateral raises on Tuesday, Wednesday, Thursday, and Friday.",
   "Front delts: enough from pressing; do not add more.",
   "Triceps: good.",
   "Biceps: good — Tuesday, Thursday, and Friday carry the arm volume.",
-  "Forearms/grip: covered by Friday wrist curls and reverse curls.",
-  "Core/trunk: covered through controlled anti-rotation holds.",
-  "Calves/feet: direct loaded calf raises on Friday only, seated by default; removed whenever sole/plantar pain reaches 3/10.",
+  "Forearms/grip: covered by Friday reverse curls and wrist curls.",
+  "Core/trunk: covered through controlled anti-rotation holds on Wednesday and Friday.",
+  "Calves/feet: three seated slots — Monday bent-leg (soleus), Wednesday and Friday straight-leg (gastrocnemius). No standing calf work; the gym has no standing calf machine. All three are removed whenever sole/plantar pain reaches 3/10.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
@@ -111,7 +125,7 @@ export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Work steps count as primary load. Foot pain controls walking volume.",
   "Training loads are logged in kg. Bodyweight remains logged in lb.",
   "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, and no failure training.",
-  "Calf raise rule (reversed from the earlier no-direct-loaded-calf-raise rule): Friday now carries one loaded calf raise slot. Seated (knee bent) is the default; standing is the progression and only when the soles are quiet. Skip it entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges it is the first movement removed under the foot-load rule.",
+  "Calf raise rule (reversed from the earlier no-direct-loaded-calf-raise rule): three seated calf slots — Monday E1 bent-leg (soleus), Wednesday E1 and Friday E1 straight-leg (gastrocnemius). There is no standing calf work in this program: the gym has no standing calf machine, so no session should substitute one. Every slot carries a fallback because the bent-leg machine has been out of service. Skip all three entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges they are the first movements removed under the foot-load rule.",
   "Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking.",
   "Ramp-up sets stay outside the ledger: Set 1 very easy x 8-10 reps at RPE 3-4; Set 2 easy/moderate x 5-8 reps at RPE 4-5 only if needed.",
   "Required later recovery is separate same-day work and stays easy: effort 1-3/10, pain 0-2/10 maximum.",
@@ -129,6 +143,15 @@ const FOOT_WALKING_CUE =
 
 const CONTROLLED_STRENGTH_CUE =
   "Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. ";
+
+/**
+ * Shared by Wednesday E1 and Friday E1 — the straight-leg (gastrocnemius) calf
+ * slot. The seated straight-leg machine is the default; the leg press calf
+ * press is the fallback, because gym machines here go out of service. There is
+ * no standing variant anywhere in this program.
+ */
+const STRAIGHT_LEG_CALF_CUE =
+  "Kg load. Straight knee, gastrocnemius emphasis. Equipment alternates: the Seated Straight-Leg Calf Machine is the default; the Leg Press Calf Press is the fallback when the machine is taken or out of service — balls of the feet low on the platform and stay fully seated on it, never perched on the edge, knees soft but not locked, safety catches engaged, and a noticeably lighter load than a working leg press set. Controlled return without forcing dorsiflexion, full range without forcing the end range, no bouncing out of the bottom, no chasing load. There is no standing calf raise option in this program — the gym has no standing calf machine, so do not substitute one. Foot-load gate: skip this exercise entirely if sole or plantar pain is 3/10 or higher; alongside walking lunges it is among the first movements removed under the foot-load rule. Stop immediately on sharp pain.";
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
@@ -159,12 +182,12 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "B2 Walking Lunges",
-        sets: 4,
+        sets: 3,
         reps: "12-20 steps total (6-10 per leg)",
         tempo: "controlled steps",
         restSeconds: 300,
         targetRPE: "5-6",
-        cues: `${WEEK4_MAIN_CUE}Kg load. Dumbbells 16 kg. Weighted now, not bodyweight. Not conditioning. Controlled steps, tall torso, front foot flat, knee tracks over middle toes, no rushing. Pain rule: skip if sole pain, ankle pain, knee pain, lower-back irritation, or balance loss appears. If sole/ankle pain reaches 3/10 at any point during the session, skip the remaining lunge sets — do not push through them. Under the foot-load rule, walking lunges remain the first exercise removed.`,
+        cues: `${WEEK4_MAIN_CUE}Kg load. Dumbbells 16 kg. Weighted now, not bodyweight. Not conditioning. Controlled steps, tall torso, front foot flat, knee tracks over middle toes, no rushing. Pain rule: skip if sole pain, ankle pain, knee pain, lower-back irritation, or balance loss appears. If sole/ankle pain reaches 3/10 at any point during the session, skip the remaining lunge sets — do not push through them. Under the foot-load rule, walking lunges remain the first exercise removed. Optional fourth set only if feet, knees and balance are all quiet — skip it by default.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
@@ -199,6 +222,17 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         targetRPE: "5-6",
         cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled inward squeeze, pelvis still, no rocking, no chasing load, stop if hip/groin/knee discomfort appears. Rest 120 seconds after D2.`,
         supersetGroup: "D",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E1 Seated Bent-Leg Calf Raise or Seated Dumbbell Calf Raise",
+        sets: 2,
+        reps: "12-20",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Bent knee, soleus emphasis. Equipment alternates: the seated bent-leg calf machine is the default; seated dumbbell calf raises are the fallback when the machine is out of service — dumbbells across the knees, balls of the feet on a plate edge. This is Monday's deliberately lighter calf option because walking lunges already load the sole in this session. Controlled tempo, full range without forcing the end range, no bouncing, no chasing load. Stop if the thigh pad irritates the knees. There is no standing calf raise option in this program — the gym has no standing calf machine. Foot-load gate: skip this exercise entirely if sole or plantar pain is 3/10 or higher; alongside walking lunges it is among the first movements removed under the foot-load rule. Placed last so dropping it costs nothing else in the session.`,
+        supersetGroup: "E",
         exerciseType: "WORKING",
       },
     ],
@@ -263,13 +297,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Triceps Extension Machine or Triceps Pushdown, bar",
+        exerciseName: "C1 Triceps Extension Machine or Overhead Cable Triceps Extension",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Triceps Extension Machine (downstairs) or Triceps Pushdown, bar (upstairs) — use whichever floor you are on. Elbows pinned, finish with control, avoid leaning over the cable.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Triceps Extension Machine (downstairs) or Overhead Cable Triceps Extension (upstairs) — use whichever floor you are on. Machine: elbows pinned, finish with control, avoid leaning over the cable. Overhead cable: straight or curved bar, cable anchor set at mid-height rather than the floor so the torso stays upright; standing or staggered stance, ribs down, no lumbar extension, elbows pinned, lighter load than the machine. The overhead cable variant is elbow-extension accessory work, not overhead pressing — it is not gated by the lower-back rule.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
@@ -285,13 +319,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C3 Reverse Pec Deck or Dead Hang",
+        exerciseName: "C3 Reverse Pec Deck or Face Pull or Dead Hang",
         sets: 3,
-        reps: "12-15 reps pec deck / 20-40 seconds hold dead hang",
+        reps: "12-15 reps pec deck / 12-15 reps face pull / 20-40 seconds hold dead hang",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load on the pec deck; bodyweight on the dead hang. Equipment alternates: Reverse Pec Deck (downstairs) or Dead Hang (upstairs) — use whichever floor you are on. Pec deck: 12-15 reps, rear delts, elbows soft, shoulder blades move smoothly, no jerking. Dead hang: 20-40 second hold, relaxed shoulders, easy breathing, stop the hold early if grip, shoulder, or lower-back discomfort appears.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load on the pec deck and face pull; bodyweight on the dead hang. Equipment alternates: Reverse Pec Deck (downstairs), Face Pull (either floor), or Dead Hang (upstairs) — use whichever is free. Pec deck: 12-15 reps, rear delts, elbows soft, shoulder blades move smoothly, no jerking. Face pull: 12-15 reps, pull to eye level, elbows high, neck relaxed, no swinging. Dead hang: 20-40 second hold, relaxed shoulders, easy breathing, stop the hold early if grip, shoulder, or lower-back discomfort appears.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
@@ -365,6 +399,39 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         targetRPE: "5-6",
         cues: `${WEEK4_ACCESSORY_CUE}Kg load. Outer hip/glute medius focus, pelvis still, control out and back, no jerking.`,
         supersetGroup: "D",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E1 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
+        sets: 2,
+        reps: "12-20",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}${STRAIGHT_LEG_CALF_CUE}`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E2 Cable Lateral Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging.`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E3 Supported Cable Anti-Rotation Hold",
+        sets: 2,
+        reps: "10-20 seconds per side",
+        tempo: "steady hold",
+        restSeconds: 90,
+        targetRPE: "4-5",
+        cues: "Kg load. Tall posture, ribs down, hips square, resist rotation, no twisting, no heavy bracing.",
+        supersetGroup: "E",
         exerciseType: "WORKING",
       },
     ],
@@ -458,112 +525,112 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: UPPER_ACCESSORY_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Pec Deck or High-to-Low Cable Fly",
-        sets: 2,
+        exerciseName: "A1 Pec Deck or Single-Arm Cable Fly",
+        sets: 3,
         reps: "12-15",
         tempo: "2-1-2",
-        restSeconds: 120,
+        restSeconds: 0,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled stretch, smooth squeeze, no shoulder pain, do not go heavy. Reason: chest balance without adding more incline pressing.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Superset with A2 — minimal rest between A1 and A2, then rest 120 seconds after A2. Controlled stretch, smooth squeeze, no shoulder pain, do not go heavy.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "A2 Chest-Supported Row or Seated Cable Row",
+        exerciseName: "A2 Reverse Pec Deck or Reverse Cable Fly",
+        sets: 3,
+        reps: "12-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Second half of the A superset; rest 120 seconds after this exercise. Rear delts, elbows soft, shoulder blades move smoothly, no jerking.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 T-Bar Chest-Supported Row or Chest-Supported Row",
         sets: 3,
         reps: "10-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled row, pause near ribs, no body swing, smooth return.`,
-        supersetGroup: "A",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Chest-supported only on both variants — an unsupported landmine T-bar is a loaded hip hinge and is not permitted under the back-pain rules. Chest stays on the pad throughout. Pause near the ribs, no body swing, smooth return.`,
+        supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B1 Cable Curl",
+        exerciseName: "C1 Dumbbell Preacher Curl or Machine Preacher Curl",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Elbows controlled, no swinging, shoulders quiet.`,
-        supersetGroup: "B",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Triple superset with C2 and C3: rounds 1 and 2 run all three, round 3 is C1 only. Rest 120 seconds after each round. Dumbbell is the default because the machine is often occupied. On either variant, stop short of full elbow extension at the bottom, elbow supported on the pad, no swinging, no dropping into the stretch.`,
+        supersetGroup: "C",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "B2 Rope Triceps Pressdown",
-        sets: 3,
+        exerciseName: "C2 Reverse Curl",
+        sets: 2,
         reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Elbows pinned, finish with control, no leaning over cable.`,
-        supersetGroup: "B",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C1 Face Pull",
-        sets: 3,
-        reps: "12-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Pull to eye level, elbows high, neck relaxed, no swinging.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Runs in rounds 1 and 2 of the C triple superset only. Overhand grip, elbows pinned, ribs down, no torso swing, no wrist flicking. Forearm and brachialis work, not a second biceps slot.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C2 Dumbbell / Plate Lateral Raise",
-        sets: 3,
+        exerciseName: "C3 Cable or Dumbbell Wrist Curl",
+        sets: 2,
         reps: "12-20",
         tempo: "2-1-2",
         restSeconds: 120,
-        targetRPE: "6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging. Adds side-delt volume without overhead pressing — overhead work stays removed under the lower-back rule.`,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Runs in rounds 1 and 2 of the C triple superset only. Forearms supported, wrists past the edge, slow lower, no bouncing, light load.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "D1 Supported Cable Anti-Rotation Hold",
-        sets: 2,
-        reps: "10-20 seconds per side",
-        tempo: "steady hold",
-        restSeconds: 90,
-        targetRPE: "4-5",
-        cues: "Kg load. Tall posture, ribs down, hips square, resist rotation, no twisting, no heavy bracing.",
+        exerciseName: "D1 Seated Machine Shoulder Press",
+        sets: 3,
+        reps: "8-12",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use the back support. Seated and controlled, ribs down, no excessive arching, comfortable press path, stop before shoulder pinch, no grinding. This is overhead pressing: removed while lower-back pain is 3/10 or higher — it returns when pain clears, the same gate as Tuesday B3. Stop immediately if pain shoots down the leg or nerve-like symptoms appear.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "E1 Cable or Dumbbell Wrist Curl",
-        sets: 2,
-        reps: "12-20",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Cable Wrist Curl or Dumbbell Wrist Curl — use whichever is free. Forearms supported on the bench or thighs, wrists just past the edge, smooth curl up, slow lower into a comfortable stretch, no bouncing at the bottom. Light load; stop if the wrist or elbow complains.`,
-        supersetGroup: "E",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "E2 Reverse Curl",
-        sets: 2,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Overhand grip, elbows pinned to the sides, tall posture with ribs down, no torso swing, no wrist flicking. Lighter than the cable curl — this is forearm and brachialis work, not a second biceps slot.`,
-        supersetGroup: "E",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "F1 Seated Calf Raise or Standing Calf Raise",
+        exerciseName: "E1 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
         sets: 3,
         reps: "12-20",
         tempo: "controlled",
         restSeconds: 90,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. This slot reverses the earlier program rule of no direct loaded calf raises — it is deliberate, and it is conditional. Equipment alternates: Seated Calf Raise (knee bent) is the lower-tension default — choose it when the soles feel at all irritated. Standing Calf Raise is the progression and only when the soles are quiet. Controlled tempo throughout, full range without forcing the end range, no bouncing out of the bottom, no chasing load. Foot-load gate: skip this exercise entirely if sole or plantar pain is 3/10 or higher. Alongside walking lunges it is the first movement removed under the foot-load rule. Stop immediately on sharp pain, and placed last on purpose so dropping it costs nothing else in the session.`,
+        cues: `${WEEK4_ACCESSORY_CUE}${STRAIGHT_LEG_CALF_CUE}`,
+        supersetGroup: "E",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "F1 Cable Lateral Raise",
+        sets: 3,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 0,
+        targetRPE: "6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Superset with F2 — rest 120 seconds after F2. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging.`,
+        supersetGroup: "F",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "F2 Overhead Cable Triceps Extension",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Second half of the F superset; rest 120 seconds after this exercise. Straight or curved bar, cable anchor set at mid-height rather than the floor so the torso stays upright, ribs down, no lumbar extension, elbows pinned. This is elbow-extension accessory work, not overhead pressing — it is not gated by the lower-back rule.`,
         supersetGroup: "F",
         exerciseType: "WORKING",
       },
