@@ -259,7 +259,7 @@ export function CustomWorkoutBuilder({
       <div className="mt-6 border-t border-rule pt-6">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h3>Selected exercises</h3>
-          <span className="num text-caption text-tertiary">{selectedExercises.length} queued</span>
+          <span className="num text-right text-caption text-tertiary">{selectedExercises.length} queued</span>
         </div>
         <p className="mt-1 text-caption text-tertiary">
           Adjust the working details directly in the list.
@@ -370,7 +370,7 @@ export function CustomWorkoutBuilder({
       <div className="mt-6 border-t border-rule pt-6">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h3>Saved templates</h3>
-          <span className="num text-caption text-tertiary">
+          <span className="num text-right text-caption text-tertiary">
             {settings.workoutTemplates.length} saved
           </span>
         </div>

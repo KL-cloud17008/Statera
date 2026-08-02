@@ -202,8 +202,8 @@ function PainChip({
       disabled={disabled}
       onClick={() => onSelect(value)}
       className={cn(
-        /* `tabular` is not a utility — the numerals were never tabular. */
-        "flex size-touch items-center justify-center rounded-control border font-mono text-row font-medium tabular-nums",
+        /* Centred by the flex box, so `.num` supplies figure style only. */
+        "num flex size-touch items-center justify-center rounded-control border text-row font-medium",
         "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
         "disabled:cursor-not-allowed disabled:opacity-45",

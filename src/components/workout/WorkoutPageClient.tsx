@@ -197,7 +197,7 @@ export function WorkoutPageClient({
                 <span className="text-body font-medium text-primary">
                   {nextTrainingDay.day.sessionName}
                 </span>
-                <span className="num text-caption text-tertiary">
+                <span className="num text-right text-caption text-tertiary">
                   {nextTrainingStats.exerciseCount} exercises · ~{nextTrainingStats.estimatedMinutes}m
                 </span>
               </div>

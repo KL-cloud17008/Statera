@@ -98,7 +98,7 @@ export function ExerciseCard({
             </div>
 
             <div className="flex shrink-0 flex-wrap items-center gap-4">
-              <span className="num text-row text-secondary">
+              <span className="num text-right text-row text-secondary">
                 {setCount} {setCount === 1 ? "set" : "sets"}
               </span>
               {exercise.cues ? (
@@ -126,7 +126,7 @@ export function ExerciseCard({
             <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
               <span className="text-label uppercase text-tertiary">Last session</span>
               {exercisePrevSets.map((set) => (
-                <span key={set.setNumber} className="num text-caption text-secondary">
+                <span key={set.setNumber} className="num text-right text-caption text-secondary">
                   S{set.setNumber} {formatWorkoutLoad(set.weightUsed)} x {set.repsCompleted ?? "--"}
                 </span>
               ))}

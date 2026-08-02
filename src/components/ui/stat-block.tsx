@@ -45,7 +45,7 @@ export function StatBlock({
         <span className="text-label uppercase text-tertiary">{label}</span>
         {icon ? <span className="text-tertiary">{icon}</span> : null}
       </div>
-      <span className={cn("font-mono tabular-nums font-medium leading-none", valueSize, toneClass[tone])}>
+      <span className={cn("num font-medium leading-none", valueSize, toneClass[tone])}>
         {value}
       </span>
       {caption ? <span className="text-caption text-tertiary">{caption}</span> : null}

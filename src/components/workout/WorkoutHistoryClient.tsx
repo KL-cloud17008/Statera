@@ -117,7 +117,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                         : "border-transparent hover:bg-row-hover"
                     )}
                   >
-                    <span className={cn("num text-row", isSelected ? "text-accent" : "text-primary")}>
+                    <span className={cn("num text-right text-row", isSelected ? "text-accent" : "text-primary")}>
                       {day.day}
                     </span>
                     {/* Training days are marked by a dot rather than a fill, so
@@ -155,7 +155,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                   <div key={session.id} className="py-4">
                     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                       <span className="text-body font-medium text-primary">{session.label}</span>
-                      <span className="num text-caption text-tertiary">
+                      <span className="num text-right text-caption text-tertiary">
                         {new Date(`${session.trainingDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
                       </span>
                     </div>

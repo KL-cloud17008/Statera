@@ -147,7 +147,7 @@ export function Num({
         : tone === "secondary"
           ? "text-secondary"
           : "text-primary";
-  return <span className={cn("num", toneClass, className)}>{children}</span>;
+  return <span className={cn("num text-right", toneClass, className)}>{children}</span>;
 }
 
 /**

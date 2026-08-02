@@ -401,12 +401,14 @@
     display: none;
   }
 
-  /* Every numeral in the ledger: mono, tabular, right-aligned by default. */
+  /* Every numeral in the ledger: mono, tabular. Figure style only — alignment
+     is the call site's business, because the same figures are right-aligned in
+     a ledger column, left-aligned under a label, and centred inside the step
+     ring. Ledger columns pair this with `text-right`. */
   .num {
     font-family: var(--font-family-mono);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
-    text-align: right;
     white-space: nowrap;
   }
 

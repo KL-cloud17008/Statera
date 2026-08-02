@@ -27,7 +27,9 @@ export function PeriodToggle<T extends string>({
             aria-pressed={active}
             onClick={() => onChange(option.value)}
             className={cn(
-              "min-h-8 rounded-pill px-3 font-mono text-label uppercase",
+              /* Was bare `font-mono`, which gave mono glyphs but proportional
+                 figures — `.num` is the one expression of that intent. */
+              "num min-h-8 rounded-pill px-3 text-label uppercase",
               "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
               /* The active chip is ink with paper text. The previous pairing

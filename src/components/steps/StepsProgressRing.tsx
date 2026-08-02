@@ -46,14 +46,13 @@ export function StepsProgressRing({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5 text-center">
-        {/* `.num` is the ledger-row numeral and right-aligns; these are
-            centred inside the ring, so they take the same mono + tabular
-            figures without the alignment. */}
-        <span className="font-mono tabular-nums text-data-lg font-medium leading-none text-primary">
+        {/* `.num` carries figure style only, so these stay centred by the
+            parent's text-center. */}
+        <span className="num text-data-lg font-medium leading-none text-primary">
           {current.toLocaleString()}
         </span>
         <span className="text-caption text-tertiary">of {goal.toLocaleString()}</span>
-        <span className="font-mono tabular-nums mt-1 text-label text-tertiary">{percentage}%</span>
+        <span className="num mt-1 text-label text-tertiary">{percentage}%</span>
       </div>
     </div>
   );

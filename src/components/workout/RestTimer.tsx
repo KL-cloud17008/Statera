@@ -105,7 +105,7 @@ export function RestTimer({
           size="icon-sm"
           onClick={() => adjustDuration(-15)}
           disabled={!isRunning && duration <= 15}
-          className={cn("num text-caption", inkControl)}
+          className={cn("num text-right text-caption", inkControl)}
           aria-label="Reduce rest timer by 15 seconds"
         >
           -15
@@ -131,7 +131,7 @@ export function RestTimer({
             aria-label={`Start ${duration} second rest timer`}
           >
             <Timer className="size-3.5" />
-            <span className="num">{duration}s</span>
+            <span className="num text-right">{duration}s</span>
           </Button>
         )}
         <Button
@@ -139,7 +139,7 @@ export function RestTimer({
           variant="ghost"
           size="icon-sm"
           onClick={() => adjustDuration(15)}
-          className={cn("num text-caption", inkControl)}
+          className={cn("num text-right text-caption", inkControl)}
           aria-label="Increase rest timer by 15 seconds"
         >
           +15
@@ -170,20 +170,20 @@ export function RestTimer({
           variant="link"
           onClick={() => adjustDuration(-15)}
           disabled={duration <= 15}
-          className="num text-row"
+          className="num text-right text-row"
           aria-label="Reduce rest timer by 15 seconds"
         >
           -15
         </Button>
         <Button type="button" variant="link" onClick={start} className="gap-2 text-row">
           <Timer className="size-3.5" />
-          <span className="num">{duration}s</span>
+          <span className="num text-right">{duration}s</span>
         </Button>
         <Button
           type="button"
           variant="link"
           onClick={() => adjustDuration(15)}
-          className="num text-row"
+          className="num text-right text-row"
           aria-label="Increase rest timer by 15 seconds"
         >
           +15
@@ -197,7 +197,7 @@ export function RestTimer({
       <span className="text-label uppercase text-tertiary">Rest</span>
       <span
         className={cn(
-          "num text-data-md font-medium",
+          "num text-right text-data-md font-medium",
           timeLeft === 0 ? "text-accent" : "text-primary"
         )}
       >
