@@ -66,7 +66,7 @@ function SelectContent({
           /* An overlay is the one thing permitted to float, so it carries the
              only shadow in the system plus an opaque fill — without both it
              renders as text over the page beneath it. */
-          "z-50 max-h-80 min-w-[12rem] overflow-hidden rounded-panel border border-rule bg-overlay p-1 text-primary shadow-[var(--shadow-overlay)]",
+          "z-50 max-h-80 min-w-[12rem] overflow-hidden rounded-panel border border-rule bg-overlay p-1 text-primary shadow-overlay",
           className
         )}
         {...props}

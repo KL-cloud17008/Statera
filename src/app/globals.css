@@ -15,6 +15,7 @@
   --color-sunken: var(--surface-sunken);
   --color-row-hover: var(--surface-row-hover);
   --color-overlay: var(--surface-overlay);
+  --color-scrim: var(--surface-scrim);
 
   /* Obsidian chrome */
   --color-ink: var(--ink-900);
@@ -120,6 +121,15 @@
   --color-input: var(--rule);
   --color-ring: var(--focus-ring-color);
   --color-destructive: var(--critical);
+}
+
+/* Elevation — overlays only, so there is exactly one shadow utility.
+   Declared with @utility rather than as a `--shadow-*` theme key: the token is
+   already named --shadow-overlay, and a theme key of the same name compiles to
+   a self-referential `--shadow-overlay: var(--shadow-overlay)` that only
+   resolves because tokens.css sits outside the theme layer. */
+@utility shadow-overlay {
+  box-shadow: var(--shadow-overlay);
 }
 
 @layer base {
