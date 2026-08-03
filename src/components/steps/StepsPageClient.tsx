@@ -70,7 +70,14 @@ export function StepsPageClient({
               label="Today"
               size="xl"
               value={stats.todaySteps.toLocaleString()}
-              detail={`of ${settings.stepGoal.toLocaleString()} · ${formatDistance(stats.todaySteps, settings.distanceUnit)}`}
+              detail={
+                <>
+                  of <span className="num">{settings.stepGoal.toLocaleString()}</span> ·{" "}
+                  <span className="num">
+                    {formatDistance(stats.todaySteps, settings.distanceUnit)}
+                  </span>
+                </>
+              }
             />
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
             <Figure
@@ -105,7 +112,13 @@ export function StepsPageClient({
               label="Best day"
               size="lg"
               value={stats.bestDay?.steps?.toLocaleString() ?? "--"}
-              detail={stats.bestDay?.date ?? "No data yet"}
+              detail={
+                stats.bestDay?.date ? (
+                  <span className="num">{stats.bestDay.date}</span>
+                ) : (
+                  "No data yet"
+                )
+              }
             />
             </div>
           </dl>

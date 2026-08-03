@@ -401,10 +401,14 @@
     display: none;
   }
 
-  /* Every numeral in the ledger: mono, tabular. Figure style only — alignment
-     is the call site's business, because the same figures are right-aligned in
-     a ledger column, left-aligned under a label, and centred inside the step
-     ring. Ledger columns pair this with `text-right`. */
+  /* `.num` marks a quantity read as a value; not numerals inside names,
+     labels, or short mixed-content chips.
+
+     Figure style only — alignment is the call site's business, because the
+     same figures are right-aligned in a ledger column, left-aligned under a
+     label, and centred inside the step ring. Ledger columns pair this with
+     `text-right`. Where a value sits inside a sentence, wrap the value alone,
+     not the element. */
   .num {
     font-family: var(--font-family-mono);
     font-variant-numeric: tabular-nums;

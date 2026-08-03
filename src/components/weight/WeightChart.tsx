@@ -176,7 +176,10 @@ export function WeightChart({
             type="button"
             aria-pressed={zoom === range}
             onClick={() => setZoom(range)}
-            className="h-7 px-2.5"
+            /* Same segmented-range idiom as PeriodToggle on /steps, which is
+               already `.num`; without this the two controls render the same
+               kind of label in two different fonts. */
+            className="num h-7 px-2.5"
           >
             {range}
           </Button>
@@ -185,7 +188,8 @@ export function WeightChart({
         <div className="relative">
         {!showFullGoal && goalWeight != null ? (
           <span className="absolute bottom-4 right-5 z-10 rounded-pill border border-rule bg-sunken px-2.5 py-1 font-mono text-label uppercase text-secondary">
-            Goal {goalWeight.toFixed(1)} lb{goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
+            Goal <span className="num">{goalWeight.toFixed(1)}</span> lb
+            {goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
           </span>
         ) : null}
         <ResponsiveContainer width="100%" height={280}>
