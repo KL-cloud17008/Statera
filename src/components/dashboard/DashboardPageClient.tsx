@@ -15,6 +15,7 @@ import {
   buildPlanDayStats,
   findNextTrainingDay,
   getPlanDay,
+  isStepGoalSuspendedByPlan,
 } from "@/lib/plan-preview";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
 import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
@@ -95,7 +96,10 @@ export function DashboardPageClient({
   painCheckIn: SerializedPainCheckIn | null;
 }) {
   const { settings } = useAppSettings();
-  const stepStats = calculateStepStats(stepsEntries, settings.stepGoal, { timezone });
+  const stepStats = calculateStepStats(stepsEntries, settings.stepGoal, {
+    timezone,
+    isGoalSuspended: isStepGoalSuspendedByPlan,
+  });
   const greeting = getGreeting();
   const heroDateLabel = new Date().toLocaleDateString("en-US", {
     weekday: "short",

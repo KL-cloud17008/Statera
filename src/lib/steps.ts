@@ -26,6 +26,22 @@ type StepStatsOptions = {
   todayLocalDate?: string;
   timezone?: string;
   recentLimit?: number;
+  /**
+   * True for a date whose step goal was suspended, so an absent entry for it is
+   * not a gap in the record. Injected rather than derived here: the suspension
+   * rule lives with the plan, and this module stays pure.
+   *
+   * Omitting it preserves the previous behaviour exactly — every absent day
+   * counts.
+   *
+   * GAP: `stepGoalSuspended` on the dashboard has two arms — no plan day for
+   * the date, OR foot-flare recovery active on it. Callers currently supply
+   * only the plan-day arm, because the recovery arm cannot be reconstructed
+   * for a past date: its third condition reads a live-computed recommendation
+   * title, and the client components hold only today's pain and mobility rows.
+   * A recovery day with no steps logged is therefore still counted here.
+   */
+  isGoalSuspended?: (date: string) => boolean;
 };
 
 type StepStatsOptionsInput = string | StepStatsOptions;
@@ -181,7 +197,8 @@ export function calculateStepStats(
   dailyStepGoal: number,
   options?: StepStatsOptionsInput
 ) {
-  const { todayLocalDate, timezone, recentLimit } = normalizeStatsOptions(options);
+  const { todayLocalDate, timezone, recentLimit, isGoalSuspended } =
+    normalizeStatsOptions(options);
   const today = todayLocalDate ?? getTodayDateString(timezone);
   const goal = Math.max(1, dailyStepGoal);
   const byDate = buildStepsByDate(entries);
@@ -206,6 +223,13 @@ export function calculateStepStats(
   while (earliestLoggedDate != null && cursor >= earliestLoggedDate) {
     const loggedSteps = byDate.get(cursor);
     if (loggedSteps == null) {
+      // A suspended day has no goal to miss, so it is skipped outright: it
+      // neither prompts a backfill nor counts toward the run that ends a
+      // streak. Counting it in the run would let a long weekend break one.
+      if (isGoalSuspended?.(cursor)) {
+        cursor = addDaysToDateString(cursor, -1);
+        continue;
+      }
       pendingUnloggedRun += 1;
       if (pendingUnloggedRun > MAX_BRIDGEABLE_UNLOGGED_RUN) {
         break;

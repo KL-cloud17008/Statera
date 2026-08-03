@@ -10,6 +10,7 @@ import { StepsHistoryList } from "@/components/steps/StepsHistoryList";
 import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { getTodayDateString } from "@/lib/dates";
+import { isStepGoalSuspendedByPlan } from "@/lib/plan-preview";
 import {
   calculateStepStats,
   getWeeklyStepChange,
@@ -27,7 +28,10 @@ export function StepsPageClient({
   backfillDate?: string;
 }) {
   const { settings } = useAppSettings();
-  const stats = calculateStepStats(entries, settings.stepGoal, { timezone });
+  const stats = calculateStepStats(entries, settings.stepGoal, {
+    timezone,
+    isGoalSuspended: isStepGoalSuspendedByPlan,
+  });
   const weeklyChange = getWeeklyStepChange(entries, timezone);
   const today = getTodayDateString(timezone);
   const monthPrefix = today.slice(0, 7);
