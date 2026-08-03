@@ -792,8 +792,26 @@ both states.
 | Category | Elements |
 | --- | ---: |
 | Numerals rendering as JetBrains Mono **with** `tabular-nums` | 802 |
-| **Data numerals rendering without mono + tabular-nums** | 126 |
+| ~~Data numerals rendering without mono + tabular-nums~~ **126 — WRONG, see below** | ~~126~~ |
 | Prose containing incidental digits (dates, "3 x 10-12", "Block C:") | 842 |
+
+> **Correction (2026-08-02).** The 126 is inflated, and the data/prose split
+> below is wrong in the same way. **Cause:** the classifier scored each
+> element's *digit-bearing child text nodes* rather than its whole
+> `textContent`. JSX splits `Block {n}` into two text nodes, `"Block "` and
+> `"1"`, so `<p>Block 1</p>` was scored as the bare data numeral `"1"`. Every
+> numeral fused to a word by JSX interpolation was miscounted as a data
+> numeral: `Block 1`, `120s rest`, `Goal 8,000`, `of 8,000`, `At risk —
+> backfill 5 days`. Re-classifying the same elements on full `textContent`
+> moves roughly a third of the 126 into the prose column, and a further 4 are
+> `#recharts_measurement_span` — an off-flow node Recharts uses to measure
+> text, not rendered UI at all.
+>
+> Measured on the post-fix tree with the corrected classifier: **39 genuine
+> data numerals per viewport**, of which the steps heatmap is 31.
+>
+> **Any future sweep must classify on the element's whole `textContent`.**
+> Digit-bearing text nodes alone will always over-report.
 
 Data numerals are the flag. Prose is listed second for completeness — body copy is expected to be Inter.
 
