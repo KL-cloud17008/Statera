@@ -121,6 +121,12 @@ const FOOT_FLARE_RECOVERY_INTRO =
 const FOOT_FLARE_RECOVERY_NOT_WORKOUT =
   "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout. No aggressive stretching, no digging hard into the sole, and no extra fatigue.";
 
+export const RIGHT_SOLE_PACE_RULE =
+  "Use the fastest pace that keeps gait normal and sole discomfort mild. Speed is optional; walking volume and consistency matter more.";
+
+export const RIGHT_SOLE_STOP_RULE =
+  "Stop and seek evaluation for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening, or new/worsening pain at rest or at night.";
+
 const FOOT_FLARE_RECOVERY_RULES = [
   FOOT_FLARE_RECOVERY_INTENSITY.effort,
   FOOT_FLARE_RECOVERY_INTENSITY.pain,
@@ -132,7 +138,7 @@ const MOVEMENT_CATALOG = {
   ankleCircles: {
     id: "ankle-circles",
     name: "Ankle Circles",
-    dose: "1-2 sets of 5-10 slow circles each direction per ankle",
+    dose: "1 set x 8-10 controlled circles each direction per ankle",
     cues: "Move slowly and smoothly; stay in a comfortable range without forcing the ankle.",
     goal: "Improve ankle awareness, gentle joint motion, and lower-leg circulation without loading the feet aggressively.",
     setup: "Sit tall or stand with support so balance is easy, then let one ankle move freely while the rest of the body stays relaxed.",
@@ -301,7 +307,7 @@ const MOVEMENT_CATALOG = {
   anklePumps: {
     id: "seated-ankle-pumps",
     name: "Seated Ankle Pumps",
-    dose: "15-20 reps/side",
+    dose: "20-30 controlled reps",
     cues: "Move slowly between toes-up and toes-down without rushing.",
     goal: "Move the ankles and lower legs before walking or training.",
     howTo: [
@@ -333,7 +339,7 @@ const MOVEMENT_CATALOG = {
   ankleRocks: {
     id: "wall-ankle-rocks",
     name: "Wall Ankle Rocks",
-    dose: "8-10 reps/side",
+    dose: "2 sets x 8-12 reps per side",
     cues: "Heel stays down; knee tracks over the middle toes.",
     goal: "Improve ankle dorsiflexion for walking, leg press setup, and stairs.",
     howTo: [
@@ -432,7 +438,7 @@ const MOVEMENT_CATALOG = {
   tibialisRaises: {
     id: "optional-tibialis-raises",
     name: "Optional tibialis raises",
-    dose: "8-12 easy reps",
+    dose: "2 sets x 10-15 controlled reps",
     cues: "Lift the toes toward the shins while the heels stay planted.",
     goal: "Lightly strengthen the front of the shins for ankle control.",
     howTo: [
@@ -459,8 +465,39 @@ const MOVEMENT_CATALOG = {
       "Do 5 reps only.",
       "Skip this movement and still count the base as complete if it is painful.",
     ],
-    completionTarget: "Complete 8-12 easy reps, or skip if it is not available or uncomfortable.",
-    intensity: DEFAULT_INTENSITY,
+    completionTarget: "Complete 10-15 controlled reps at RPE 3-5 without cramping or rushing.",
+    intensity: {
+      ...DEFAULT_INTENSITY,
+      effort: "RPE: 3-5",
+      goal: "Goal: build front-of-ankle capacity without fatigue",
+    },
+  },
+  calfCapacityIsometric: {
+    id: "supported-calf-isometric",
+    name: "Seated calf raise isometric",
+    category: "Foot / Ankle Capacity",
+    dose: "2 sets x 20-30 seconds",
+    cues: "Light load only. Hold a comfortable mid-range; no bouncing or fatigue chasing.",
+    goal: "Introduce low-dose calf capacity while symptoms are calm.",
+    setup: "Sit supported with both feet grounded. Add only bodyweight or a very light load if comfortable.",
+    howTo: [
+      "Set both feet flat and keep the knees relaxed.",
+      "Lift the heels slightly and hold a quiet isometric position.",
+      "Breathe normally and stop before the calf or sole feels worked.",
+      "Lower slowly and rest before the next hold.",
+    ],
+    beginnerPointers: ["Use bodyweight first.", "Keep the pressure even through the foot tripod.", "A supported double-leg calf raise is the fallback."],
+    commonMistakes: ["Bouncing", "Loading heavily", "Training to failure", "Continuing when pain is increasing"],
+    scaleDown: ["Shorten the hold to 10-15 seconds.", "Use a smaller heel lift.", "Skip the capacity block and keep the daily base."],
+    progression: ["Add time before load.", "Use less hand support only if gait and symptoms remain normal."],
+    completionTarget: "Complete two calm 20-30 second holds with pain no higher than 2-3/10 and no next-morning increase.",
+    painRule: "Only continue if pain stays at or below 2-3/10, gait stays normal, and symptoms settle afterward.",
+    intensity: {
+      effort: "RPE: 3-4",
+      pain: "Pain: 0-2/10 preferred; 3/10 only if stable",
+      breathing: "Breathing: easy and unforced",
+      goal: "Goal: capacity, not fatigue",
+    },
   },
   thoracicOpenBooks: {
     id: "thoracic-open-books",
@@ -1463,20 +1500,49 @@ function movement(key: MovementKey, override: MovementOverride = {}): MobilityEx
 function dailyLowerLegBase(): MobilityBlock {
   return {
     id: "daily-lower-leg-base",
-    title: "Daily lower-leg base",
+    title: "Daily base · ankle range + foot control",
     duration: "6-8 min",
     purpose:
-      "Build foot and ankle control, ankle dorsiflexion, calf and soleus mobility, plantar-fascia resilience, knee tracking, and supported balance without adding fatigue.",
+      "A low-effort daily minimum for ankle range, calf mobility, foot control, and supported balance. Keep it at effort 1-3/10.",
     exercises: [
       movement("anklePumps"),
       movement("ankleCircles"),
       movement("ankleRocks"),
       movement("calfStretch"),
       movement("calfStretchBent"),
-      movement("supportedTandemBalance"),
       movement("supportedSingleLegBalanceKickstand"),
     ],
   };
+}
+
+function ankleCapacityBlock(): MobilityBlock {
+  return {
+    id: "ankle-capacity-block",
+    title: "Capacity · low-dose foot + ankle strength",
+    duration: "4-6 min",
+    purpose:
+      "Use 2-3 days per week while symptoms are calm. Build tolerance gradually without turning mobility into conditioning.",
+    adaptationNote:
+      "Pain 0-2/10 is acceptable. At 3/10, continue only if stable, gait stays normal, and symptoms settle afterward. Above 3/10 or increasing: reduce pace/load and return to the daily base.",
+    exercises: [
+      movement("tibialisRaises"),
+      movement("calfCapacityIsometric"),
+      movement("supportedTandemBalance", {
+        id: "capacity-supported-tandem-balance",
+        dose: "2 rounds x 30-45 seconds each stance",
+        progression: ["Use less hand support before narrowing the stance."],
+      }),
+      movement("supportedSingleLegBalanceKickstand", {
+        id: "capacity-supported-single-leg-kickstand",
+        dose: "2 rounds x 20-30 seconds per side",
+        progression: ["Use less kickstand pressure before removing support."],
+      }),
+    ],
+  };
+}
+
+export function getAnkleCapacityBlock(dayOfWeek: number): MobilityBlock | null {
+  return [1, 3, 5].includes(dayOfWeek) ? ankleCapacityBlock() : null;
 }
 
 function block({
@@ -2055,7 +2121,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Monday",
     trainingRole: "Lower A training day",
     sessionTitle: "Lower A primer",
-    totalDuration: "6-10 min",
+    totalDuration: "12-16 min",
     todayPurpose:
       "Prepare feet, ankles, knees, hips, hamstrings, glutes, trunk, and breathing before the heaviest lower-body day.",
     previousDayReason:
@@ -2071,6 +2137,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     ],
     blocks: [
       dailyLowerLegBase(),
+      ankleCapacityBlock(),
       block({
         id: "monday-lower-a-prep",
         title: "Lower A prep block",
@@ -2129,7 +2196,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Wednesday",
     trainingRole: "Lower B training day",
     sessionTitle: "Lower B primer",
-    totalDuration: "6-10 min",
+    totalDuration: "12-16 min",
     todayPurpose:
       "Prepare feet, ankles, knees, hips, hamstrings, hip stability, trunk, and breathing for lower accessory work.",
     previousDayReason:
@@ -2145,6 +2212,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     ],
     blocks: [
       dailyLowerLegBase(),
+      ankleCapacityBlock(),
       block({
         id: "wednesday-lower-b-prep",
         title: "Lower B prep block",
@@ -2203,7 +2271,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Friday",
     trainingRole: "Friday chest isolation + row day",
     sessionTitle: "Friday chest + row primer",
-    totalDuration: "6-10 min",
+    totalDuration: "12-16 min",
     todayPurpose:
       "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for chest isolation, supported rows, shoulder work, and arms.",
     previousDayReason:
@@ -2219,6 +2287,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     ],
     blocks: [
       dailyLowerLegBase(),
+      ankleCapacityBlock(),
       block({
         id: "friday-upper-accessory-prep",
         title: "Chest + row prep block",
@@ -2293,21 +2362,37 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     dayName: "Sunday",
     trainingRole: "Complete Rest",
     sessionTitle: "Complete Rest",
-    totalDuration: "0 min",
+    totalDuration: "10-15 min",
     todayPurpose:
-      "Full rest. Keep the day empty and start the next week fresh.",
+      "Rest day movement quality. Keep the session easy, supported, and free of conditioning so the next week starts fresh.",
     previousDayReason:
-      "Saturday was complete rest, so Sunday stays deliberately empty.",
+      "Saturday was complete rest, so Sunday keeps movement quality easy and optional.",
     adaptationNote:
-      "No gym, no make-up training, and no recovery checklist is scheduled.",
-    completionSummary: "Done means the day stayed empty.",
+      "No gym and no make-up training. This is optional movement-quality work, not conditioning.",
+    completionSummary: "Done means you moved well without creating fatigue.",
     logType: "POST_WORKOUT",
     focus: [
-      { label: "Rest match", value: "Complete rest", note: "Keep the day empty." },
+      { label: "Movement quality", value: "10-15 min", note: "Easy range, no conditioning." },
       { label: "Previous day", value: "Recovery rest", note: "No make-up training after Saturday." },
-      { label: "Feel target", value: "Fresh", note: "Start the next week without adding work." },
+      { label: "Feel target", value: "Fresh", note: "Finish calmer than you started." },
     ],
-    blocks: [],
+    blocks: [
+      dailyLowerLegBase(),
+      block({
+        id: "sunday-rest-movement-quality",
+        title: "Rest-day movement quality",
+        duration: "4-7 min",
+        purpose: "Add easy hip, thoracic, hinge, and breathing work after the daily base.",
+        adaptationNote: "Stop before fatigue. Use the supported version of every movement you need.",
+        exercises: [
+          movement("hipFlexorStretch"),
+          movement("thoracicOpenBooks"),
+          movement("catCow"),
+          movement("supportedHipHingeRockBack"),
+          movement("supportedBreathingReset"),
+        ],
+      }),
+    ],
   },
 };
 

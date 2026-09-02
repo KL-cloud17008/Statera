@@ -62,6 +62,14 @@
      which clears 4.5 on all three ink surfaces (5.31 / 5.07 / 4.65). */
   --ink-text-dim: rgba(250, 247, 242, 0.52);
 
+  /* Command surfaces are deeper than the navigation rail and reserved for
+     one page decision, never repeated as a tile grid. */
+  --command-900: #171411;
+  --command-800: #28221c;
+  --command-line: rgba(250, 247, 242, 0.14);
+  --command-text: #fbf8f1;
+  --command-muted: rgba(251, 248, 241, 0.7);
+
   /* ── The one chromatic accent: olive ──────────────────────────────────── */
   /* Active nav, data emphasis, goal-met state. NOT spent on buttons — the
      primary action is a solid ink button. */

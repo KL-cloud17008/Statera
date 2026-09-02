@@ -26,6 +26,11 @@
   --color-ink-text: var(--ink-text);
   --color-ink-muted: var(--ink-text-muted);
   --color-ink-dim: var(--ink-text-dim);
+  --color-command: var(--command-900);
+  --color-command-800: var(--command-800);
+  --color-command-line: var(--command-line);
+  --color-command-text: var(--command-text);
+  --color-command-muted: var(--command-muted);
 
   /* Rules — the structural device */
   --color-rule: var(--rule);
@@ -373,6 +378,75 @@
     top: calc(3rem + env(safe-area-inset-top));
     z-index: 10;
     background-color: var(--surface-canvas);
+  }
+
+  /* A command surface is the authored focal point on decision-heavy pages.
+     Keep its contents asymmetric and quiet; the rest of the page returns to
+     the continuous paper canvas. */
+  .command-surface {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--command-900);
+    color: var(--command-text);
+  }
+
+  .command-surface::after {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    content: "";
+    border: 1px solid var(--command-line);
+    border-radius: inherit;
+  }
+
+  .command-rule {
+    border-color: var(--command-line);
+  }
+
+  .command-metric {
+    border-left: 1px solid var(--command-line);
+    padding-left: var(--space-3);
+  }
+
+  @media (max-width: 639px) {
+    .command-metric:nth-child(odd) {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+
+  .page-enter {
+    animation: page-enter var(--duration-base) var(--ease-out) both;
+  }
+
+  /* Settings uses the card primitives for semantics and form layout, but its
+     visible treatment is a control surface: sections on the canvas, not an
+     admin grid of floating boxes. */
+  .settings-panel {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .settings-panel [data-slot="card-header"] {
+    padding-inline: 0;
+    padding-top: var(--space-5);
+  }
+
+  .settings-panel [data-slot="card-content"] {
+    padding-inline: 0;
+    padding-top: var(--space-4);
+  }
+
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter { animation: none; }
   }
 
   @media (min-width: 768px) {

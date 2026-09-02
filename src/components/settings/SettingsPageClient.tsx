@@ -315,13 +315,13 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     <>
       <PageTitle
         eyebrow="Settings"
-        title="Control panel."
-        lead="Profile values, unit locks, goals, backup, and data safety."
+        title="System controls."
+        lead="Targets, units, backups, and account safety for a private performance ledger."
         className="mb-6"
       />
 
-      <Card>
-        <CardHeader>
+      <Card className="settings-panel">
+        <CardHeader className="border-l-2 border-l-accent pl-4">
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
               <UserRound className="h-5 w-5" />
@@ -379,14 +379,14 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <Card>
+      <div className="grid gap-10 xl:grid-cols-2">
+        <Card className="settings-panel">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
                 <Paintbrush className="h-5 w-5" />
               </div>
-              <CardTitle>Units & Goals</CardTitle>
+              <CardTitle>Targets & units</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -497,13 +497,13 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="settings-panel">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
                 <Palette className="h-5 w-5" />
               </div>
-              <CardTitle>Appearance</CardTitle>
+              <CardTitle>System</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -517,9 +517,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </Card>
       </div>
 
-      <Card>
+      <Card className="settings-panel">
         <CardHeader>
-          <CardTitle>Data management</CardTitle>
+          <CardTitle>Data</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-3">
@@ -555,18 +555,18 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card>
+      <div className="grid gap-10 xl:grid-cols-[1.1fr_0.9fr]">
+        <Card className="settings-panel">
           <CardHeader>
-          <CardTitle>About</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <CardTitle>System notes</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
             <p>Private performance ledger for movement, bodyweight, training volume, and recovery.</p>
             <p>Backups preserve tracker data and local preferences.</p>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-        <Card className="border-critical-line">
+        <Card className="settings-panel border-t-2 border-t-critical">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-critical-surface text-critical">

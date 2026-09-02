@@ -52,9 +52,9 @@ export default function FlexibilityBalancePage() {
   return (
     <>
       <PageTitle
-        eyebrow="Flexibility & Balance"
+        eyebrow="Movement quality"
         title="Movement quality system."
-        lead="What each block is for, the standard it holds to, and how it progresses. Doses and logging live on the Mobility page."
+        lead="A six-part movement-quality map for ankle range, foot control, hips, thoracic motion, balance, and recovery. Doses and logging live on Mobility."
       />
 
       {/* Figures print directly on the canvas. Ink chrome is reserved for the
@@ -69,10 +69,19 @@ export default function FlexibilityBalancePage() {
         </dl>
       </Section>
 
+      <Section title="Choose the layer">
+        <div className="grid gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
+          <ContextLine label="Before lower-body" value="Daily base + hip / hinge prep" href="/mobility#session" />
+          <ContextLine label="Before upper-body" value="Daily base + thoracic / shoulder mobility" href="/mobility#session" />
+          <ContextLine label="After long walking" value="Ankle motion + gentle calf / soleus reset" href="/mobility#later-recovery" />
+          <ContextLine label="Rest day" value="10-15 min, no fatigue or conditioning" href="/mobility#session" />
+        </div>
+      </Section>
+
       <ReferenceBlock
         icon={CircleDot}
-        eyebrow="Daily minimum"
-        title={dailyMinimum.title}
+        eyebrow="Ankle range"
+        title="Controlled range before load"
         purpose={dailyMinimum.purpose}
         standards={[
           "Runs every day, training or rest.",
@@ -87,7 +96,7 @@ export default function FlexibilityBalancePage() {
 
       <ReferenceBlock
         icon={ShieldCheck}
-        eyebrow="Balance"
+        eyebrow="Foot control / balance"
         title="Supported control before challenge"
         purpose="Balance work stays supported, low risk, and repeatable. It builds ankle and hip control for walking load, not a wobble-board challenge."
         standards={[
@@ -107,7 +116,7 @@ export default function FlexibilityBalancePage() {
 
       <ReferenceBlock
         icon={RotateCcw}
-        eyebrow="Required later recovery"
+        eyebrow="Recovery"
         /* Pinned copy: tests/workout-plan.test.mjs asserts this exact heading. */
         title="Weekday recovery blocks"
         purpose={RECOVERY_INTRO}
@@ -125,7 +134,7 @@ export default function FlexibilityBalancePage() {
 
       <ReferenceBlock
         icon={Footprints}
-        eyebrow="Required foot-flare recovery"
+        eyebrow="Walking resilience"
         title={footFlareBlock.title}
         purpose={FOOT_FLARE_RECOVERY_INTRO}
         standards={[...FOOT_FLARE_RECOVERY_RULES]}
@@ -139,7 +148,7 @@ export default function FlexibilityBalancePage() {
 
       <ReferenceBlock
         icon={Spline}
-        eyebrow="Back care"
+        eyebrow="Recovery / back care"
         title={BACK_CARE_DECOMPRESSION.title}
         purpose={BACK_CARE_DECOMPRESSION.purpose}
         standards={[
@@ -251,6 +260,18 @@ function PrincipleList({ title, items }: { title: string; items: string[] }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function ContextLine({ label, value, href }: { label: string; value: string; href: string }) {
+  return (
+    <div className="border-t border-rule pt-3">
+      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="mt-1 text-row font-medium text-primary">{value}</p>
+      <Link href={href} className="mt-2 inline-flex min-h-touch items-center gap-1 text-caption text-secondary underline-offset-4 hover:text-primary hover:underline">
+        Open protocol <ArrowRight className="size-3.5" aria-hidden />
+      </Link>
     </div>
   );
 }

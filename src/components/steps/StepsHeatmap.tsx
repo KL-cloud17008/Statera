@@ -42,9 +42,12 @@ export function StepsHeatmap({
     <div>
       {/* No card: the calendar sits on the canvas under the section rule. */}
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-row text-secondary">
+        <div>
+          <p className="text-label uppercase text-tertiary">Activity ledger</p>
+          <p className="mt-1 text-row text-secondary">
           {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-        </p>
+          </p>
+        </div>
         <div className="flex items-center gap-1">
           <Button
             type="button"
@@ -72,14 +75,14 @@ export function StepsHeatmap({
           <span key={day}>{day}</span>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1.5" aria-label="Monthly step goal heatmap">
         {Array.from({ length: startWeekday }).map((_, index) => (
           <div key={`pad-${index}`} className="aspect-square rounded-control border border-transparent" />
         ))}
         {days.map((day) => (
           <div
             key={day.date}
-            className={`flex aspect-square min-w-0 flex-col justify-between overflow-hidden rounded-control border px-1 py-1 ${getHeatLevel(day.steps, goal)}`}
+            className={`flex aspect-square min-w-0 flex-col justify-between overflow-hidden rounded-control border px-1.5 py-1.5 transition-colors duration-(--duration-fast) ${getHeatLevel(day.steps, goal)}`}
             title={`${day.date}: ${day.steps.toLocaleString()} steps`}
           >
             {/* Day-of-month in a fixed grid — the column only reads as a grid
@@ -90,6 +93,12 @@ export function StepsHeatmap({
             </span>
           </div>
         ))}
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-caption text-tertiary">
+        <span className="text-label uppercase">Goal intensity</span>
+        <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-sunken" /> Some movement</span>
+        <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-accent-subtle border border-accent-line" /> Near goal</span>
+        <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-accent" /> Goal met</span>
       </div>
     </div>
   );

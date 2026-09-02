@@ -6,6 +6,7 @@ import { AlertTriangle, CheckCircle2, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { completeSession, discardWorkoutSession } from "@/actions/workout";
 import { ExerciseCard } from "./ExerciseCard";
+import { SetInput } from "./SetInput";
 import { RestTimer } from "./RestTimer";
 import { SessionPrepStrip } from "./SessionPrepStrip";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,7 @@ export function SessionLogger({
   const [isPending, startTransition] = useTransition();
   const [savedSetKeys, setSavedSetKeys] = useState<Set<string>>(() => buildSavedSetKeys(existingSets));
   const [completedSets, setCompletedSets] = useState<Set<string>>(() => buildSavedSetKeys(existingSets));
+  const [loggedSets, setLoggedSets] = useState<SessionSet[]>(existingSets);
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
   const loggableExercises = useMemo(
     () => exercises.filter(isLoggableTrainingExercise),
@@ -137,6 +139,31 @@ export function SessionLogger({
   }, [completedSets, loggableExercises]);
 
   const currentTarget = findCurrentTarget(loggableExercises, completedSets);
+  const orderedExerciseGroups = useMemo(() => {
+    if (!currentTarget) {
+      return exerciseGroups;
+    }
+
+    const currentIndex = exerciseGroups.findIndex((group) =>
+      group.some((exercise) => exercise.exerciseName === currentTarget.exercise.exerciseName)
+    );
+    if (currentIndex < 0) {
+      return exerciseGroups;
+    }
+
+    const currentGroup = exerciseGroups[currentIndex];
+    const focusedExercise = currentGroup.find(
+      (exercise) => exercise.exerciseName === currentTarget.exercise.exerciseName
+    );
+    const reorderedCurrentGroup = focusedExercise
+      ? [focusedExercise, ...currentGroup.filter((exercise) => exercise !== focusedExercise)]
+      : currentGroup;
+
+    return [
+      reorderedCurrentGroup,
+      ...exerciseGroups.filter((_, index) => index !== currentIndex),
+    ];
+  }, [currentTarget, exerciseGroups]);
   const currentRestSeconds = getProgrammedRestSeconds(
     loggableExercises,
     currentTarget?.exercise
@@ -277,13 +304,53 @@ export function SessionLogger({
             </Button>
           ) : null}
         </div>
+
+        {currentTarget ? (
+          <FocusedSetPanel
+            exercise={currentTarget.exercise}
+            setNumber={currentTarget.setNumber}
+            totalSets={currentTarget.totalSets}
+            sessionId={sessionId}
+            logged={loggedSets.find(
+              (set) =>
+                set.exerciseName === currentTarget.exercise.exerciseName &&
+                set.setNumber === currentTarget.setNumber
+            ) ?? null}
+            previous={previousSets.find(
+              (set) =>
+                set.exerciseName === currentTarget.exercise.exerciseName &&
+                set.setNumber === currentTarget.setNumber
+            ) ?? null}
+            completed={completedSets.has(`${currentTarget.exercise.exerciseName}:${currentTarget.setNumber}`)}
+            onCompletedChange={(checked) =>
+              handleSetCompleteChange(currentTarget.exercise.exerciseName, currentTarget.setNumber, checked)
+            }
+            onSaved={(setKey, values) => {
+              setSavedSetKeys((current) => new Set([...current, setKey]));
+              setLoggedSets((current) => {
+                const next = current.filter(
+                  (set) => !(set.exerciseName === currentTarget.exercise.exerciseName && set.setNumber === currentTarget.setNumber)
+                );
+                return [...next, {
+                  exerciseName: currentTarget.exercise.exerciseName,
+                  setNumber: currentTarget.setNumber,
+                  weightUsed: values.weightUsed,
+                  repsCompleted: values.repsCompleted,
+                  actualRPE: null,
+                  notes: null,
+                }];
+              });
+              setCompletedSets((current) => new Set([...current, setKey]));
+            }}
+          />
+        ) : null}
       </Section>
 
       <Section title="Session prep">
         <SessionPrepStrip note="Arrival only. No Weight/Reps/RPE rows." />
       </Section>
 
-      {exerciseGroups.map((group, groupIndex) => {
+      {orderedExerciseGroups.map((group, groupIndex) => {
         const isGroupedBlock = group.length > 1 && group[0].supersetGroup;
         const restSeconds = group[group.length - 1]?.restSeconds ?? 90;
 
@@ -306,17 +373,22 @@ export function SessionLogger({
                   key={exercise.id}
                   exercise={exercise}
                   sessionId={sessionId}
-                  loggedSets={existingSets.filter((set) => set.exerciseName === exercise.exerciseName)}
+                   loggedSets={loggedSets.filter((set) => set.exerciseName === exercise.exerciseName)}
                   previousSets={previousSets}
-                  onSetLogged={(setKey) => {
-                    setSavedSetKeys((current) => new Set([...current, setKey]));
+                   onSetLogged={(setKey) => {
+                     setSavedSetKeys((current) => new Set([...current, setKey]));
                     setCompletedSets((current) => new Set([...current, setKey]));
                   }}
                   exerciseComplete={completedExercises.has(exercise.exerciseName)}
                   onExerciseCompleteChange={(complete) => handleExerciseCompleteChange(exercise.exerciseName, complete)}
-                  completedSetNumbers={getCompletedSetNumbers(exercise.exerciseName)}
-                  onSetCompleteChange={handleSetCompleteChange}
-                />
+                   completedSetNumbers={getCompletedSetNumbers(exercise.exerciseName)}
+                   onSetCompleteChange={handleSetCompleteChange}
+                   focusSetNumber={
+                     currentTarget?.exercise.exerciseName === exercise.exerciseName
+                       ? currentTarget.setNumber
+                       : null
+                   }
+                 />
               ))}
             </div>
 
@@ -342,9 +414,17 @@ export function SessionLogger({
         />
         <div className="flex items-center justify-between gap-3 px-4 py-2.5">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-row font-medium text-ink-text">
+            <button
+              type="button"
+              className="block max-w-full truncate text-left text-row font-medium text-ink-text"
+              onClick={() => {
+                if (currentTarget) {
+                  document.getElementById(`exercise-${currentTarget.exercise.id}`)?.scrollIntoView({ block: "start", behavior: "smooth" });
+                }
+              }}
+            >
               {currentTarget ? currentTarget.exercise.exerciseName : "All sets logged"}
-            </p>
+            </button>
             <p className="mt-0.5 text-label uppercase text-ink-dim">
               {currentTarget
                 ? `Set ${currentTarget.setNumber} of ${currentTarget.totalSets}`
@@ -354,6 +434,56 @@ export function SessionLogger({
           <RestTimer variant="bar" defaultSeconds={currentRestSeconds} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function FocusedSetPanel({
+  exercise,
+  setNumber,
+  totalSets,
+  sessionId,
+  logged,
+  previous,
+  completed,
+  onCompletedChange,
+  onSaved,
+}: {
+  exercise: PlanExercise;
+  setNumber: number;
+  totalSets: number;
+  sessionId: string;
+  logged: SessionSet | null;
+  previous: PrevSet | null;
+  completed: boolean;
+  onCompletedChange: (checked: boolean) => void;
+  onSaved: (setKey: string, values: { weightUsed: number | null; repsCompleted: number | null }) => void;
+}) {
+  return (
+    <div className="mt-6 rounded-panel border border-rule-strong border-l-2 border-l-accent bg-raised p-4 sm:p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <p className="text-label uppercase text-accent">Current set</p>
+          <p className="mt-1 text-body font-medium text-primary">{exercise.exerciseName}</p>
+        </div>
+        <span className="num text-caption text-secondary">Set {setNumber} of {totalSets}</span>
+      </div>
+      <p className="mt-2 text-caption text-tertiary">
+        Target {exercise.reps}{exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""} · Save here, then the next set comes forward.
+      </p>
+      <SetInput
+        sessionId={sessionId}
+        planExerciseId={exercise.id}
+        exerciseName={exercise.exerciseName}
+        setNumber={setNumber}
+        isFinisher={exercise.exerciseType === "FINISHER"}
+        logged={logged}
+        previous={previous}
+        completed={completed}
+        onCompletedChange={onCompletedChange}
+        onSaved={onSaved}
+        className="pb-0"
+      />
     </div>
   );
 }

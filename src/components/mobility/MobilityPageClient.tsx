@@ -15,6 +15,8 @@ import {
   getRequiredLaterRecoveryTitle,
   getMobilityProgram,
   getRecoverySessionBlocks,
+  RIGHT_SOLE_PACE_RULE,
+  RIGHT_SOLE_STOP_RULE,
   UNDO_SITTING,
   type RecoveryMode,
 } from "@/lib/mobility";
@@ -120,8 +122,12 @@ export function MobilityPageClient({
       <PageTitle
         eyebrow="Mobility protocol"
         title={`${dayLabel ?? program.dayName} — ${program.trainingRole}`}
-        lead={program.todayPurpose}
+        lead={`${program.todayPurpose} The progression target is ankle capacity, foot control, and walking resilience.`}
       />
+
+      <Notice tone="accent" className="mt-4 max-w-3xl">
+        {RIGHT_SOLE_PACE_RULE}
+      </Notice>
 
       {isResumedSession && sessionName ? (
         <Notice className="mt-4">
@@ -148,102 +154,103 @@ export function MobilityPageClient({
 
       <Section id="pain-check-in">
         <PainCheckInCard latest={painCheckIn} timezone={timezone} />
+        <p className="mt-4 border-t border-rule pt-3 text-caption text-tertiary">{RIGHT_SOLE_STOP_RULE}</p>
       </Section>
 
-        <RoutineSection
-          id="session"
-          title={program.sessionTitle}
-          summary={
+      <RoutineSection
+        id="session"
+        title={program.sessionTitle}
+        summary={
+          program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
+            ? "Required foot-flare recovery puts seated ankle motion, calf mobility, supported balance, quiet foot pressure, and supported breathing first."
+            : program.adaptationNote
+        }
+        completed={sessionCompleted}
+        isPending={isPending}
+        isCurrentAction={pendingType === program.logType}
+        actionLabel={program.logType === "PRE_WORKOUT" ? "Mark primer complete" : "Mark recovery complete"}
+        onLog={() =>
+          handleLogCompletion(
+            program.logType,
             program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-              ? "Required foot-flare recovery puts seated ankle motion, calf mobility, supported balance, quiet foot pressure, and supported breathing first."
-              : program.adaptationNote
-          }
-          completed={sessionCompleted}
-          isPending={isPending}
-          isCurrentAction={pendingType === program.logType}
-          actionLabel={program.logType === "PRE_WORKOUT" ? "Mark primer complete" : "Mark recovery complete"}
-          onLog={() =>
-            handleLogCompletion(
-              program.logType,
-              program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-                ? `${program.sessionTitle} - required foot-flare recovery`
-                : program.sessionTitle
-            )
-          }
-          headerAside={
-            program.logType === "POST_WORKOUT" ? (
-              <RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />
-            ) : undefined
-          }
-          meta={program.completionSummary}
-          contextNote={program.logType === "POST_WORKOUT" ? highStepLoadNote : undefined}
-          hideAction={sessionBlocks.length === 0}
-        >
-          {sessionBlocks.length > 0 ? (
-            <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
-          ) : (
-            <div>
-              <h3>Complete rest</h3>
-              <p className="mt-1 text-row text-secondary">
-                No mobility block is scheduled today.
-              </p>
-            </div>
-          )}
-        </RoutineSection>
+              ? `${program.sessionTitle} - required foot-flare recovery`
+              : program.sessionTitle
+          )
+        }
+        headerAside={
+          program.logType === "POST_WORKOUT" ? (
+            <RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />
+          ) : undefined
+        }
+        meta={program.completionSummary}
+        contextNote={program.logType === "POST_WORKOUT" ? highStepLoadNote : undefined}
+        hideAction={sessionBlocks.length === 0}
+      >
+        {sessionBlocks.length > 0 ? (
+          <MobilityChecklist blocks={sessionBlocks} title="Today's mobility session" />
+        ) : (
+          <div>
+            <h3>Complete rest</h3>
+            <p className="mt-1 text-row text-secondary">
+              No mobility block is scheduled today.
+            </p>
+          </div>
+        )}
+      </RoutineSection>
 
         {showLaterRecovery ? (
-          <RoutineSection
-            id="later-recovery"
-            title={laterRecoveryTitle}
-            summary={
-              recoveryMode === "footFlare"
-                ? "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout."
-                : "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work."
-            }
-            completed={laterRecoveryCompleted}
-            isPending={isPending}
-            isCurrentAction={pendingType === "POST_WORKOUT"}
-            actionLabel="Mark recovery complete"
-            onLog={() => handleLogCompletion("POST_WORKOUT", laterRecoveryTitle)}
-            headerAside={<RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />}
-            meta={
-              recoveryMode === "footFlare"
-                ? "Effort 1-3/10. Pain 0-2/10 maximum. No aggressive stretching, no digging hard into the sole, and no extra fatigue."
-                : "Required means consistently completed, not intense. Effort 1-3/10, pain 0-2/10 maximum, no fatigue."
-            }
-            contextNote={highStepLoadNote}
-          >
-            <MobilityChecklist blocks={laterRecoveryBlocks} title="Required later recovery" />
-          </RoutineSection>
+      <RoutineSection
+        id="later-recovery"
+        title={laterRecoveryTitle}
+        summary={
+          recoveryMode === "footFlare"
+            ? "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout."
+            : "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work."
+        }
+        completed={laterRecoveryCompleted}
+        isPending={isPending}
+        isCurrentAction={pendingType === "POST_WORKOUT"}
+        actionLabel="Mark recovery complete"
+        onLog={() => handleLogCompletion("POST_WORKOUT", laterRecoveryTitle)}
+        headerAside={<RecoveryModeControl value={recoveryMode} onChange={setRecoveryMode} />}
+        meta={
+          recoveryMode === "footFlare"
+            ? "Effort 1-3/10. Pain 0-2/10 maximum. No aggressive stretching, no digging hard into the sole, and no extra fatigue."
+            : "Required means consistently completed, not intense. Effort 1-3/10, pain 0-2/10 maximum, no fatigue."
+        }
+        contextNote={highStepLoadNote}
+      >
+        <MobilityChecklist blocks={laterRecoveryBlocks} title="Required later recovery" />
+      </RoutineSection>
         ) : null}
 
-        <RoutineSection
-          id="back-care"
-          title="Back care — decompression routine"
-          summary="Personal relief routine — available every day, including full rest days. Relief work, not training: gentle effort only, and stop any movement that increases pain or moves symptoms down the leg."
-          completed={false}
-          isPending={isPending}
-          isCurrentAction={pendingType === "BACK_CARE"}
-          actionLabel="Log back care"
-          onLog={() => handleLogCompletion("BACK_CARE", "Back care — decompression routine")}
-          meta={backCareCount > 0 ? `${backCareCount} logged today` : "As needed — no schedule, no required dose."}
-        >
-          <MobilityChecklist blocks={[BACK_CARE_DECOMPRESSION]} title="Back care — decompression routine" />
-        </RoutineSection>
+      <RoutineSection
+        id="back-care"
+        title="Back care — decompression routine"
+        summary="Personal relief routine — available every day, including full rest days. Relief work, not training: gentle effort only, and stop any movement that increases pain or moves symptoms down the leg."
+        completed={false}
+        isPending={isPending}
+        isCurrentAction={pendingType === "BACK_CARE"}
+        actionLabel="Log back care"
+        onLog={() => handleLogCompletion("BACK_CARE", "Back care — decompression routine")}
+        meta={backCareCount > 0 ? `${backCareCount} logged today` : "As needed — no schedule, no required dose."}
+      >
+        <MobilityChecklist blocks={[BACK_CARE_DECOMPRESSION]} title="Back care — decompression routine" />
+      </RoutineSection>
 
-        <RoutineSection
-          id="desk-reset"
-          title="Optional desk reset"
-          summary="Use this short reset when long sitting blocks stack up during the day."
-          completed={false}
-          isPending={isPending}
-          isCurrentAction={pendingType === "UNDO_SITTING"}
-          actionLabel="Log desk reset"
-          onLog={() => handleLogCompletion("UNDO_SITTING")}
-          meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
-        >
-          <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
-        </RoutineSection>
+      <RoutineSection
+        id="desk-reset"
+        title="Optional desk reset"
+        summary="Use this short reset when long sitting blocks stack up during the day."
+        completed={false}
+        isPending={isPending}
+        isCurrentAction={pendingType === "UNDO_SITTING"}
+        actionLabel="Log desk reset"
+        onLog={() => handleLogCompletion("UNDO_SITTING")}
+        meta={undoCount > 0 ? `${undoCount} logged today` : "Aim for two or three short resets."}
+      >
+        <MobilityChecklist blocks={undoBlocks} title="Desk reset" />
+      </RoutineSection>
     </>
   );
 }

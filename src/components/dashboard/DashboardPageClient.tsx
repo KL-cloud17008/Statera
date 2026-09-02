@@ -6,7 +6,7 @@ import type { SerializedPainCheckIn } from "@/actions/pain";
 import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
-import { Figure, Notice, Num, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
+import { Figure, Notice, Num, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
 import {
@@ -160,72 +160,48 @@ export function DashboardPageClient({
   // Rest / recovery days don't score steps against the goal (A-audit): steps
   // still display, but no failure framing.
   const stepGoalSuspended = !todayPlanDay || recoveryFlagActive;
+  const currentActionLabel = workoutSummary.hasCompletedWorkoutToday
+    ? "Review session"
+    : todayPlanDay
+      ? "Start session"
+      : "Open mobility";
 
   return (
     <>
-      {/* ── Masthead ─────────────────────────────────────────────────────── */}
-      <PageTitle
-        eyebrow={`${greeting} · ${heroDateLabel}`}
-        title={decision.title}
-        lead={decision.description}
-        action={
-          <Button asChild variant="primary" size="sm">
-            <Link href={decision.href}>
-              Open next action
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          </Button>
-        }
-      />
+      {/* One decision surface gives the dashboard a point of view. Supporting
+          metrics return to the paper canvas below instead of becoming eight
+          equal cards. */}
+      <section className="command-surface p-5 sm:p-7 lg:p-8">
+        <div className="relative z-[1] grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.7fr)] lg:items-end">
+          <div className="max-w-2xl">
+            <p className="text-label uppercase tracking-[0.16em] text-command-muted">
+              Athanor / {greeting} / {heroDateLabel}
+            </p>
+            <h1 className="mt-3 max-w-xl font-display text-[clamp(2rem,5vw,3.5rem)] font-normal leading-[1.04] tracking-[-0.03em] text-command-text">
+              {decision.title}
+            </h1>
+            <p className="mt-4 max-w-lg text-body-lg text-command-muted">{decision.description}</p>
+            <Button asChild variant="secondary" size="lg" className="mt-6 border-command-line bg-command-800 text-command-text hover:bg-ink-700 hover:text-command-text">
+              <Link href={decision.href}>
+                {currentActionLabel}
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </Button>
+          </div>
 
-      {/* ── Summary strip: figures printed on the canvas, no tiles ───────── */}
-      <div className="mt-6 border-t border-rule pt-5">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 lg:grid-cols-4">
-          <Figure
-            label="Today status"
-            value={stepGoalSuspended ? (!todayPlanDay ? "Rest" : "Recovery") : `${stepCompletion}%`}
-            detail={
-              stepGoalSuspended
-                ? `Step goal suspended · ${todaySteps.toLocaleString()} steps logged`
-                : `${todaySteps.toLocaleString()} / ${settings.stepGoal.toLocaleString()} steps`
-            }
-          />
-          <Figure
-            label="Readiness"
-            value={recoveryFlagActive ? "Recovery" : "Clear"}
-            tone={recoveryFlagActive ? "ember" : "primary"}
-            detail={recoveryFlagActive ? "Foot load requires attention" : "No flare flag"}
-          />
-          <Figure
-            label="Bodyweight"
-            value={formatBodyweight(weightStats.currentWeight)}
-            detail={
-              bodyweightSecondary
-                ? `${bodyweightSecondary} · ${getTrendCopy(weightStats.trend)}`
-                : getTrendCopy(weightStats.trend)
-            }
-          />
-          <Figure
-            label="Training output"
-            value={weeklyVolume}
-            detail={
-              <>
-                {volumeWeekOverWeek != null ? (
-                  <span className="num num-left">
-                    {volumeWeekOverWeek >= 0 ? "+" : ""}
-                    {volumeWeekOverWeek}% vs last week ·{" "}
-                  </span>
-                ) : null}
-                {workoutSummary.weeklySessions} sessions this week
-              </>
-            }
-          />
-        </dl>
-      </div>
+          <div className="grid grid-cols-2 gap-x-5 gap-y-6 border-t border-command-line pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+            <CommandMetric label="Readiness" value={recoveryFlagActive ? "Recovery" : "Clear"} detail={recoveryFlagActive ? "Foot load is in the decision" : "No flare signal"} tone={recoveryFlagActive ? "ember" : "default"} />
+            <CommandMetric label="Today" value={todaySteps.toLocaleString()} detail={`steps · ${stepGoalSuspended ? "not scored" : `${stepCompletion}% of goal`}`} />
+            <CommandMetric label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={bodyweightSecondary || getTrendCopy(weightStats.trend)} />
+            <CommandMetric label="This week" value={weeklyVolume} detail={`${workoutSummary.weeklySessions} sessions${volumeWeekOverWeek != null ? ` · ${volumeWeekOverWeek >= 0 ? "+" : ""}${volumeWeekOverWeek}%` : ""}`} />
+          </div>
+        </div>
+      </section>
 
       {/* ── Today's protocol ─────────────────────────────────────────────── */}
       <Section
         title="Today · Protocol"
+        className="mt-8"
         action={
           <Link
             href="/workout"
@@ -610,6 +586,28 @@ function getNextProtocol(dayOfWeek: number) {
   return getPlanDay(dayOfWeek)?.sessionName ?? "Complete Rest";
 }
 
+function CommandMetric({
+  label,
+  value,
+  detail,
+  tone = "default",
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  tone?: "default" | "ember";
+}) {
+  return (
+    <div className="command-metric min-w-0">
+      <p className="text-label uppercase tracking-[0.14em] text-command-muted">{label}</p>
+      <p className={cn("num mt-2 truncate text-data-lg font-medium leading-none", tone === "ember" ? "text-ember-bright" : "text-command-text")}>
+        {value}
+      </p>
+      <p className="mt-2 text-caption text-command-muted">{detail}</p>
+    </div>
+  );
+}
+
 function getTrendCopy(trend: WeightStats["trend"]) {
   if (trend === "down") {
     return "Moving down. Open the chart for pace and context.";
@@ -670,7 +668,7 @@ function buildDecision({
     stepGoalSuspendedForSignals
       ? `Step goal suspended — recovery day. ${todaySteps.toLocaleString()} steps logged.`
       : `${todaySteps.toLocaleString()} of ${stepGoal.toLocaleString()} steps logged today.`,
-    "Nutrition is tracked externally in Cronometer.",
+    "Walking volume and gait quality remain the primary movement signal.",
     mobilityDone ? "Expected mobility is logged." : "Expected mobility is still open.",
     todayFootPain == null
       ? "No foot-pain check-in logged yet today."

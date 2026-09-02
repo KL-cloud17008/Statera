@@ -47,6 +47,7 @@ export function ExerciseCard({
   onExerciseCompleteChange,
   completedSetNumbers,
   onSetCompleteChange,
+  focusSetNumber = null,
 }: {
   exercise: PlanExercise;
   sessionId: string;
@@ -57,8 +58,10 @@ export function ExerciseCard({
   onExerciseCompleteChange: (complete: boolean) => void;
   completedSetNumbers: Set<number>;
   onSetCompleteChange: (exerciseName: string, setNumber: number, complete: boolean) => void;
+  focusSetNumber?: number | null;
 }) {
   const [showCues, setShowCues] = useState(false);
+  const [showCompletedDetails, setShowCompletedDetails] = useState(false);
   const [sessionPrefills, setSessionPrefills] = useState<Record<number, { weightUsed: number | null; repsCompleted: number | null }>>({});
   const [advanceTarget, setAdvanceTarget] = useState<number | null>(null);
   const isLoggable = isLoggableTrainingExercise(exercise);
@@ -72,8 +75,39 @@ export function ExerciseCard({
     return null;
   }
 
+  if (exerciseComplete && !showCompletedDetails) {
+    return (
+      <section className="border-t border-rule py-3">
+        <div className="flex min-h-touch items-center gap-3">
+          <Checkbox
+            checked
+            onCheckedChange={(checked) => {
+              if (!checked) {
+                onExerciseCompleteChange(false);
+                setShowCompletedDetails(true);
+              }
+            }}
+            aria-label={`Mark ${exercise.exerciseName} incomplete`}
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-row font-medium text-secondary">{exercise.exerciseName}</p>
+            <p className="mt-0.5 text-caption text-accent">{setCount} {setCount === 1 ? "set" : "sets"} logged</p>
+          </div>
+          <Button
+            type="button"
+            variant="link"
+            className="min-h-touch shrink-0 text-caption"
+            onClick={() => setShowCompletedDetails(true)}
+          >
+            Edit sets
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section>
+    <section id={`exercise-${exercise.id}`}>
       <div className="flex items-start gap-3">
         <Checkbox
           checked={exerciseComplete}
@@ -136,6 +170,9 @@ export function ExerciseCard({
           <div className="ledger-rows mt-3 border-t border-rule">
             {Array.from({ length: setCount }, (_, index) => {
               const setNum = index + 1;
+              if (setNum === focusSetNumber) {
+                return null;
+              }
               const logged = loggedSets.find((set) => set.setNumber === setNum);
               const previous = exercisePrevSets.find((set) => set.setNumber === setNum);
 

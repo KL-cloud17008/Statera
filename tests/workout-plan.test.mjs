@@ -494,6 +494,10 @@ test("session actions remain prominent and stateful", () => {
   assert.match(workoutDayPreviewSource, /const blockOrder = \["A", "B", "C", "D", "E", "F"\]/);
   assert.match(sessionLoggerSource, /group\[group\.length - 1\]\?\.restSeconds/);
   assert.match(sessionLoggerSource, /getProgrammedRestSeconds/);
+  assert.match(sessionLoggerSource, /FocusedSetPanel/);
+  assert.match(sessionLoggerSource, /Save here, then the next set comes forward/);
+  assert.match(sessionLoggerSource, /focusSetNumber/);
+  assert.match(sessionLoggerSource, /scrollIntoView/);
 });
 
 test("start-new-plan and stale active snapshots rebuild from the next-week template", () => {
@@ -706,7 +710,8 @@ test("mobility later recovery and rest routines match the next-week block", () =
   assert.equal(mobility.getMobilityProgram(6).sessionTitle, "Complete Rest");
   assert.equal(mobility.getMobilityProgram(6).totalDuration, "0-8 min if stiff");
   assert.equal(mobility.getMobilityProgram(0).sessionTitle, "Complete Rest");
-  assert.deepEqual(Array.from(mobility.getMobilityProgram(0).blocks), []);
+  assert.equal(mobility.getMobilityProgram(0).totalDuration, "10-15 min");
+  assert.ok(mobility.getMobilityProgram(0).blocks.length > 0);
   assert.deepEqual(
     [1, 2, 3, 4, 5].map((day) => mobility.getRequiredLaterRecoveryTitle("standard", day)),
     [
@@ -733,7 +738,10 @@ test("mobility later recovery and rest routines match the next-week block", () =
   const footFlareBlocks = mobility.getRequiredLaterRecoveryBlocks("footFlare", 4);
   assert.equal(footFlareBlocks[0].title, "Required foot-flare recovery");
   assert.match(mobilityPageSource, /Required foot-flare recovery/);
-  assert.match(mobilityPageSource, /No mobility block is scheduled today/);
+  assert.match(mobilityPageSource, /RIGHT_SOLE_PACE_RULE/);
+  assert.match(mobilitySource, /fastest pace that keeps gait normal/);
+  assert.match(mobilitySource, /calfCapacityIsometric/);
+  assert.match(mobilitySource, /getAnkleCapacityBlock/);
   assert.match(flexibilityBalancePageSource, /Weekday recovery blocks/);
 });
 
@@ -750,13 +758,13 @@ test("nutrition remains removed from navigation and tracker routes", () => {
   ]);
   assert.doesNotMatch(navItemsSource, /Nutrition|\/nutrition/);
   assert.match(desktopSidebarSource, /NAV_ITEMS\.map/);
-  assert.match(mobileNavSource, /NAV_ITEMS\.map/);
+  assert.match(mobileNavSource, /primaryItems\.map/);
   assert.match(mobileHeaderSource, /NAV_ITEMS\.find/);
   for (const source of nutritionRouteSources) {
     assert.match(source, /redirect\("\/"\)/);
     assert.doesNotMatch(source, /NutritionPageClient|NutritionPlaceholder|prisma\.nutritionDay/);
   }
-  assert.match(dashboardSource, /Nutrition is tracked externally in Cronometer/);
+  assert.match(dashboardSource, /Walking volume and gait quality remain the primary movement signal/);
 });
 
 test("bodyweight formatting keeps pounds canonical and adds consistent kg and stone conversions", () => {
