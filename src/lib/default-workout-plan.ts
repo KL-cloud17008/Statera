@@ -24,7 +24,7 @@ export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
  * against it invalidate — a resumed session must not keep serving its old
  * training day, and the mobility protocol follows the session.
  *
- * v4 revamps Friday: direct loaded calf raises enter the program for the first
+ * v4 revamps Friday: direct loaded calf raises entered the program for the first
  * time (seated default, standing progression), shoulders gain a lateral raise
  * alongside the existing face pull, and forearms gain wrist and reverse curls.
  *
@@ -35,22 +35,22 @@ export const NEXT_WEEK_TAPER_TITLE = "Next Week Progressive Overload Block";
  * machine has been unreliable. Friday D1 reintroduces overhead pressing, which
  * remains gated by the lower-back rule.
  *
- * v6 makes the next-week program details explicit: Monday starts with
- * bodyweight lunges before a dedicated pendulum squat, Tuesday adds a
- * two-movement pec-deck pair and complementary dual pulldowns, Wednesday uses a
- * conservative cable crunch, Thursday uses the same dual-pulldown structure,
- * and Friday drops the duplicated reverse-pec-deck slot.
+ * v7 makes the next-week program details explicit: Monday uses a light lying
+ * curl primer before lunges and pendulum squat, Tuesday leads with incline
+ * pressing and a machine row before the dual pulldown block, Wednesday and
+ * Thursday remain unchanged, and Friday becomes a lower-fatigue Upper C with
+ * chest isolation, supported pulling, arms, rear-delts/scapular work, and core.
  */
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v6";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v7";
 
 export const ADJUSTED_WEEK_HEADER_COPY =
   "Five training days with balanced chest, back, legs, hips, arms, and trunk stability. Progress by clean reps before load. Walking to the gym is acceptable while foot pain stays manageable and settles with rest.";
 
-export const LOWER_A_TAPER_TITLE = "Lower A — Lunges + Pendulum Squat / Quad-Hamstring Strength";
-export const UPPER_A_TITLE = "Upper A — Incline Chest + Row / Dual Pulldown";
+export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum Squat Strength";
+export const UPPER_A_TITLE = "Upper A — Incline Chest + Row / Dual Pulldown + Rear Delts";
 export const LOWER_B_TAPER_TITLE = "Lower B — Split Squat + Hamstrings / Hips + Core";
 export const UPPER_B_TITLE = "Upper B — Machine Chest + Dual Pulldown / Arms";
-export const UPPER_ACCESSORY_TITLE = "Friday — Chest Isolation + Row / Shoulders + Arms";
+export const UPPER_ACCESSORY_TITLE = "Upper C — Chest Isolation + Upper Back / Arms + Core";
 export const LOWER_B_BACK_SAFE_TITLE = LOWER_B_TAPER_TITLE;
 export const FULL_BODY_CIRCUIT_TITLE = UPPER_ACCESSORY_TITLE;
 
@@ -62,9 +62,9 @@ export const FULL_BODY_CIRCUIT_TITLE = UPPER_ACCESSORY_TITLE;
  *
  * Deliberately matches the two-word movement phrases "overhead press" and
  * "shoulder press" — NOT the bare fragment "overhead". Widening this to
- * /overhead/ would wrongly gate "Overhead Cable Triceps Extension" (Tuesday C1
- * and Friday F2), which is an elbow-extension accessory, not overhead pressing,
- * and must stay in the session while lower-back pain is elevated.
+ * /overhead/ would wrongly gate "Overhead Cable Triceps Extension", which is
+ * elbow-extension accessory work, not overhead pressing, and must stay in the
+ * session while lower-back pain is elevated.
  */
 export function isOverheadPressExercise(exerciseName: string) {
   return /overhead press|shoulder press/i.test(exerciseName);
@@ -82,7 +82,7 @@ export const PROGRESSIVE_OVERLOAD_RULES = [
   "No failure training.",
   "No grinding.",
   "If form breaks, keep load the same next session.",
-  "If feet/ankles rise above 3/10, remove walking lunges and all three calf slots (Monday E1, Wednesday E1, Friday E1) first.",
+  "If feet/ankles rise above 3/10, remove walking lunges and both calf slots (Monday E1 and Wednesday E1) first.",
   "If lower back rises above 3/10, remove back hyperextensions and overhead press first.",
   "Pain 5/10 or higher means stop that movement.",
 ] as const;
@@ -116,13 +116,13 @@ export const WEEKLY_SET_SUMMARY = [
   "Chest: balanced between incline, mid-chest press, and fly/accessory work.",
   "Back/lats: strong.",
   "Rear delts: good.",
-  "Side delts: covered through the Tuesday curl/lateral-raise alternate plus dedicated Wednesday and Friday raises.",
+  "Side delts: covered through Tuesday cable lateral raises and the unchanged Wednesday work.",
   "Front delts: enough from pressing; do not add more.",
   "Triceps: good.",
   "Biceps: good — Tuesday, Thursday, and Friday carry the arm volume.",
-  "Forearms/grip: covered by Friday reverse curls and wrist curls.",
-  "Core/trunk: covered through conservative cable crunches on Wednesday.",
-  "Calves/feet: three seated slots — Monday bent-leg (soleus), Wednesday and Friday straight-leg (gastrocnemius). No standing calf work; the gym has no standing calf machine. All three are removed whenever sole/plantar pain reaches 3/10.",
+  "Forearms/grip: receive indirect work from the weekly pulling and curling pattern without unnecessary extra isolation.",
+  "Core/trunk: covered through conservative cable crunches on Wednesday and Friday.",
+  "Calves/feet: two seated slots — Monday bent-leg (soleus) and Wednesday straight-leg (gastrocnemius). No standing calf work; the gym has no standing calf machine. Both are removed whenever sole/plantar pain reaches 3/10.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
@@ -131,7 +131,7 @@ export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Work steps count as primary load. Foot pain controls walking volume.",
   "Training loads are logged in kg. Bodyweight remains logged in lb.",
   "No treadmill warm-ups, no bike warm-ups, no running, no jumping, no HIIT, no conditioning finishers, and no failure training.",
-  "Calf raise rule (reversed from the earlier no-direct-loaded-calf-raise rule): three seated calf slots — Monday E1 bent-leg (soleus), Wednesday E1 and Friday E1 straight-leg (gastrocnemius). There is no standing calf work in this program: the gym has no standing calf machine, so no session should substitute one. Every slot carries a fallback because the bent-leg machine has been out of service. Skip all three entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges they are the first movements removed under the foot-load rule.",
+  "Calf raise rule: two seated calf slots — Monday E1 bent-leg (soleus) and Wednesday E1 straight-leg (gastrocnemius). There is no standing calf work in this program: the gym has no standing calf machine, so no session should substitute one. Every slot carries a fallback because the bent-leg machine has been out of service. Skip both entirely if sole/plantar pain is 3/10 or higher — alongside walking lunges they are the first movements removed under the foot-load rule.",
   "Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking.",
   "Ramp-up sets stay outside the ledger: Set 1 very easy x 8-10 reps at RPE 3-4; Set 2 easy/moderate x 5-8 reps at RPE 4-5 only if needed.",
   "Required later recovery is separate same-day work and stays easy: effort 1-3/10, pain 0-2/10 maximum.",
@@ -151,7 +151,7 @@ const CONTROLLED_STRENGTH_CUE =
   "Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. ";
 
 /**
- * Shared by Wednesday E1 and Friday E1 — the straight-leg (gastrocnemius) calf
+ * Used by Wednesday E1 — the straight-leg (gastrocnemius) calf
  * slot. The seated straight-leg machine is the default; the leg press calf
  * press is the fallback, because gym machines here go out of service. There is
  * no standing variant anywhere in this program.
@@ -165,51 +165,51 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: LOWER_A_TAPER_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Walking Lunges",
+        exerciseName: "A1 Lying Leg Curl",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. This is a controlled hamstring and knee primer, not pre-exhaustion. Keep approximately 2-4 reps in reserve and do not chase fatigue. Hips stable and heavy on the pad, smooth curl, controlled eccentric, no jerking, and no lower-back arching.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Walking Lunges",
         sets: 2,
         reps: "6-10 steps per leg",
         tempo: "controlled steps",
         restSeconds: 180,
-        targetRPE: "4-5",
-        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Bodyweight first. Controlled strength work, not conditioning. Take long enough between sets and before the pendulum squat for breathing and balance to recover; do not rush. Tall torso, front foot flat, knee tracks over middle toes, and use support or regress to a stationary split squat if needed. Skip or regress if foot, ankle, knee, or lower-back pain increases, or if balance becomes less reliable. If sole/ankle pain reaches 3/10, stop the remaining lunge work — do not push through it.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "A2 Pendulum Squat",
-        sets: 3,
-        reps: "6-8",
-        tempo: "controlled lowering",
-        restSeconds: 180,
-        targetRPE: "5-7",
-        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Kg load. Keep 1-3 reps in reserve on every set, including the last; no failure training. Keep the back supported against the pad, descend only to the deepest comfortable position, track the knees over the middle toes, and use a controlled tempo. If foot, ankle, knee, hip, or lower-back symptoms increase, reduce load or range or regress to a supported stationary split squat.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B1 Lying Leg Curl",
-        sets: 3,
-        reps: "10-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Hips heavy on the pad, smooth curl, pause gently, return slowly, no jerking, and no lower-back arching.`,
+        targetRPE: "5-6",
+        cues: `${WEEK4_MAIN_CUE}${FOOT_WALKING_CUE}Bodyweight initially or minimal load. Controlled stride, front foot stable, knee tracks naturally, and do not rush. Use support or regress to a supported stationary split squat if necessary. If ankle or sole symptoms meaningfully worsen, reduce or skip this movement according to the existing pain logic.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Seated Leg Extension",
+        exerciseName: "C1 Pendulum Squat",
+        sets: 3,
+        reps: "8-12",
+        tempo: "controlled lowering",
+        restSeconds: 180,
+        targetRPE: "6-7",
+        cues: `${WEEK4_MAIN_CUE}Kg load. This is the primary stable lower-body loading movement. Use controlled depth and tempo, no bouncing, and no grinding. Keep the back supported against the pad and reduce range or load if foot, ankle, knee, hip, or lower-back symptoms increase.`,
+        supersetGroup: "C",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "D1 Leg Extension",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
         cues: `${WEEK4_ACCESSORY_CUE}Kg load. Smooth reps, no knee snapping, brief pause near top without aggressive lockout, lower slowly, hips stay heavy on pad, and use a controlled comfortable range. Rest 120 seconds between sets.`,
-        supersetGroup: "C",
+        supersetGroup: "D",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "D1 Hip Abduction Machine",
+        exerciseName: "D2 Hip Abduction Machine",
         sets: 3,
         reps: "12-20",
         tempo: "2-1-2",
@@ -220,13 +220,13 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "D2 Hip Adduction Machine",
-        sets: 3,
+        exerciseName: "D3 Hip Adduction Machine",
+        sets: 2,
         reps: "12-20",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled inward squeeze, pelvis still, no rocking, no chasing load, stop if hip/groin/knee discomfort appears. Rest 120 seconds after D2.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Controlled inward squeeze, pelvis still, no rocking, no chasing load, stop if hip/groin/knee discomfort appears.`,
         supersetGroup: "D",
         exerciseType: "WORKING",
       },
@@ -248,24 +248,24 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: UPPER_A_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Two-Arm Reverse Pec Deck",
-        sets: 2,
-        reps: "12-15",
-        tempo: "2-1-2",
-        restSeconds: 0,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. First half of the pec-deck pairing; move directly to A2, then rest 120 seconds. Keep 2-3 reps in reserve. Rear delts lead the motion, elbows stay soft, shoulder blades move smoothly, and there is no jerking or failure training.`,
+        exerciseName: "A1 Incline Dumbbell Press",
+        sets: 3,
+        reps: "8-12",
+        tempo: "3-1-1",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: `${WEEK4_MAIN_CUE}Kg load. Primary progressive-overload press: add reps before load. Bench 30-45 degrees, shoulder blades back/down, elbows slightly tucked, control the bottom, no bounce, no grinding, and stop before shoulder pinch.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "A2 Single-Arm Pec Deck",
-        sets: 2,
-        reps: "10-15 per arm",
+        exerciseName: "A2 Machine Row",
+        sets: 3,
+        reps: "8-12",
         tempo: "2-1-2",
         restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Second half of the pec-deck pairing; rest 120 seconds after both arms. Keep 2-3 reps in reserve. Set the shoulder comfortably, sweep the arm across under control, pause on the chest squeeze, and avoid twisting or chasing range.`,
+        targetRPE: "6-7",
+        cues: `${WEEK4_MAIN_CUE}Kg load. Sit tall with feet planted, row smoothly toward the ribs, pause briefly, and return under control without body swing or lumbar extension.`,
         supersetGroup: "A",
         exerciseType: "WORKING",
       },
@@ -292,57 +292,46 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Dumbbell Incline Press or Machine Incline Press",
-        sets: 3,
-        reps: "8-12",
-        tempo: "3-1-1",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_MAIN_CUE}Kg load. Equipment alternates: Dumbbell Incline Press or Machine Incline Press — use whichever is free. Bench 30-45 degrees, shoulder blades back/down, elbows slightly tucked, control the bottom, no bounce, and stop before shoulder pinch.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C2 Chest-Supported Row or Seated Cable Row",
-        sets: 3,
-        reps: "8-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_MAIN_CUE}Kg load. Equipment alternates: Chest-Supported Row or Seated Cable Row — use whichever is free. Keep the chest supported if possible, row smoothly, pause near the ribs, return under control, and use no body swing. Rest 120 seconds after the pair.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "D1 Machine Shoulder Press",
-        sets: 3,
-        reps: "8-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use the back support. Seated and controlled, ribs down, no excessive arching, comfortable press path, stop before shoulder pinch, no grinding. Keep it light and controlled. Removed while lower-back pain is 3/10 or higher — it returns when pain clears. Stop immediately if pain shoots down the leg or nerve-like symptoms appear.`,
-        supersetGroup: "D",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "E1 Triceps Extension Machine or Overhead Cable Triceps Extension",
+        exerciseName: "C1 Overhead Cable Triceps Extension",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Triceps Extension Machine (downstairs) or Overhead Cable Triceps Extension (upstairs) — use whichever floor you are on. Machine: elbows pinned, finish with control, avoid leaning over the cable. Overhead cable: straight or curved bar, cable anchor set at mid-height rather than the floor so the torso stays upright; standing or staggered stance, ribs down, no lumbar extension, elbows pinned, lighter load than the machine. The overhead cable variant is elbow-extension accessory work, not overhead pressing — it is not gated by the lower-back rule.`,
-        supersetGroup: "E",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Cable anchor at mid-height so the torso stays upright; ribs down, elbows pinned, no lumbar extension, and use a controlled elbow-extension path. This is not overhead pressing and is not gated by the lower-back rule.`,
+        supersetGroup: "C",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "E2 Machine Preacher Curl or Cable Lateral Raise",
+        exerciseName: "D1 Reverse Cable Crossover",
         sets: 3,
-        reps: "10-15 curl / 12-20 lateral raise",
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 0,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Bilateral or alternating cable execution is acceptable. Rear delts lead, elbows soft, shoulder blades move smoothly, and there is no jerking, shrugging, or failure training. Move to D2, then rest 120 seconds.`,
+        supersetGroup: "D",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "D2 Cable Lateral Raise",
+        sets: 3,
+        reps: "12-20",
         tempo: "2-1-2",
         restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Equipment alternates: Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs) — use whichever floor you are on. Curl: 10-15 reps, elbows supported, no swinging, smooth full range. Lateral raise: 12-20 reps, light load, shoulder height or slightly below, elbows slightly bent, no shrugging.`,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging or swinging, and rest 120 seconds after the pair.`,
+        supersetGroup: "D",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "E1 Cable Curl",
+        sets: 2,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 90,
+        targetRPE: "6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Optional direct biceps work retained at modest volume: elbows stay quiet, no swinging, smooth curl and controlled return.`,
         supersetGroup: "E",
         exerciseType: "WORKING",
       },
@@ -542,102 +531,69 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     sessionName: UPPER_ACCESSORY_TITLE,
     exercises: [
       {
-        exerciseName: "A1 Pec Deck or Single-Arm Cable Fly",
-        sets: 3,
-        reps: "12-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use straight controlled sets with 120 seconds of rest. Controlled stretch, smooth squeeze, no shoulder pain, and do not go heavy.`,
-        supersetGroup: "A",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "B1 T-Bar Chest-Supported Row or Chest-Supported Row",
+        exerciseName: "A1 Chest-Supported Row",
         sets: 3,
         reps: "10-12",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Chest-supported only on both variants — an unsupported landmine T-bar is a loaded hip hinge and is not permitted under the back-pain rules. Chest stays on the pad throughout. Pause near the ribs, no body swing, smooth return.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Keep the chest supported, row smoothly toward the ribs, pause briefly, and return under control without body swing or lumbar loading. Seated Cable Row is the regression/alternative when a supported row is unavailable.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "A2 High-to-Low Cable Fly",
+        sets: 2,
+        reps: "12-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use a controlled high-to-low path toward the lower chest, keep the ribs and pelvis quiet, use a comfortable stretch, smooth squeeze, and no jerking or heavy loading. Rest 120 seconds after the pair.`,
+        supersetGroup: "A",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "B1 Cable Curl",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 0,
+        targetRPE: "6-7",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Pair with B2, keep the elbows quiet, avoid torso swing, curl smoothly, and control the eccentric. Rest 90-120 seconds after the pair.`,
         supersetGroup: "B",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C1 Dumbbell Preacher Curl or Machine Preacher Curl",
+        exerciseName: "B2 Rope Triceps Pressdown",
         sets: 3,
         reps: "10-15",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Triple superset with C2 and C3: rounds 1 and 2 run all three, round 3 is C1 only. Rest 120 seconds after each round. Dumbbell is the default because the machine is often occupied. On either variant, stop short of full elbow extension at the bottom, elbow supported on the pad, no swinging, no dropping into the stretch.`,
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use the rope, keep elbows pinned, separate the rope under control, avoid leaning over the cable, and rest 90-120 seconds after the pair.`,
+        supersetGroup: "B",
+        exerciseType: "WORKING",
+      },
+      {
+        exerciseName: "C1 Face Pull",
+        sets: 3,
+        reps: "12-20",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "5-6",
+        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Pull toward the face with elbows high but comfortable, rotate smoothly, keep the ribs controlled, and avoid yanking or shrugging. This is a different rear-delt/scapular pattern from Tuesday's Reverse Cable Crossover.`,
         supersetGroup: "C",
         exerciseType: "WORKING",
       },
       {
-        exerciseName: "C2 Reverse Curl",
+        exerciseName: "D1 Cable Crunch",
         sets: 2,
         reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Runs in rounds 1 and 2 of the C triple superset only. Overhand grip, elbows pinned, ribs down, no torso swing, no wrist flicking. Forearm and brachialis work, not a second biceps slot.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "C3 Cable or Dumbbell Wrist Curl",
-        sets: 2,
-        reps: "12-20",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Runs in rounds 1 and 2 of the C triple superset only. Forearms supported, wrists past the edge, slow lower, no bouncing, light load.`,
-        supersetGroup: "C",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "D1 Seated Machine Shoulder Press",
-        sets: 3,
-        reps: "8-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Use the back support. Seated and controlled, ribs down, no excessive arching, comfortable press path, stop before shoulder pinch, no grinding. This is overhead pressing: removed while lower-back pain is 3/10 or higher — it returns when pain clears, the same gate as Tuesday D1. Stop immediately if pain shoots down the leg or nerve-like symptoms appear.`,
-        supersetGroup: "D",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "E1 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
+        tempo: "slow controlled flexion",
         restSeconds: 90,
         targetRPE: "5-6",
-        cues: `${WEEK4_ACCESSORY_CUE}${STRAIGHT_LEG_CALF_CUE}`,
-        supersetGroup: "E",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "F1 Cable Lateral Raise",
-        sets: 3,
-        reps: "12-20",
-        tempo: "2-1-2",
-        restSeconds: 0,
-        targetRPE: "6",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Superset with F2 — rest 120 seconds after F2. Light load, raise to shoulder height or slightly below, elbows slightly bent, no shrugging, no swinging.`,
-        supersetGroup: "F",
-        exerciseType: "WORKING",
-      },
-      {
-        exerciseName: "F2 Overhead Cable Triceps Extension",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: `${WEEK4_ACCESSORY_CUE}Kg load. Second half of the F superset; rest 120 seconds after this exercise. Straight or curved bar, cable anchor set at mid-height rather than the floor so the torso stays upright, ribs down, no lumbar extension, elbows pinned. This is elbow-extension accessory work, not overhead pressing — it is not gated by the lower-back rule.`,
-        supersetGroup: "F",
+        cues: "Light/moderate kg load. Controlled trunk flexion, slow eccentric, no jerking, no maximal loading, and no grinding. Progress control, then reps, then small load increases. Keep the hips relatively stable and stop for back pain, nerve-like symptoms, or loss of control.",
+        supersetGroup: "D",
         exerciseType: "WORKING",
       },
     ],
@@ -647,11 +603,11 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
 ];
 
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Lower A — Lunges + Pendulum Squat / Quad-Hamstring Strength",
-  "Tuesday: Upper A — Incline Chest + Row / Dual Pulldown",
+  "Monday: Lower A — Hamstring Primer → Lunges → Pendulum Squat Strength",
+  "Tuesday: Upper A — Incline Chest + Row / Dual Pulldown + Rear Delts",
   "Wednesday: Lower B — Split Squat + Hamstrings / Hips + Core",
   "Thursday: Upper B — Machine Chest + Dual Pulldown / Arms",
-  "Friday — Chest Isolation + Row / Shoulders + Arms",
+  "Friday: Upper C — Chest Isolation + Upper Back / Arms + Core",
   "Saturday: Complete Rest",
   "Sunday: Complete Rest",
 ] as const;

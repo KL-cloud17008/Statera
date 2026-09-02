@@ -2161,7 +2161,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, and wrists for the pec-deck pair, incline press, row, and dual pulldowns.",
+      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, and wrists for incline pressing, the machine row, dual pulldowns, and rear-delt/lateral-delt cable work.",
     previousDayReason:
       "Monday was Lower A, so this keeps lower-leg prep low-dose before upper-body training.",
     adaptationNote:
@@ -2169,7 +2169,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Pec-deck pair, incline press, row, dual pulldowns, shoulders, and arms." },
+      { label: "Training match", value: "Upper A setup", note: "Incline press, machine row, dual pulldowns, triceps, rear delts, lateral delts, and modest biceps." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
@@ -2269,20 +2269,20 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   5: {
     dayOfWeek: 5,
     dayName: "Friday",
-    trainingRole: "Friday chest isolation + row day",
-    sessionTitle: "Friday chest + row primer",
+    trainingRole: "Upper C training day",
+    sessionTitle: "Upper C primer",
     totalDuration: "12-16 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for chest isolation, supported rows, shoulder work, and arms.",
+      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for high-to-low fly work, supported rows, arms, face pulls, and core.",
     previousDayReason:
-      "Thursday was Upper B, so Friday keeps prep simple before chest isolation, supported rows, shoulders, calves, and arms.",
+      "Thursday was Upper B, so Friday keeps prep simple before lower-fatigue chest isolation, supported rows, arms, face pulls, and core.",
     adaptationNote:
       "Keep prep easy. Friday is accessory strength work, not conditioning.",
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Friday setup", note: "Chest isolation, chest-supported row, shoulders, calves, and arms." },
-      { label: "Back rule", value: "Supported pressing", note: "Remove the shoulder press if lower-back pain reaches 3/10." },
+      { label: "Training match", value: "Upper C setup", note: "High-to-low fly, chest-supported row, arms, face pulls, and core." },
+      { label: "Back rule", value: "Supported pulling", note: "Keep the chest-supported row controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
@@ -2588,7 +2588,7 @@ export function getTrainingSessionKey(
   if (/^upper a\b|upper a —|upper a -/.test(name)) return "UPPER_A";
   if (/^lower b\b|lower b —|lower b -/.test(name)) return "LOWER_B";
   if (/^upper b\b|upper b —|upper b -/.test(name)) return "UPPER_B";
-  if (/^friday\b|upper accessory/.test(name)) return "UPPER_ACCESSORY";
+  if (/^friday\b|upper accessory|^upper c\b/.test(name)) return "UPPER_ACCESSORY";
   return "REST";
 }
 

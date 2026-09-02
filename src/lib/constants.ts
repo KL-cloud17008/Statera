@@ -22,11 +22,11 @@ export const TRAINING_DAY_BOUNDARY_HOUR = 12; // noon
 
 /** Labels for training days — keyed by dayOfWeek (DB value 1-5). */
 export const TRAINING_DAY_LABELS: Record<number, string> = {
-  1: "Monday • Lower A — Lunges + Pendulum Squat / Quad-Hamstring Strength",
-  2: "Tuesday • Upper A — Incline Chest + Row / Dual Pulldown",
+  1: "Monday • Lower A — Hamstring Primer → Lunges → Pendulum Squat Strength",
+  2: "Tuesday • Upper A — Incline Chest + Row / Dual Pulldown + Rear Delts",
   3: "Wednesday • Lower B — Split Squat + Hamstrings / Hips + Core",
   4: "Thursday • Upper B — Machine Chest + Dual Pulldown / Arms",
-  5: "Friday • Chest Isolation + Row / Shoulders + Arms",
+  5: "Friday • Upper C — Chest Isolation + Upper Back / Arms + Core",
 };
 
 // Navigation items
