@@ -56,7 +56,7 @@ export function StepsEntryForm({
   return (
     <div className={editEntry ? "border-l-2 border-accent pl-3" : ""}>
       {editEntry ? null : (
-        <p className="mb-3 text-caption text-tertiary">Log today or backfill a day.</p>
+        <p className="mb-3 text-caption text-tertiary">Log today or add a past day.</p>
       )}
       <form ref={formRef} action={handleSubmit} className="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
           <div className="space-y-2">

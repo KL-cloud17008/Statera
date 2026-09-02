@@ -11,12 +11,12 @@ import { Num, Row, Rows, Sub } from "@/components/ui/ledger";
 
 /* Entry, status, weight, controls. Fixed control track keeps head and rows
    on one grid; mobile drops the status column into the entry cell. */
-const ENTRY_COLUMNS_MOBILE = "minmax(0,1fr) minmax(0,6rem) 4.5rem";
-const ENTRY_COLUMNS = "minmax(0,1fr) minmax(0,8rem) minmax(0,8rem) 4.5rem";
+const ENTRY_COLUMNS_MOBILE = "minmax(0,1fr) minmax(0,8.5rem) 4.5rem";
+const ENTRY_COLUMNS = "minmax(0,1fr) minmax(0,8rem) minmax(0,10.5rem) 4.5rem";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { SerializedWeightEntry } from "@/lib/weight";
-import { formatBodyweight } from "@/lib/units";
+import { formatBodyweight, formatBodyweightSecondary } from "@/lib/units";
 
 const statusVariant = {
   BASELINE: "accent",
@@ -150,7 +150,12 @@ export function WeightHistoryList({
                   <span className="hidden truncate text-tertiary md:block">
                     {statusLabel[entry.status]}
                   </span>
-                  <Num>{formatBodyweight(entry.weight)}</Num>
+                  <span className="min-w-0 text-right">
+                    <Num className="block">{formatBodyweight(entry.weight)}</Num>
+                    <Sub hideOnDesktop={false} className="mt-0.5 block whitespace-normal leading-tight">
+                      {formatBodyweightSecondary(entry.weight)}
+                    </Sub>
+                  </span>
                   <span className="flex justify-end gap-1 opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100 motion-reduce:transition-none">
                     <Button
                       type="button"

@@ -208,8 +208,8 @@ export function calculateStepStats(
 
   // Streak semantics: a logged below-goal day breaks the streak; an UNLOGGED
   // day is missing data, not failure — short gaps (up to
-  // MAX_BRIDGEABLE_UNLOGGED_RUN consecutive unlogged days) are bridged, and
-  // reported so the UI can prompt a backfill instead of silently zeroing.
+  // MAX_BRIDGEABLE_UNLOGGED_RUN consecutive unlogged days) are bridged. The
+  // gap metadata remains available without turning those gaps into UI warnings.
   const recentEntries = getNormalizedStepEntries(entries);
   const earliestLoggedDate =
     recentEntries.length > 0 ? recentEntries[recentEntries.length - 1].date : null;
@@ -224,8 +224,8 @@ export function calculateStepStats(
     const loggedSteps = byDate.get(cursor);
     if (loggedSteps == null) {
       // A suspended day has no goal to miss, so it is skipped outright: it
-      // neither prompts a backfill nor counts toward the run that ends a
-      // streak. Counting it in the run would let a long weekend break one.
+      // neither contributes gap metadata nor counts toward the run that ends
+      // a streak. Counting it in the run would let a long weekend break one.
       if (isGoalSuspended?.(cursor)) {
         cursor = addDaysToDateString(cursor, -1);
         continue;

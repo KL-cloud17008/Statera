@@ -3,6 +3,9 @@ import type { DistanceUnit, WeightUnit } from "@/lib/app-settings";
 export const LB_TO_KG = 0.45359237;
 export const BODYWEIGHT_UNIT = "lb";
 export const WORKOUT_LOAD_UNIT = "kg";
+export const BODYWEIGHT_DIGITS = 1;
+export const BODYWEIGHT_KG_DIGITS = 1;
+export const BODYWEIGHT_RATE_KG_DIGITS = 2;
 const STEPS_TO_MILES = 0.0004734848;
 const MILES_TO_KM = 1.609344;
 const INCHES_TO_CM = 2.54;
@@ -62,37 +65,168 @@ export function poundsToStoneParts(lb: number | null | undefined): { stone: numb
   };
 }
 
-export function formatBodyweight(value: number | null | undefined, digits = 1) {
-  if (value == null || !Number.isFinite(value)) {
-    return "--";
+function toBodyweightNumber(value: number | string | null | undefined): number | null {
+  if (value == null || value === "") {
+    return null;
   }
 
-  return `${value.toFixed(digits)} ${BODYWEIGHT_UNIT}`;
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
-export function formatBodyweightDelta(value: number | null | undefined, digits = 1) {
+function roundedMagnitude(value: number, digits: number): number {
+  const factor = 10 ** digits;
+  return Math.round((Math.abs(value) + Number.EPSILON) * factor) / factor;
+}
+
+function signPrefix(value: number, includePositive: boolean): string {
+  if (value < 0) {
+    return "-";
+  }
+
+  return includePositive && value > 0 ? "+" : "";
+}
+
+function formatStone(value: number, includeSign: boolean, digits = BODYWEIGHT_DIGITS): string {
+  // Round before splitting so a displayed remainder never reads `14.0 lb`.
+  const roundedPounds = roundedMagnitude(value, digits);
+  const stone = Math.floor(roundedPounds / 14);
+  const pounds = roundedPounds - stone * 14;
+  return `${signPrefix(value, includeSign)}${stone} st ${pounds.toFixed(digits)} lb`;
+}
+
+function formatSignedUnit(
+  value: number,
+  unit: string,
+  digits: number,
+  includePositive: boolean
+): string {
+  return `${signPrefix(value, includePositive)}${roundedMagnitude(value, digits).toFixed(digits)} ${unit}`;
+}
+
+export function formatBodyweight(
+  value: number | null | undefined,
+  digits = BODYWEIGHT_DIGITS
+) {
   if (value == null || !Number.isFinite(value)) {
     return "--";
   }
 
-  const prefix = value > 0 ? "+" : "";
-  return `${prefix}${value.toFixed(digits)} ${BODYWEIGHT_UNIT}`;
+  return formatSignedUnit(value, BODYWEIGHT_UNIT, digits, false);
+}
+
+export function formatBodyweightSecondary(
+  value: number | string | null | undefined,
+  { signed = false }: { signed?: boolean } = {}
+) {
+  const lb = toBodyweightNumber(value);
+  if (lb == null || (!signed && lb < 0)) {
+    return "";
+  }
+
+  const kg = poundsToKg(Math.abs(lb));
+  if (kg == null) {
+    return "";
+  }
+
+  const includePositive = signed;
+  return `${formatSignedUnit(
+    lb < 0 ? -kg : kg,
+    "kg",
+    BODYWEIGHT_KG_DIGITS,
+    includePositive
+  )} · ${formatStone(lb, includePositive)}`;
+}
+
+export function formatBodyweightWithConversions(
+  value: number | string | null | undefined
+) {
+  const lb = toBodyweightNumber(value);
+  const secondary = formatBodyweightSecondary(value);
+  if (lb == null || lb < 0 || !secondary) {
+    return "";
+  }
+
+  return `${formatBodyweight(lb)} · ${secondary}`;
+}
+
+export function formatBodyweightDeltaPrimary(
+  value: number | null | undefined,
+  digits = BODYWEIGHT_DIGITS
+) {
+  if (value == null || !Number.isFinite(value)) {
+    return "--";
+  }
+
+  return formatSignedUnit(value, BODYWEIGHT_UNIT, digits, true);
+}
+
+export function formatBodyweightDelta(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) {
+    return "--";
+  }
+
+  const kg = poundsToKg(Math.abs(value));
+  if (kg == null) {
+    return "--";
+  }
+
+  const includePositive = true;
+  return `${formatSignedUnit(
+    value,
+    BODYWEIGHT_UNIT,
+    BODYWEIGHT_DIGITS,
+    includePositive
+  )} · ${formatSignedUnit(
+    value < 0 ? -kg : kg,
+    "kg",
+    BODYWEIGHT_KG_DIGITS,
+    includePositive
+  )} · ${formatStone(value, includePositive)}`;
+}
+
+export function formatBodyweightDeltaSecondary(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) {
+    return "";
+  }
+
+  return formatBodyweightSecondary(value, { signed: true });
 }
 
 export function formatBodyweightConversion(value: number | string | null | undefined) {
-  if (value == null || value === "") {
+  return formatBodyweightWithConversions(value);
+}
+
+export function formatBodyweightRatePrimary(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) {
+    return "--";
+  }
+
+  return `${signPrefix(value, true)}${roundedMagnitude(value, BODYWEIGHT_DIGITS).toFixed(BODYWEIGHT_DIGITS)} lb/wk`;
+}
+
+export function formatBodyweightRateSecondary(value: number | null | undefined) {
+  if (value == null || !Number.isFinite(value)) {
     return "";
   }
 
-  const lb = typeof value === "number" ? value : Number.parseFloat(value);
-  const kg = poundsToKg(lb);
-  const stoneParts = poundsToStoneParts(lb);
-
-  if (kg == null || stoneParts == null) {
+  const kg = poundsToKg(Math.abs(value));
+  if (kg == null) {
     return "";
   }
 
-  return `${lb.toFixed(1)} lb = ${kg.toFixed(2)} kg = ${stoneParts.stone} st ${stoneParts.pounds.toFixed(1)} lb`;
+  return formatSignedUnit(
+    value < 0 ? -kg : kg,
+    "kg/wk",
+    BODYWEIGHT_RATE_KG_DIGITS,
+    true
+  );
+}
+
+export function formatBodyweightRate(value: number | null | undefined) {
+  const primary = formatBodyweightRatePrimary(value);
+  const secondary = formatBodyweightRateSecondary(value);
+  return secondary ? `${primary} · ${secondary}` : primary;
 }
 
 export function workoutLoadToKg(value: number | null | undefined, sourceUnit: WorkoutLoadUnit = WORKOUT_LOAD_UNIT) {

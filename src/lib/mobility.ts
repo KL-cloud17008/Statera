@@ -1633,7 +1633,7 @@ function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): Mob
       id: `${idPrefix}-weekly-reset-downshift`,
       title: "Weekly downshift reset",
       duration: "4-6 min",
-      purpose: "After Friday Upper Accessory + Arms + Core, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
+      purpose: "After Friday chest-isolation, row, shoulder, and arm work, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
       exercises: [
         footFlareMovement("supportedSingleLegBalanceKickstand", `${idPrefix}-single-leg-kickstand`, {
           dose: "10-20 seconds per side",
@@ -1964,7 +1964,7 @@ const DAY_5_LATER_RECOVERY: MobilityBlock = block({
   title: "Weekly Downshift / Foot-Flare Recovery",
   duration: "12-16 min",
   purpose:
-    "Complete later the same day after Friday Upper Accessory + Arms + Core. End the week with easy foot, ankle, balance, spine, and breathing work.",
+    "Complete later the same day after Friday chest-isolation, row, shoulder, and arm work. End the week with easy foot, ankle, balance, spine, and breathing work.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -2094,7 +2094,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, wrists, and trunk for incline push, rows, pulldown, rear delts, and anti-rotation work.",
+      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, and wrists for the pec-deck pair, incline press, row, and dual pulldowns.",
     previousDayReason:
       "Monday was Lower A, so this keeps lower-leg prep low-dose before upper-body training.",
     adaptationNote:
@@ -2102,7 +2102,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Incline press, row, pulldown, rear delts, arms, and trunk control." },
+      { label: "Training match", value: "Upper A setup", note: "Pec-deck pair, incline press, row, dual pulldowns, shoulders, and arms." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
@@ -2139,7 +2139,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means hips and ankles feel easier to position without adding fatigue.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Lower B setup", note: "Supported split squat, low-dose back extension, leg curl, leg extension, adduction, and abduction." },
+      { label: "Training match", value: "Lower B setup", note: "Supported split squat, leg curls, leg extension, hip machines, calves, and a light cable crunch." },
       { label: "Foot rule", value: "No step chasing", note: "Gym walking is removed if soles are flaring." },
       { label: "Feel target", value: "Stable", note: "Hips stay quiet and breathing stays easy." },
     ],
@@ -2168,7 +2168,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for machine press, rows, pulldown, shoulders, and arms.",
+      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for machine press, rows, dual pulldowns, rear delts, and arms.",
     previousDayReason:
       "Wednesday was Lower B, so this keeps lower-leg work quiet before upper-body training.",
     adaptationNote:
@@ -2176,8 +2176,8 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper B setup", note: "Machine press, row, pulldown, lateral raise, triceps, biceps, and light overhead press." },
-      { label: "Back rule", value: "Controlled press", note: "Remove overhead press first if lower back rises above 3/10." },
+      { label: "Training match", value: "Upper B setup", note: "Machine press, row, dual pulldowns, rear delts, triceps, and biceps." },
+      { label: "Back rule", value: "Supported pulling", note: "Keep the torso controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
@@ -2201,27 +2201,27 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   5: {
     dayOfWeek: 5,
     dayName: "Friday",
-    trainingRole: "Upper accessory training day",
-    sessionTitle: "Upper accessory primer",
+    trainingRole: "Friday chest isolation + row day",
+    sessionTitle: "Friday chest + row primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, rear delts, lats, chest, arms, trunk, and breathing for accessory upper-body and core work.",
+      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for chest isolation, supported rows, shoulder work, and arms.",
     previousDayReason:
-      "Thursday was Upper B, so Friday keeps prep simple before accessory rows, arms, rear delts, and trunk stability.",
+      "Thursday was Upper B, so Friday keeps prep simple before chest isolation, supported rows, shoulders, calves, and arms.",
     adaptationNote:
       "Keep prep easy. Friday is accessory strength work, not conditioning.",
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper accessory setup", note: "Chest balance, row, arms, face pull, and anti-rotation hold." },
-      { label: "Trunk rule", value: "Control", note: "No heavy bracing and no loaded spinal flexion." },
+      { label: "Training match", value: "Friday setup", note: "Chest isolation, chest-supported row, shoulders, calves, and arms." },
+      { label: "Back rule", value: "Supported pressing", note: "Remove the shoulder press if lower-back pain reaches 3/10." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
       dailyLowerLegBase(),
       block({
         id: "friday-upper-accessory-prep",
-        title: "Upper accessory prep block",
+        title: "Chest + row prep block",
         duration: "3-5 min",
         purpose: "Prepare upper back, lats, rear delts, shoulders, elbows, and trunk before controlled accessory work.",
         adaptationNote: "Do not force shoulder range. Stop before pinch.",
@@ -2461,6 +2461,25 @@ export type TrainingSessionKey =
   | "UPPER_ACCESSORY"
   | "REST";
 
+export function getTrainingSessionKeyForPlanDay(
+  dayOfWeek: number | null | undefined
+): TrainingSessionKey {
+  switch (dayOfWeek) {
+    case 1:
+      return "LOWER_A";
+    case 2:
+      return "UPPER_A";
+    case 3:
+      return "LOWER_B";
+    case 4:
+      return "UPPER_B";
+    case 5:
+      return "UPPER_ACCESSORY";
+    default:
+      return "REST";
+  }
+}
+
 /** The weekday each program was authored for — an index, not a schedule. */
 const MOBILITY_PROGRAM_INDEX_BY_SESSION: Record<TrainingSessionKey, number> = {
   LOWER_A: 1,
@@ -2484,7 +2503,7 @@ export function getTrainingSessionKey(
   if (/^upper a\b|upper a —|upper a -/.test(name)) return "UPPER_A";
   if (/^lower b\b|lower b —|lower b -/.test(name)) return "LOWER_B";
   if (/^upper b\b|upper b —|upper b -/.test(name)) return "UPPER_B";
-  if (/upper accessory/.test(name)) return "UPPER_ACCESSORY";
+  if (/^friday\b|upper accessory/.test(name)) return "UPPER_ACCESSORY";
   return "REST";
 }
 

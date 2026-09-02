@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import { PageTitle } from "@/components/ui/ledger";
 import { parseCSV, getDataRows, getHeaders } from "@/lib/csv";
 import { parseCSVDate } from "@/lib/weight";
+import { formatBodyweightWithConversions } from "@/lib/units";
 
 type ParsedRow = {
   status: string;
@@ -199,7 +200,7 @@ export function WeightImportClient() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="max-h-80 overflow-auto rounded-control border border-rule">
-              <div className="min-w-[34rem]">
+              <div className="min-w-[44rem]">
                 <div className="sticky top-0 grid grid-cols-4 gap-2 bg-sunken px-4 py-2.5 text-label uppercase text-tertiary">
                   <span>Date</span>
                   <span>Weight</span>
@@ -212,7 +213,9 @@ export function WeightImportClient() {
                     className={`grid grid-cols-4 gap-2 border-t border-rule px-4 py-2.5 text-row ${!row.valid ? "bg-critical-surface text-critical" : "text-primary"}`}
                   >
                     <span className="truncate">{row.date}</span>
-                    <span>{row.valid ? `${row.weight} lb` : "Invalid"}</span>
+                    <span>
+                      {row.valid ? formatBodyweightWithConversions(row.weight) : "Invalid"}
+                    </span>
                     <span className="truncate">{row.status}</span>
                     <span>{row.bodyFatPercent != null ? `${row.bodyFatPercent}%` : "-"}</span>
                   </div>

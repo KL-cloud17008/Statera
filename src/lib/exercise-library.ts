@@ -46,11 +46,17 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "machine-chest-press", name: "Machine Chest Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "incline-dumbbell-press", name: "Incline Dumbbell Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "chest-fly", name: "Chest Fly", muscleGroup: "Chest", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 60, source: "builtin" },
+  { id: "single-arm-pec-deck", name: "Single-Arm Pec Deck", muscleGroup: "Chest", defaultSets: 2, defaultReps: "10-15 per arm", defaultRestSeconds: 120, source: "builtin" },
+  { id: "two-arm-reverse-pec-deck", name: "Two-Arm Reverse Pec Deck", muscleGroup: "Shoulders", defaultSets: 2, defaultReps: "12-15", defaultRestSeconds: 120, source: "builtin" },
   { id: "chest-supported-row", name: "Chest-Supported Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "lat-pulldown", name: "Lat Pulldown", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
+  { id: "neutral-grip-lat-pulldown", name: "Neutral-Grip Lat Pulldown", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
+  { id: "close-grip-lat-pulldown", name: "Close-Grip Lat Pulldown", muscleGroup: "Back", defaultSets: 2, defaultReps: "10-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "seated-cable-row", name: "Seated Cable Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "single-leg-leg-press", name: "Single-Leg Leg Press", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12 per side", defaultRestSeconds: 120, source: "builtin" },
   { id: "leg-press", name: "Leg Press", muscleGroup: "Legs", defaultSets: 4, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
+  { id: "walking-lunges", name: "Walking Lunges", muscleGroup: "Legs", defaultSets: 2, defaultReps: "6-10 steps per leg", defaultRestSeconds: 180, source: "builtin" },
+  { id: "pendulum-squat", name: "Pendulum Squat", muscleGroup: "Legs", defaultSets: 3, defaultReps: "6-8", defaultRestSeconds: 180, source: "builtin" },
   { id: "back-extension-machine", name: "Back Extension Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "10-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "leg-curl", name: "Leg Curl", muscleGroup: "Legs", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 75, source: "builtin" },
   // No standing calf raise: the gym has no standing calf machine. Both seated
@@ -68,6 +74,7 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "skull-crusher", name: "Skull Crusher", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 75, source: "builtin" },
   { id: "plank", name: "Plank", muscleGroup: "Core", defaultSets: 3, defaultReps: "30-60 sec", defaultRestSeconds: 45, source: "builtin" },
   { id: "hanging-knee-raise", name: "Hanging Knee Raise", muscleGroup: "Core", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 60, source: "builtin" },
+  { id: "cable-crunch", name: "Cable Crunch", muscleGroup: "Core", defaultSets: 2, defaultReps: "10-15", defaultRestSeconds: 90, source: "builtin" },
   { id: "farmers-carry", name: "Farmer's Carry", muscleGroup: "Full Body", defaultSets: 3, defaultReps: "40 m", defaultRestSeconds: 90, source: "builtin" },
 ];
 

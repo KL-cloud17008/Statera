@@ -4,7 +4,14 @@ import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Notice, Num, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { normalizeGoalTargetDate } from "@/lib/app-settings";
 import { computeRequiredWeeklyLossPace, type WeightStats } from "@/lib/weight";
-import { formatBodyweight } from "@/lib/units";
+import {
+  formatBodyweight,
+  formatBodyweightRate,
+  formatBodyweightRatePrimary,
+  formatBodyweightRateSecondary,
+  formatBodyweightSecondary,
+  formatBodyweightWithConversions,
+} from "@/lib/units";
 
 export function WeightStatsCards({ stats }: { stats: WeightStats }) {
   const { settings } = useAppSettings();
@@ -16,10 +23,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
     targetDate
   );
 
-  const weeklyRate =
-    stats.weeklyRate != null
-      ? `${stats.weeklyRate > 0 ? "+" : ""}${stats.weeklyRate.toFixed(1)} lb/wk`
-      : "--";
+  const weeklyRate = formatBodyweightRate(stats.weeklyRate);
 
   const remainingToGoal =
     stats.currentWeight != null && stats.goalWeight != null
@@ -40,7 +44,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
 
   const paceHint =
     requiredPace != null && targetDate
-      ? `Required -${requiredPace.toFixed(1)} lb/wk to hit ${formatGoalDate(targetDate)}`
+      ? `Required ${formatBodyweightRate(-requiredPace)} to hit ${formatGoalDate(targetDate)}`
       : targetDate
         ? `No further loss required by ${formatGoalDate(targetDate)}`
         : "Set a target date in settings to compare";
@@ -54,6 +58,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
   const metrics: Array<{
     label: string;
     value: string;
+    secondary?: string;
     hint: string;
     tone?: "primary" | "accent" | "ember";
     numeric?: boolean;
@@ -65,22 +70,28 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
     },
     {
       label: "Weekly pace",
-      value: weeklyRate,
+      value: formatBodyweightRatePrimary(stats.weeklyRate),
+      secondary: formatBodyweightRateSecondary(stats.weeklyRate),
       hint: paceHint,
       tone: paceGuardrailActive ? "ember" : "primary",
     },
     {
       label: "Remaining to goal",
       value: remainingToGoal != null ? formatBodyweight(Math.abs(remainingToGoal)) : "--",
+      secondary:
+        remainingToGoal != null
+          ? formatBodyweightSecondary(Math.abs(remainingToGoal))
+          : "",
       hint:
         stats.goalWeight != null
-          ? `To go — goal ${formatBodyweight(stats.goalWeight)}`
+          ? `To go — goal ${formatBodyweightWithConversions(stats.goalWeight)}`
           : "Set a goal weight in settings",
     },
     { label: "BMI", value: stats.bmi?.toFixed(1) ?? "--", hint: "Based on height set in profile" },
     {
       label: "Goal weight",
       value: formatBodyweight(stats.goalWeight),
+      secondary: formatBodyweightSecondary(stats.goalWeight),
       hint: "Target set in profile settings",
     },
     {
@@ -125,7 +136,22 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
                  state, not a figure. */
               <span className="text-right text-primary">{metric.value}</span>
             ) : (
-              <Num tone={metric.tone === "ember" ? "ember" : "primary"}>{metric.value}</Num>
+              <span className="min-w-0 text-right">
+                <Num
+                  tone={metric.tone === "ember" ? "ember" : "primary"}
+                  className="block"
+                >
+                  {metric.value}
+                </Num>
+                {metric.secondary ? (
+                  <Sub
+                    hideOnDesktop={false}
+                    className="mt-0.5 block whitespace-normal leading-tight"
+                  >
+                    {metric.secondary}
+                  </Sub>
+                ) : null}
+              </span>
             )}
           </Row>
         ))}
@@ -134,8 +160,8 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
   );
 }
 
-const STAT_COLUMNS_MOBILE = "minmax(0,1fr) minmax(0,7rem)";
-const STAT_COLUMNS = "minmax(0,14rem) minmax(0,1fr) minmax(0,9rem)";
+const STAT_COLUMNS_MOBILE = "minmax(0,1fr) minmax(0,8.5rem)";
+const STAT_COLUMNS = "minmax(0,14rem) minmax(0,1fr) minmax(0,11rem)";
 
 function formatGoalDate(dateString: string) {
   return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {

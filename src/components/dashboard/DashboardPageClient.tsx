@@ -1,6 +1,5 @@
 "use client";
 
-
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import type { SerializedPainCheckIn } from "@/actions/pain";
@@ -18,7 +17,11 @@ import {
   isStepGoalSuspendedByPlan,
 } from "@/lib/plan-preview";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
-import { formatBodyweight, formatWorkoutVolume } from "@/lib/units";
+import {
+  formatBodyweight,
+  formatBodyweightSecondary,
+  formatWorkoutVolume,
+} from "@/lib/units";
 import { cn } from "@/lib/utils";
 
 type WeightStats = {
@@ -51,25 +54,23 @@ type WorkoutDayStatus = {
   sessionId?: string;
 };
 
+const STRENGTH_RHYTHM_DAYS = [
+  { day: "MON", dayOfWeek: 1 },
+  { day: "TUE", dayOfWeek: 2 },
+  { day: "WED", dayOfWeek: 3 },
+  { day: "THU", dayOfWeek: 4 },
+  { day: "FRI", dayOfWeek: 5 },
+] as const;
+
 const WEEKLY_RHYTHM = [
-  { day: "MON", label: "Lower A — Leg Press + Quad/Hamstring Strength", protocol: "Strength Protocol", dayOfWeek: 1 },
-  { day: "TUE", label: "Upper A — Incline Push / Row / Trunk Stability", protocol: "Strength Protocol", dayOfWeek: 2 },
-  { day: "WED", label: "Lower B — Accessory Legs + Hip Stability", protocol: "Strength Protocol", dayOfWeek: 3 },
-  { day: "THU", label: "Upper B — Chest Machine Press / Pull + Shoulders and Arms", protocol: "Strength Protocol", dayOfWeek: 4 },
-  { day: "FRI", label: "Upper Accessory + Arms + Core", protocol: "Strength Protocol", dayOfWeek: 5 },
+  ...STRENGTH_RHYTHM_DAYS.map(({ day, dayOfWeek }) => ({
+    day,
+    dayOfWeek,
+    label: getPlanDay(dayOfWeek)?.sessionName ?? "Training",
+    protocol: "Strength Protocol",
+  })),
   { day: "SAT", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 6 },
   { day: "SUN", label: "Complete Rest", protocol: "Full Rest", dayOfWeek: 0 },
-];
-
-/* Indexed by calendar weekday (0=Sunday). */
-const NEXT_BY_DAY = [
-  "Complete Rest",
-  "Lower A — Leg Press + Quad/Hamstring Strength",
-  "Upper A — Incline Push / Row / Trunk Stability",
-  "Lower B — Accessory Legs + Hip Stability",
-  "Upper B — Chest Machine Press / Pull + Shoulders and Arms",
-  "Upper Accessory + Arms + Core",
-  "Complete Rest",
 ];
 
 export function DashboardPageClient({
@@ -110,6 +111,7 @@ export function DashboardPageClient({
     ? Math.min(100, Math.round((todaySteps / settings.stepGoal) * 100))
     : 0;
   const weeklyVolume = formatWorkoutVolume(workoutSummary.weeklyVolume);
+  const bodyweightSecondary = formatBodyweightSecondary(weightStats.currentWeight);
   const volumeWeekOverWeek =
     workoutSummary.prevWeeklyVolume > 0
       ? Math.round(
@@ -197,7 +199,11 @@ export function DashboardPageClient({
           <Figure
             label="Bodyweight"
             value={formatBodyweight(weightStats.currentWeight)}
-            detail={getTrendCopy(weightStats.trend)}
+            detail={
+              bodyweightSecondary
+                ? `${bodyweightSecondary} · ${getTrendCopy(weightStats.trend)}`
+                : getTrendCopy(weightStats.trend)
+            }
           />
           <Figure
             label="Training output"
@@ -317,20 +323,8 @@ export function DashboardPageClient({
               label="Streak"
               value={stepStats.currentStreak}
               size="lg"
-              tone={stepStats.streakUnloggedDays > 0 ? "ember" : "primary"}
-              detail={
-                stepStats.streakUnloggedDays > 0 && stepStats.streakBackfillDate ? (
-                  <Link
-                    href={`/steps?backfill=${stepStats.streakBackfillDate}#quick-add`}
-                    className="text-ember underline-offset-2 hover:underline"
-                  >
-                    At risk — backfill {stepStats.streakUnloggedDays}{" "}
-                    {stepStats.streakUnloggedDays === 1 ? "day" : "days"}
-                  </Link>
-                ) : (
-                  "Consecutive goal days"
-                )
-              }
+              tone="primary"
+              detail="Consecutive goal days"
             />
             <Figure label="Goal days" value={stepStats.goalDaysTotal} size="lg" />
           </dl>
@@ -489,8 +483,8 @@ export function DashboardPageClient({
    its own content, so the empty head cell collapsed to 0 and the SESSION
    label overhung the button column. A fixed track keeps head and rows on
    one grid — which is the whole point of a ledger. */
-/* Display-only split of "Lower A — Leg Press + Quad/Hamstring Strength" into
-   its name and focus. Purely presentational: the plan data is untouched. */
+/* Display-only split of a canonical session title into its name and focus.
+   Purely presentational: the plan data is untouched. */
 function splitSessionLabel(label: string): { name: string; focus?: string } {
   const [name, ...rest] = label.split(" — ");
   return { name, focus: rest.length > 0 ? rest.join(" — ") : undefined };
@@ -613,7 +607,7 @@ function getGreeting() {
 }
 
 function getNextProtocol(dayOfWeek: number) {
-  return NEXT_BY_DAY[dayOfWeek] ?? "Upper A";
+  return getPlanDay(dayOfWeek)?.sessionName ?? "Complete Rest";
 }
 
 function getTrendCopy(trend: WeightStats["trend"]) {

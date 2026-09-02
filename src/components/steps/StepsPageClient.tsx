@@ -40,14 +40,12 @@ export function StepsPageClient({
     (entry) => entry.date.slice(0, 7) === monthPrefix && (entry.steps ?? 0) >= settings.stepGoal
   ).length;
 
-  const streakAtRisk = stats.streakUnloggedDays > 0;
-
   return (
     <>
       <PageTitle
         eyebrow="Steps"
         title="Foot load and daily movement."
-        lead="Daily step signal, streak pressure, weekly rhythm, and monthly load."
+        lead="Daily step signal, current streak, weekly rhythm, and monthly load."
         action={
           <Button asChild variant="primary" size="sm">
             <Link href="#quick-add">Log steps</Link>
@@ -80,24 +78,9 @@ export function StepsPageClient({
             <Figure
               label="Streak"
               size="lg"
-              tone={streakAtRisk ? "ember" : "accent"}
+              tone="accent"
               value={stats.currentStreak.toLocaleString()}
-              detail={
-                streakAtRisk && stats.streakBackfillDate ? (
-                  <>
-                    {stats.streakUnloggedDays} unlogged{" "}
-                    {stats.streakUnloggedDays === 1 ? "day" : "days"} —{" "}
-                    <Link
-                      href={`/steps?backfill=${stats.streakBackfillDate}#quick-add`}
-                      className="text-ember underline underline-offset-2"
-                    >
-                      backfill {formatBackfillDate(stats.streakBackfillDate)}
-                    </Link>
-                  </>
-                ) : (
-                  "Consecutive goal days"
-                )
-              }
+              detail="Consecutive goal days"
             />
             <Figure
               label="7-day avg"
@@ -152,12 +135,5 @@ export function StepsPageClient({
       </Section>
     </>
   );
-}
-
-function formatBackfillDate(dateString: string) {
-  return new Date(`${dateString}T00:00:00`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
 }
 

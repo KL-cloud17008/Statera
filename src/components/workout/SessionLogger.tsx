@@ -137,6 +137,10 @@ export function SessionLogger({
   }, [completedSets, loggableExercises]);
 
   const currentTarget = findCurrentTarget(loggableExercises, completedSets);
+  const currentRestSeconds = getProgrammedRestSeconds(
+    loggableExercises,
+    currentTarget?.exercise
+  );
 
   const totalExercises = loggableExercises.length;
   const completedCount = completedExercises.size;
@@ -281,7 +285,7 @@ export function SessionLogger({
 
       {exerciseGroups.map((group, groupIndex) => {
         const isGroupedBlock = group.length > 1 && group[0].supersetGroup;
-        const restSeconds = group[0].restSeconds ?? 90;
+        const restSeconds = group[group.length - 1]?.restSeconds ?? 90;
 
         return (
           <Section key={groupIndex}>
@@ -347,7 +351,7 @@ export function SessionLogger({
                 : "Ready to complete session"}
             </p>
           </div>
-          <RestTimer variant="bar" defaultSeconds={currentTarget?.exercise.restSeconds || 90} />
+          <RestTimer variant="bar" defaultSeconds={currentRestSeconds} />
         </div>
       </div>
     </div>
@@ -364,6 +368,24 @@ function findCurrentTarget(exercises: PlanExercise[], completedSets: Set<string>
     }
   }
   return null;
+}
+
+function getProgrammedRestSeconds(
+  exercises: PlanExercise[],
+  exercise: PlanExercise | undefined
+) {
+  if (!exercise) {
+    return 90;
+  }
+
+  if (!exercise.supersetGroup) {
+    return exercise.restSeconds ?? 90;
+  }
+
+  const blockExercises = exercises.filter(
+    (candidate) => candidate.supersetGroup === exercise.supersetGroup
+  );
+  return blockExercises[blockExercises.length - 1]?.restSeconds ?? exercise.restSeconds ?? 90;
 }
 
 function formatSessionDate(dateString: string) {

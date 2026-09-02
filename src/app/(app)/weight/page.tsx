@@ -8,7 +8,12 @@ import { WeightStatsCards } from "@/components/weight/WeightStatsCards";
 import { Figure, PageTitle, Section } from "@/components/ui/ledger";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { computeWeightStats } from "@/lib/weight";
-import { formatBodyweight, formatBodyweightConversion, formatBodyweightDelta } from "@/lib/units";
+import {
+  formatBodyweight,
+  formatBodyweightDeltaPrimary,
+  formatBodyweightDeltaSecondary,
+  formatBodyweightSecondary,
+} from "@/lib/units";
 
 export const metadata: Metadata = {
   title: "Weight | Athanor",
@@ -42,13 +47,14 @@ export default async function WeightPage() {
   });
 
   const progress = getWeightProgress(stats.startWeight, stats.currentWeight, stats.goalWeight);
+  const goalWeightSecondary = formatBodyweightSecondary(stats.goalWeight);
 
   return (
     <>
       <PageTitle
         eyebrow="Weight"
         title="Body-composition ledger."
-        lead="Pounds remain canonical, with kg and stone available at the point of entry."
+        lead="Pounds remain canonical, with kg and stone visible throughout the ledger."
         action={<WeightPageActions />}
       />
 
@@ -62,27 +68,47 @@ export default async function WeightPage() {
             size="xl"
             value={formatBodyweight(stats.currentWeight)}
             detail={
-              formatBodyweightConversion(stats.currentWeight) ||
+              formatBodyweightSecondary(stats.currentWeight) ||
               "Log a weigh-in to unlock kg and stone conversion."
             }
           />
           <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
-            <Figure label="Start" size="lg" value={formatBodyweight(stats.startWeight)} detail="Baseline" />
+            <Figure
+              label="Start"
+              size="lg"
+              value={formatBodyweight(stats.startWeight)}
+              detail={joinDetail(formatBodyweightSecondary(stats.startWeight), "Baseline")}
+            />
             <Figure
               label="Change"
               size="lg"
               tone="accent"
-              value={formatBodyweightDelta(stats.totalChange)}
-              detail="From start weight"
+              value={formatBodyweightDeltaPrimary(stats.totalChange)}
+              detail={joinDetail(
+                formatBodyweightDeltaSecondary(stats.totalChange),
+                "From start weight"
+              )}
             />
-            <Figure label="7-day" size="lg" value={formatBodyweight(stats.avg7Day)} detail="Smoothed trend" />
+            <Figure
+              label="7-day"
+              size="lg"
+              value={formatBodyweight(stats.avg7Day)}
+              detail={joinDetail(formatBodyweightSecondary(stats.avg7Day), "Smoothed trend")}
+            />
           </div>
         </dl>
 
         {/* Progress to goal reads as a rule that fills, not a floating bar. */}
         <div className="mt-8">
           <div className="flex items-baseline justify-between gap-4 text-label uppercase text-tertiary">
-            <span>Progress to goal {formatBodyweight(stats.goalWeight)}</span>
+            <span className="min-w-0">
+              <span className="block">Progress to goal {formatBodyweight(stats.goalWeight)}</span>
+              {goalWeightSecondary ? (
+                <span className="mt-1 block normal-case">
+                  {goalWeightSecondary}
+                </span>
+              ) : null}
+            </span>
             <span className="num text-right text-accent">{progress}%</span>
           </div>
           <div className="mt-2 h-1 overflow-hidden bg-sunken">
@@ -106,6 +132,10 @@ export default async function WeightPage() {
       </Section>
     </>
   );
+}
+
+function joinDetail(conversion: string, detail: string) {
+  return conversion ? `${conversion} · ${detail}` : detail;
 }
 
 function getWeightProgress(start: number | null, current: number | null, goal: number | null) {

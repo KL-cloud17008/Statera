@@ -237,6 +237,8 @@ export async function getWorkoutPlanDayStatuses(
 }
 
 export async function getTodaysPlan(userId: string, timezone?: string) {
+  await ensureDefaultWorkoutPlans(prisma, userId);
+
   const dayNum = getTrainingDayNumber(new Date(), timezone);
   if (!dayNum) {
     return null;
@@ -332,14 +334,16 @@ export async function startWorkoutSession(
   const now = new Date();
   const trainingDate = getTrainingDate(now, user.timezone);
   const openSessions = await deleteStaleOpenPlanSessions(user.id);
-  const existing = openSessions.find(
-    (session) =>
-      session.workoutPlanId === plan.id &&
-      isCurrentPlanBackedWorkoutSession(session)
-  );
+  const existing = openSessions[0];
 
   if (existing) {
-    return { sessionId: existing.id, warning: "Resumed existing session" };
+    return {
+      sessionId: existing.id,
+      warning:
+        existing.workoutPlanId === plan.id
+          ? "Resumed existing session"
+          : "Another session is already in progress; resumed it",
+    };
   }
 
   const session = await prisma.workoutSession.create({

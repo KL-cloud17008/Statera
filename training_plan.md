@@ -8,11 +8,11 @@ Five training days with balanced chest, back, legs, hips, arms, and trunk stabil
 
 | Day | Plan |
 | --- | --- |
-| Monday | Lower A - Leg Press + Quad/Hamstring Strength |
-| Tuesday | Upper A - Incline Push / Row / Trunk Stability |
-| Wednesday | Lower B - Accessory Legs + Hip Stability |
-| Thursday | Upper B - Chest Machine Press / Pull + Shoulders and Arms |
-| Friday | Upper Accessory + Arms + Core |
+| Monday | Lower A - Lunges + Pendulum Squat / Quad-Hamstring Strength |
+| Tuesday | Upper A - Incline Chest + Row / Dual Pulldown |
+| Wednesday | Lower B - Split Squat + Hamstrings / Hips + Core |
+| Thursday | Upper B - Machine Chest + Dual Pulldown / Arms |
+| Friday | Chest Isolation + Row / Shoulders + Arms |
 | Saturday | Complete Rest |
 | Sunday | Complete Rest |
 
@@ -45,42 +45,45 @@ Five training days with balanced chest, back, legs, hips, arms, and trunk stabil
 
 ## Monday - Lower A
 
-Name: Lower A - Leg Press + Quad/Hamstring Strength
+Name: Lower A - Lunges + Pendulum Squat / Quad-Hamstring Strength
 
 Required later recovery: Lower-Body Flush + Sole Care, 10-14 minutes.
 
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
-| A1 | Lying Leg Curl | 3 | 10-12 | 6-7 |
-| B1 | Leg Press or Pendulum Squat (if available) | 3 | 8-12 leg press / 6-8 pendulum squat | 5-7 |
-| B2 | Walking Lunges (dumbbells 16 kg) | 3 | 12-20 steps total (6-10 per leg) | 5-6 |
+| A1 | Walking Lunges (bodyweight first) | 2 | 6-10 steps per leg | 4-5 |
+| A2 | Pendulum Squat | 3 | 6-8 | 5-7 |
+| B1 | Lying Leg Curl | 3 | 10-12 | 6-7 |
 | C1 | Seated Leg Extension | 3 | 10-15 | 6-7 |
 | D1 | Hip Abduction Machine | 3 | 12-20 | 6 |
 | D2 | Hip Adduction Machine | 3 | 12-20 | 5-6 |
 | E1 | Seated Bent-Leg Calf Raise or Seated Dumbbell Calf Raise | 2 | 12-20 | 5-6 |
 
-Optional fourth walking-lunge set only if feet, knees and balance are all quiet — skip it by default.
+Walking lunges are controlled strength work, not conditioning. Take long enough between sets and before Pendulum Squat to recover. Skip or regress them if foot, ankle, knee, or lower-back pain increases or balance becomes less reliable.
 
 Monday E1 calf gate: bent knee, soleus emphasis. Machine is the default; seated dumbbells across the knees with the balls of the feet on a plate edge are the fallback. This is Monday's deliberately lighter calf option because walking lunges already load the sole. Skip entirely at sole or plantar pain 3/10 or higher.
 
-Monday total working sets: 20.
+Monday total working sets: 19.
 
 ## Tuesday - Upper A
 
-Name: Upper A - Incline Push / Row / Trunk Stability
+Name: Upper A - Incline Chest + Row / Dual Pulldown
 
 Required later recovery: Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.
 
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
-| A1 | Dumbbell Incline Press or Machine Incline Press | 3 | 8-12 | 6-7 |
-| A2 | Chest-Supported Row or Seated Cable Row | 3 | 8-12 | 6-7 |
+| A1 | Two-Arm Reverse Pec Deck | 2 | 12-15 | 5-6 |
+| A2 | Single-Arm Pec Deck | 2 | 10-15 per arm | 5-6 |
 | B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 6-7 |
-| B2 | Dumbbell / Plate Lateral Raise | 3 | 12-20 | 6 |
-| B3 | Machine Shoulder Press | 3 | 8-12 | 5-6 |
-| C1 | Triceps Extension Machine (downstairs) or Overhead Cable Triceps Extension (upstairs) | 3 | 10-15 | 6-7 |
-| C2 | Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs) | 3 | 10-15 curl / 12-20 lateral raise | 6-7 |
-| C3 | Reverse Pec Deck (downstairs) or Face Pull (either floor) or Dead Hang (upstairs) | 3 | 12-15 reps pec deck / 12-15 reps face pull / 20-40 seconds hold dead hang | 5-6 |
+| B2 | Close-Grip Lat Pulldown | 2 | 10-12 | 5-6 |
+| C1 | Dumbbell Incline Press or Machine Incline Press | 3 | 8-12 | 6-7 |
+| C2 | Chest-Supported Row or Seated Cable Row | 3 | 8-12 | 6-7 |
+| D1 | Machine Shoulder Press | 3 | 8-12 | 5-6 |
+| E1 | Triceps Extension Machine (downstairs) or Overhead Cable Triceps Extension (upstairs) | 3 | 10-15 | 6-7 |
+| E2 | Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs) | 3 | 10-15 curl / 12-20 lateral raise | 6-7 |
+
+Block A is a pec-deck pairing: keep 2-3 reps in reserve and rest 120 seconds after A2. Block B pairs the 3-set neutral-grip pulldown with 2 complementary close-grip sets; use controlled reps and rest 120 seconds after B2.
 
 Machine Shoulder Press is overhead pressing and is gated by the lower-back rule. Overhead Cable Triceps Extension is elbow-extension accessory work, is NOT overhead pressing, and is not gated.
 
@@ -88,7 +91,7 @@ Tuesday total working sets: 24.
 
 ## Wednesday - Lower B
 
-Name: Lower B - Accessory Legs + Hip Stability
+Name: Lower B - Split Squat + Hamstrings / Hips + Core
 
 Required later recovery: Lower-Body Flush + Back Care, 10-14 minutes.
 
@@ -102,9 +105,9 @@ Required later recovery: Lower-Body Flush + Back Care, 10-14 minutes.
 | D2 | Hip Abduction Machine | 4 | 12-20 | 5-6 |
 | E1 | Seated Straight-Leg Calf Machine or Leg Press Calf Press | 2 | 12-20 | 5-6 |
 | E2 | Cable Lateral Raise | 3 | 12-20 | 6 |
-| E3 | Supported Cable Anti-Rotation Hold | 2 | 10-20 seconds per side | 4-5 |
+| E3 | Cable Crunch | 2 | 10-15 | 4-5 |
 
-Wednesday is a lower accessory day plus a short upper/trunk finisher: Block E adds side delts, anti-rotation core, and calves. Hip adduction and abduction stay at 4 sets each as a deliberate focus.
+Wednesday is a lower accessory day plus a short upper/trunk finisher: Block E adds side delts, conservative cable crunches, and calves. Use a light/moderate crunch load, slow controlled flexion, an exhale through the shortening phase, and relatively stable hips. Do not yank with the arms or use aggressive loaded spinal flexion; stop for back pain, nerve-like symptoms, or loss of control. Hip adduction and abduction stay at 4 sets each as a deliberate focus.
 
 Arm work has moved off Wednesday: Tuesday, Thursday, and Friday already carry the biceps and triceps volume.
 
@@ -112,7 +115,7 @@ Wednesday total working sets: 27, including the 2 warm-up sets.
 
 ## Thursday - Upper B
 
-Name: Upper B - Chest Machine Press / Pull + Shoulders and Arms
+Name: Upper B - Machine Chest + Dual Pulldown / Arms
 
 Required later recovery: Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.
 
@@ -121,23 +124,24 @@ Required later recovery: Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.
 | A1 | Chest Machine Press | 3 | 8-12 | 6-7 |
 | A2 | Chest-Supported Row or Seated Cable Row | 3 | 8-12 | 6-7 |
 | B1 | Neutral-Grip Lat Pulldown | 3 | 8-12 | 6-7 |
-| B2 | Dumbbell / Plate Lateral Raise | 3 | 12-20 | 6 |
+| B2 | Close-Grip Lat Pulldown | 2 | 10-12 | 5-6 |
 | C1 | Triceps Pressdown, bar | 3 | 15-20 | 6-7 |
 | C2 | Reverse Cable Crossover | 3 | 15-20 | 5-6 |
 | C3 | Face-Away Bayesian Cable Curl | 3 | 10-15 | 6-7 |
 
-Thursday total working sets: 21.
+Block B pairs the 3-set neutral-grip pulldown with 2 complementary close-grip sets. Use controlled reps, keep 2-3 reps in reserve, and rest 120 seconds after B2.
 
-## Friday - Upper Accessory
+Thursday total working sets: 20.
 
-Name: Upper Accessory + Arms + Core
+## Friday - Chest Isolation + Row / Shoulders + Arms
+
+Name: Friday - Chest Isolation + Row / Shoulders + Arms
 
 Required later recovery: Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.
 
 | Block | Exercise | Sets | Reps | RPE |
 | --- | --- | ---: | --- | --- |
 | A1 | Pec Deck or Single-Arm Cable Fly | 3 | 12-15 | 5-6 |
-| A2 | Reverse Pec Deck or Reverse Cable Fly | 3 | 12-15 | 5-6 |
 | B1 | T-Bar Chest-Supported Row or Chest-Supported Row | 3 | 10-12 | 5-6 |
 | C1 | Dumbbell Preacher Curl or Machine Preacher Curl | 3 | 10-15 | 6-7 |
 | C2 | Reverse Curl | 2 | 10-15 | 5-6 |
@@ -147,24 +151,24 @@ Required later recovery: Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.
 | F1 | Cable Lateral Raise | 3 | 12-20 | 6 |
 | F2 | Overhead Cable Triceps Extension | 3 | 10-15 | 6-7 |
 
-Block A is a superset (minimal rest between A1 and A2, rest 120s after A2). Block C is a triple superset: rounds 1 and 2 run C1-C2-C3, round 3 is C1 only, rest 120s after each round. Block F is a superset, rest 120s after F2.
+Block A uses controlled straight sets with 120 seconds of rest. Block C is a triple superset: rounds 1 and 2 run C1-C2-C3, round 3 is C1 only, rest 120s after each round. Block F is a superset, rest 120s after F2.
 
 Block B is chest-supported only on both variants — an unsupported landmine T-bar is a loaded hip hinge and is not permitted under the back-pain rules.
 
-Friday D1 Seated Machine Shoulder Press IS overhead pressing: removed while lower-back pain is 3/10 or higher, and it returns when pain clears — the same gate as Tuesday B3. Friday F2 Overhead Cable Triceps Extension is elbow-extension accessory work, is NOT overhead pressing, and is not gated.
+Friday D1 Seated Machine Shoulder Press IS overhead pressing: removed while lower-back pain is 3/10 or higher, and it returns when pain clears — the same gate as Tuesday D1. Friday F2 Overhead Cable Triceps Extension is elbow-extension accessory work, is NOT overhead pressing, and is not gated.
 
 Friday E1 calf gate: straight knee, gastrocnemius emphasis. The seated straight-leg machine is the default; the leg press calf press is the fallback — balls of the feet low on the platform, fully seated on it and never perched on the edge, knees soft but not locked, safety catches engaged, noticeably lighter than a working leg press set. Skip entirely at sole or plantar pain 3/10 or higher.
 
-Friday total working sets: 28.
+Friday total working sets: 25.
 
 ## Weekly Set Summary
 
-- Monday: 20 sets
+- Monday: 19 sets
 - Tuesday: 24 sets
 - Wednesday: 27 sets (including 2 warm-up sets)
-- Thursday: 21 sets
-- Friday: 28 sets
-- Weekly total: 120 sets
+- Thursday: 20 sets
+- Friday: 25 sets
+- Weekly total: 115 sets
 
 ## Muscle-Group Balance
 
@@ -175,10 +179,10 @@ Friday total working sets: 28.
 - Chest: balanced between incline, mid-chest press, and fly/accessory work.
 - Back/lats: strong.
 - Rear delts: good.
-- Side delts: strong — lateral raises on Tuesday, Wednesday, Thursday, and Friday.
+- Side delts: covered through the Tuesday curl/lateral-raise alternate plus dedicated Wednesday and Friday raises.
 - Front delts: enough from pressing; do not add more.
 - Triceps: good.
 - Biceps: good — Tuesday, Thursday, and Friday carry the arm volume.
 - Forearms/grip: covered by Friday reverse curls and wrist curls.
-- Core/trunk: covered through controlled anti-rotation holds on Wednesday and Friday.
+- Core/trunk: covered through conservative cable crunches on Wednesday.
 - Calves/feet: three seated slots — Monday bent-leg (soleus), Wednesday and Friday straight-leg (gastrocnemius). No standing calf work; the gym has no standing calf machine. All three are removed whenever sole/plantar pain reaches 3/10.

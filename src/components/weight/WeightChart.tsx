@@ -21,6 +21,12 @@ import {
   computeRequiredWeeklyLossPace,
   type SerializedWeightEntry,
 } from "@/lib/weight";
+import {
+  formatBodyweight,
+  formatBodyweightRate,
+  formatBodyweightSecondary,
+  formatBodyweightWithConversions,
+} from "@/lib/units";
 
 type ZoomRange = "1W" | "1M" | "3M" | "ALL";
 
@@ -184,8 +190,14 @@ export function WeightChart({
       </div>
         <div className="relative">
         {!showFullGoal && goalWeight != null ? (
-          <span className="absolute bottom-4 right-5 z-10 rounded-pill border border-rule bg-sunken px-2.5 py-1 font-mono text-label uppercase text-secondary">
-            Goal {goalWeight.toFixed(1)} lb{goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
+          <span className="absolute bottom-4 right-5 z-10 max-w-[calc(100%-2rem)] rounded-control border border-rule bg-sunken px-2.5 py-1.5 text-right font-mono text-label text-secondary">
+            <span className="block uppercase">
+              Goal {formatBodyweight(goalWeight)}
+              {goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
+            </span>
+            <span className="mt-0.5 block normal-case">
+              {formatBodyweightSecondary(goalWeight)}
+            </span>
           </span>
         ) : null}
         <ResponsiveContainer width="100%" height={280}>
@@ -232,7 +244,7 @@ export function WeightChart({
                 });
               }}
               formatter={(value, name) => [
-                `${Number(value).toFixed(1)} lb`,
+                formatBodyweightWithConversions(Number(value)),
                 name === "displayWeight"
                   ? "Weight"
                   : name === "displayAvg7"
@@ -285,7 +297,7 @@ function TargetDateNote({ summary }: { summary: TargetDateSummary | null }) {
 
   const paceCopy =
     summary.requiredPace != null
-      ? `Required pace: about ${summary.requiredPace.toFixed(1)} lb/week. ${
+      ? `Required pace: about ${formatBodyweightRate(-summary.requiredPace)}. ${
           summary.requiredPace >= 2
             ? "This is an aggressive target; use the trend as guidance, not medical advice."
             : "Use the trend as guidance, not medical advice."

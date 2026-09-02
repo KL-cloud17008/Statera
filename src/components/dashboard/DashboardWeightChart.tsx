@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { buildChartData, type SerializedWeightEntry } from "@/lib/weight";
+import { formatBodyweightWithConversions } from "@/lib/units";
 
 export function DashboardWeightChart({
   entries,
@@ -98,7 +99,7 @@ export function DashboardWeightChart({
             });
           }}
           formatter={(value, name) => [
-            `${Number(value).toFixed(1)} lb`,
+            formatBodyweightWithConversions(Number(value)),
             name === "weight" ? "Weight" : "7-Day Avg",
           ]}
         />

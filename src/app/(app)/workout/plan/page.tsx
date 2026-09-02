@@ -25,82 +25,83 @@ import { isLoggableTrainingExercise } from "@/lib/training-session";
 const WEEK_STRUCTURE = [
   {
     day: "Monday",
-    title: "Lower A — Leg Press + Quad/Hamstring Strength",
+    title: "Lower A — Lunges + Pendulum Squat / Quad-Hamstring Strength",
     protocol: "Strength Protocol",
     dayOfWeek: 1,
-    note: "Primary lower-body strength day. Leg press first, controlled lunges second, then quad/hamstring and hip accessory work.",
+    note: "Primary lower-body strength day. Controlled bodyweight lunges lead into the pendulum squat, followed by quad/hamstring and hip accessory work.",
     laterRecovery: "Lower-Body Flush + Sole Care, 10-14 minutes.",
     details: [
-      "Block A: Lying Leg Curl opens the session — it warms the knees and hamstrings without axial loading. First set is deliberately easy, then work at the assigned RPE.",
-      "Block B: Leg Press or Pendulum Squat (if available), and Walking Lunges (weighted, dumbbells 16 kg, 3 sets). Rest 180-300 seconds; this is not conditioning. Keep 1-3 reps in reserve on every set, including the last. Optional fourth lunge set only if feet, knees and balance are all quiet — skip it by default.",
-      "Block C: Seated Leg Extension. Rest 120 seconds after C2.",
+      "Block A: Walking Lunges first — 2 bodyweight sets of 6-10 steps per leg at RPE 4-5 — then Pendulum Squat for 3 controlled sets of 6-8. Recover fully between movements; this is strength work, not conditioning. Skip or regress lunges if foot, ankle, knee, lower-back, or balance symptoms increase.",
+      "Block B: Lying Leg Curl. Keep the hips heavy on the pad and use smooth, controlled reps.",
+      "Block C: Seated Leg Extension. Rest 120 seconds between sets.",
       "Block D: Hip Abduction Machine and Hip Adduction Machine. Rest 120 seconds after D2.",
       "Block E: Seated Bent-Leg Calf Raise or Seated Dumbbell Calf Raise. Bent knee, soleus emphasis; machine is the default, dumbbells across the knees are the fallback. Monday's deliberately lighter calf option because walking lunges already load the sole. Skip entirely if sole/plantar pain is 3/10 or higher.",
-      "Monday total working sets: 20.",
+      "Monday total working sets: 19.",
     ],
   },
   {
     day: "Tuesday",
-    title: "Upper A — Incline Push / Row / Trunk Stability",
+    title: "Upper A — Incline Chest + Row / Dual Pulldown",
     protocol: "Strength Protocol",
     dayOfWeek: 2,
-    note: "Upper-body strength with one incline chest slot, strong pulling work, rear delts, and arm work.",
+    note: "Upper-body strength with a controlled pec-deck pairing, incline chest and row work, complementary dual pulldowns, shoulders, and arms.",
     laterRecovery: "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.",
     details: [
-      "Block A: Dumbbell Incline Press or Machine Incline Press, and Chest-Supported Row or Seated Cable Row.",
-      "Block B: Neutral-Grip Lat Pulldown, Dumbbell / Plate Lateral Raise, and Machine Shoulder Press.",
-      "Block C: Triceps Extension Machine (downstairs) or Overhead Cable Triceps Extension (upstairs); Machine Preacher Curl (downstairs) or Cable Lateral Raise (upstairs); Reverse Pec Deck (downstairs) or Face Pull (either floor) or Dead Hang (upstairs).",
+      "Block A pec-deck pairing: Two-Arm Reverse Pec Deck, then Single-Arm Pec Deck. Two controlled sets each at RPE 5-6, with 2-3 reps in reserve and 120 seconds of rest after the pair.",
+      "Block B dual-pulldown pairing: Neutral-Grip Lat Pulldown for 3 sets of 8-12 at RPE 6-7, then Close-Grip Lat Pulldown for 2 sets of 10-12 at RPE 5-6. Use controlled reps and rest 120 seconds after the pair.",
+      "Block C: Dumbbell Incline Press or Machine Incline Press, paired with Chest-Supported Row or Seated Cable Row.",
+      "Block D: Machine Shoulder Press. Block E: Triceps Extension Machine or Overhead Cable Triceps Extension, paired with Machine Preacher Curl or Cable Lateral Raise.",
       "Tuesday total working sets: 24.",
       "Machine Shoulder Press is overhead pressing: removed while lower-back pain is 3/10 or higher, and it returns when pain clears. Overhead Cable Triceps Extension is not overhead pressing and is not gated.",
     ],
   },
   {
     day: "Wednesday",
-    title: "Lower B — Accessory Legs + Hip Stability",
+    title: "Lower B — Split Squat + Hamstrings / Hips + Core",
     protocol: "Strength Protocol",
     dayOfWeek: 3,
-    note: "Lower accessory day plus a short upper/trunk finisher. Legs and hips carry the session; Block E adds side delts, anti-rotation core, and calves without turning this into another max-effort leg day.",
+    note: "Lower accessory day with split-squat, hamstring, and hip work plus a short calf, side-delt, and conservative trunk finisher.",
     laterRecovery: "Lower-Body Flush + Back Care, 10-14 minutes.",
     details: [
       "Block A: Lying Leg Curl (warm-up) — 2 light sets to open the knees and hamstrings. Not a working hamstring set.",
       "Block B: Supported Stationary Bulgarian Split Squat.",
       "Block C: Seated Leg Extension and Seated Leg Curl (4 sets — replaces back hyperextensions without loaded spinal extension). The working hamstring volume stays here.",
       "Block D: Hip Adduction Machine and Hip Abduction Machine (4 sets each) — a deliberate focus.",
-      "Block E finisher: Seated Straight-Leg Calf Machine or Leg Press Calf Press; Cable Lateral Raise; Supported Cable Anti-Rotation Hold. Straight knee, gastrocnemius emphasis; skip the calf slot entirely if sole/plantar pain is 3/10 or higher.",
+      "Block E finisher: Seated Straight-Leg Calf Machine or Leg Press Calf Press; Cable Lateral Raise; Cable Crunch for 2 sets of 10-15 at RPE 4-5. Crunch slowly with a light/moderate load, stable hips, and no arm yanking or aggressive loaded flexion; stop for back pain, nerve-like symptoms, or loss of control. Skip the calf slot entirely if sole/plantar pain is 3/10 or higher.",
       "Arm work has moved off Wednesday: Tuesday, Thursday, and Friday already carry the biceps and triceps volume.",
       "Wednesday total working sets: 27, including the 2 warm-up sets.",
     ],
   },
   {
     day: "Thursday",
-    title: "Upper B — Chest Machine Press / Pull + Shoulders and Arms",
+    title: "Upper B — Machine Chest + Dual Pulldown / Arms",
     protocol: "Strength Protocol",
     dayOfWeek: 4,
-    note: "Balanced upper-body day with mid-chest machine press, rows, pulldown, shoulders, and arms.",
+    note: "Balanced upper-body day with mid-chest machine press, rows, complementary dual pulldowns, rear delts, and arms.",
     laterRecovery: "Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.",
     details: [
       "Block A: Chest Machine Press and Chest-Supported Row or Seated Cable Row.",
-      "Block B: Neutral-Grip Lat Pulldown and Dumbbell / Plate Lateral Raise.",
+      "Block B dual-pulldown pairing: Neutral-Grip Lat Pulldown for 3 sets of 8-12 at RPE 6-7, then Close-Grip Lat Pulldown for 2 sets of 10-12 at RPE 5-6. Use controlled reps and rest 120 seconds after the pair.",
       "Block C: Triceps Pressdown, bar; Reverse Cable Crossover; and Face-Away Bayesian Cable Curl.",
-      "Thursday total working sets: 21.",
+      "Thursday total working sets: 20.",
       "Chest Machine Press balances repeated incline pressing with neutral mid-chest work.",
     ],
   },
   {
     day: "Friday",
-    title: "Upper Accessory + Arms + Core",
+    title: "Friday — Chest Isolation + Row / Shoulders + Arms",
     protocol: "Strength Protocol",
     dayOfWeek: 5,
-    note: "Accessory upper-body day built around supersets: chest and rear delts paired, a chest-supported row, an arm triple superset, overhead pressing, calves, and a shoulder/triceps pair.",
+    note: "Accessory upper-body day built around chest isolation, a chest-supported row, an arm triple superset, overhead pressing, calves, and a shoulder/triceps pair.",
     laterRecovery: "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.",
     details: [
-      "Block A superset: Pec Deck or Single-Arm Cable Fly, then Reverse Pec Deck or Reverse Cable Fly. Minimal rest between A1 and A2; rest 120 seconds after A2.",
+      "Block A: Pec Deck or Single-Arm Cable Fly for controlled straight sets with 120 seconds of rest.",
       "Block B: T-Bar Chest-Supported Row or Chest-Supported Row. Chest-supported only on both variants — an unsupported landmine T-bar is a loaded hip hinge and is not permitted.",
       "Block C triple superset: Dumbbell Preacher Curl or Machine Preacher Curl, then Reverse Curl, then Cable or Dumbbell Wrist Curl. Rounds 1 and 2 run all three; round 3 is C1 only. Rest 120 seconds after each round.",
-      "Block D: Seated Machine Shoulder Press. This is overhead pressing — removed while lower-back pain is 3/10 or higher, and it returns when pain clears, the same gate as Tuesday B3.",
+      "Block D: Seated Machine Shoulder Press. This is overhead pressing — removed while lower-back pain is 3/10 or higher, and it returns when pain clears, the same gate as Tuesday D1.",
       "Block E: Seated Straight-Leg Calf Machine or Leg Press Calf Press. Straight knee, gastrocnemius emphasis; skip entirely if sole/plantar pain is 3/10 or higher.",
       "Block F superset: Cable Lateral Raise, then Overhead Cable Triceps Extension. Rest 120 seconds after F2. The overhead cable extension is elbow-extension accessory work, not overhead pressing, and is not gated.",
-      "Friday total working sets: 28.",
+      "Friday total working sets: 25.",
     ],
   },
   {
@@ -137,8 +138,11 @@ export default async function WorkoutPlanPage() {
     return null;
   }
 
-  const [plans, dayStatuses, painCheckIn] = await Promise.all([
-    getWorkoutPlans(user.id),
+  // Both plan readers ensure the active snapshot matches the canonical
+  // template. Seed once before reading statuses so two concurrent rotations
+  // cannot race when this page is rendered or prefetched on mobile.
+  const plans = await getWorkoutPlans(user.id);
+  const [dayStatuses, painCheckIn] = await Promise.all([
     getWorkoutPlanDayStatuses(user.id, user.timezone),
     getLatestPainCheckIn(user.id),
   ]);

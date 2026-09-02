@@ -8,6 +8,7 @@ import {
   isCurrentWorkoutPlanContent,
 } from "@/lib/workout-plan-version";
 import { parseWorkoutSessionMeta, serializeWorkoutSessionMeta } from "@/lib/workout-session-meta";
+import { isCurrentPlanBackedWorkoutSession } from "@/lib/workout-session-state";
 import { WORKOUT_LOAD_UNIT } from "@/lib/units";
 
 type WorkoutPlanClient = PrismaClient | Prisma.TransactionClient;
@@ -72,15 +73,36 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
 
   const hasCurrentActivePlan =
     activePlans.length === DEFAULT_WORKOUT_PLAN.length &&
+    new Set(activePlans.map((plan) => plan.dayOfWeek)).size === DEFAULT_WORKOUT_PLAN.length &&
+    DEFAULT_WORKOUT_PLAN.every((day) =>
+      activePlans.some((plan) => plan.dayOfWeek === day.dayOfWeek)
+    ) &&
     activePlans.every((plan) => isCurrentWorkoutPlanContent(plan));
 
   if (hasCurrentActivePlan) {
-    return false;
-  }
+    const openPlanSessions = await prisma.workoutSession.findMany({
+      where: {
+        userId,
+        completed: false,
+        workoutPlanId: { not: null },
+      },
+      include: {
+        workoutPlan: {
+          include: { exercises: { orderBy: { sortOrder: "asc" } } },
+        },
+      },
+    });
+    const staleOpenSessionIds = openPlanSessions
+      .filter((session) => !isCurrentPlanBackedWorkoutSession(session))
+      .map((session) => session.id);
 
-  if (activePlans.length === 0) {
-    await createDefaultWorkoutPlans(prisma, userId);
-    return true;
+    if (staleOpenSessionIds.length > 0) {
+      await prisma.workoutSession.deleteMany({
+        where: { id: { in: staleOpenSessionIds } },
+      });
+    }
+
+    return staleOpenSessionIds.length > 0;
   }
 
   const rotatePlans = async (tx: WorkoutPlanClient) => {
@@ -97,7 +119,7 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
       },
     });
     const preservableOpenSessions = openPlanSessions.filter(
-      (session) => session.workoutPlan && isCurrentWorkoutPlanContent(session.workoutPlan)
+      isCurrentPlanBackedWorkoutSession
     );
     const preservableSessionIds = new Set(preservableOpenSessions.map((session) => session.id));
     const staleOpenSessionIds = openPlanSessions

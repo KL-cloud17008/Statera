@@ -45,7 +45,7 @@ export function WorkoutDayPreview({
     (exercise) => isLoggableTrainingExercise(exercise) && exercise.exerciseType === "ACCESSORY"
   );
   const totalLoggableSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
-  const blockOrder = ["A", "B", "C", "D"] as const;
+  const blockOrder = ["A", "B", "C", "D", "E", "F"] as const;
   const blockCount = blockOrder.filter((block) =>
     workingExercises.some((exercise) => exercise.supersetGroup === block)
   ).length;

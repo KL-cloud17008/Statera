@@ -51,7 +51,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
       <EmptyState
         icon={CalendarRange}
         title="No logged step entries"
-        description="Start with today's total or backfill past days to build a movement history."
+        description="Start with today's total or add past days to build a movement history."
       />
     );
   }

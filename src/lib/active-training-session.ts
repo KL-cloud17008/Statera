@@ -1,6 +1,10 @@
 import { prisma } from "@/lib/db";
 import { getTrainingDayNumber } from "@/lib/dates";
-import { getTrainingSessionKey, type TrainingSessionKey } from "@/lib/mobility";
+import {
+  getTrainingSessionKeyForPlanDay,
+  type TrainingSessionKey,
+} from "@/lib/mobility";
+import { ensureDefaultWorkoutPlans } from "@/lib/workout-plan-seed";
 import { isCurrentPlanBackedWorkoutSession } from "@/lib/workout-session-state";
 
 /**
@@ -31,6 +35,8 @@ export async function resolveActiveTrainingSession(
   timezone: string | undefined,
   currentTrainingDate: Date
 ): Promise<ActiveTrainingSession> {
+  await ensureDefaultWorkoutPlans(prisma, userId);
+
   const openSessions = await prisma.workoutSession.findMany({
     where: { userId, completed: false },
     include: {
@@ -44,7 +50,7 @@ export async function resolveActiveTrainingSession(
 
   if (openSession && openPlan) {
     return {
-      sessionKey: getTrainingSessionKey(openPlan.sessionName),
+      sessionKey: getTrainingSessionKeyForPlanDay(openPlan.dayOfWeek),
       sessionName: openPlan.sessionName,
       planDayOfWeek: openPlan.dayOfWeek,
       source: "open-session",
@@ -61,7 +67,7 @@ export async function resolveActiveTrainingSession(
 
     if (todayPlan) {
       return {
-        sessionKey: getTrainingSessionKey(todayPlan.sessionName),
+        sessionKey: getTrainingSessionKeyForPlanDay(todayPlan.dayOfWeek),
         sessionName: todayPlan.sessionName,
         planDayOfWeek: todayPlan.dayOfWeek,
         source: "today-plan",
