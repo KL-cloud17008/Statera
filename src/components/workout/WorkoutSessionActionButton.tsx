@@ -48,6 +48,22 @@ export function WorkoutSessionActionButton({
   const Icon = copy.icon;
   const buttonClassName = cn(fullWidth && "w-full", className);
 
+  if (status === "resume") {
+    return (
+      <Button
+        asChild
+        variant={prominent ? "primary" : "secondary"}
+        size="sm"
+        className={buttonClassName}
+      >
+        <Link href="/workout">
+          <Icon className="size-4" aria-hidden />
+          {copy.label}
+        </Link>
+      </Button>
+    );
+  }
+
   if (status === "view") {
     return (
       <Button asChild variant="secondary" size="sm" className={buttonClassName}>
