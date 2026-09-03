@@ -200,7 +200,7 @@ export function WeightChart({
             </span>
           </span>
         ) : null}
-        <ResponsiveContainer width="100%" height={280}>
+        <ResponsiveContainer width="100%" height={280} minWidth={0}>
           <ComposedChart
             data={chartData}
             margin={{ top: 5, right: 5, bottom: 5, left: -10 }}

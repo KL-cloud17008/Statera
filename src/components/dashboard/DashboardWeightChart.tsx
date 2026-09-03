@@ -51,7 +51,7 @@ export function DashboardWeightChart({
     allValues.length > 0 ? Math.ceil(Math.max(...allValues) + 2) : 340;
 
   return (
-    <ResponsiveContainer width="100%" height={192}>
+    <ResponsiveContainer width="100%" height={192} minWidth={0}>
       <ComposedChart
         data={chartData}
         margin={{ top: 5, right: 5, bottom: 5, left: -10 }}

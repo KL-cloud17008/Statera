@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Figure, Notice, Row, Rows, Section, Sub } from "@/components/ui/ledger";
+import { Figure, Notice, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { SessionPrepStrip } from "@/components/workout/SessionPrepStrip";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE, isOverheadPressExercise } from "@/lib/default-workout-plan";
@@ -60,25 +60,25 @@ export function WorkoutDayPreview({
   return (
     <div>
       {!hideHeader ? (
-        <Section>
-          <p className="text-label uppercase text-tertiary">Today&apos;s programmed work</p>
-          <h1 className="mt-2">{plan.sessionName}</h1>
-          <p className="mt-2 max-w-2xl text-body text-secondary">
-            Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises
-            above 3/10, use transport or reduce walking. Ramp-up sets stay outside the ledger.
-          </p>
+        <>
+          <PageTitle
+            eyebrow="Today's programmed work"
+            title={plan.sessionName}
+            lead="Walk to gym only if foot load is tolerable. Ramp-up sets remain outside the working ledger."
+          />
           {showLowerBReadiness ? (
-            <Notice tone="accent" className="mt-4">
+            <Notice tone="accent" className="mt-5 max-w-3xl">
               {LOWER_B_BACK_PAIN_READINESS_NOTE}
             </Notice>
           ) : null}
-
-          <dl className="mt-6 grid grid-cols-3 gap-4">
-            <Figure label="Blocks" value={blockCount} size="lg" />
-            <Figure label="Exercises" value={loggableExercises.length} size="lg" />
-            <Figure label="Sets" value={totalLoggableSets} size="lg" />
-          </dl>
-        </Section>
+          <Section className="mt-6">
+            <dl className="grid grid-cols-3 gap-4">
+              <Figure label="Blocks" value={blockCount} size="lg" />
+              <Figure label="Exercises" value={loggableExercises.length} size="lg" />
+              <Figure label="Sets" value={totalLoggableSets} size="lg" />
+            </dl>
+          </Section>
+        </>
       ) : null}
 
       <Section title="Protocol">

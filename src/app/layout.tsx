@@ -1,28 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
+import { Archivo, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSettingsProvider } from "@/components/settings/AppSettingsProvider";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { Toaster } from "@/components/ui/sonner";
 
-// Page titles only — one editorial voice per screen.
-const fraunces = Fraunces({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  variable: "--font-barlow-condensed",
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
-// Every other piece of UI text.
-const inter = Inter({
+const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-archivo",
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
+  variable: "--font-ibm-plex-mono",
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -44,8 +44,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // Matches --obsidian-900 in tokens.css (the chrome frames the canvas).
-  themeColor: "#0b0f14",
+  themeColor: "#171b18",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -59,7 +58,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`light ${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`light ${barlowCondensed.variable} ${archivo.variable} ${ibmPlexMono.variable}`}
     >
       <head>
         <meta name="color-scheme" content="light" />

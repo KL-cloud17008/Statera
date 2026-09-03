@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   Download,
   Loader2,
-  Palette,
   Paintbrush,
   ShieldAlert,
   Trash2,
@@ -379,17 +378,16 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-10 xl:grid-cols-2">
-        <Card className="settings-panel">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
-                <Paintbrush className="h-5 w-5" />
-              </div>
-              <CardTitle>Targets & units</CardTitle>
+      <Card className="settings-panel">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
+              <Paintbrush className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            <CardTitle>Targets & units</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
             <div className="rounded-control bg-sunken px-3 py-2.5 text-row text-secondary">
               Local preferences. JSON backup includes them.
             </div>
@@ -494,28 +492,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 </Select>
               </Field>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="settings-panel">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
-                <Palette className="h-5 w-5" />
-              </div>
-              <CardTitle>System</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Appearance is fixed to the Athanor ledger system for visual consistency.
-            </p>
-            <div className="rounded-control bg-sunken px-3 py-2.5 text-row text-secondary">
-              Warm paper canvas, ink chrome, a single olive accent, and ember reserved for attention states remain consistent across the app.
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
 
       <Card className="settings-panel">
         <CardHeader>
@@ -555,34 +533,22 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-10 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="settings-panel">
-          <CardHeader>
-            <CardTitle>System notes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>Private performance ledger for movement, bodyweight, training volume, and recovery.</p>
-            <p>Backups preserve tracker data and local preferences.</p>
-          </CardContent>
-        </Card>
-
-        <Card className="settings-panel border-t-2 border-t-critical">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-critical-surface text-critical">
-                <ShieldAlert className="h-5 w-5" />
-              </div>
-              <CardTitle>Danger Zone</CardTitle>
+      <Card className="settings-panel border-t-2 border-t-critical">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-critical-surface text-critical">
+              <ShieldAlert className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <Button type="button" variant="critical" onClick={() => setIsClearOpen(true)}>
-              <Trash2 className="h-4 w-4" />
-              Clear All Tracker Data
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+            <CardTitle>Danger Zone</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Button type="button" variant="critical" onClick={() => setIsClearOpen(true)}>
+            <Trash2 className="h-4 w-4" />
+            Clear All Tracker Data
+          </Button>
+        </CardContent>
+      </Card>
 
       <Dialog open={!!pendingImport} onOpenChange={(open) => !open && setPendingImport(null)}>
         <DialogContent>

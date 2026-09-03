@@ -162,19 +162,17 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Only page titles use the display face, and only at page-title size. */
   h1 {
     font-family: var(--font-family-display);
     font-size: var(--font-size-page-title);
     line-height: var(--line-height-page-title);
     letter-spacing: var(--tracking-page-title);
-    /* Fraunces ships 400-700; staying under 500 keeps the editorial weight. */
-    font-weight: 450;
+    font-weight: 600;
+    text-transform: uppercase;
     color: var(--text-primary);
     text-wrap: balance;
   }
 
-  /* Section headings are labels, not headlines — the rule separates, not size. */
   h2,
   h3,
   h4,
@@ -183,7 +181,7 @@
     font-size: var(--font-size-label);
     line-height: var(--line-height-label);
     letter-spacing: var(--tracking-label);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     text-transform: uppercase;
     color: var(--text-tertiary);
   }
@@ -238,10 +236,6 @@
 }
 
 @layer components {
-  /* ── The ledger canvas ─────────────────────────────────────────────────── */
-
-  /* One continuous column of content. Sections are separated by rules, so
-     this carries no background, border, or radius of its own. */
   .ledger {
     width: 100%;
     max-width: var(--layout-content-max);
@@ -259,18 +253,97 @@
     }
   }
 
-  /* Sections divided by a hairline rule — the primary structural device.
-     No section is a floating panel. */
+  .page-masthead {
+    display: grid;
+    gap: var(--space-5);
+    border-top: 4px solid var(--ink-900);
+    padding-top: var(--space-5);
+  }
+
+  .page-masthead-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-tertiary);
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+  }
+
+  .page-masthead-mark {
+    width: 1.75rem;
+    height: 0.25rem;
+    background-color: var(--olive);
+  }
+
+  .page-masthead-action {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .ledger-section {
+    display: grid;
+    gap: var(--space-4);
+    border-top: 1px solid var(--rule-strong);
+    padding-top: var(--space-4);
+  }
+
   .ledger-section + .ledger-section {
     margin-top: var(--layout-section-gap-mobile);
-    padding-top: var(--layout-section-gap-mobile);
-    border-top: 1px solid var(--rule);
+  }
+
+  .section-rail {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .section-title {
+    color: var(--text-primary);
+  }
+
+  .section-action {
+    flex-shrink: 0;
+  }
+
+  .section-body {
+    min-width: 0;
   }
 
   @media (min-width: 768px) {
+    .page-masthead {
+      grid-template-columns: 9rem minmax(0, 1fr) auto;
+      align-items: start;
+      gap: var(--space-8);
+      padding-top: var(--space-6);
+    }
+
+    .page-masthead-action {
+      justify-content: flex-end;
+    }
+
+    .ledger-section {
+      grid-template-columns: 9rem minmax(0, 1fr);
+      gap: var(--space-8);
+      padding-top: var(--space-5);
+    }
+
+    .ledger-section[data-has-rail="false"] .section-body {
+      grid-column: 1 / -1;
+    }
+
+    .section-rail {
+      display: block;
+    }
+
+    .section-action {
+      margin-top: var(--space-3);
+    }
+
     .ledger-section + .ledger-section {
       margin-top: var(--layout-section-gap);
-      padding-top: var(--layout-section-gap);
     }
   }
 
@@ -290,7 +363,11 @@
 
   /* ── Ledger rows ──────────────────────────────────────────────────────── */
 
-  /* A run of rows separated by hairlines, flush to the canvas. */
+  .metric-figure {
+    border-left: 2px solid var(--rule-strong);
+    padding-left: var(--space-3);
+  }
+
   .ledger-rows > * + * {
     border-top: 1px solid var(--rule);
   }
@@ -307,7 +384,7 @@
     align-items: center;
     gap: var(--space-2) var(--space-3);
     min-height: var(--layout-row-height);
-    padding-block: var(--space-2);
+    padding-block: var(--space-3);
     font-size: var(--font-size-row);
     line-height: var(--line-height-row);
   }
@@ -330,8 +407,8 @@
 
   /* Row hover is a background wash only — rows never lift or gain borders. */
   .ledger-row-interactive {
-    margin-inline: calc(var(--space-2) * -1);
-    padding-inline: var(--space-2);
+    margin-inline: calc(var(--space-3) * -1);
+    padding-inline: var(--space-3);
     border-radius: var(--radius-sm);
     transition: background-color var(--duration-fast) var(--ease-out);
   }
@@ -354,8 +431,9 @@
     grid-template-columns: var(--cols, minmax(0, 1fr));
     align-items: center;
     gap: var(--space-3);
-    padding-bottom: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border-bottom: 1px solid var(--rule-strong);
+    background-color: var(--surface-sunken);
     font-size: var(--font-size-label);
     line-height: var(--line-height-label);
     letter-spacing: var(--tracking-label);
@@ -375,9 +453,9 @@
      showing through. */
   .ledger-head-sticky {
     position: sticky;
-    top: calc(3rem + env(safe-area-inset-top));
+    top: calc(3.5rem + env(safe-area-inset-top));
     z-index: 10;
-    background-color: var(--surface-canvas);
+    background-color: var(--surface-raised);
   }
 
   /* A command surface is the authored focal point on decision-heavy pages.
@@ -386,9 +464,10 @@
   .command-surface {
     position: relative;
     overflow: hidden;
-    border-radius: var(--radius-md);
     background: var(--command-900);
     color: var(--command-text);
+    border: 1px solid var(--command-line);
+    border-top: 5px solid var(--olive);
   }
 
   .command-surface::after {
@@ -396,8 +475,10 @@
     inset: 0;
     pointer-events: none;
     content: "";
-    border: 1px solid var(--command-line);
-    border-radius: inherit;
+    width: 4.75rem;
+    right: auto;
+    background-color: var(--ink-900);
+    opacity: 0.045;
   }
 
   .command-rule {
@@ -424,19 +505,19 @@
      visible treatment is a control surface: sections on the canvas, not an
      admin grid of floating boxes. */
   .settings-panel {
-    border: 0;
-    border-top: 1px solid var(--rule);
-    border-radius: 0;
-    background: transparent;
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--ink-900);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
   }
 
   .settings-panel [data-slot="card-header"] {
-    padding-inline: 0;
+    padding-inline: var(--space-5);
     padding-top: var(--space-5);
   }
 
   .settings-panel [data-slot="card-content"] {
-    padding-inline: 0;
+    padding-inline: var(--space-5);
     padding-top: var(--space-4);
   }
 
@@ -456,13 +537,6 @@
   }
 
   /* ── Session cockpit ──────────────────────────────────────────────────── */
-
-  /* A live session owns the bottom of the screen: the session dock replaces
-     the app nav rather than stacking on top of it. SessionLogger sets the
-     attribute on <body> for its lifetime. */
-  body[data-active-workout-session="true"] [data-mobile-nav] {
-    display: none;
-  }
 
   /* The nav tab strip scrolls horizontally on narrow screens; the scrollbar
      itself would sit on top of the tab labels. */

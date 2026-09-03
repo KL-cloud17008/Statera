@@ -21,10 +21,10 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-start gap-2 border-t border-rule py-8", className)}>
+    <div className={cn("flex flex-col items-start gap-2 border-l-2 border-accent bg-sunken px-5 py-6", className)}>
       {/* Decorative: the title carries the meaning, so this takes the faint
           tone that is WCAG-exempt for non-text. */}
-      <Icon aria-hidden className="size-5 text-faint" strokeWidth={1.5} />
+      <Icon aria-hidden className="size-5 text-accent" strokeWidth={1.5} />
       <p className="text-body font-medium text-primary">{title}</p>
       <p className="max-w-md text-row text-tertiary">{description}</p>
       {action ? <div className="pt-2">{action}</div> : null}

@@ -168,20 +168,17 @@ export function DashboardPageClient({
 
   return (
     <>
-      {/* One decision surface gives the dashboard a point of view. Supporting
-          metrics return to the paper canvas below instead of becoming eight
-          equal cards. */}
       <section className="command-surface p-5 sm:p-7 lg:p-8">
-        <div className="relative z-[1] grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.7fr)] lg:items-end">
+        <div className="relative z-[1] grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.78fr)] lg:items-stretch">
           <div className="max-w-2xl">
-            <p className="text-label uppercase tracking-[0.16em] text-command-muted">
-              Athanor / {greeting} / {heroDateLabel}
+            <p className="text-label font-semibold uppercase tracking-[0.12em] text-command-muted">
+              Daily brief / {greeting} / {heroDateLabel}
             </p>
-            <h1 className="mt-3 max-w-xl font-display text-[clamp(2rem,5vw,3.5rem)] font-normal leading-[1.04] tracking-[-0.03em] text-command-text">
+            <h1 className="mt-4 max-w-xl font-display text-[2.25rem] font-semibold uppercase leading-[0.96] tracking-normal text-command-text lg:text-[3rem]">
               {decision.title}
             </h1>
             <p className="mt-4 max-w-lg text-body-lg text-command-muted">{decision.description}</p>
-            <Button asChild variant="secondary" size="lg" className="mt-6 border-command-line bg-command-800 text-command-text hover:bg-ink-700 hover:text-command-text">
+            <Button asChild variant="primary" size="lg" className="mt-6">
               <Link href={decision.href}>
                 {currentActionLabel}
                 <ArrowRight className="size-4" aria-hidden />
@@ -189,7 +186,7 @@ export function DashboardPageClient({
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-6 border-t border-command-line pt-5 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="grid grid-cols-2 gap-x-5 gap-y-6 border-t border-command-line bg-sunken p-5 lg:border-l lg:border-t-0 lg:p-6">
             <CommandMetric label="Readiness" value={recoveryFlagActive ? "Recovery" : "Clear"} detail={recoveryFlagActive ? "Foot load is in the decision" : "No flare signal"} tone={recoveryFlagActive ? "ember" : "default"} />
             <CommandMetric label="Today" value={todaySteps.toLocaleString()} detail={`steps · ${stepGoalSuspended ? "not scored" : `${stepCompletion}% of goal`}`} />
             <CommandMetric label="Bodyweight" value={formatBodyweight(weightStats.currentWeight)} detail={bodyweightSecondary || getTrendCopy(weightStats.trend)} />
@@ -599,8 +596,8 @@ function CommandMetric({
 }) {
   return (
     <div className="command-metric min-w-0">
-      <p className="text-label uppercase tracking-[0.14em] text-command-muted">{label}</p>
-      <p className={cn("num mt-2 truncate text-data-lg font-medium leading-none", tone === "ember" ? "text-ember-bright" : "text-command-text")}>
+      <p className="text-label font-semibold uppercase tracking-[0.1em] text-command-muted">{label}</p>
+      <p className={cn("num mt-2 text-data-lg font-medium leading-none", tone === "ember" ? "text-ember-bright" : "text-command-text")}>
         {value}
       </p>
       <p className="mt-2 text-caption text-command-muted">{detail}</p>

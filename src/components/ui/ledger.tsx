@@ -22,14 +22,14 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("ledger-section", className)}>
+    <section id={id} className={cn("ledger-section", className)} data-has-rail={title || action ? "true" : "false"}>
       {title || action ? (
-        <div className="mb-3 flex items-baseline justify-between gap-4">
-          {title ? <h2>{title}</h2> : <span />}
-          {action}
+        <div className="section-rail">
+          {title ? <h2 className="section-title">{title}</h2> : <span />}
+          {action ? <div className="section-action">{action}</div> : null}
         </div>
       ) : null}
-      {children}
+      <div className="section-body">{children}</div>
     </section>
   );
 }
@@ -175,7 +175,7 @@ export function Figure({
     tone === "ember" ? "text-ember" : tone === "accent" ? "text-accent" : "text-primary";
 
   return (
-    <div className={cn("min-w-0", className)}>
+    <div className={cn("metric-figure min-w-0", className)}>
       <dt className="text-label uppercase text-tertiary">{label}</dt>
       <dd
         className={cn(
@@ -206,13 +206,16 @@ export function PageTitle({
   className?: string;
 }) {
   return (
-    <header className={cn("flex flex-wrap items-end justify-between gap-4", className)}>
-      <div className="min-w-0 max-w-2xl">
-        {eyebrow ? <p className="text-label uppercase text-tertiary">{eyebrow}</p> : null}
-        <h1 className="mt-2">{title}</h1>
-        {lead ? <p className="mt-2 text-body-lg text-secondary">{lead}</p> : null}
+    <header className={cn("page-masthead", className)}>
+      <div className="page-masthead-label">
+        <span aria-hidden className="page-masthead-mark" />
+        <p>{eyebrow ?? "Athanor"}</p>
       </div>
-      {action ? <div className="shrink-0">{action}</div> : null}
+      <div className="min-w-0 max-w-3xl">
+        <h1>{title}</h1>
+        {lead ? <p className="mt-3 max-w-2xl text-body-lg text-secondary">{lead}</p> : null}
+      </div>
+      {action ? <div className="page-masthead-action">{action}</div> : null}
     </header>
   );
 }

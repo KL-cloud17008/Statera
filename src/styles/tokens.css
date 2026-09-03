@@ -1,97 +1,81 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   ATHANOR DESIGN TOKENS — the single source of truth for the visual system.
+   ATHANOR DESIGN TOKENS — performance console visual system.
 
    The ONLY file permitted to contain raw colour values, font sizes, radii,
    spacing, or motion values. Components consume them through semantic
    Tailwind utilities generated in globals.css.
 
-   GRAMMAR (v3): the product is a ledger, not a dashboard of cards.
-     · one continuous warm-paper canvas; sections divided by hairline rules
-     · repeating data renders as ledger rows: aligned columns, right-aligned
-       mono numerals, hairline separators
-     · near-black warm ink chrome (sidebar rail, mobile bars) frames the canvas
-     · maximum one level of container nesting
-     · tight type: 14px body, 13px rows, 11px labels; only page titles large
-
-   PALETTE B — warm paper, ink chrome, olive accent, ember attention.
-     There is no blue in this system. Verified: olive #4F5D2A reads 6.70:1 on
-     canvas, ember #A9451F reads 5.52:1 — both clear AA at 11px label size —
-     and they sit 71° apart in hue (ΔE 55.7), so they never read as the same
-     signal. Ember's meaning is load-bearing, so any future collision is
-     resolved by moving the olive.
-
-   Typography (next/font in src/app/layout.tsx):
-     Fraunces       — page titles only, regular weight.
-     Inter          — all other UI text.
-     JetBrains Mono — every numeral in the ledger, tabular.
+   Mineral canvas, paper-white work surfaces, carbon type, training green,
+   and safety orange. Layout is defined by strong section rails and aligned
+   data runs rather than a field of interchangeable cards.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
   color-scheme: light;
 
   /* ── Font families ────────────────────────────────────────────────────── */
-  --font-family-display: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-family-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+  --font-family-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  --font-family-sans: var(--font-archivo), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
-  --font-family-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular",
+  --font-family-mono: var(--font-ibm-plex-mono), ui-monospace, "SFMono-Regular",
     Consolas, monospace;
 
-  /* ── Warm paper ramp — the canvas and its surfaces ────────────────────── */
-  --paper-0: #fffefb; /* warm white */
-  --paper-50: #faf7f2; /* bone — the canvas */
-  --paper-100: #f5f1ea;
-  --paper-150: #f2eee6;
-  --paper-200: #e6e0d5; /* hairline rule */
-  --paper-300: #d8d1c3; /* strong rule */
-  --paper-400: #b3a996;
-  --paper-500: #736a5b; /* tertiary text — 4.99:1 canvas, 4.60:1 on sunken */
-  --paper-600: #635b4f; /* secondary text — 6.26:1 */
-  --paper-900: #1f1a16; /* primary text — 16.14:1 */
+  /* ── Mineral neutral ramp — canvas, surfaces, rules, and text ────────── */
+  --paper-0: #fbfcf9;
+  --paper-50: #f0f2ed;
+  --paper-100: #e9ece6;
+  --paper-150: #e3e7df;
+  --paper-200: #d5dad2;
+  --paper-300: #bfc6bd;
+  --paper-400: #929b91;
+  --paper-500: #687168;
+  --paper-600: #4d564e;
+  --paper-900: #171b18;
 
   /* ── Ink chrome — near-black, warm ────────────────────────────────────── */
-  --ink-900: #1a1613;
-  --ink-800: #262019;
-  --ink-700: #342c23;
-  --ink-line: rgba(250, 247, 242, 0.1);
-  --ink-line-strong: rgba(250, 247, 242, 0.22);
-  --ink-text: #faf7f2;
-  --ink-text-muted: rgba(250, 247, 242, 0.64);
+  --ink-900: #171b18;
+  --ink-800: #242a25;
+  --ink-700: #343c35;
+  --ink-line: rgba(251, 252, 249, 0.12);
+  --ink-line-strong: rgba(251, 252, 249, 0.24);
+  --ink-text: #fbfcf9;
+  --ink-text-muted: rgba(251, 252, 249, 0.68);
   /* The quietest tone that still carries text on the chrome: inactive nav
      labels and the session dock's set counter both use it. At 0.44 it read
      4.16:1 on ink-900 and 3.98:1 on ink-700 — under AA — so it sits at 0.52,
      which clears 4.5 on all three ink surfaces (5.31 / 5.07 / 4.65). */
-  --ink-text-dim: rgba(250, 247, 242, 0.52);
+  --ink-text-dim: rgba(251, 252, 249, 0.54);
 
   /* Command surfaces are deeper than the navigation rail and reserved for
      one page decision, never repeated as a tile grid. */
-  --command-900: #171411;
-  --command-800: #28221c;
-  --command-line: rgba(250, 247, 242, 0.14);
-  --command-text: #fbf8f1;
-  --command-muted: rgba(251, 248, 241, 0.7);
+  --command-900: #fbfcf9;
+  --command-800: #e9ece6;
+  --command-line: #cbd1c9;
+  --command-text: #171b18;
+  --command-muted: #596259;
 
-  /* ── The one chromatic accent: olive ──────────────────────────────────── */
+  /* ── Training green — position, completion, and positive signal ───────── */
   /* Active nav, data emphasis, goal-met state. NOT spent on buttons — the
      primary action is a solid ink button. */
-  --olive: #4f5d2a; /* 6.70:1 on canvas */
-  --olive-bright: #a8bd6a; /* on ink chrome only */
-  --olive-subtle: #f1f3e8;
-  --olive-line: #d5deba;
-  --olive-on: #fffefb;
+  --olive: #166a49;
+  --olive-bright: #79dda7;
+  --olive-subtle: #e3f2e9;
+  --olive-line: #afd7c1;
+  --olive-on: #fbfcf9;
 
   /* ── Ember: the four sanctioned attention states ──────────────────────── */
   /* recovery flag · streak at-risk · pain >=3 · pace guardrail */
-  --ember: #a9451f; /* 5.52:1 on canvas */
-  --ember-bright: #e59366; /* on ink chrome only */
-  --ember-surface: #fdf3ee;
-  --ember-line: #f0d3c1;
+  --ember: #b94b22;
+  --ember-bright: #ff9a6c;
+  --ember-surface: #fff0e8;
+  --ember-line: #efc1aa;
 
   /* ── Critical — destructive actions and errors only ───────────────────── */
   /* Pushed toward true red (hue 33°) so it never reads as ember (47°). */
-  --critical: #921f24;
-  --critical-surface: #fdf0ef;
-  --critical-line: #f2c9c5;
-  --on-status: #fffefb;
+  --critical: #a52b2b;
+  --critical-surface: #fcebea;
+  --critical-line: #e9b8b5;
+  --on-status: #fbfcf9;
 
   /* ── Surfaces — deliberately few. The canvas does the work. ───────────── */
   --surface-canvas: var(--paper-50);
@@ -99,9 +83,8 @@
   --surface-sunken: var(--paper-150); /* input wells, chart tracks, table heads */
   --surface-row-hover: var(--paper-100);
   --surface-overlay: var(--paper-0);
-  /* The one scrim behind every overlay — dialog and sheet both resolve here.
-     Warm ink, matching the chrome; there is no purple in this system. */
-  --surface-scrim: rgb(26 22 19 / 0.44);
+  /* The one scrim behind every overlay — dialog and sheet both resolve here. */
+  --surface-scrim: rgb(23 27 24 / 0.48);
 
   /* ── Rules — the primary structural device ────────────────────────────── */
   /* These delimit content, not controls. A separator is decorative and WCAG
@@ -114,7 +97,7 @@
      hairline rules above only reach 1.14–1.51, so a control bounded by them
      is not perceivably a control. Clears 3:1 on all four paper surfaces
      (raised 3.67, canvas 3.46, row-hover 3.29, sunken 3.20). */
-  --control-border: #8d8471;
+  --control-border: #7b857b;
 
   /* ── Text ─────────────────────────────────────────────────────────────── */
   --text-primary: var(--paper-900);
@@ -142,38 +125,38 @@
   --chart-series-3: var(--paper-500); /* projection and goal lines, 4.99:1 */
 
   /* ── Type scale — tight. Only page titles are large. ──────────────────── */
-  --font-size-page-title: 1.875rem; /* 30px — Fraunces, one per screen */
-  --line-height-page-title: 1.1;
-  --tracking-page-title: -0.02em;
+  --font-size-page-title: 2.5rem;
+  --line-height-page-title: 0.96;
+  --tracking-page-title: 0em;
 
-  --font-size-body-lg: 0.9375rem; /* 15px — page lead only */
+  --font-size-body-lg: 0.9375rem;
   --line-height-body-lg: 1.5;
 
-  --font-size-body: 0.875rem; /* 14px — default */
+  --font-size-body: 0.875rem;
   --line-height-body: 1.45;
 
-  --font-size-row: 0.8125rem; /* 13px — ledger rows, dense lists */
+  --font-size-row: 0.8125rem;
   --line-height-row: 1.35;
 
-  --font-size-caption: 0.75rem; /* 12px — secondary detail */
+  --font-size-caption: 0.75rem;
   --line-height-caption: 1.35;
 
-  --font-size-label: 0.6875rem; /* 11px — section heads, column heads */
+  --font-size-label: 0.6875rem;
   --line-height-label: 1.3;
-  --tracking-label: 0.07em;
+  --tracking-label: 0.09em;
 
   /* Numerals — JetBrains Mono, tabular, right-aligned in ledgers */
   --font-size-data-sm: 0.8125rem;
   --font-size-data-md: 1rem;
   --font-size-data-lg: 1.375rem;
-  --font-size-data-xl: 2rem;
+  --font-size-data-xl: 2.25rem;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
 
   /* ── Radii — small. Rules carry structure, not rounded panels. ────────── */
-  --radius-sm: 0.25rem;
+  --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-full: 9999px;
 
@@ -190,12 +173,12 @@
   --space-16: 4rem;
 
   /* ── Layout ───────────────────────────────────────────────────────────── */
-  --layout-content-max: 68rem;
-  --layout-rail-width: 13.5rem;
-  --layout-gutter: var(--space-8);
+  --layout-content-max: 76rem;
+  --layout-rail-width: 15.5rem;
+  --layout-gutter: var(--space-10);
   --layout-gutter-mobile: var(--space-4);
-  --layout-section-gap: var(--space-10);
-  --layout-section-gap-mobile: var(--space-8);
+  --layout-section-gap: var(--space-12);
+  --layout-section-gap-mobile: var(--space-10);
   --layout-row-height: 2.75rem; /* 44px — ledger row = touch target */
   --layout-touch-target: 2.75rem;
 
@@ -205,10 +188,10 @@
   --focus-ring-color: var(--olive);
 
   /* ── Motion ───────────────────────────────────────────────────────────── */
-  --duration-fast: 120ms;
-  --duration-base: 180ms;
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
 
   /* ── Elevation — overlays only. Nothing else floats. ──────────────────── */
-  --shadow-overlay: 0 8px 24px -8px rgb(31 26 22 / 0.18), 0 2px 6px -2px rgb(31 26 22 / 0.1);
+  --shadow-overlay: 0 18px 45px -22px rgb(23 27 24 / 0.32), 0 4px 12px -6px rgb(23 27 24 / 0.16);
 }

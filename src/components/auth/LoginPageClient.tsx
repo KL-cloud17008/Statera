@@ -58,7 +58,7 @@ export function LoginPageClient() {
 
             <div className="max-w-xl py-12">
               <p className="text-label uppercase text-ink-dim">Athanor Prime</p>
-              <p className="mt-4 font-display text-page-title leading-[1.1] tracking-[-0.02em] text-ink-text">
+              <p className="mt-4 font-display text-[2.75rem] font-semibold uppercase leading-[0.95] tracking-normal text-ink-text">
                 Private performance operating system.
               </p>
               <p className="mt-4 max-w-md text-body text-ink-muted">

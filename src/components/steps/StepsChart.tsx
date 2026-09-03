@@ -76,7 +76,7 @@ export function StepsChart({
         />
       </div>
         <div className="h-[280px]">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={280}>
             <BarChart data={config.data} margin={{ top: 12, right: 10, left: -18, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.45} />
               <XAxis

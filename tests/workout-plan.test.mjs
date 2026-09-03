@@ -22,8 +22,8 @@ const dashboardSource = readFileSync("src/components/dashboard/DashboardPageClie
 const mobilityPageSource = readFileSync("src/components/mobility/MobilityPageClient.tsx", "utf8");
 const flexibilityBalancePageSource = readFileSync("src/app/(app)/flexibility-balance/page.tsx", "utf8");
 const navItemsSource = readFileSync("src/components/layout/nav-items.ts", "utf8");
+const appLayoutSource = readFileSync("src/app/(app)/layout.tsx", "utf8");
 const desktopSidebarSource = readFileSync("src/components/layout/DesktopSidebar.tsx", "utf8");
-const mobileNavSource = readFileSync("src/components/layout/MobileNav.tsx", "utf8");
 const mobileHeaderSource = readFileSync("src/components/layout/MobileHeader.tsx", "utf8");
 const trainingPlanSource = readFileSync("training_plan.md", "utf8");
 const mobilitySource = readFileSync("src/lib/mobility.ts", "utf8");
@@ -693,8 +693,10 @@ test("nutrition remains removed from navigation and tracker routes", () => {
   ]);
   assert.doesNotMatch(navItemsSource, /Nutrition|\/nutrition/);
   assert.match(desktopSidebarSource, /NAV_ITEMS\.map/);
-  assert.match(mobileNavSource, /primaryItems\.map/);
   assert.match(mobileHeaderSource, /NAV_ITEMS\.find/);
+  assert.match(mobileHeaderSource, /NAV_ITEMS\.map/);
+  assert.match(mobileHeaderSource, /SheetContent/);
+  assert.doesNotMatch(appLayoutSource, /MobileNav/);
   for (const source of nutritionRouteSources) {
     assert.match(source, /redirect\("\/"\)/);
     assert.doesNotMatch(source, /NutritionPageClient|NutritionPlaceholder|prisma\.nutritionDay/);
