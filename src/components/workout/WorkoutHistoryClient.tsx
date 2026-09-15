@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -52,9 +52,9 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
   return (
     <>
       <PageTitle
-        eyebrow="Training History"
-        title="Review performance over time"
-        lead="Use the calendar to scan training frequency, then drill into sessions, volume, duration, and PR activity."
+        eyebrow="Training"
+        title="History"
+
       />
 
       {sessions.length === 0 ? (
@@ -62,7 +62,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
           <EmptyState
             icon={History}
             title="No completed sessions yet"
-            description="Finish a training session and the calendar, exercise links, and PR summaries will appear here."
+            description="Completed sessions will appear here."
           />
         </Section>
       ) : (
@@ -83,7 +83,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
               </div>
             }
           >
-            <div className="grid grid-cols-7 gap-1 border-b border-rule-strong pb-2 text-center text-label uppercase text-tertiary">
+            <div className="grid grid-cols-7 gap-1 border-b border-rule-strong pb-2 text-center text-caption text-tertiary">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                 <div key={day}>{day}</div>
               ))}

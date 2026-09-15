@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { WORKOUT_LOAD_UNIT, cmToInches, workoutLoadToKg } from "@/lib/units";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload } from "@/lib/backup";
+import { formText, parseMeasurementNumber } from "@/lib/measurement-input";
 
 type WeighInStatus = "BASELINE" | "FASTING" | "NORMAL";
 
@@ -226,33 +227,33 @@ export async function updateUserProfile(formData: FormData) {
     return { error: "Not authenticated" };
   }
 
-  const heightCmStr = formData.get("heightCm") as string;
-  const startWeightStr = formData.get("startWeight") as string;
-  const goalWeightStr = formData.get("goalWeight") as string;
-  const timezone = ((formData.get("timezone") as string) || user.timezone).trim();
+  const heightCmStr = formText(formData, "heightCm");
+  const startWeightStr = formText(formData, "startWeight");
+  const goalWeightStr = formText(formData, "goalWeight");
+  const timezone = formText(formData, "timezone") || user.timezone;
 
-  const heightCm = heightCmStr ? Number.parseFloat(heightCmStr) : null;
+  const heightCm = heightCmStr ? parseMeasurementNumber(heightCmStr) : null;
   const heightInches = heightCm != null ? Math.round(cmToInches(heightCm)) : null;
-  const startWeight = startWeightStr ? Number.parseFloat(startWeightStr) : null;
-  const goalWeight = goalWeightStr ? Number.parseFloat(goalWeightStr) : null;
+  const startWeight = startWeightStr ? parseMeasurementNumber(startWeightStr) : null;
+  const goalWeight = goalWeightStr ? parseMeasurementNumber(goalWeightStr) : null;
 
   if (
-    heightCm != null &&
-    (Number.isNaN(heightCm) || heightCm < 91 || heightCm > 244)
+    heightCmStr &&
+    (heightCm == null || heightCm < 91 || heightCm > 244)
   ) {
     return { error: "Height must be between 91 and 244 cm" };
   }
 
   if (
-    startWeight != null &&
-    (Number.isNaN(startWeight) || startWeight < 50 || startWeight > 999)
+    startWeightStr &&
+    (startWeight == null || startWeight < 50 || startWeight > 999)
   ) {
     return { error: "Start weight must be between 50 and 999 lbs" };
   }
 
   if (
-    goalWeight != null &&
-    (Number.isNaN(goalWeight) || goalWeight < 50 || goalWeight > 999)
+    goalWeightStr &&
+    (goalWeight == null || goalWeight < 50 || goalWeight > 999)
   ) {
     return { error: "Goal weight must be between 50 and 999 lbs" };
   }
@@ -274,6 +275,8 @@ export async function updateUserProfile(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/weight");
   revalidatePath("/workout");
+  revalidatePath("/steps");
+  revalidatePath("/mobility");
   revalidatePath("/settings");
   return {};
 }

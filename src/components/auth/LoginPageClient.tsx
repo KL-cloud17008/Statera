@@ -37,56 +37,16 @@ export function LoginPageClient() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-canvas px-4 py-8 sm:px-6">
-      <div className="w-full max-w-5xl">
-        <div className="grid gap-px overflow-hidden rounded-panel border border-rule bg-rule lg:grid-cols-[1.08fr_0.92fr]">
-          {/* The ink panel is the same chrome that frames the app canvas. */}
-          <section className="flex min-h-[28rem] flex-col justify-between bg-ink p-7 sm:p-9">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="flex size-10 items-center justify-center rounded-pill border border-ink-line bg-ink-800 text-ink-text">
-                  <BrandMark className="size-5" />
-                </span>
-                <div>
-                  <p className="font-display text-body text-ink-text">Athanor</p>
-                  <p className="mt-0.5 text-label uppercase text-ink-dim">Prime ledger</p>
-                </div>
-              </div>
-              <span className="rounded-pill border border-ink-line bg-ink-800 px-3 py-1 text-label uppercase text-ink-muted">
-                Private OS
-              </span>
-            </div>
-
-            <div className="max-w-xl py-12">
-              <p className="text-label uppercase text-ink-dim">Athanor Prime</p>
-              <p className="mt-4 font-display text-[2.75rem] font-semibold uppercase leading-[0.95] tracking-normal text-ink-text">
-                Private performance operating system.
-              </p>
-              <p className="mt-4 max-w-md text-body text-ink-muted">
-                Training, steps, bodyweight, and recovery signal in one precise ledger.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                ["Steps", "Daily pace"],
-                ["Weight", "Body trend"],
-                ["Training", "Output log"],
-              ].map(([title, copy]) => (
-                <div key={title} className="border-t border-ink-line pt-3">
-                  <p className="text-label uppercase text-ink-dim">{title}</p>
-                  <p className="mt-1 text-row font-medium text-ink-text">{copy}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="flex min-h-[28rem] flex-col justify-center bg-raised p-6 sm:p-8 lg:p-10">
+      <div className="w-full max-w-md">
+        <div className="overflow-hidden rounded-panel border border-rule bg-raised">
+          <section className="flex flex-col bg-raised p-6 sm:p-8">
             <div className="mx-auto w-full max-w-md">
               <div className="mb-8">
+                <div className="mb-8 flex items-center gap-3"><BrandMark className="size-6 text-accent" /><span className="text-xl font-semibold tracking-tight">Athanor</span></div>
                 {/* The page's one h1 lives here — the ink panel is decoration. */}
                 <h1>{isSignUp ? "Create your account" : "Welcome back"}</h1>
                 <p className="mt-2 text-body text-secondary">
-                  {isSignUp ? "Create access to your private ledger." : "Sign in to continue your command ledger."}
+                  {isSignUp ? "Keep your training records in one place." : "Sign in to your training log."}
                 </p>
               </div>
 
@@ -117,7 +77,7 @@ export function LoginPageClient() {
 
                 <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isPending}>
                   {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-                  {isSignUp ? "Create Account" : "Sign In"}
+                  {isSignUp ? "Create account" : "Sign in"}
                 </Button>
               </form>
 
@@ -132,7 +92,7 @@ export function LoginPageClient() {
                   }}
                   className="font-medium text-primary underline-offset-4 transition-colors duration-(--duration-fast) hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
                 >
-                  {isSignUp ? "Sign In" : "Sign Up"}
+                  {isSignUp ? "Sign in" : "Sign up"}
                 </button>
               </div>
             </div>

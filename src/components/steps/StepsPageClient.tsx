@@ -7,7 +7,7 @@ import { StepsChart } from "@/components/steps/StepsChart";
 import { StepsEntryForm } from "@/components/steps/StepsEntryForm";
 import { StepsHeatmap } from "@/components/steps/StepsHeatmap";
 import { StepsHistoryList } from "@/components/steps/StepsHistoryList";
-import { StepsProgressRing } from "@/components/steps/StepsProgressRing";
+
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { getTodayDateString } from "@/lib/dates";
 import { isStepGoalSuspendedByPlan } from "@/lib/plan-preview";
@@ -34,6 +34,7 @@ export function StepsPageClient({
   });
   const weeklyChange = getWeeklyStepChange(entries, timezone);
   const today = getTodayDateString(timezone);
+  const stepGoalSuspended = isStepGoalSuspendedByPlan(today);
   const monthPrefix = today.slice(0, 7);
   const daysIntoMonth = Number.parseInt(today.slice(8, 10), 10);
   const goalDaysThisMonth = entries.filter(
@@ -43,9 +44,7 @@ export function StepsPageClient({
   return (
     <>
       <PageTitle
-        eyebrow="Steps"
-        title="Foot load and daily movement."
-        lead="Daily step signal, current streak, weekly rhythm, and monthly load."
+        title="Steps"
         action={
           <Button asChild variant="primary" size="sm">
             <Link href="#quick-add">Log steps</Link>
@@ -53,28 +52,19 @@ export function StepsPageClient({
         }
       />
 
-      {/* Today reads as one figure on the canvas, with the goal ring beside it.
-          The streak/average figures appear once here — the previous build
-          printed Streak and 7-Day Average twice, in the deck and again in the
-          card row below it. */}
-      <Section className="mt-6">
-        {/* The ring and the figures sit side by side only when there is room.
-            Below sm the figures take the full width — sharing the row left
-            each cell ~95px, and the 2rem Today numeral overran into Streak. */}
-        <div className="flex flex-wrap items-center gap-x-10 gap-y-6">
-          <div className="mx-auto shrink-0 sm:mx-0">
-            <StepsProgressRing current={stats.todaySteps} goal={settings.stepGoal} />
-          </div>
-          {/* Today keeps its own line: sharing a 4-up row with the ring beside
-              it left 61px cells for a 115px numeral, and .num is nowrap. */}
-          <dl className="w-full min-w-0 sm:w-auto sm:flex-1">
+      <div className="measurement-overview">
+      <Section className="measurement-summary">
+          <dl className="min-w-0">
             <Figure
               label="Today"
               size="xl"
               value={stats.todaySteps.toLocaleString()}
-              detail={`of ${settings.stepGoal.toLocaleString()} · ${formatDistance(stats.todaySteps, settings.distanceUnit)}`}
+              detail={`${stepGoalSuspended ? "Rest day · no goal" : `of ${settings.stepGoal.toLocaleString()}`} · ${formatDistance(stats.todaySteps, settings.distanceUnit)}`}
             />
-            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
+            {!stepGoalSuspended ? <div role="progressbar" aria-label="Daily step goal" aria-valuemin={0} aria-valuemax={settings.stepGoal} aria-valuenow={Math.min(stats.todaySteps, settings.stepGoal)} className="mt-3 h-1.5 bg-sunken">
+              <div className="h-full bg-accent" style={{ width: `${Math.min(100, stats.todaySteps / settings.stepGoal * 100)}%` }} />
+            </div> : null}
+            <div className="supporting-figures grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
             <Figure
               label="Streak"
               size="lg"
@@ -96,8 +86,12 @@ export function StepsPageClient({
             />
             </div>
           </dl>
-        </div>
       </Section>
+
+      <Section title="Log steps" className="measurement-entry scroll-mt-24" id="quick-add">
+        <StepsEntryForm key={backfillDate ?? "today"} timezone={timezone} initialDate={backfillDate} entries={entries} />
+      </Section>
+      </div>
 
       <Section title="Consistency">
         <Rows columns="minmax(0,1fr) auto">
@@ -123,15 +117,11 @@ export function StepsPageClient({
       </Section>
 
       <Section title="Month">
-        <StepsHeatmap entries={entries} goal={settings.stepGoal} />
-      </Section>
-
-      <Section title="Log an entry" className="scroll-mt-20" id="quick-add">
-        <StepsEntryForm key={backfillDate ?? "today"} timezone={timezone} initialDate={backfillDate} />
+        <StepsHeatmap entries={entries} goal={settings.stepGoal} timezone={timezone} />
       </Section>
 
       <Section title="Recent entries">
-        <StepsHistoryList entries={entries} />
+        <StepsHistoryList entries={entries} timezone={timezone} />
       </Section>
     </>
   );

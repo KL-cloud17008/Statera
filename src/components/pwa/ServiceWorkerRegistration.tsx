@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 const SW_URL = "/sw.js";
 
@@ -43,7 +44,11 @@ export function ServiceWorkerRegistration() {
       }
 
       hasReloadedForUpdate = true;
-      window.location.reload();
+      toast("An update is ready", {
+        id: "app-update",
+        duration: Infinity,
+        action: { label: "Reload", onClick: () => window.location.reload() },
+      });
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);

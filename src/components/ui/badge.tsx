@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
  * sanctioned coaching states; `secondary` is the neutral default.
  */
 const badgeVariants = cva(
-  "inline-flex w-fit items-center gap-1 rounded-pill border px-2 py-0.5 text-label uppercase",
+  "inline-flex w-fit items-center gap-1 rounded-pill border px-2 py-0.5 text-label",
   {
     variants: {
       variant: {

@@ -32,9 +32,9 @@ const buttonVariants = cva(
         link: "border-transparent bg-transparent p-0 text-secondary underline-offset-4 hover:text-primary hover:underline",
       },
       size: {
-        sm: "h-8 px-2.5 text-row",
-        md: "h-10 px-3.5 text-body",
-        lg: "h-11 px-4 text-body",
+        sm: "h-9 px-2.5 text-row",
+        md: "h-12 px-3.5 text-body",
+        lg: "h-12 px-4 text-body",
         icon: "size-10",
         "icon-sm": "size-8",
       },

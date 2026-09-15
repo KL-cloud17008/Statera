@@ -201,7 +201,7 @@ export function WeightImportClient() {
           <CardContent className="space-y-4">
             <div className="max-h-80 overflow-auto rounded-control border border-rule">
               <div className="min-w-[44rem]">
-                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-sunken px-4 py-2.5 text-label uppercase text-tertiary">
+                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-sunken px-4 py-2.5 text-label text-tertiary">
                   <span>Date</span>
                   <span>Weight</span>
                   <span>Status</span>
@@ -261,7 +261,7 @@ export function WeightImportClient() {
             </div>
             {state.errors.length > 0 ? (
               <div className="mx-auto max-w-lg rounded-control bg-sunken p-4 text-left">
-                <p className="text-label uppercase text-tertiary">Skipped Rows</p>
+                <p className="text-label text-tertiary">Skipped Rows</p>
                 <ul className="mt-2 space-y-1 text-caption text-secondary">
                   {state.errors.slice(0, 10).map((err, i) => (
                     <li key={i}>{err}</li>

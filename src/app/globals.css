@@ -2,6 +2,17 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "../styles/tokens.css";
+@import "../styles/presentation.css";
+
+details > summary.flex::after {
+  content: "+";
+  margin-left: auto;
+  padding-left: 1rem;
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+details[open] > summary.flex::after { content: "−"; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Token → utility mapping. Nothing here introduces a value; it only names
@@ -168,7 +179,7 @@
     line-height: var(--line-height-page-title);
     letter-spacing: var(--tracking-page-title);
     font-weight: 600;
-    text-transform: uppercase;
+    text-transform: none;
     color: var(--text-primary);
     text-wrap: balance;
   }
@@ -182,7 +193,7 @@
     line-height: var(--line-height-label);
     letter-spacing: var(--tracking-label);
     font-weight: var(--font-weight-semibold);
-    text-transform: uppercase;
+    text-transform: none;
     color: var(--text-tertiary);
   }
 
@@ -256,8 +267,8 @@
   .page-masthead {
     display: grid;
     gap: var(--space-5);
-    border-top: 4px solid var(--ink-900);
-    padding-top: var(--space-5);
+    align-items: center;
+    padding-bottom: var(--space-6);
   }
 
   .page-masthead-label {
@@ -268,7 +279,7 @@
     font-size: var(--font-size-label);
     font-weight: var(--font-weight-semibold);
     letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
+    text-transform: none;
   }
 
   .page-masthead-mark {
@@ -282,11 +293,19 @@
     align-items: flex-start;
   }
 
+  .page-masthead-compact {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+  }
+
   .ledger-section {
     display: grid;
     gap: var(--space-4);
-    border-top: 1px solid var(--rule-strong);
-    padding-top: var(--space-4);
+    border-top: 1px solid var(--rule);
+    padding-top: var(--space-6);
   }
 
   .ledger-section + .ledger-section {
@@ -302,6 +321,8 @@
 
   .section-title {
     color: var(--text-primary);
+    font-size: var(--font-size-body);
+    font-weight: 600;
   }
 
   .section-action {
@@ -314,7 +335,7 @@
 
   @media (min-width: 768px) {
     .page-masthead {
-      grid-template-columns: 9rem minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: start;
       gap: var(--space-8);
       padding-top: var(--space-6);
@@ -325,7 +346,7 @@
     }
 
     .ledger-section {
-      grid-template-columns: 9rem minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: var(--space-8);
       padding-top: var(--space-5);
     }
@@ -335,11 +356,11 @@
     }
 
     .section-rail {
-      display: block;
+      display: flex;
     }
 
     .section-action {
-      margin-top: var(--space-3);
+      margin-top: 0;
     }
 
     .ledger-section + .ledger-section {
@@ -364,8 +385,7 @@
   /* ── Ledger rows ──────────────────────────────────────────────────────── */
 
   .metric-figure {
-    border-left: 2px solid var(--rule-strong);
-    padding-left: var(--space-3);
+    padding-block: var(--space-2);
   }
 
   .ledger-rows > * + * {
@@ -438,7 +458,7 @@
     line-height: var(--line-height-label);
     letter-spacing: var(--tracking-label);
     font-weight: var(--font-weight-medium);
-    text-transform: uppercase;
+    text-transform: none;
     color: var(--text-tertiary);
   }
 
@@ -467,19 +487,10 @@
     background: var(--command-900);
     color: var(--command-text);
     border: 1px solid var(--command-line);
-    border-top: 5px solid var(--olive);
+    border-radius: var(--radius-md);
   }
 
-  .command-surface::after {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    content: "";
-    width: 4.75rem;
-    right: auto;
-    background-color: var(--ink-900);
-    opacity: 0.045;
-  }
+
 
   .command-rule {
     border-color: var(--command-line);
@@ -498,7 +509,7 @@
   }
 
   .page-enter {
-    animation: page-enter var(--duration-base) var(--ease-out) both;
+    animation: none;
   }
 
   /* Settings uses the card primitives for semantics and form layout, but its
@@ -506,7 +517,7 @@
      admin grid of floating boxes. */
   .settings-panel {
     border: 1px solid var(--rule);
-    border-top: 3px solid var(--ink-900);
+
     border-radius: var(--radius-md);
     background: var(--surface-raised);
   }
@@ -563,4 +574,22 @@
   .num-left {
     text-align: left;
   }
+}
+
+@layer components {
+  .dashboard-grid { display: grid; gap: var(--space-8); }
+  .training-overview { padding: var(--space-6); border-left: 3px solid var(--olive); }
+  .summary-strip { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-5); padding-block: var(--space-6); }
+  .dashboard-side { min-width: 0; }
+  .quick-links { display:flex; flex-wrap:wrap; gap:var(--space-2); }
+  @media (min-width: 1100px) {
+    .dashboard-grid { grid-template-columns: minmax(0,1.6fr) minmax(18rem,1fr); gap:var(--space-10); }
+    .dashboard-side { border-left:1px solid var(--rule); padding-left:var(--space-8); }
+    .summary-strip { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  }
+  @media (max-width: 767px) {
+    [data-slot=button] { min-height:var(--layout-touch-target); }
+    [data-slot=input], [data-slot=select-trigger] { min-height:var(--layout-touch-target); font-size:1rem; }
+  }
+  :where(input,textarea,select,button,a) { scroll-margin-block:6rem; }
 }

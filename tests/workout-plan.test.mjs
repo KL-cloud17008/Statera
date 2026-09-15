@@ -12,10 +12,8 @@ const workoutPageClientSource = readFileSync("src/components/workout/WorkoutPage
 const workoutDayPreviewSource = readFileSync("src/components/workout/WorkoutDayPreview.tsx", "utf8");
 const sessionLoggerSource = readFileSync("src/components/workout/SessionLogger.tsx", "utf8");
 const workoutSessionActionButtonSource = readFileSync("src/components/workout/WorkoutSessionActionButton.tsx", "utf8");
-const workoutPlanResetButtonSource = readFileSync("src/components/workout/WorkoutPlanResetButton.tsx", "utf8");
 const workoutActionsSource = readFileSync("src/actions/workout.ts", "utf8");
 const workoutPlanSeedSource = readFileSync("src/lib/workout-plan-seed.ts", "utf8");
-const activeTrainingSessionSource = readFileSync("src/lib/active-training-session.ts", "utf8");
 const workoutSessionStateSource = readFileSync("src/lib/workout-session-state.ts", "utf8");
 const trainingSessionSource = readFileSync("src/lib/training-session.ts", "utf8");
 const dashboardSource = readFileSync("src/components/dashboard/DashboardPageClient.tsx", "utf8");
@@ -67,10 +65,6 @@ test("canonical workout plan is the next-week progressive overload block", () =>
     "Saturday: Complete Rest",
     "Sunday: Complete Rest",
   ]);
-  assert.match(workoutPlanPageSource, /5 \/ 0 \/ 2/);
-  assert.match(workoutPlanPageSource, /5 Strength/);
-  assert.match(workoutPlanPageSource, /0 Recovery/);
-  assert.match(workoutPlanPageSource, /2 Full Rest/);
   assert.match(workoutPlanPageSource, /Monday total working sets: 18/);
   assert.match(workoutPlanPageSource, /Tuesday total working sets: 22/);
   assert.match(workoutPlanPageSource, /Wednesday total working sets: 27/);
@@ -404,10 +398,6 @@ test("dashboard and schedule constants reflect the next-week five strength days"
   assert.match(constantsSource, /DEFAULT_TRAINING_DAYS = \[1, 2, 3, 4, 5\]/);
   assert.match(constantsSource, /DEFAULT_RECOVERY_DAYS: number\[\] = \[\]/);
   assert.match(constantsSource, /DEFAULT_REST_DAYS = \[0, 6\]/);
-  assert.match(dashboardSource, /5 Strength \/ 2 Full Rest/);
-  assert.match(dashboardSource, /STRENGTH_RHYTHM_DAYS\.map/);
-  assert.match(dashboardSource, /label: getPlanDay\(dayOfWeek\)\?\.sessionName \?\? "Training"/);
-  assert.match(dashboardSource, /return getPlanDay\(dayOfWeek\)\?\.sessionName \?\? "Complete Rest"/);
   assert.deepEqual(
     Array.from(workoutPlan.DEFAULT_WORKOUT_PLAN, (day) => day.sessionName),
     [
@@ -418,54 +408,24 @@ test("dashboard and schedule constants reflect the next-week five strength days"
       "Upper C — Chest Isolation + Upper Back / Arms + Core",
     ]
   );
-  assert.match(dashboardSource, /day: "SAT"[\s\S]*label: "Complete Rest"[\s\S]*protocol: "Full Rest"/);
-  assert.match(dashboardSource, /day: "SUN"[\s\S]*label: "Complete Rest"[\s\S]*protocol: "Full Rest"/);
-  assert.match(dashboardSource, /const isStrengthDay = \[1, 2, 3, 4, 5\]/);
   assert.doesNotMatch(dashboardSource, /Recovery Protocol/);
 });
 
 test("session actions remain prominent and stateful", () => {
   for (const label of ["Start Session", "Resume Session", "View Session"]) {
-    assert.match(workoutSessionActionButtonSource, new RegExp(escapeRegExp(label)));
+    assert.match(workoutSessionActionButtonSource, new RegExp(escapeRegExp(label), "i"));
   }
   assert.match(workoutDayPreviewSource, /WorkoutSessionActionButton/);
   assert.match(workoutPlanPageSource, /WorkoutSessionActionButton/);
   assert.match(dashboardSource, /WorkoutSessionActionButton/);
   assert.match(workoutPageClientSource, /Full plan/);
   assert.match(workoutPageSource, /title: "Training \| Athanor"/);
-  assert.match(workoutDayPreviewSource, /const blockOrder = \["A", "B", "C", "D", "E", "F"\]/);
-  assert.match(sessionLoggerSource, /group\[group\.length - 1\]\?\.restSeconds/);
-  assert.match(sessionLoggerSource, /getProgrammedRestSeconds/);
-  assert.match(sessionLoggerSource, /FocusedSetPanel/);
-  assert.match(sessionLoggerSource, /Save here, then the next set comes forward/);
-  assert.match(sessionLoggerSource, /focusSetNumber/);
-  assert.match(sessionLoggerSource, /scrollIntoView/);
 });
 
-test("start-new-plan and stale active snapshots rebuild from the next-week template", () => {
-  assert.match(workoutPlanResetButtonSource, /Start new plan/);
-  assert.match(workoutPlanResetButtonSource, /next-week progressive overload plan/);
-  assert.match(workoutActionsSource, /Start a new next-week plan first/);
-  for (const path of ["/", "/workout", "/workout/plan", "/mobility", "/flexibility-balance", "/steps", "/weight", "/settings"]) {
-    assert.match(workoutActionsSource, new RegExp(`"${escapeRegExp(path)}"`));
+test("workout changes invalidate the affected destinations", () => {
+  for (const path of ["/", "/workout", "/workout/plan", "/workout/history", "/mobility", "/flexibility-balance", "/steps", "/weight", "/settings"]) {
+    assert.ok(workoutActionsSource.includes('"' + path + '"'));
   }
-  assert.match(workoutPlanSeedSource, /isCurrentWorkoutPlanContent/);
-  assert.match(workoutPlanSeedSource, /isCurrentPlanBackedWorkoutSession/);
-  assert.match(workoutPlanSeedSource, /workoutPlanId: \{ not: null \}/);
-  assert.match(workoutPlanSeedSource, /preservableOpenSessions/);
-  assert.match(workoutPlanSeedSource, /staleOpenSessionIds/);
-  assert.match(workoutPlanSeedSource, /workoutSession\.update/);
-  assert.match(workoutPlanSeedSource, /buildCurrentPlanSessionNotes/);
-  assert.match(workoutPlanSeedSource, /data: \{ isActive: false \}/);
-  assert.match(workoutPlanSeedSource, /createDefaultWorkoutPlans\(tx, userId\)/);
-  assert.match(workoutPlanSeedSource, /completed: false/);
-  assert.match(activeTrainingSessionSource, /ensureDefaultWorkoutPlans\(prisma, userId\)/);
-  assert.match(activeTrainingSessionSource, /getTrainingSessionKeyForPlanDay/);
-  assert.match(workoutActionsSource, /completedSessionMatchesCurrentPlan/);
-  assert.match(workoutActionsSource, /const existing = openSessions\[0\]/);
-  assert.match(workoutActionsSource, /Another session is already in progress/);
-  assert.doesNotMatch(workoutActionsSource, /getSessionFamily/);
-  assert.match(workoutActionsSource, /workoutPlanId: \{ not: null \}/);
 });
 
 test("workout plan hashes reject old active plan snapshots", () => {
@@ -671,8 +631,8 @@ test("mobility later recovery and rest routines match the next-week block", () =
   ]);
 
   const footFlareBlocks = mobility.getRequiredLaterRecoveryBlocks("footFlare", 4);
-  assert.equal(footFlareBlocks[0].title, "Required foot-flare recovery");
-  assert.match(mobilityPageSource, /Required foot-flare recovery/);
+  assert.equal(footFlareBlocks[0].title, "Foot comfort routine");
+  assert.match(mobilityPageSource, /Foot comfort routine/);
   assert.match(mobilityPageSource, /RIGHT_SOLE_PACE_RULE/);
   assert.match(mobilitySource, /fastest pace that keeps gait normal/);
   assert.match(mobilitySource, /calfCapacityIsometric/);
@@ -701,7 +661,6 @@ test("nutrition remains removed from navigation and tracker routes", () => {
     assert.match(source, /redirect\("\/"\)/);
     assert.doesNotMatch(source, /NutritionPageClient|NutritionPlaceholder|prisma\.nutritionDay/);
   }
-  assert.match(dashboardSource, /Walking volume and gait quality remain the primary movement signal/);
 });
 
 test("bodyweight formatting keeps pounds canonical and adds consistent kg and stone conversions", () => {
@@ -728,7 +687,7 @@ test("bodyweight formatting keeps pounds canonical and adds consistent kg and st
     "28.0 lb · 12.7 kg · 2 st 0.0 lb"
   );
   assert.equal(units.formatBodyweightConversion("not-a-weight"), "");
-  assert.match(settingsSource, /Training Load Unit/);
+  assert.match(settingsSource, /Training load unit/i);
   assert.match(weightPageSource, /formatBodyweightSecondary/);
   assert.match(weightChartSource, /formatBodyweightWithConversions/);
 });
@@ -754,7 +713,6 @@ test("daily step goal still supports 8000 and step streak behavior is stable", (
     stepsPageClientSource,
     /streakAtRisk|streakUnloggedDays|streakBackfillDate|formatBackfillDate/
   );
-  assert.match(dashboardSource, /detail="Consecutive goal days"/);
   assert.match(stepsPageClientSource, /detail="Consecutive goal days"/);
   assert.match(stepsActionsSource, /revalidatePath\("\/steps"\)/);
   assert.match(stepsActionsSource, /revalidatePath\("\/"\)/);

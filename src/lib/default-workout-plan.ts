@@ -88,11 +88,11 @@ export const PROGRESSIVE_OVERLOAD_RULES = [
 ] as const;
 
 export const FOOT_LOAD_RULES = [
-  "Sole/plantar pain 0-2/10: normal controlled activity allowed.",
-  "Sole/plantar pain 3-4/10: reduce step load, split walking into smaller chunks, no gym walking.",
-  "Sole/plantar pain 5+/10: work-only walking if unavoidable, recovery only, no gym walking, no step chasing.",
-  "Sharp pain, limping, swelling, warmth, numbness, or tingling: stop loading and seek medical evaluation.",
-  "If work steps exceed 10,000 or sole pain is at least 5/10, Required Foot-Flare Recovery applies.",
+  "Sole/plantar pain 0-2/10: generally acceptable if stable.",
+  "Sole/plantar pain 3/10: continue only if stable, gait and form remain normal, and symptoms settle.",
+  "Above 3/10 or increasing symptoms: reduce load, range, or pace.",
+  "Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, new persistent worsening, or new/worsening rest or night pain.",
+  "Use the fastest pace that keeps gait normal and sole discomfort mild. Speed is optional; consistency and tolerable volume matter more.",
 ] as const;
 
 export const BACK_PAIN_RULES = [

@@ -9,7 +9,7 @@ import {
 } from "@/lib/workout-plan-version";
 import { parseWorkoutSessionMeta, serializeWorkoutSessionMeta } from "@/lib/workout-session-meta";
 import { isCurrentPlanBackedWorkoutSession } from "@/lib/workout-session-state";
-import { WORKOUT_LOAD_UNIT } from "@/lib/units";
+import { withWorkoutTransaction } from "@/lib/workout-transaction";
 
 type WorkoutPlanClient = PrismaClient | Prisma.TransactionClient;
 type WorkoutPlanWithExercises = Prisma.WorkoutPlanGetPayload<{
@@ -28,7 +28,8 @@ function buildCurrentPlanSessionNotes(
   return serializeWorkoutSessionMeta({
     label: plan.sessionName,
     source: "plan",
-    loadUnit: meta?.loadUnit ?? WORKOUT_LOAD_UNIT,
+    // Untagged legacy sessions contain pounds; relinking must not relabel them kg.
+    loadUnit: meta?.loadUnit ?? "lb",
     planTemplateVersion: DEFAULT_WORKOUT_PLAN_VERSION,
     planContentHash: getWorkoutPlanContentHash(plan),
     generatedAt: meta?.generatedAt ?? session.createdAt.toISOString(),
@@ -65,7 +66,10 @@ export async function createDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
   }
 }
 
-export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userId: string) {
+export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userId: string): Promise<boolean> {
+  if ("$transaction" in prisma) {
+    return withWorkoutTransaction(prisma, userId, (tx) => ensureDefaultWorkoutPlans(tx, userId));
+  }
   const activePlans = await prisma.workoutPlan.findMany({
     where: { userId, isActive: true },
     include: { exercises: { orderBy: { sortOrder: "asc" } } },
@@ -92,17 +96,7 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
         },
       },
     });
-    const staleOpenSessionIds = openPlanSessions
-      .filter((session) => !isCurrentPlanBackedWorkoutSession(session))
-      .map((session) => session.id);
-
-    if (staleOpenSessionIds.length > 0) {
-      await prisma.workoutSession.deleteMany({
-        where: { id: { in: staleOpenSessionIds } },
-      });
-    }
-
-    return staleOpenSessionIds.length > 0;
+    return refreshOpenPlanSessions(prisma, openPlanSessions, activePlans);
   }
 
   const rotatePlans = async (tx: WorkoutPlanClient) => {
@@ -118,19 +112,6 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
         },
       },
     });
-    const preservableOpenSessions = openPlanSessions.filter(
-      isCurrentPlanBackedWorkoutSession
-    );
-    const preservableSessionIds = new Set(preservableOpenSessions.map((session) => session.id));
-    const staleOpenSessionIds = openPlanSessions
-      .filter((session) => !preservableSessionIds.has(session.id))
-      .map((session) => session.id);
-
-    if (staleOpenSessionIds.length > 0) {
-      await tx.workoutSession.deleteMany({
-        where: { id: { in: staleOpenSessionIds } },
-      });
-    }
 
     await tx.workoutPlan.updateMany({
       where: { userId, isActive: true },
@@ -139,7 +120,7 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
 
     await createDefaultWorkoutPlans(tx, userId);
 
-    if (preservableOpenSessions.length === 0) {
+    if (openPlanSessions.length === 0) {
       return;
     }
 
@@ -148,33 +129,32 @@ export async function ensureDefaultWorkoutPlans(prisma: WorkoutPlanClient, userI
       include: { exercises: { orderBy: { sortOrder: "asc" } } },
     });
 
-    for (const session of preservableOpenSessions) {
-      const newPlan = newActivePlans.find(
-        (plan) =>
-          plan.dayOfWeek === session.workoutPlan?.dayOfWeek &&
-          isCurrentWorkoutPlanContent(plan)
-      );
-
-      if (!newPlan) {
-        await tx.workoutSession.delete({ where: { id: session.id } });
-        continue;
-      }
-
-      await tx.workoutSession.update({
-        where: { id: session.id },
-        data: {
-          workoutPlanId: newPlan.id,
-          notes: buildCurrentPlanSessionNotes(session, newPlan),
-        },
-      });
-    }
+    await refreshOpenPlanSessions(tx, openPlanSessions, newActivePlans);
   };
 
-  if ("$transaction" in prisma) {
-    await prisma.$transaction(rotatePlans);
-  } else {
-    await rotatePlans(prisma);
-  }
+  await rotatePlans(prisma);
 
   return true;
+}
+
+async function refreshOpenPlanSessions(
+  tx: WorkoutPlanClient,
+  sessions: OpenSessionWithPlan[],
+  plans: WorkoutPlanWithExercises[]
+) {
+  let refreshed = false;
+  for (const session of sessions) {
+    if (session.completed) continue;
+    const dayOfWeek = session.workoutPlan?.dayOfWeek ?? parseWorkoutSessionMeta(session.notes)?.dayOfWeek;
+    const plan = plans.find((candidate) => candidate.dayOfWeek === dayOfWeek);
+    // An unmatched session is retained for recovery, never deleted on a read.
+    if (!plan) continue;
+    if (session.workoutPlanId === plan.id && isCurrentPlanBackedWorkoutSession(session)) continue;
+    await tx.workoutSession.update({
+      where: { id: session.id, userId: session.userId, completed: false },
+      data: { workoutPlanId: plan.id, notes: buildCurrentPlanSessionNotes(session, plan) },
+    });
+    refreshed = true;
+  }
+  return refreshed;
 }

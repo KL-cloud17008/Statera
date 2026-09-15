@@ -1,17 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AppSettingsProvider } from "@/components/settings/AppSettingsProvider";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { Toaster } from "@/components/ui/sonner";
-
-const barlowCondensed = Barlow_Condensed({
-  subsets: ["latin"],
-  variable: "--font-barlow-condensed",
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -44,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#171b18",
+  themeColor: "#202a31",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -58,7 +51,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`light ${barlowCondensed.variable} ${archivo.variable} ${ibmPlexMono.variable}`}
+      className={`light ${archivo.variable} ${ibmPlexMono.variable}`}
     >
       <head>
         <meta name="color-scheme" content="light" />

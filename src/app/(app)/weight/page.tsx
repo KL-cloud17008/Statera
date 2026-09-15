@@ -52,13 +52,12 @@ export default async function WeightPage() {
   return (
     <>
       <PageTitle
-        eyebrow="Weight"
-        title="Body-composition ledger."
-        lead="Pounds remain canonical, with kg and stone visible throughout the ledger."
+        title="Weight"
         action={<WeightPageActions />}
       />
 
-      <Section className="mt-6">
+      <div className="measurement-overview">
+      <Section className="measurement-summary">
         {/* The xl figure gets its own line. Sharing a 4-up grid gave it a
             108px cell for a 154px numeral, and since .num is nowrap it
             overran into Start rather than wrapping. */}
@@ -69,38 +68,35 @@ export default async function WeightPage() {
             value={formatBodyweight(stats.currentWeight)}
             detail={
               formatBodyweightSecondary(stats.currentWeight) ||
-              "Log a weigh-in to unlock kg and stone conversion."
+              "No weigh-ins yet"
             }
           />
-          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
+          <div className="supporting-figures grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
             <Figure
               label="Start"
               size="lg"
               value={formatBodyweight(stats.startWeight)}
-              detail={joinDetail(formatBodyweightSecondary(stats.startWeight), "Baseline")}
+              detail={formatBodyweightSecondary(stats.startWeight)}
             />
             <Figure
               label="Change"
               size="lg"
               tone="accent"
               value={formatBodyweightDeltaPrimary(stats.totalChange)}
-              detail={joinDetail(
-                formatBodyweightDeltaSecondary(stats.totalChange),
-                "From start weight"
-              )}
+              detail={formatBodyweightDeltaSecondary(stats.totalChange)}
             />
             <Figure
-              label="7-day"
+              label="7-day average"
               size="lg"
               value={formatBodyweight(stats.avg7Day)}
-              detail={joinDetail(formatBodyweightSecondary(stats.avg7Day), "Smoothed trend")}
+              detail={formatBodyweightSecondary(stats.avg7Day)}
             />
           </div>
         </dl>
 
         {/* Progress to goal reads as a rule that fills, not a floating bar. */}
-        <div className="mt-8">
-          <div className="flex items-baseline justify-between gap-4 text-label uppercase text-tertiary">
+        <div className="goal-progress">
+          <div className="flex items-baseline justify-between gap-4 text-label text-secondary">
             <span className="min-w-0">
               <span className="block">Progress to goal {formatBodyweight(stats.goalWeight)}</span>
               {goalWeightSecondary ? (
@@ -117,25 +113,22 @@ export default async function WeightPage() {
         </div>
       </Section>
 
-      <WeightStatsCards stats={stats} />
-
-      <Section title="Trend">
-        <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} />
-      </Section>
-
-      <Section title="Log a weigh-in">
+      <Section title="Log a weigh-in" id="quick-add" className="measurement-entry scroll-mt-24">
         <WeightEntryForm timezone={user.timezone} />
       </Section>
+      </div>
+
+      <Section title="Trend">
+        <WeightChart entries={serializedEntries} goalWeight={user.goalWeight} timezone={user.timezone} />
+      </Section>
+
+      <WeightStatsCards stats={stats} />
 
       <Section title="History">
         <WeightHistoryList entries={serializedEntries} timezone={user.timezone} />
       </Section>
     </>
   );
-}
-
-function joinDetail(conversion: string, detail: string) {
-  return conversion ? `${conversion} · ${detail}` : detail;
 }
 
 function getWeightProgress(start: number | null, current: number | null, goal: number | null) {

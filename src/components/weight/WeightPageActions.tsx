@@ -1,11 +1,12 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { Download, Loader2, Upload } from "lucide-react";
+import { Download, Loader2, MoreHorizontal, Plus, Upload } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { exportWeightCSV } from "@/actions/weight";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export function WeightPageActions() {
   const [exporting, setExporting] = useState(false);
@@ -38,16 +39,18 @@ export function WeightPageActions() {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" type="button" onClick={handleExport} disabled={exporting}>
-        {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-        Export CSV
-      </Button>
-      <Button variant="secondary" asChild>
-        <Link href="/weight/import">
-          <Upload className="h-4 w-4" />
-          Import CSV
-        </Link>
-      </Button>
+      <Button asChild><Link href="#quick-add"><Plus className="size-4" />Log weight</Link></Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" aria-label="More weight actions" disabled={exporting}>
+            {exporting ? <Loader2 className="size-4 animate-spin" /> : <MoreHorizontal className="size-4" />} More
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem className="min-h-12" onSelect={() => void handleExport()}><Download />Export CSV</DropdownMenuItem>
+          <DropdownMenuItem className="min-h-12" asChild><Link href="/weight/import"><Upload />Import CSV</Link></DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

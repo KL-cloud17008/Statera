@@ -9,10 +9,7 @@ import {
   getWorkoutPlanContentHash,
   isCurrentWorkoutPlanContent,
 } from "@/lib/workout-plan-version";
-import {
-  getStaleOpenPlanSessionIds,
-  isCurrentPlanBackedWorkoutSession,
-} from "@/lib/workout-session-state";
+import { isCurrentPlanBackedWorkoutSession } from "@/lib/workout-session-state";
 import {
   getWorkoutSessionLoadUnit,
   parseWorkoutSessionMeta,
@@ -23,6 +20,8 @@ import { createDefaultWorkoutPlans, ensureDefaultWorkoutPlans } from "@/lib/work
 import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/training-session";
 import { WORKOUT_LOAD_UNIT, poundsToKg, workoutLoadToKg } from "@/lib/units";
 import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
+import { withWorkoutTransaction } from "@/lib/workout-transaction";
+import { parseWorkoutSetInput, sameSavedWorkoutSet, type SavedWorkoutSet } from "@/lib/workout-set-input";
 
 type WorkoutSessionActionResult = {
   error?: string;
@@ -32,6 +31,8 @@ type WorkoutSessionActionResult = {
 
 type WorkoutMutationResult = {
   error?: string;
+  conflict?: boolean;
+  savedSet?: SavedWorkoutSet | null;
 };
 
 export type WorkoutPlanDaySessionStatus = {
@@ -85,7 +86,7 @@ function revalidateWorkoutResetPaths() {
 }
 
 function revalidateWorkoutSessionPaths() {
-  for (const path of WORKOUT_RESET_REVALIDATION_PATHS) {
+  for (const path of ["/", "/workout", "/workout/plan", "/workout/history", "/mobility", "/flexibility-balance"]) {
     revalidatePath(path);
   }
 }
@@ -111,35 +112,9 @@ function completedSessionMatchesCurrentPlan(
   return false;
 }
 
-async function findOpenSessionsWithPlans(userId: string) {
-  return prisma.workoutSession.findMany({
-    where: {
-      userId,
-      completed: false,
-    },
-    include: {
-      workoutPlan: {
-        include: { exercises: { orderBy: { sortOrder: "asc" } } },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-}
-
-async function deleteStaleOpenPlanSessions(userId: string) {
-  const openSessions = await findOpenSessionsWithPlans(userId);
-  const staleSessionIds = getStaleOpenPlanSessionIds(openSessions);
-
-  if (staleSessionIds.length > 0) {
-    await prisma.workoutSession.deleteMany({
-      where: { id: { in: staleSessionIds } },
-    });
-  }
-
-  return openSessions.filter((session) => !staleSessionIds.includes(session.id));
-}
-
 export async function getWorkoutPlans(userId: string) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   await ensureDefaultWorkoutPlans(prisma, userId);
 
   const plans = await prisma.workoutPlan.findMany({
@@ -160,6 +135,8 @@ export async function getWorkoutPlanDayStatuses(
   userId: string,
   timezone?: string
 ): Promise<WorkoutPlanDaySessionStatus[]> {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   await ensureDefaultWorkoutPlans(prisma, userId);
 
   const plans = await prisma.workoutPlan.findMany({
@@ -174,10 +151,10 @@ export async function getWorkoutPlanDayStatuses(
     return [];
   }
 
-  const currentTrainingDate = getTrainingDate(new Date(), timezone);
+  const currentTrainingDate = getTrainingDate(new Date(), user.timezone ?? timezone);
   const startOfWeek = new Date(currentTrainingDate);
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-  startOfWeek.setHours(0, 0, 0, 0);
+  startOfWeek.setUTCDate(startOfWeek.getUTCDate() - (startOfWeek.getUTCDay() + 6) % 7);
+  startOfWeek.setUTCHours(0, 0, 0, 0);
 
   const [openSessions, completedSessions] = await Promise.all([
     prisma.workoutSession.findMany({
@@ -237,9 +214,11 @@ export async function getWorkoutPlanDayStatuses(
 }
 
 export async function getTodaysPlan(userId: string, timezone?: string) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return null;
   await ensureDefaultWorkoutPlans(prisma, userId);
 
-  const dayNum = getTrainingDayNumber(new Date(), timezone);
+  const dayNum = getTrainingDayNumber(new Date(), user.timezone ?? timezone);
   if (!dayNum) {
     return null;
   }
@@ -259,371 +238,184 @@ export async function getTodaysPlan(userId: string, timezone?: string) {
     : null;
 }
 
-async function getOpenSession(userId: string) {
-  await deleteStaleOpenPlanSessions(userId);
-
-  const session = await prisma.workoutSession.findFirst({
-    where: {
-      userId,
-      completed: false,
-    },
-    include: {
-      sets: { orderBy: [{ exerciseName: "asc" }, { setNumber: "asc" }] },
-      workoutPlan: {
-        include: { exercises: { orderBy: { sortOrder: "asc" } } },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  return session?.workoutPlan
-    ? {
-        ...session,
-        workoutPlan: {
-          ...session.workoutPlan,
-          exercises: session.workoutPlan.exercises.filter(isLoggableTrainingExercise),
-        },
-      }
-    : session;
-}
-
 export async function resetCurrentWorkoutPlan(): Promise<WorkoutMutationResult> {
   const user = await getOrCreateCurrentUser();
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await tx.workoutSession.deleteMany({
-      where: { userId: user.id, completed: false },
-    });
-
-    await tx.workoutPlan.updateMany({
-      where: { userId: user.id, isActive: true },
-      data: { isActive: false },
-    });
-
+  if (!user) return { error: "Not authenticated" };
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx) => {
+    const open = await tx.workoutSession.findFirst({ where: { userId: user.id, completed: false } });
+    if (open) return { error: "Finish or discard your open session before starting a new plan." };
+    await tx.workoutPlan.updateMany({ where: { userId: user.id, isActive: true }, data: { isActive: false } });
     await createDefaultWorkoutPlans(tx, user.id);
+    return {};
   });
-
-  revalidateWorkoutResetPaths();
-  return {};
+  if (!result.error) revalidateWorkoutResetPaths();
+  return result;
 }
 
-export async function startWorkoutSession(
-  planId: string
-): Promise<WorkoutSessionActionResult> {
+export async function startWorkoutSession(planId: string): Promise<WorkoutSessionActionResult> {
   const user = await getOrCreateCurrentUser();
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  const plan = await prisma.workoutPlan.findFirst({
-    where: { id: planId, userId: user.id, isActive: true },
-    include: {
-      exercises: { orderBy: { sortOrder: "asc" } },
-    },
-  });
-  if (!plan) {
-    return { error: "Plan not found" };
-  }
-  if (!isCurrentWorkoutPlanContent(plan)) {
-    return { error: "This saved plan is out of date. Start a new next-week plan first." };
-  }
-
-  const now = new Date();
-  const trainingDate = getTrainingDate(now, user.timezone);
-  const openSessions = await deleteStaleOpenPlanSessions(user.id);
-  const existing = openSessions[0];
-
-  if (existing) {
-    return {
-      sessionId: existing.id,
-      warning:
-        existing.workoutPlanId === plan.id
-          ? "Resumed existing session"
-          : "Another session is already in progress; resumed it",
-    };
-  }
-
-  const session = await prisma.workoutSession.create({
-    data: {
-      userId: user.id,
-      workoutPlanId: planId,
-      date: now,
-      trainingDate,
-      startTime: now,
-      weekNumber: 1,
-      notes: serializeWorkoutSessionMeta({
-        label: plan.sessionName,
-        source: "plan",
-        loadUnit: WORKOUT_LOAD_UNIT,
-        planTemplateVersion: DEFAULT_WORKOUT_PLAN_VERSION,
-        planContentHash: getWorkoutPlanContentHash(plan),
-        generatedAt: now.toISOString(),
-        dayOfWeek: plan.dayOfWeek,
-        workoutPlanId: plan.id,
-      }),
-    },
-  });
-
-  revalidateWorkoutSessionPaths();
-  return { sessionId: session.id };
-}
-
-export async function startCustomWorkoutSession(
-  formData: FormData
-): Promise<WorkoutSessionActionResult> {
-  const user = await getOrCreateCurrentUser();
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  const label = ((formData.get("label") as string) || "Custom Session").trim();
-  const exercisesJson = formData.get("exercises") as string;
-  const source = ((formData.get("source") as string) || "free") as
-    | "template"
-    | "free";
-
-  let exercises: WorkoutTemplateExercise[] = [];
-  try {
-    exercises = JSON.parse(exercisesJson) as WorkoutTemplateExercise[];
-  } catch {
-    return { error: "Invalid workout definition" };
-  }
-
-  if (!Array.isArray(exercises) || exercises.length === 0) {
-    return { error: "Add at least one exercise before starting a session" };
-  }
-
-  const existingOpen = await getOpenSession(user.id);
-  if (existingOpen) {
-    return { sessionId: existingOpen.id, warning: "Resumed existing session" };
-  }
-
-  const now = new Date();
-  const trainingDate = getTrainingDate(now, user.timezone);
-
-  const session = await prisma.workoutSession.create({
-    data: {
-      userId: user.id,
-      date: now,
-      trainingDate,
-      startTime: now,
-      weekNumber: 1,
-      notes: serializeWorkoutSessionMeta({
-        label,
-        source,
-        loadUnit: WORKOUT_LOAD_UNIT,
-        exercises: exercises.map((exercise) => ({
-          exerciseId:
-            exercise.exerciseId ||
-            exercise.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          name: exercise.name,
-          muscleGroup: exercise.muscleGroup,
-          sets: exercise.sets,
-          reps: exercise.reps,
-          restSeconds: exercise.restSeconds,
-          notes: exercise.notes,
-        })),
-      }),
-    },
-  });
-
-  revalidateWorkoutSessionPaths();
-  return { sessionId: session.id };
-}
-
-export async function logSet(
-  formData: FormData
-): Promise<WorkoutMutationResult> {
-  const user = await getOrCreateCurrentUser();
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  const sessionId = formData.get("sessionId") as string;
-  const planExerciseId = (formData.get("planExerciseId") as string) || null;
-  const exerciseName = (formData.get("exerciseName") as string)?.trim();
-  const setNumber = Number.parseInt(formData.get("setNumber") as string, 10);
-  const weightUsedValue = formData.get("weightUsed") as string;
-  const repsValue = formData.get("repsCompleted") as string;
-  const rpeValue = formData.get("actualRPE") as string;
-  const durationValue = formData.get("duration") as string;
-  const notes = ((formData.get("notes") as string) || null)?.trim() ?? null;
-  const isAMRAP = formData.get("isAMRAP") === "true";
-
-  if (!exerciseName) {
-    return { error: "Exercise name is required" };
-  }
-  if (isAtHomePrimerExerciseName(exerciseName)) {
-    return { error: "Session prep is not a loggable training exercise" };
-  }
-  if (Number.isNaN(setNumber) || setNumber < 1 || setNumber > 50) {
-    return { error: "Set number must be between 1 and 50" };
-  }
-
-  const weightUsed = weightUsedValue ? Number.parseFloat(weightUsedValue) : null;
-  const repsCompleted = repsValue ? Number.parseInt(repsValue, 10) : null;
-  const actualRPE = rpeValue ? Number.parseInt(rpeValue, 10) : null;
-  const duration = durationValue ? Number.parseInt(durationValue, 10) : null;
-
-  if (
-    weightUsed != null &&
-    (Number.isNaN(weightUsed) || weightUsed < 0 || weightUsed > 1500)
-  ) {
-    return { error: "Weight must be between 0 and 1500 kg" };
-  }
-  if (
-    repsCompleted != null &&
-    (Number.isNaN(repsCompleted) || repsCompleted < 0 || repsCompleted > 1000)
-  ) {
-    return { error: "Reps must be between 0 and 1000" };
-  }
-  if (
-    actualRPE != null &&
-    (Number.isNaN(actualRPE) || actualRPE < 1 || actualRPE > 10)
-  ) {
-    return { error: "RPE must be between 1 and 10" };
-  }
-  if (
-    duration != null &&
-    (Number.isNaN(duration) || duration < 0 || duration > 7200)
-  ) {
-    return { error: "Duration must be between 0 and 7200 seconds" };
-  }
-  if (notes && notes.length > 240) {
-    return { error: "Notes must be 240 characters or fewer" };
-  }
-  if (weightUsed == null && repsCompleted == null && duration == null && !notes) {
-    return { error: "Enter at least one training value before saving" };
-  }
-
-  const session = await prisma.workoutSession.findFirst({
-    where: { id: sessionId, userId: user.id },
-    include: {
-      sets: true,
-      workoutPlan: true,
-    },
-  });
-  if (!session) {
-    return { error: "Session not found" };
-  }
-
-  const sessionMeta = parseWorkoutSessionMeta(session.notes);
-  if (sessionMeta?.loadUnit !== WORKOUT_LOAD_UNIT && !session.completed) {
-    const normalizedMeta: WorkoutSessionMeta = sessionMeta
-      ? { ...sessionMeta, loadUnit: WORKOUT_LOAD_UNIT }
-      : {
-          label: session.workoutPlan?.sessionName || session.notes || "Free Session",
-          source: session.workoutPlanId ? "plan" : "free",
-          loadUnit: WORKOUT_LOAD_UNIT,
-        };
-
-    // Older workout sets were stored as implicit pounds. Open legacy sessions are normalized
-    // before accepting new kg input so one session never mixes raw lb and kg values.
-    await prisma.$transaction([
-      ...session.sets
-        .filter((set) => set.weightUsed != null)
-        .map((set) =>
-          prisma.sessionSet.update({
-            where: { id: set.id },
-            data: { weightUsed: poundsToKg(set.weightUsed) },
-          })
-        ),
-      prisma.workoutSession.update({
-        where: { id: session.id },
-        data: { notes: serializeWorkoutSessionMeta(normalizedMeta) },
-      }),
-    ]);
-  }
-
-  const existingSet = await prisma.sessionSet.findFirst({
-    where: {
-      workoutSessionId: sessionId,
-      exerciseName,
-      setNumber,
-    },
-  });
-
-  if (existingSet) {
-    await prisma.sessionSet.update({
-      where: { id: existingSet.id },
-      data: { weightUsed, repsCompleted, actualRPE, duration, isAMRAP, notes },
+  if (!user) return { error: "Not authenticated" };
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx) => {
+    const plan = await tx.workoutPlan.findFirst({
+      where: { id: planId, userId: user.id, isActive: true },
+      include: { exercises: { orderBy: { sortOrder: "asc" } } },
     });
-  } else {
-    await prisma.sessionSet.create({
+    if (!plan) return { error: "Plan not found. Refresh Training and try again." };
+    // Resume takes precedence even if a plan update occurred during the session.
+    const existing = await tx.workoutSession.findFirst({
+      where: { userId: user.id, completed: false }, orderBy: { createdAt: "desc" },
+    });
+    if (existing) return {
+      sessionId: existing.id,
+      warning: existing.workoutPlanId === plan.id ? "Resumed existing session" : "Another session is already in progress; resumed it",
+    };
+    if (!isCurrentWorkoutPlanContent(plan)) return { error: "This saved plan is out of date. Refresh Training and try again." };
+    const now = new Date();
+    const session = await tx.workoutSession.create({
       data: {
-        workoutSessionId: sessionId,
-        planExerciseId,
-        exerciseName,
-        setNumber,
-        weightUsed,
-        repsCompleted,
-        actualRPE,
-        duration,
-        isAMRAP,
-        notes,
+        userId: user.id, workoutPlanId: plan.id, date: now,
+        trainingDate: getTrainingDate(now, user.timezone), startTime: now, weekNumber: 1,
+        notes: serializeWorkoutSessionMeta({
+          label: plan.sessionName, source: "plan", loadUnit: WORKOUT_LOAD_UNIT,
+          planTemplateVersion: DEFAULT_WORKOUT_PLAN_VERSION,
+          planContentHash: getWorkoutPlanContentHash(plan), generatedAt: now.toISOString(),
+          dayOfWeek: plan.dayOfWeek, workoutPlanId: plan.id,
+        }),
       },
     });
-  }
-
-  revalidateWorkoutSessionPaths();
-  return {};
+    return { sessionId: session.id };
+  });
+  if (!result.error) revalidateWorkoutSessionPaths();
+  return result;
 }
 
-export async function completeSession(
-  sessionId: string
-): Promise<WorkoutMutationResult> {
+export async function startCustomWorkoutSession(formData: FormData): Promise<WorkoutSessionActionResult> {
   const user = await getOrCreateCurrentUser();
-  if (!user) {
-    return { error: "Not authenticated" };
+  if (!user) return { error: "Not authenticated" };
+  const rawLabel = formData.get("label");
+  const label = (typeof rawLabel === "string" ? rawLabel.trim() : "") || "Custom Session";
+  const source = formData.get("source") || "free";
+  if (label.length > 120 || (source !== "template" && source !== "free")) return { error: "Invalid workout definition" };
+  let exercises: WorkoutTemplateExercise[];
+  try { exercises = JSON.parse(String(formData.get("exercises"))); }
+  catch { return { error: "Invalid workout definition" }; }
+  if (!Array.isArray(exercises) || exercises.length < 1 || exercises.length > 50 || exercises.some((exercise) =>
+    !exercise || typeof exercise.name !== "string" || !exercise.name.trim() || exercise.name.length > 240 ||
+    isAtHomePrimerExerciseName(exercise.name) || !Number.isInteger(exercise.sets) || exercise.sets < 1 || exercise.sets > 50 ||
+    typeof exercise.reps !== "string" || !exercise.reps.trim() || exercise.reps.length > 80 ||
+    !Number.isInteger(exercise.restSeconds) || exercise.restSeconds < 0 || exercise.restSeconds > 7200 ||
+    (exercise.notes != null && (typeof exercise.notes !== "string" || exercise.notes.length > 2000))
+  ) || new Set(exercises.map((exercise) => exercise.name.trim())).size !== exercises.length) {
+    return { error: "Add valid exercises, sets, reps and rest times before starting a session" };
   }
-
-  const session = await prisma.workoutSession.findFirst({
-    where: { id: sessionId, userId: user.id },
-    include: { sets: true },
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx) => {
+    const existing = await tx.workoutSession.findFirst({ where: { userId: user.id, completed: false }, orderBy: { createdAt: "desc" } });
+    if (existing) return { sessionId: existing.id, warning: "Resumed existing session" };
+    const now = new Date();
+    const session = await tx.workoutSession.create({ data: {
+      userId: user.id, date: now, trainingDate: getTrainingDate(now, user.timezone), startTime: now, weekNumber: 1,
+      notes: serializeWorkoutSessionMeta({ label, source, loadUnit: WORKOUT_LOAD_UNIT,
+        exercises: exercises.map((exercise) => ({
+          exerciseId: typeof exercise.exerciseId === "string" ? exercise.exerciseId : exercise.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          name: exercise.name.trim(), muscleGroup: exercise.muscleGroup,
+          sets: exercise.sets, reps: exercise.reps.trim(), restSeconds: exercise.restSeconds, notes: exercise.notes,
+        })),
+      }),
+    } });
+    return { sessionId: session.id };
   });
-  if (!session) {
-    return { error: "Session not found" };
-  }
-  if (session.sets.length === 0) {
-    return { error: "Log at least one set before completing the session" };
-  }
-
-  await prisma.workoutSession.update({
-    where: { id: sessionId },
-    data: { completed: true, endTime: new Date() },
-  });
-
   revalidateWorkoutSessionPaths();
-  return {};
+  return result;
 }
 
-export async function discardWorkoutSession(
-  sessionId: string
-): Promise<WorkoutMutationResult> {
+export async function logSet(formData: FormData): Promise<WorkoutMutationResult> {
   const user = await getOrCreateCurrentUser();
-  if (!user) {
-    return { error: "Not authenticated" };
-  }
-
-  const session = await prisma.workoutSession.findFirst({
-    where: { id: sessionId, userId: user.id, completed: false },
+  if (!user) return { error: "Not authenticated" };
+  const parsed = parseWorkoutSetInput(formData);
+  if (!parsed.value) return { error: parsed.error };
+  const { sessionId, exerciseName, setNumber, weightUsed, repsCompleted, actualRPE, duration, notes, isAMRAP, expectedSet, hasDuration, hasAMRAP } = parsed.value;
+  if (isAtHomePrimerExerciseName(exerciseName)) return { error: "Session prep is not a loggable training exercise" };
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx): Promise<WorkoutMutationResult> => {
+    const session = await tx.workoutSession.findFirst({
+      where: { id: sessionId, userId: user.id },
+      include: { sets: true, workoutPlan: { include: { exercises: true } } },
+    });
+    if (!session) return { error: "Session not found" };
+    if (session.completed) return { error: "This session is complete. Saved history has not been changed." };
+    const meta = parseWorkoutSessionMeta(session.notes);
+    const planExercise = session.workoutPlan?.exercises.find((exercise) => exercise.exerciseName === exerciseName);
+    const existingSet = session.sets.find((set) => set.exerciseName === exerciseName && set.setNumber === setNumber);
+    // Derive the foreign key from the owned session. Never trust a submitted planExerciseId.
+    if (!planExercise && !meta?.exercises?.some((exercise) => exercise.name === exerciseName) && !session.sets.some((set) => set.exerciseName === exerciseName)) {
+      return { error: "Exercise not found in this session. Refresh Training and try again." };
+    }
+    const loadUnit = getWorkoutSessionLoadUnit(session.notes);
+    const current: SavedWorkoutSet | null = existingSet ? {
+      weightUsed: workoutLoadToKg(existingSet.weightUsed, loadUnit), repsCompleted: existingSet.repsCompleted,
+      actualRPE: existingSet.actualRPE, notes: existingSet.notes,
+    } : null;
+    const savedSet = { weightUsed, repsCompleted, actualRPE, notes };
+    const savedDuration = hasDuration ? duration : existingSet?.duration ?? null;
+    const savedAMRAP = hasAMRAP ? isAMRAP : existingSet?.isAMRAP ?? false;
+    const identical = sameSavedWorkoutSet(current, savedSet) && existingSet?.duration === savedDuration && existingSet.isAMRAP === savedAMRAP;
+    // A retry after a lost response is successful; a different edit from another tab requires review.
+    if (identical) return { savedSet };
+    if (expectedSet !== undefined && !sameSavedWorkoutSet(current, expectedSet)) {
+      return { error: "This set changed in another tab or device. Review the saved values before replacing them.", conflict: true, savedSet: current };
+    }
+    if (loadUnit !== WORKOUT_LOAD_UNIT) {
+      const normalizedMeta: WorkoutSessionMeta = meta ? { ...meta, loadUnit: WORKOUT_LOAD_UNIT } : {
+        label: session.workoutPlan?.sessionName || session.notes || "Free Session", source: session.workoutPlanId ? "plan" : "free", loadUnit: WORKOUT_LOAD_UNIT,
+      };
+      for (const set of session.sets) {
+        if (set.weightUsed != null) await tx.sessionSet.update({ where: { id: set.id }, data: { weightUsed: poundsToKg(set.weightUsed) } });
+      }
+      await tx.workoutSession.update({ where: { id: session.id }, data: { notes: serializeWorkoutSessionMeta(normalizedMeta) } });
+    }
+    const data = { weightUsed, repsCompleted, actualRPE, duration: savedDuration, isAMRAP: savedAMRAP, notes };
+    if (existingSet) await tx.sessionSet.update({ where: { id: existingSet.id }, data });
+    else await tx.sessionSet.create({ data: { workoutSessionId: session.id, planExerciseId: planExercise?.id ?? null, exerciseName, setNumber, ...data } });
+    return { savedSet };
   });
-  if (!session) {
-    return { error: "Open session not found" };
-  }
+  if (!result.error) revalidateWorkoutSessionPaths();
+  return result;
+}
 
-  await prisma.workoutSession.delete({ where: { id: sessionId } });
+export async function completeSession(sessionId: string): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) return { error: "Not authenticated" };
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx) => {
+    const session = await tx.workoutSession.findFirst({ where: { id: sessionId, userId: user.id }, include: { _count: { select: { sets: true } } } });
+    if (!session) return { error: "Session not found" };
+    if (session.completed) return {};
+    if (session._count.sets === 0) return { error: "Log at least one set before completing the session" };
+    await tx.workoutSession.update({ where: { id: sessionId }, data: { completed: true, endTime: new Date() } });
+    return {};
+  });
+  if (!result.error) revalidateWorkoutSessionPaths();
+  return result;
+}
 
-  revalidateWorkoutSessionPaths();
-  return {};
+export async function discardWorkoutSession(sessionId: string): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) return { error: "Not authenticated" };
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx) => {
+    const session = await tx.workoutSession.findFirst({ where: { id: sessionId, userId: user.id } });
+    // Already discarded is also a successful retry; completed history is never discarded here.
+    if (!session) return {};
+    if (session.completed) return { error: "Completed sessions cannot be discarded here" };
+    await tx.workoutSession.delete({ where: { id: sessionId } });
+    return {};
+  });
+  if (!result.error) revalidateWorkoutSessionPaths();
+  return result;
 }
 
 export async function getSessionWithSets(sessionId: string) {
-  return prisma.workoutSession.findUnique({
-    where: { id: sessionId },
+  const user = await getOrCreateCurrentUser();
+  if (!user) return null;
+  return prisma.workoutSession.findFirst({
+    where: { id: sessionId, userId: user.id },
     include: {
       sets: { orderBy: [{ exerciseName: "asc" }, { setNumber: "asc" }] },
       workoutPlan: {
@@ -634,6 +426,8 @@ export async function getSessionWithSets(sessionId: string) {
 }
 
 export async function getRecentSessions(userId: string, limit = 30) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   return prisma.workoutSession.findMany({
     where: { userId, completed: true },
     include: {
@@ -641,7 +435,7 @@ export async function getRecentSessions(userId: string, limit = 30) {
       workoutPlan: true,
     },
     orderBy: { trainingDate: "desc" },
-    take: limit,
+    take: Number.isFinite(limit) ? Math.max(1, Math.min(100, Math.trunc(limit))) : 30,
   });
 }
 
@@ -654,12 +448,17 @@ export async function getPreviousSessionSets(
     setNumber: number;
     weightUsed: number | null;
     repsCompleted: number | null;
+    actualRPE: number | null;
   }>
 > {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
+  const plan = await prisma.workoutPlan.findFirst({ where: { id: planId, userId } });
+  if (!plan) return [];
   const prevSession = await prisma.workoutSession.findFirst({
     where: {
       userId,
-      workoutPlanId: planId,
+      workoutPlan: { userId, dayOfWeek: plan.dayOfWeek },
       completed: true,
     },
     orderBy: { trainingDate: "desc" },
@@ -680,10 +479,13 @@ export async function getPreviousSessionSets(
       setNumber: set.setNumber,
       weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
       repsCompleted: set.repsCompleted,
+      actualRPE: set.actualRPE,
     }));
 }
 
 export async function getExerciseHistory(userId: string, exerciseName: string) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   return prisma.sessionSet.findMany({
     where: {
       exerciseName,

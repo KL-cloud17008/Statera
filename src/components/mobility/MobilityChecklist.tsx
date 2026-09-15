@@ -108,7 +108,7 @@ export function MobilityChecklist({
         {blocks.map((block, blockIndex) => (
           <section key={block.title} className="grid gap-4 border-t border-rule pt-5 first:border-t-0 first:pt-0 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-6">
             <div className="lg:sticky lg:top-24 lg:self-start">
-              <p className="text-label uppercase text-tertiary">Block {blockIndex + 1}</p>
+              <p className="text-label text-tertiary">Block {blockIndex + 1}</p>
               <p className="mt-1 text-row font-medium text-primary">{block.title}</p>
               <p className="num num-left mt-0.5 text-caption text-tertiary">{block.duration}</p>
               <p className="mt-2 text-caption text-tertiary">{block.purpose}</p>
@@ -176,7 +176,7 @@ export function MobilityChecklist({
                             <div className="flex w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:shrink-0 sm:flex-col sm:items-end sm:justify-start">
                               <p
                                 title={exercise.dose}
-                                className="num text-right whitespace-nowrap rounded-pill border border-rule bg-sunken px-2 py-0.5 text-label uppercase text-secondary"
+                                className="num text-right whitespace-nowrap rounded-pill border border-rule bg-sunken px-2 py-0.5 text-label text-secondary"
                               >
                                 {compactDose(exercise.dose)}
                               </p>
@@ -186,7 +186,7 @@ export function MobilityChecklist({
                                   aria-expanded={isExpanded}
                                   aria-controls={detailsId}
                                   onClick={() => toggleExpanded(key)}
-                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-pill border border-control-border bg-raised px-2.5 py-1 text-label uppercase text-secondary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
+                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-pill border border-control-border bg-raised px-2.5 py-1 text-label text-secondary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
                                 >
                                   <span>How to do it</span>
                                   <ChevronDown
@@ -236,7 +236,7 @@ function RecoveryIntro({
     <div className="border-y border-rule py-4">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(13rem,0.72fr)]">
         <div>
-          <p className="text-label uppercase text-tertiary">Recovery intensity</p>
+          <p className="text-label text-tertiary">Recovery intensity</p>
           <p className="mt-1 text-row text-secondary">
             {isFootFlare ? FOOT_FLARE_RECOVERY_INTRO : RECOVERY_INTRO}
           </p>
@@ -340,7 +340,7 @@ function IntensityBox({
 }) {
   return (
     <div>
-      <p className="text-label uppercase text-tertiary">Intensity</p>
+      <p className="text-label text-tertiary">Intensity</p>
       <div className="mt-2 grid gap-2">
         {[
           exercise.intensity.effort,
@@ -369,7 +369,7 @@ function DetailCopy({
 }) {
   return (
     <div>
-      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="text-label text-tertiary">{label}</p>
       <p className="mt-1 text-row text-secondary">{value}</p>
     </div>
   );
@@ -410,12 +410,12 @@ function NumberedSteps({
 
   return (
     <div>
-      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="text-label text-tertiary">{label}</p>
       <div className="mt-2 space-y-2">
         {rows.map((row) => {
           if (row.isSectionLabel) {
             return (
-              <p key={row.item} className="pt-1 text-label uppercase text-primary">
+              <p key={row.item} className="pt-1 text-label text-primary">
                 {row.item.replace(/:$/, "")}
               </p>
             );
@@ -448,7 +448,7 @@ function DetailList({
 
   return (
     <div>
-      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="text-label text-tertiary">{label}</p>
       <ul className="mt-2 space-y-2">
         {items.map((item) => (
           <li key={item} className="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-2 text-row text-secondary">

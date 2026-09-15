@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useRef, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, Loader2, Play, RotateCcw } from "lucide-react";
@@ -13,17 +13,17 @@ type SessionActionStatus = "start" | "resume" | "view";
 
 const ACTION_COPY = {
   start: {
-    label: "Start Session",
+    label: "Start session",
     loadingLabel: "Starting...",
     icon: Play,
   },
   resume: {
-    label: "Resume Session",
+    label: "Resume session",
     loadingLabel: "Opening...",
     icon: RotateCcw,
   },
   view: {
-    label: "View Session",
+    label: "View session",
     loadingLabel: "Opening...",
     icon: Eye,
   },
@@ -44,6 +44,7 @@ export function WorkoutSessionActionButton({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const starting = useRef(false);
   const copy = ACTION_COPY[status];
   const Icon = copy.icon;
   const buttonClassName = cn(fullWidth && "w-full", className);
@@ -76,22 +77,23 @@ export function WorkoutSessionActionButton({
   }
 
   function handleStart() {
+    if (starting.current) return;
     if (!planId) {
       toast.error("No active plan is available for this training day.");
       return;
     }
 
+    starting.current = true;
     startTransition(async () => {
-      const result = await startWorkoutSession(planId);
-      if (result.error) {
-        toast.error(result.error);
+      try {
+        const result = await startWorkoutSession(planId);
+        if (result.error) { toast.error(result.error); return; }
+        toast.success(result.warning ?? "Training session started");
+        router.push("/workout");
         router.refresh();
-        return;
-      }
-
-      toast.success(result.warning ?? "Training session started");
-      router.push("/workout");
-      router.refresh();
+      } catch {
+        toast.error("Starting was interrupted. Retry to open your session.");
+      } finally { starting.current = false; }
     });
   }
 

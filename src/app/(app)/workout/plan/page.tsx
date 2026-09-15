@@ -11,11 +11,9 @@ import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetBut
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getTodayDateString, getTrainingDayOfWeek } from "@/lib/dates";
 import {
-  ADJUSTED_WEEK_HEADER_COPY,
   BACK_PAIN_RULES,
   FOOT_LOAD_RULES,
   LOWER_B_BACK_PAIN_READINESS_NOTE,
-  NEXT_WEEK_TAPER_TITLE,
   PROGRESSIVE_OVERLOAD_RULES,
   WEEKLY_SET_SUMMARY,
   isOverheadPressExercise,
@@ -93,7 +91,7 @@ const WEEK_STRUCTURE = [
     protocol: "Strength Protocol",
     dayOfWeek: 5,
     note: "Lower-fatigue third upper-body day built around chest isolation, upper-back work, an arms superset, rear-delt/scapular work, and conservative core.",
-    laterRecovery: "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes.",
+    laterRecovery: "Weekly downshift / foot care, 12-16 minutes.",
     details: [
       "Block A upper back/chest: Chest-Supported Row for 3 sets of 10-12, followed by High-to-Low Cable Fly for 2-3 sets of 12-15, both at RPE 5-6. Seated Cable Row is the supported alternative where appropriate.",
       "Block B arms superset: Cable Curl and Rope Triceps Pressdown, 3 sets each of 10-15 at RPE 6-7. Rest approximately 90-120 seconds after the pair.",
@@ -156,10 +154,9 @@ export default async function WorkoutPlanPage() {
   return (
     <>
       <PageTitle
-        eyebrow="Training Protocol"
-        title={NEXT_WEEK_TAPER_TITLE}
-        lead={ADJUSTED_WEEK_HEADER_COPY}
-        action={<WorkoutPlanResetButton />}
+        eyebrow="Training"
+        title="Full plan"
+        lead="Five training days. Progress by controlled reps, then load."
       />
 
       {plans.length === 0 ? (
@@ -172,22 +169,11 @@ export default async function WorkoutPlanPage() {
         </Section>
       ) : null}
 
-      <Section className="mt-6" title="Week structure">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <p className="num num-left text-data-xl font-medium text-primary">5 / 0 / 2</p>
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary">5 Strength</Badge>
-            <Badge variant="secondary">0 Recovery</Badge>
-            <Badge variant="secondary">2 Full Rest</Badge>
-          </div>
-        </div>
-        <p className="mt-3 max-w-2xl text-body text-secondary">
-          Five training days with balanced chest, back, legs, hips, arms, and trunk stability.
-          Progress by clean reps before load. Saturday and Sunday are full rest. Ramp-up sets
-          stay outside the ledger. Required later recovery remains separate.
-        </p>
-      </Section>
-
+      <nav aria-label="Plan days" className="plan-day-index my-4 grid grid-cols-7 gap-1">
+        {WEEK_STRUCTURE.map(day => <a key={day.day} aria-label={day.day} href={`#${day.day.toLowerCase()}`} className="inline-flex min-h-12 items-center justify-center border-b border-rule bg-sunken px-1 text-caption font-medium hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent"><span className="sm:hidden">{day.day.slice(0,3)}</span><span className="hidden sm:inline">{day.day}</span></a>)}
+      </nav>
+      <details className="border-y border-rule">
+        <summary className="flex min-h-14 cursor-pointer items-center text-body font-medium focus-visible:outline-2 focus-visible:outline-accent">Load rules, progression & preparation</summary>
       <Section title="Load rules">
         <div className="grid gap-x-8 gap-y-6 lg:grid-cols-2">
           <RuleList title="Foot-load rules" rules={FOOT_LOAD_RULES} />
@@ -204,10 +190,14 @@ export default async function WorkoutPlanPage() {
       </Section>
 
       <Section title="Session prep">
-        <SessionPrepStrip note="Non-loggable arrival guidance. No set rows." />
+        <SessionPrepStrip note="Use controlled ramp-up sets before working sets." />
       </Section>
 
-      <div>
+      <Section title="Plan management"><WorkoutPlanResetButton /></Section>
+
+      </details>
+
+      <div className="mt-6">
         {WEEK_STRUCTURE.map((day, index) => {
             const plan = "dayOfWeek" in day ? plansByDay.get(day.dayOfWeek) : null;
             const loggableExercises = plan?.exercises.filter(isLoggableTrainingExercise) ?? [];
@@ -217,16 +207,7 @@ export default async function WorkoutPlanPage() {
             const showBackReadiness = plan?.dayOfWeek === 3 || plan?.dayOfWeek === 4;
 
             return (
-              <Section key={day.day}>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span className="num num-left text-row text-tertiary">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h2>{day.day}</h2>
-                  <Badge variant={day.protocol === "Strength Protocol" ? "accent" : "outline"}>
-                    {day.protocol}
-                  </Badge>
-                </div>
+              <Section key={day.day} id={day.day.toLowerCase()} title={`${String(index + 1).padStart(2, "0")} · ${day.day}`} action={<Badge variant={day.protocol === "Strength Protocol" ? "accent" : "outline"}>{day.protocol}</Badge>}>
 
                 <p className="mt-2 text-body font-medium text-primary">
                   {plan?.sessionName ?? day.title}
@@ -248,9 +229,9 @@ export default async function WorkoutPlanPage() {
                   </div>
                 ) : null}
 
-                <p className="mt-4 max-w-2xl text-row text-secondary">{day.note}</p>
+                <details className="mt-4" open={plan?.dayOfWeek === trainingDayOfWeek}><summary className="flex min-h-12 cursor-pointer items-center text-row font-medium focus-visible:outline-2 focus-visible:outline-accent">{plan ? "Exercises & guidance" : "Rest-day guidance"}</summary><p className="mt-3 max-w-2xl text-row text-secondary">{day.note}</p>
                 <p className="mt-2 max-w-2xl text-row text-secondary">
-                  <span className="font-medium text-primary">Required later recovery:</span> {day.laterRecovery}
+                  <span className="font-medium text-primary">Later recovery:</span> {day.laterRecovery}
                 </p>
                 {"details" in day && Array.isArray(day.details) ? (
                   <ul className="mt-3 grid gap-1.5">
@@ -300,7 +281,7 @@ export default async function WorkoutPlanPage() {
                             {exercise.cues ? (
                               <p className="mt-1 text-caption text-tertiary">{exercise.cues}</p>
                             ) : null}
-                            <Sub className="mt-1 block">{programming}</Sub>
+                            <Sub className="mt-1 block md:hidden">{programming}</Sub>
                           </div>
                           <span className="hidden text-row text-secondary md:block md:text-right">
                             {programming}
@@ -314,7 +295,7 @@ export default async function WorkoutPlanPage() {
                     Keep the day deliberately empty. Use only gentle recovery mobility if needed.
                   </p>
                 )}
-              </Section>
+              </details></Section>
             );
           })}
       </div>
@@ -338,7 +319,7 @@ const PLAN_COLUMNS_MD = "minmax(0,1fr) minmax(14rem,auto)";
 function RuleList({ title, rules }: { title: string; rules: readonly string[] }) {
   return (
     <div>
-      <p className="text-label uppercase text-tertiary">{title}</p>
+      <p className="text-caption text-tertiary">{title}</p>
       <ul className="mt-2 space-y-1.5">
         {rules.map((rule) => (
           <li key={rule} className="flex items-start gap-2 text-row text-secondary">

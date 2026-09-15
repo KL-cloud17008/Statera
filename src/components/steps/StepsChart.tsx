@@ -98,7 +98,7 @@ export function StepsChart({
                 contentStyle={{
                   backgroundColor: "var(--color-popover)",
                   border: "1px solid var(--color-border)",
-                  borderRadius: "1rem",
+                  borderRadius: "0.375rem",
                   boxShadow: "var(--shadow-overlay)",
                 }}
                 formatter={(value) => [Number(value).toLocaleString(), "Steps"]}
@@ -106,7 +106,7 @@ export function StepsChart({
               {typeof config.reference === "number" ? (
                 <ReferenceLine y={config.reference} stroke="var(--color-chart-2)" strokeDasharray="6 4" />
               ) : null}
-              <Bar dataKey={config.barKey} radius={[10, 10, 4, 4]} animationDuration={650}>
+              <Bar dataKey={config.barKey} radius={[3, 3, 0, 0]} isAnimationActive={false}>
                 {config.data.map((point, index) => {
                   const isToday = "isToday" in point && point.isToday;
                   return (

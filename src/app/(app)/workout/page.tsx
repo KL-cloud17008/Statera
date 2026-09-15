@@ -9,6 +9,7 @@ import { getPreviousSessionSets, getWorkoutPlans } from "@/actions/workout";
 import { WorkoutPageClient } from "@/components/workout/WorkoutPageClient";
 import { isCurrentPlanBackedWorkoutSession } from "@/lib/workout-session-state";
 import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/training-session";
+import { mergeSavedSessionExercises } from "@/lib/workout-session-exercises";
 
 export const metadata: Metadata = {
   title: "Training | Athanor",
@@ -47,7 +48,7 @@ export default async function WorkoutPage() {
     },
     orderBy: { createdAt: "desc" },
   });
-  const openSession = openSessions.find(isCurrentPlanBackedWorkoutSession) ?? null;
+  const openSession = openSessions.find(isCurrentPlanBackedWorkoutSession) ?? openSessions[0] ?? null;
 
   let activeSession = null;
   if (openSession) {
@@ -80,7 +81,7 @@ export default async function WorkoutPage() {
       startTime: openSession.startTime?.toISOString() ?? new Date().toISOString(),
       trainingDate: openSession.trainingDate.toISOString().split("T")[0],
       isStale: openSession.trainingDate.getTime() !== currentTrainingDate.getTime(),
-      exercises,
+      exercises: mergeSavedSessionExercises(exercises, openSession.sets.filter((set) => !isAtHomePrimerExerciseName(set.exerciseName))),
       sets: openSession.sets
         .filter((set) => !isAtHomePrimerExerciseName(set.exerciseName))
         .map((set) => ({

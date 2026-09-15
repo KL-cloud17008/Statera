@@ -116,7 +116,7 @@ const RECOVERY_STOP_NOTE =
   "Required does not mean push through pain. Stop or scale down if you feel sharp pain, numbness, tingling, swelling, warmth, limping, dizziness, or pain that increases as you continue. If foot pain does not settle or keeps returning, get assessed by a clinician.";
 
 const FOOT_FLARE_RECOVERY_INTRO =
-  "Foot flare recovery is required when your soles are irritated or recent step load is high. The goal is to reduce guarding, restore easy motion, and protect tomorrow's training.";
+  "Choose gentle foot and ankle motion when it feels comfortable. Step counts alone do not determine symptoms or require this routine.";
 
 const FOOT_FLARE_RECOVERY_NOT_WORKOUT =
   "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout. No aggressive stretching, no digging hard into the sole, and no extra fatigue.";
@@ -1606,10 +1606,10 @@ function recoveryMovement(
 function footFlareFootBlock(idPrefix = "foot-flare"): MobilityBlock {
   return block({
     id: `${idPrefix}-foot-sole-downshift`,
-    title: "Required foot-flare recovery",
+    title: "Foot comfort routine",
     duration: "6-8 min",
     purpose:
-      "Foot flare recovery is required when your soles are irritated or recent step load is high. Restore ankle motion, calf mobility, supported balance, and quiet foot pressure before adding anything else.",
+      "Choose comfortable ankle motion, calf mobility, supported balance, and quiet foot pressure. Stop if symptoms increase.",
     adaptationNote:
       "Effort 1-3/10. Pain 0-2/10 maximum. Prioritize easy ankle motion, supported balance, and quiet feet. No aggressive stretching, no unstable surfaces, no hard pressure, and no extra fatigue.",
     recoveryIntro: true,
@@ -1760,7 +1760,7 @@ function sundayFootFlareResetBlock(): MobilityBlock {
 }
 
 export const REQUIRED_LATER_RECOVERY_FOOT_FLARE_TITLE =
-  "Required foot-flare recovery";
+  "Foot comfort routine";
 
 export const REQUIRED_LATER_RECOVERY: MobilityBlock = block({
   id: "day-1-lower-body-flush-sole-care",

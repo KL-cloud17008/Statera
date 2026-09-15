@@ -59,6 +59,8 @@ export async function logMobility(
 }
 
 export async function getTodayMobilityLogs(userId: string, timezone: string) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   const trainingDate = getTrainingDate(new Date(), timezone);
   return prisma.mobilityLog.findMany({
     where: { userId, date: trainingDate },
@@ -67,9 +69,11 @@ export async function getTodayMobilityLogs(userId: string, timezone: string) {
 }
 
 export async function getMobilityHistory(userId: string, limit = 30) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   return prisma.mobilityLog.findMany({
     where: { userId },
     orderBy: { date: "desc" },
-    take: limit,
+    take: Number.isFinite(limit) ? Math.max(1, Math.min(365, Math.trunc(limit))) : 30,
   });
 }

@@ -55,21 +55,15 @@ export function getTodayDateString(timezone: string = TRAINING_TIMEZONE) {
  * Get the training date for a given timestamp.
  * Before boundary hour -> current calendar date.
  * At or after boundary hour -> next calendar date.
+ * Returns UTC midnight to match Prisma @db.Date values on every server timezone.
  */
 export function getTrainingDate(
   timestamp: Date,
   userTimezone: string = TRAINING_TIMEZONE
 ): Date {
-  const localTime = toLocalDate(timestamp, userTimezone);
-  const hour = localTime.getHours();
-
-  if (hour < TRAINING_DAY_BOUNDARY_HOUR) {
-    return startOfDay(localTime);
-  }
-
-  const tomorrow = new Date(localTime);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return startOfDay(tomorrow);
+  const parts = getDateTimeParts(timestamp, userTimezone);
+  const day = parts.day + (parts.hour >= TRAINING_DAY_BOUNDARY_HOUR ? 1 : 0);
+  return new Date(Date.UTC(parts.year, parts.month - 1, day));
 }
 
 export function startOfDay(date: Date): Date {
@@ -119,7 +113,7 @@ export function getTrainingDayOfWeek(
   userTimezone: string = TRAINING_TIMEZONE
 ): number {
   const trainingDate = getTrainingDate(timestamp, userTimezone);
-  return trainingDate.getDay();
+  return trainingDate.getUTCDay();
 }
 
 export function getTrainingDayNumber(
@@ -127,7 +121,7 @@ export function getTrainingDayNumber(
   userTimezone: string = TRAINING_TIMEZONE
 ): number | null {
   const trainingDate = getTrainingDate(timestamp, userTimezone);
-  const jsDay = trainingDate.getDay();
+  const jsDay = trainingDate.getUTCDay();
   if (jsDay >= 1 && jsDay <= 5) {
     return jsDay;
   }

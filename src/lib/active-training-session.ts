@@ -45,7 +45,7 @@ export async function resolveActiveTrainingSession(
     orderBy: { createdAt: "desc" },
   });
 
-  const openSession = openSessions.find(isCurrentPlanBackedWorkoutSession) ?? null;
+  const openSession = openSessions.find(isCurrentPlanBackedWorkoutSession) ?? openSessions[0] ?? null;
   const openPlan = openSession?.workoutPlan ?? null;
 
   if (openSession && openPlan) {

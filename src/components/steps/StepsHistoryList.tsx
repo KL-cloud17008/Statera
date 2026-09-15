@@ -13,7 +13,7 @@ import { CalendarRange } from "lucide-react";
 
 /* Date, steps, controls. The controls track is fixed so the column head and
    the rows resolve to the same grid. */
-const HISTORY_COLUMNS = "minmax(0,1fr) minmax(0,6rem) 4.5rem";
+const HISTORY_COLUMNS = "minmax(0,1fr) minmax(0,6rem) 6rem";
 
 type StepsEntry = {
   id: string;
@@ -21,29 +21,29 @@ type StepsEntry = {
   steps: number | null;
 };
 
-export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
+export function StepsHistoryList({ entries, timezone }: { entries: StepsEntry[]; timezone?: string }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function handleDelete() {
-    if (!deleteId) {
+    if (!deleteId || isDeleting) {
       return;
     }
 
     setIsDeleting(true);
     const formData = new FormData();
     formData.set("id", deleteId);
-    const result = await deleteStepsEntry(formData);
-    setIsDeleting(false);
-
-    if (result.error) {
-      toast.error(result.error);
-      return;
+    try {
+      const result = await deleteStepsEntry(formData);
+      if (result.error) { toast.error(result.error); return; }
+      setDeleteId(null);
+      toast.success("Step entry deleted");
+    } catch {
+      toast.error("Delete could not be confirmed. Check your connection and retry.");
+    } finally {
+      setIsDeleting(false);
     }
-
-    setDeleteId(null);
-    toast.success("Step entry deleted");
   }
 
   if (entries.length === 0) {
@@ -79,6 +79,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
             <StepsEntryForm
               key={entry.id}
               editEntry={entry}
+              timezone={timezone}
               onDone={() => setEditingId(null)}
             />
           ) : (
@@ -86,11 +87,12 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
               <span className="truncate text-secondary">{label}</span>
               <Num>{(entry.steps ?? 0).toLocaleString()}</Num>
               {/* Controls stay reachable on touch, where there is no hover. */}
-              <span className="flex justify-end gap-1 opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100 motion-reduce:transition-none">
+              <span className="flex justify-end gap-1">
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon-sm"
+                  className="size-11"
                   onClick={() => setEditingId(entry.id)}
                   aria-label={`Edit ${label} step entry`}
                 >
@@ -100,7 +102,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  className="text-critical hover:text-critical"
+                  className="size-11 text-critical hover:text-critical"
                   onClick={() => setDeleteId(entry.id)}
                   aria-label={`Delete ${label} step entry`}
                 >
@@ -112,7 +114,7 @@ export function StepsHistoryList({ entries }: { entries: StepsEntry[] }) {
         })}
       </Rows>
 
-      <Dialog open={deleteId != null} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <Dialog open={deleteId != null} onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete this step entry?</DialogTitle>

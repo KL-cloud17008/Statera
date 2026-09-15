@@ -1,0 +1,158 @@
+/* The caption, field and index share a grid. Colour belongs to the subject;
+   status colours retain their separate warning/error meaning. */
+[data-tone="neutral"] { --frame-accent: #53645b; --frame-tint: #e9ede7; }
+[data-tone="training"] { --frame-accent: var(--tone-clay); --frame-tint: #f3e9e1; }
+[data-tone="movement"] { --frame-accent: var(--tone-petrol); --frame-tint: #e7eff0; }
+[data-tone="weight"] { --frame-accent: var(--tone-plum); --frame-tint: #eee9ee; }
+[data-tone="recovery"] { --frame-accent: var(--tone-moss); --frame-tint: #eaf0e6; }
+[data-tone="balance"] { --frame-accent: var(--tone-ochre); --frame-tint: #f0eddf; }
+
+.presentation-frame, .presentation-frame [data-tone] {
+  --olive: var(--frame-accent);
+  --olive-subtle: var(--frame-tint);
+  --chart-accent: var(--frame-accent);
+  --chart-series-2: var(--frame-accent);
+  --color-chart-2: var(--frame-accent);
+  --focus-ring-color: var(--frame-accent);
+}
+
+.page-masthead {
+  position: relative;
+  border-top: 3px solid var(--frame-accent);
+  padding-top: 14px;
+  padding-bottom: 18px;
+  margin-bottom: 12px;
+}
+.page-masthead::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: 0;
+  width: 24%;
+  height: 3px;
+  background: var(--surface-canvas);
+  transform-origin: right;
+  pointer-events: none;
+}
+.page-masthead-compact { padding-bottom: 12px; }
+.section-rail {
+  position: relative;
+  min-height: 34px;
+  padding: 5px 10px 5px 24px;
+  background: var(--paper-150);
+  overflow: visible;
+}
+.section-rail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--frame-accent);
+  transform-origin: top;
+  pointer-events: none;
+}
+.section-title { font-size: 14px; font-weight: 600; }
+.section-action { font-size: 13px; }
+.ledger-section { border-top: 0; padding-top: 0; gap: 16px; align-content: start; }
+.ledger-section + .ledger-section { margin-top: 28px; }
+.ledger-head { background: var(--paper-100); font-size: 13px; }
+.ledger-head-sticky { background: var(--paper-100); }
+.ledger-row { padding-inline: 10px; }
+.metric-figure > dt { font-size: 13px; }
+.command-surface { border-radius: 0; }
+.training-overview {
+  --frame-accent: var(--tone-clay);
+  --frame-tint: #f3e9e1;
+  background: var(--frame-tint);
+  border: 0;
+  border-top: 4px solid var(--frame-accent);
+  padding: 18px 22px 22px;
+}
+.training-overview h2 { margin-top: 20px; font-size: 30px; }
+.training-overview .training-caption { font-size: 13px; }
+.training-overview [data-slot="button"][data-variant="primary"] { background: var(--tone-clay); }
+
+.dashboard-grid { display: grid; gap: 24px; align-items: start; }
+.dashboard-grid > .ledger-section { margin-top: 0; }
+.dashboard-training { grid-area: training; }
+.dashboard-steps { grid-area: steps; }
+.dashboard-weight { grid-area: weight; }
+.dashboard-week { grid-area: week; }
+.dashboard-totals { grid-area: totals; }
+.dashboard-last { grid-area: last; }
+.dashboard-checkin { grid-area: checkin; }
+.dashboard-grid { grid-template-areas: "training" "steps" "weight" "week" "totals" "last" "checkin"; }
+.dashboard-steps .section-body, .dashboard-weight .section-body { padding: 0 10px 10px; }
+.week-index-row { min-height: 60px; padding-block: 10px; }
+.week-index-row:last-child { border-bottom: 0; }
+.measurement-overview { display: grid; align-items: start; gap: 24px; margin-block: 8px 28px; }
+.measurement-overview > .ledger-section { margin: 0; }
+.measurement-summary { padding: 18px; background: var(--frame-tint); border-top: 4px solid var(--frame-accent); }
+.measurement-summary .metric-figure { padding-block: 4px; }
+.measurement-summary .supporting-figures { margin-top: 16px; gap: 16px; }
+.measurement-summary .goal-progress { margin-top: 20px; }
+.measurement-entry .section-body { padding: 0 10px; }
+.measurement-entry .measurement-fields { grid-template-columns: repeat(2,minmax(0,1fr)); align-items: start; }
+.measurement-entry .measurement-fields > * { min-width: 0; }
+.measurement-entry div.measurement-fields > div:has(> button[type="submit"]) { padding-top: 26px; }
+.measurement-entry fieldset.measurement-fields > div:has(> button) { grid-column: 1 / -1; }
+.measurement-entry fieldset.measurement-fields > button { grid-column: 1 / -1; }
+.settings-panel { border: 0; border-top: 1px solid var(--rule); border-radius: 0; background: transparent; }
+.settings-panel [data-slot="card-header"] { padding: 12px 16px; background: var(--paper-150); }
+.settings-panel [data-slot="card-content"] { padding-inline: 16px; }
+
+.navigation-index { padding-inline: 12px; }
+.navigation-index a { border-radius: 0; margin-bottom: 4px; }
+.navigation-index a::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--frame-accent);
+  transition: border-radius 240ms ease, transform 240ms ease;
+}
+.navigation-index a[aria-current="page"] { background: var(--frame-tint); color: var(--text-primary); }
+.navigation-index a[aria-current="page"]::before { border-radius: 0; transform: scale(1.15); }
+.navigation-index a:hover { background: var(--paper-100); }
+.navigation-index .nav-number { margin-left: auto; font: 11px var(--font-family-mono); color: var(--text-tertiary); }
+#current-set { border-top: 4px solid var(--frame-accent); }
+[aria-label="Session exercises"] > h2 { padding: 8px 12px; background: var(--paper-150); color: var(--text-primary); }
+
+/* Frames reveal by extending a colour rail and settling the caption. Contents
+   never disappear, move, intercept input, or change the document's geometry. */
+@media (prefers-reduced-motion: no-preference) {
+  .section-rail[data-frame-enter="true"] { animation: frame-emphasis 900ms ease-out both; }
+  .section-rail[data-frame-enter="true"]::before { animation: frame-extend 650ms cubic-bezier(.16,1,.3,1) both; }
+  .section-rail[data-frame-enter="true"] .section-title { animation: caption-settle 550ms cubic-bezier(.16,1,.3,1) both; }
+  .page-masthead[data-frame-enter="true"]::after { animation: frame-open 750ms cubic-bezier(.16,1,.3,1) both; }
+}
+@keyframes frame-extend { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes caption-settle { from { transform: translateX(10px); } to { transform: translateX(0); } }
+@keyframes frame-open { from { width: 100%; } to { width: 24%; } }
+@keyframes frame-emphasis { from { background-color: var(--frame-tint); } to { background-color: var(--paper-150); } }
+@media (prefers-reduced-motion: reduce) {
+  .navigation-index a::before { transition: none; }
+  [data-frame] *, [data-frame]::after { animation: none !important; }
+}
+@media (min-width: 1000px) {
+  .measurement-overview { grid-template-columns: minmax(0,1.3fr) minmax(20rem,1fr); gap: 24px; }
+  .dashboard-grid { grid-template-columns: minmax(0,1.45fr) minmax(18rem,1fr); grid-template-areas: "training steps" "week weight" "week totals" "last checkin"; gap: 28px; }
+  .dashboard-training { min-height: 260px; }
+}
+@media (max-width: 767px) {
+  .page-masthead { padding-top: 12px; }
+  .page-masthead-action { align-self: center; }
+  .training-overview { padding: 14px 16px 18px; }
+  .training-overview h2 { font-size: 26px; margin-top: 16px; }
+  .training-overview h2 + p { font-size: 14px; }
+  .training-overview .training-action { margin-top: 18px; }
+  .measurement-summary { padding: 14px; }
+  .measurement-summary .supporting-figures { grid-template-columns: minmax(0,1fr); gap: 8px; }
+  .measurement-summary .supporting-figures .metric-figure { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: baseline; gap: 2px 10px; border-top: 1px solid var(--rule); padding-top: 8px; }
+  .measurement-summary .supporting-figures dd { margin: 0; font-size: 20px; text-align: right; }
+  .measurement-summary .supporting-figures p { grid-column: 1 / -1; margin-top: 0; text-align: right; font-size: 12px; }
+  .section-rail { min-height: 42px; }
+}

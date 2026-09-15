@@ -44,6 +44,7 @@ type PrevSet = {
   setNumber: number;
   weightUsed: number | null;
   repsCompleted: number | null;
+  actualRPE?: number | null;
 };
 
 type ActiveSession = {
@@ -86,27 +87,25 @@ export function WorkoutPageClient({
     <>
       {/* WorkoutDayPreview prints its own masthead, so the page-level title is
           suppressed in that branch rather than printing two. */}
-      {todayPlan && !activeSession ? null : (
+      {activeSession ? (
+        <header className="border-b border-rule pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight">Training</h1>
+            <nav aria-label="Training views" className="flex items-center gap-4 text-caption font-medium text-secondary">
+              <Link href="/workout/history" className="inline-flex min-h-12 items-center underline-offset-4 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">History</Link>
+              <Link href="/workout/plan" className="inline-flex min-h-12 items-center underline-offset-4 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Full plan</Link>
+            </nav>
+          </div>
+          <p className="text-caption leading-relaxed text-secondary">{activeSession.sessionName}</p>
+        </header>
+      ) : todayPlan ? null : (
         <PageTitle
-          eyebrow={
-            activeSession
-              ? "Session in progress"
-              : /* On a rest day the eyebrow carries the "Full Rest" framing. */
-                (dayGuidance?.eyebrow ?? "Training Ledger")
-          }
+          eyebrow={dayGuidance?.eyebrow ?? "Training"}
           title={
-            activeSession
-              ? activeSession.sessionName
-              : dayGuidance
-                ? dayGuidance.title
-                : "Custom training"
+            dayGuidance ? dayGuidance.title : "Custom training"
           }
           lead={
-            activeSession
-              ? "Log working sets only. Ramp-up sets stay outside the ledger."
-              : dayGuidance
-                ? dayGuidance.description
-                : "Build or reuse a focused session."
+            dayGuidance ? dayGuidance.description : "Build or reuse a focused session."
           }
           action={
             <div className="flex flex-wrap items-center gap-2">

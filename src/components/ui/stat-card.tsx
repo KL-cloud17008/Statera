@@ -29,7 +29,7 @@ export function StatCard({
     <div className={cn("relative min-w-0", className)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-label uppercase text-tertiary">{label}</p>
+          <p className="text-label text-tertiary">{label}</p>
           <div className="num num-left mt-1.5 text-data-lg font-medium leading-none text-primary">
             {value}
           </div>

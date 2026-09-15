@@ -9,6 +9,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { routeTone } from "@/lib/presentation";
 
 export function MobileHeader() {
   const pathname = usePathname();
@@ -21,7 +22,7 @@ export function MobileHeader() {
 
   return (
     <header
-      className="sticky top-0 z-30 border-b border-rule bg-raised/95 backdrop-blur-md md:hidden"
+      className="sticky top-0 z-30 border-b border-rule bg-raised md:hidden"
       style={{ paddingTop: "env(safe-area-inset-top)" }}
     >
       <div className="flex h-14 items-center justify-between gap-3 px-4">
@@ -30,8 +31,8 @@ export function MobileHeader() {
             <BrandMark className="size-3.5 shrink-0" />
           </span>
           <span className="min-w-0">
-            <span className="block truncate font-display text-base font-semibold uppercase leading-none text-primary">Athanor</span>
-            <span className="mt-0.5 block truncate text-[0.625rem] uppercase tracking-[0.1em] text-tertiary">{activeLabel}</span>
+            <span className="block truncate font-display text-base font-semibold leading-none text-primary">Athanor</span>
+            <span className="mt-0.5 block truncate text-caption text-tertiary">{activeLabel}</span>
           </span>
         </div>
         <Sheet>
@@ -42,20 +43,19 @@ export function MobileHeader() {
           </SheetTrigger>
           <SheetContent side="right" className="w-[min(22rem,88vw)] gap-0 p-0">
             <SheetHeader className="border-b border-rule p-6 pr-14 text-left">
-              <SheetTitle className="font-display text-2xl font-semibold uppercase">Athanor</SheetTitle>
-              <SheetDescription>Personal training command center</SheetDescription>
+              <SheetTitle className="font-display text-2xl font-semibold">Athanor</SheetTitle>
+              <SheetDescription>Navigation</SheetDescription>
             </SheetHeader>
-            <nav aria-label="Primary" className="flex-1 overflow-y-auto p-3">
+            <nav aria-label="Primary" className="navigation-index flex-1 overflow-y-auto p-3">
               <ul className="space-y-1">
-                {NAV_ITEMS.map((item) => {
+                {NAV_ITEMS.map((item, index) => {
                   const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
                   return (
                     <li key={item.href}>
                       <SheetClose asChild>
-                        <Link href={item.href} aria-current={isActive ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-control px-3 text-row font-medium transition-colors", isActive ? "bg-ink text-ink-text" : "text-secondary hover:bg-sunken hover:text-primary")}>
-                          <item.icon className="size-4" strokeWidth={1.8} />
+                        <Link href={item.href} data-tone={routeTone(item.href)} aria-current={isActive ? "page" : undefined} className={cn("flex min-h-touch items-center gap-3 rounded-control px-3 text-row font-medium transition-colors", isActive ? "bg-ink text-ink-text" : "text-secondary hover:bg-sunken hover:text-primary")}>
                           <span>{item.label}</span>
-                          <span className={cn("ml-auto size-1.5 rounded-full", isActive ? "bg-accent-bright" : "bg-transparent")} />
+                          <span aria-hidden="true" className="nav-number">{String(index + 1).padStart(2, "0")}</span>
                         </Link>
                       </SheetClose>
                     </li>

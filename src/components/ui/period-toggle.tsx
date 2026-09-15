@@ -29,7 +29,7 @@ export function PeriodToggle<T extends string>({
             className={cn(
               /* Was bare `font-mono`, which gave mono glyphs but proportional
                  figures — `.num` is the one expression of that intent. */
-              "num min-h-8 rounded-pill px-3 text-label uppercase",
+              "num min-h-8 rounded-pill px-3 text-label",
               "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
               /* The active chip is ink with paper text. The previous pairing

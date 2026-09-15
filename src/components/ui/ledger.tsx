@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { FrameReveal } from "@/components/layout/PresentationFrame";
 
 /**
  * The ledger grammar. These components replace the card grid: content sits
@@ -14,20 +15,22 @@ export function Section({
   children,
   className,
   id,
+  tone,
 }: {
   title?: string;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
   id?: string;
+  tone?: "training" | "movement" | "weight" | "recovery" | "balance";
 }) {
   return (
-    <section id={id} className={cn("ledger-section", className)} data-has-rail={title || action ? "true" : "false"}>
+    <section id={id} data-tone={tone} className={cn("ledger-section", className)} data-has-rail={title || action ? "true" : "false"}>
       {title || action ? (
-        <div className="section-rail">
+        <FrameReveal key={id ?? title} name={id ?? title ?? "section"} className="section-rail">
           {title ? <h2 className="section-title">{title}</h2> : <span />}
           {action ? <div className="section-action">{action}</div> : null}
-        </div>
+        </FrameReveal>
       ) : null}
       <div className="section-body">{children}</div>
     </section>
@@ -176,7 +179,7 @@ export function Figure({
 
   return (
     <div className={cn("metric-figure min-w-0", className)}>
-      <dt className="text-label uppercase text-tertiary">{label}</dt>
+      <dt className="text-label text-tertiary">{label}</dt>
       <dd
         className={cn(
           "num num-left mt-1.5 font-medium leading-none",
@@ -206,17 +209,14 @@ export function PageTitle({
   className?: string;
 }) {
   return (
-    <header className={cn("page-masthead", className)}>
-      <div className="page-masthead-label">
-        <span aria-hidden className="page-masthead-mark" />
-        <p>{eyebrow ?? "Athanor"}</p>
-      </div>
+    <FrameReveal key={title} as="header" name={`page:${title}`} className={cn("page-masthead", !lead && !eyebrow && "page-masthead-compact", className)}>
       <div className="min-w-0 max-w-3xl">
+        {eyebrow && eyebrow.toLowerCase() !== title.toLowerCase() ? <p className="mb-2 text-caption text-tertiary">{eyebrow}</p> : null}
         <h1>{title}</h1>
         {lead ? <p className="mt-3 max-w-2xl text-body-lg text-secondary">{lead}</p> : null}
       </div>
       {action ? <div className="page-masthead-action">{action}</div> : null}
-    </header>
+    </FrameReveal>
   );
 }
 

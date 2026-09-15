@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logPainCheckIn, type SerializedPainCheckIn } from "@/actions/pain";
-import { BACK_PAIN_RULES, FOOT_LOAD_RULES } from "@/lib/default-workout-plan";
+import { BACK_PAIN_RULES } from "@/lib/default-workout-plan";
 import { getTodayDateString } from "@/lib/dates";
+import { getPainGuidance } from "@/lib/movement-guidance";
 import { cn } from "@/lib/utils";
 
 const PAIN_VALUES = Array.from({ length: 11 }, (_, value) => value);
@@ -15,24 +16,16 @@ const BACK_REMOVE_RULE =
   "If lower back rises above 3/10, remove back hyperextensions and overhead press first.";
 const BACK_RED_FLAG = BACK_PAIN_RULES[5];
 
-function footGuidance(footPain: number) {
-  if (footPain >= 5) {
-    return FOOT_LOAD_RULES[2];
-  }
-  if (footPain >= 3) {
-    return FOOT_LOAD_RULES[1];
-  }
-  return FOOT_LOAD_RULES[0];
-}
+function footGuidance(footPain: number) { return getPainGuidance(footPain).text; }
 
 function backGuidance(backPain: number) {
   if (backPain >= 5) {
     return `${BACK_PAIN_RULES[2]} ${BACK_REMOVE_RULE}`;
   }
-  if (backPain >= 3) {
+  if (backPain > 3) {
     return BACK_REMOVE_RULE;
   }
-  return BACK_PAIN_RULES[0];
+  return getPainGuidance(backPain).text;
 }
 
 function formatCheckInDate(dateString: string) {
@@ -68,9 +61,12 @@ export function PainCheckInCard({
         formData.set("lowerBackPain", String(nextBack));
       }
 
-      const result = await logPainCheckIn(formData);
+      let result;
+      try { result = await logPainCheckIn(formData); } catch { result = { error: "Could not save. Tap your score to retry." }; }
       if (result.error) {
         toast.error(result.error);
+        setFootValue(loggedToday ? latest.footPain : null);
+        setBackValue(loggedToday ? latest.lowerBackPain : null);
         return;
       }
 
@@ -95,7 +91,7 @@ export function PainCheckInCard({
     <div className={cn("", className)}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-label uppercase text-tertiary">Pain check-in</p>
+          <p className="text-label text-tertiary">Pain check-in</p>
           <p className="mt-1 text-caption text-tertiary">
             Feet / soles and lower back, 0-10. One tap logs today.
           </p>
@@ -103,7 +99,7 @@ export function PainCheckInCard({
         {isPending ? <Loader2 className="size-4 animate-spin text-tertiary" aria-label="Saving" /> : null}
       </div>
 
-      <p className="mt-3 text-label uppercase text-tertiary">
+      <p className="mt-3 text-label text-tertiary">
         Feet / soles
       </p>
       <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Foot pain 0 to 10">
@@ -130,7 +126,7 @@ export function PainCheckInCard({
         </p>
       ) : null}
 
-      <p className="mt-4 text-label uppercase text-tertiary">
+      <p className="mt-4 text-label text-tertiary">
         Lower back
       </p>
       <div className="mt-1.5 flex flex-wrap gap-1.5" role="group" aria-label="Lower-back pain 0 to 10">

@@ -16,6 +16,7 @@ import {
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
 import { normalizeGoalTargetDate } from "@/lib/app-settings";
+import { formatDate, getTodayDateString, parseDate } from "@/lib/dates";
 import {
   buildChartData,
   computeRequiredWeeklyLossPace,
@@ -47,9 +48,11 @@ type TargetDateSummary = {
 export function WeightChart({
   entries,
   goalWeight,
+  timezone,
 }: {
   entries: SerializedWeightEntry[];
   goalWeight: number | null;
+  timezone?: string;
 }) {
   const { settings } = useAppSettings();
   const [zoom, setZoom] = useState<ZoomRange>("1M");
@@ -80,7 +83,7 @@ export function WeightChart({
       return allChartData;
     }
 
-    const now = new Date();
+    const now = parseDate(getTodayDateString(timezone));
     const cutoff = new Date(now);
     if (zoom === "1W") {
       cutoff.setDate(cutoff.getDate() - 7);
@@ -90,9 +93,9 @@ export function WeightChart({
       cutoff.setMonth(cutoff.getMonth() - 3);
     }
 
-    const cutoffStr = cutoff.toISOString().split("T")[0];
+    const cutoffStr = formatDate(cutoff);
     return allChartData.filter((point) => point.date >= cutoffStr);
-  }, [allChartData, zoom]);
+  }, [allChartData, zoom, timezone]);
 
   const chartData = useMemo<WeightChartPoint[]>(() => {
     const transformed: WeightChartPoint[] = filteredData.map((point) => ({
@@ -182,7 +185,7 @@ export function WeightChart({
             type="button"
             aria-pressed={zoom === range}
             onClick={() => setZoom(range)}
-            className="h-7 px-2.5"
+            className="min-h-11 px-3"
           >
             {range}
           </Button>
@@ -191,7 +194,7 @@ export function WeightChart({
         <div className="relative">
         {!showFullGoal && goalWeight != null ? (
           <span className="absolute bottom-4 right-5 z-10 max-w-[calc(100%-2rem)] rounded-control border border-rule bg-sunken px-2.5 py-1.5 text-right font-mono text-label text-secondary">
-            <span className="block uppercase">
+            <span className="block">
               Goal {formatBodyweight(goalWeight)}
               {goalWeight < minY ? " ↓" : goalWeight > maxY ? " ↑" : ""}
             </span>
@@ -230,7 +233,7 @@ export function WeightChart({
               contentStyle={{
                 background: "var(--color-popover)",
                 border: "1px solid var(--color-border)",
-                borderRadius: "1rem",
+                borderRadius: "0.375rem",
                 fontSize: "0.8125rem",
                 boxShadow: "var(--shadow-overlay)",
               }}
@@ -248,7 +251,7 @@ export function WeightChart({
                 name === "displayWeight"
                   ? "Weight"
                   : name === "displayAvg7"
-                    ? "7-Day Avg"
+                    ? "7-day average"
                     : "Projection",
               ]}
             />
@@ -260,12 +263,14 @@ export function WeightChart({
               />
             ) : null}
             <Scatter
+              isAnimationActive={false}
               dataKey="displayWeight"
               fill="var(--color-chart-1)"
               opacity={0.8}
               r={3}
             />
             <Line
+              isAnimationActive={false}
               dataKey="displayAvg7"
               stroke="var(--color-chart-2)"
               strokeWidth={2}
@@ -274,6 +279,7 @@ export function WeightChart({
               type="monotone"
             />
             <Line
+              isAnimationActive={false}
               dataKey="projection"
               stroke="var(--color-chart-3)"
               strokeWidth={2}

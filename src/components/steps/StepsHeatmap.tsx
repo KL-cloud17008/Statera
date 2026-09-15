@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildMonthlyHeatmap, type SerializedStepsEntry } from "@/lib/steps";
+import { getTodayDateString, parseDate } from "@/lib/dates";
 
 function formatCellSteps(steps: number) {
   if (steps <= 0) {
@@ -29,11 +30,14 @@ function getHeatLevel(steps: number, goal: number) {
 export function StepsHeatmap({
   entries,
   goal,
+  timezone,
 }: {
   entries: SerializedStepsEntry[];
   goal: number;
+  timezone?: string;
 }) {
-  const [monthDate, setMonthDate] = useState(() => new Date());
+  const today = getTodayDateString(timezone);
+  const [monthDate, setMonthDate] = useState(() => parseDate(today));
 
   const days = useMemo(() => buildMonthlyHeatmap(entries, monthDate), [entries, monthDate]);
   const startWeekday = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay();
@@ -43,8 +47,7 @@ export function StepsHeatmap({
       {/* No card: the calendar sits on the canvas under the section rule. */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
-          <p className="text-label uppercase text-tertiary">Activity ledger</p>
-          <p className="mt-1 text-row text-secondary">
+          <p className="text-row font-medium text-primary">
           {monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
           </p>
         </div>
@@ -53,6 +56,7 @@ export function StepsHeatmap({
             type="button"
             variant="ghost"
             size="icon-sm"
+            className="size-11"
             onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}
           >
             <ChevronLeft className="size-4" />
@@ -62,6 +66,8 @@ export function StepsHeatmap({
             type="button"
             variant="ghost"
             size="icon-sm"
+            className="size-11"
+            disabled={monthDate.getFullYear() === Number(today.slice(0, 4)) && monthDate.getMonth() === Number(today.slice(5, 7)) - 1}
             onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}
           >
             <ChevronRight className="size-4" />
@@ -70,7 +76,7 @@ export function StepsHeatmap({
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 pb-2 text-center text-label uppercase text-tertiary">
+      <div className="grid grid-cols-7 gap-1 pb-2 text-center text-label text-secondary">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <span key={day}>{day}</span>
         ))}
@@ -82,20 +88,19 @@ export function StepsHeatmap({
         {days.map((day) => (
           <div
             key={day.date}
-            className={`flex aspect-square min-w-0 flex-col justify-between overflow-hidden rounded-control border px-1.5 py-1.5 transition-colors duration-(--duration-fast) ${getHeatLevel(day.steps, goal)}`}
+            className={`flex min-h-14 min-w-0 flex-col justify-between overflow-hidden rounded-control border p-1.5 sm:min-h-20 ${getHeatLevel(day.steps, goal)}`}
             title={`${day.date}: ${day.steps.toLocaleString()} steps`}
           >
             {/* Day-of-month in a fixed grid — the column only reads as a grid
                 if the figures are the same width. */}
-            <span className="num text-[0.625rem] leading-none">{day.day}</span>
-            <span className="num num-left whitespace-nowrap text-[0.625rem] leading-none">
+            <span className="num text-xs leading-none sm:text-sm">{day.day}</span>
+            <span className="num num-left whitespace-nowrap text-xs leading-none sm:text-sm">
               {formatCellSteps(day.steps)}
             </span>
           </div>
         ))}
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-caption text-tertiary">
-        <span className="text-label uppercase">Goal intensity</span>
         <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-sunken" /> Some movement</span>
         <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-accent-subtle border border-accent-line" /> Near goal</span>
         <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-accent" /> Goal met</span>

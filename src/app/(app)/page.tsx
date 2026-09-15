@@ -1,11 +1,11 @@
 ﻿import type { Metadata } from "next";
 import { getLatestPainCheckIn } from "@/actions/pain";
-import { getStepsEntries, getTodaySteps } from "@/actions/steps";
+import { getStepsEntries } from "@/actions/steps";
 import { getWeightEntries } from "@/actions/weight";
 import { getRecentSessions, getWorkoutPlanDayStatuses } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
+import { getTodayDateString, getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
 import { prisma } from "@/lib/db";
 import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
@@ -25,9 +25,8 @@ export default async function DashboardPage() {
   const trainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
 
-  const [stepsEntries, todaySteps, weightEntries, recentSessions, todayMobilityLogs, workoutDayStatuses, painCheckIn] = await Promise.all([
+  const [stepsEntries, weightEntries, recentSessions, todayMobilityLogs, workoutDayStatuses, painCheckIn] = await Promise.all([
     getStepsEntries(user.id, 180, user.timezone),
-    getTodaySteps(user.id, user.timezone),
     getWeightEntries(user.id),
     getRecentSessions(user.id, 20),
     prisma.mobilityLog.findMany({
@@ -38,6 +37,7 @@ export default async function DashboardPage() {
     getLatestPainCheckIn(user.id),
   ]);
 
+  const todaySteps = stepsEntries.find(entry => entry.date.toISOString().slice(0,10) === getTodayDateString(user.timezone))?.steps ?? 0;
   const serializedSteps = stepsEntries.map((entry) => ({
     id: entry.id,
     date: entry.date.toISOString().split("T")[0],
@@ -62,8 +62,8 @@ export default async function DashboardPage() {
   });
 
   const startOfWeek = new Date(trainingDate);
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-  startOfWeek.setHours(0, 0, 0, 0);
+  startOfWeek.setUTCDate(startOfWeek.getUTCDate() - (startOfWeek.getUTCDay() + 6) % 7);
+  startOfWeek.setUTCHours(0, 0, 0, 0);
   const weeklySessions = recentSessions.filter((session) => session.trainingDate >= startOfWeek);
   const hasCompletedWorkoutToday = recentSessions.some(
     (session) => session.trainingDate.getTime() === trainingDate.getTime()
@@ -73,7 +73,7 @@ export default async function DashboardPage() {
     0
   );
   const startOfPrevWeek = new Date(startOfWeek);
-  startOfPrevWeek.setDate(startOfPrevWeek.getDate() - 7);
+  startOfPrevWeek.setUTCDate(startOfPrevWeek.getUTCDate() - 7);
   const prevWeeklyVolume = recentSessions
     .filter((session) => session.trainingDate >= startOfPrevWeek && session.trainingDate < startOfWeek)
     .reduce(

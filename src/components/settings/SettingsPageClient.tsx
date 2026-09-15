@@ -69,6 +69,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const goalDateInputRef = useRef<HTMLInputElement>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const savingProfileRef = useRef(false);
+  const [profileStatus, setProfileStatus] = useState<{ type: "saved" | "error"; message: string } | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
@@ -100,16 +102,24 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   }, [settings.weightGoalTargetDate]);
 
   async function handleProfileSave(formData: FormData) {
+    if (savingProfileRef.current) return;
+    savingProfileRef.current = true;
     setIsSaving(true);
-    const result = await updateUserProfile(formData);
-    setIsSaving(false);
-
-    if (result.error) {
-      toast.error(result.error);
-      return;
+    setProfileStatus(null);
+    try {
+      const result = await updateUserProfile(formData);
+      if (result.error) {
+        setProfileStatus({ type: "error", message: result.error });
+        return;
+      }
+      setProfileStatus({ type: "saved", message: "Profile saved" });
+      toast.success("Profile saved");
+    } catch {
+      setProfileStatus({ type: "error", message: "Save could not be confirmed. Your changes are still here; check your connection and retry." });
+    } finally {
+      setIsSaving(false);
+      savingProfileRef.current = false;
     }
-
-    toast.success("Profile updated");
   }
 
   async function handleExportJson() {
@@ -135,6 +145,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         "application/json"
       );
       toast.success("JSON backup exported");
+    } catch {
+      toast.error("Backup could not be exported. Check your connection and retry.");
     } finally {
       setIsExporting(false);
     }
@@ -170,6 +182,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       downloadTextFile("athanor-nutrition.csv", csv.nutrition, "text/csv;charset=utf-8;");
       downloadTextFile("athanor-pain.csv", csv.pain, "text/csv;charset=utf-8;");
       toast.success("CSV exports downloaded");
+    } catch {
+      toast.error("CSV files could not be exported. Check your connection and retry.");
     } finally {
       setIsExporting(false);
     }
@@ -238,29 +252,32 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       toast.success("Backup imported");
       setPendingImport(null);
       setImportConfirmation("");
+    } catch {
+      toast.error("Import could not be confirmed. Refresh and check your data before retrying.");
     } finally {
       setIsImporting(false);
     }
   }
 
   async function handleClearAllData() {
+    if (isClearing) return;
     setIsClearing(true);
-    const result = await clearAllUserData();
-    setIsClearing(false);
-
-    if (result.error) {
-      toast.error(result.error);
-      return;
+    try {
+      const result = await clearAllUserData();
+      if (result.error) { toast.error(result.error); return; }
+      resetSettings();
+      setIsClearOpen(false);
+      toast.success("All tracker data cleared");
+    } catch {
+      toast.error("Clear could not be confirmed. Refresh and check your data before retrying.");
+    } finally {
+      setIsClearing(false);
     }
-
-    resetSettings();
-    setIsClearOpen(false);
-    toast.success("All tracker data cleared");
   }
 
   function handleStepGoalSave() {
-    const next = Number.parseInt(stepGoalValue, 10);
-    if (Number.isNaN(next) || next < 1000 || next > 50000) {
+    const next = Number(stepGoalValue);
+    if (!/^\d+$/.test(stepGoalValue.trim()) || !Number.isInteger(next) || next < 1000 || next > 50000) {
       setStepGoalStatus({
         type: "error",
         message: "Daily step goal must be between 1,000 and 50,000.",
@@ -313,14 +330,12 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
   return (
     <>
       <PageTitle
-        eyebrow="Settings"
-        title="System controls."
-        lead="Targets, units, backups, and account safety for a private performance ledger."
+        title="Settings"
         className="mb-6"
       />
 
-      <Card className="settings-panel">
-        <CardHeader className="border-l-2 border-l-accent pl-4">
+      <Card className="mb-6 settings-panel">
+        <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
               <UserRound className="h-5 w-5" />
@@ -329,18 +344,20 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           </div>
         </CardHeader>
         <CardContent>
-          <form action={handleProfileSave} className="grid gap-4 md:grid-cols-2">
+          <form onSubmit={(event) => { event.preventDefault(); void handleProfileSave(new FormData(event.currentTarget)); }} aria-busy={isSaving}>
+          <fieldset disabled={isSaving} className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Height (cm)" htmlFor="heightCm">
-              <Input id="heightCm" name="heightCm" type="number" min="91" max="244" step="0.1" placeholder="175" defaultValue={profile.heightInches != null ? inchesToCm(profile.heightInches) : ""} className="h-12" />
+              <Input id="heightCm" name="heightCm" type="number" inputMode="decimal" min="91" max="244" step="0.1" placeholder="175" defaultValue={profile.heightInches != null ? inchesToCm(profile.heightInches) : ""} className="h-12" />
             </Field>
             <Field label="Timezone" htmlFor="timezone">
               <Input id="timezone" name="timezone" type="text" defaultValue={profile.timezone} className="h-12" />
             </Field>
-            <Field label="Start Weight (lb)" htmlFor="startWeight">
+            <Field label="Start weight (lb)" htmlFor="startWeight">
               <Input
                 id="startWeight"
                 name="startWeight"
                 type="number"
+                inputMode="decimal"
                 step="0.1"
                 min="50"
                 max="999"
@@ -352,11 +369,12 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 <p className="text-caption text-tertiary">{startWeightConversion}</p>
               ) : null}
             </Field>
-            <Field label="Goal Weight (lb)" htmlFor="goalWeight">
+            <Field label="Goal weight (lb)" htmlFor="goalWeight">
               <Input
                 id="goalWeight"
                 name="goalWeight"
                 type="number"
+                inputMode="decimal"
                 step="0.1"
                 min="50"
                 max="999"
@@ -371,14 +389,16 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             <div className="md:col-span-2">
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                Save Profile
+                {isSaving ? "Saving…" : "Save profile"}
               </Button>
             </div>
+          </fieldset>
+          {profileStatus ? <p role={profileStatus.type === "error" ? "alert" : "status"} className={`mt-3 text-sm ${profileStatus.type === "error" ? "text-critical" : "text-accent"}`}>{profileStatus.message}</p> : null}
           </form>
         </CardContent>
       </Card>
 
-      <Card className="settings-panel">
+      <Card className="mb-6 settings-panel">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
@@ -389,9 +409,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="rounded-control bg-sunken px-3 py-2.5 text-row text-secondary">
-              Local preferences. JSON backup includes them.
+              Saved on this browser. Include a JSON backup to transfer these preferences to another device.
             </div>
-            <Field label="Daily Step Goal" htmlFor="stepGoal">
+            <Field label="Daily step goal" htmlFor="stepGoal">
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <Input
                   id="stepGoal"
@@ -415,7 +435,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                   }}
                 />
                 <Button type="button" variant="secondary" onClick={handleStepGoalSave} className="h-12">
-                  Save Goal
+                  Save goal
                 </Button>
               </div>
               {stepGoalStatus ? (
@@ -429,7 +449,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 </p>
               ) : null}
             </Field>
-            <Field label="Goal Target Date" htmlFor="goalDate">
+            <Field label="Goal target date" htmlFor="goalDate">
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <Input
                   id="goalDate"
@@ -451,7 +471,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                   }}
                 />
                 <Button type="button" variant="secondary" onClick={handleGoalDateSave} className="h-12">
-                  Save Date
+                  Save date
                 </Button>
               </div>
               {goalDateStatus ? (
@@ -466,13 +486,13 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
               ) : null}
             </Field>
             <div className="grid gap-4 md:grid-cols-3">
-              <Field label="Bodyweight Unit" htmlFor="bodyweightUnit">
+              <Field label="Bodyweight unit" htmlFor="bodyweightUnit">
                 <Input id="bodyweightUnit" value={`Pounds (${BODYWEIGHT_UNIT})`} readOnly className="h-12" />
               </Field>
-              <Field label="Training Load Unit" htmlFor="workoutLoadUnit">
+              <Field label="Training load unit" htmlFor="workoutLoadUnit">
                 <Input id="workoutLoadUnit" value={`Kilograms (${WORKOUT_LOAD_UNIT})`} readOnly className="h-12" />
               </Field>
-              <Field label="Distance Unit" htmlFor="distanceUnit">
+              <Field label="Distance unit" htmlFor="distanceUnit">
                 <Select
                   value={settings.distanceUnit}
                   onValueChange={(value) => {
@@ -495,7 +515,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <Card className="settings-panel">
+      <Card className="mb-6 settings-panel">
         <CardHeader>
           <CardTitle>Data</CardTitle>
         </CardHeader>
@@ -503,15 +523,15 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
           <div className="flex flex-wrap gap-3">
             <Button type="button" variant="secondary" onClick={handleExportJson} disabled={isExporting}>
               {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Export JSON Backup
+              Export JSON backup
             </Button>
             <Button type="button" variant="secondary" onClick={handleExportCsv} disabled={isExporting}>
               {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              Export CSV Files
+              Export CSV files
             </Button>
             <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isImporting}>
               {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-              Import JSON Backup
+              Import JSON backup
             </Button>
             <input
               ref={fileInputRef}
@@ -533,19 +553,19 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <Card className="settings-panel border-t-2 border-t-critical">
+      <Card className="mb-6 settings-panel border-t-2 border-t-critical">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-critical-surface text-critical">
               <ShieldAlert className="h-5 w-5" />
             </div>
-            <CardTitle>Danger Zone</CardTitle>
+            <CardTitle>Danger zone</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <Button type="button" variant="critical" onClick={() => setIsClearOpen(true)}>
             <Trash2 className="h-4 w-4" />
-            Clear All Tracker Data
+            Clear all tracker data
           </Button>
         </CardContent>
       </Card>
@@ -624,7 +644,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
             </Button>
             <Button type="button" variant="critical" onClick={handleClearAllData} disabled={isClearing}>
               {isClearing ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Clear Everything
+              Clear everything
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -653,7 +673,7 @@ function Field({
 function ImportCount({ label, value }: { label: string; value: number }) {
   return (
     <div className="border-t border-rule pt-3">
-      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="text-label text-tertiary">{label}</p>
       <p className="num num-left mt-1 text-data-md font-medium text-primary">{value.toLocaleString()}</p>
     </div>
   );

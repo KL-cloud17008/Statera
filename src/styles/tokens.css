@@ -1,166 +1,99 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   ATHANOR DESIGN TOKENS — performance console visual system.
-
-   The ONLY file permitted to contain raw colour values, font sizes, radii,
-   spacing, or motion values. Components consume them through semantic
-   Tailwind utilities generated in globals.css.
-
-   Mineral canvas, paper-white work surfaces, carbon type, training green,
-   and safety orange. Layout is defined by strong section rails and aligned
-   data runs rather than a field of interchangeable cards.
-   ═══════════════════════════════════════════════════════════════════════════ */
-
+/* Neutral framing with clay, petrol and plum accents for distinct records. */
 :root {
   color-scheme: light;
-
-  /* ── Font families ────────────────────────────────────────────────────── */
-  --font-family-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
-  --font-family-sans: var(--font-archivo), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
-  --font-family-mono: var(--font-ibm-plex-mono), ui-monospace, "SFMono-Regular",
-    Consolas, monospace;
-
-  /* ── Mineral neutral ramp — canvas, surfaces, rules, and text ────────── */
-  --paper-0: #fbfcf9;
-  --paper-50: #f0f2ed;
-  --paper-100: #e9ece6;
-  --paper-150: #e3e7df;
-  --paper-200: #d5dad2;
-  --paper-300: #bfc6bd;
-  --paper-400: #929b91;
-  --paper-500: #687168;
-  --paper-600: #4d564e;
-  --paper-900: #171b18;
-
-  /* ── Ink chrome — near-black, warm ────────────────────────────────────── */
-  --ink-900: #171b18;
-  --ink-800: #242a25;
-  --ink-700: #343c35;
-  --ink-line: rgba(251, 252, 249, 0.12);
-  --ink-line-strong: rgba(251, 252, 249, 0.24);
-  --ink-text: #fbfcf9;
-  --ink-text-muted: rgba(251, 252, 249, 0.68);
-  /* The quietest tone that still carries text on the chrome: inactive nav
-     labels and the session dock's set counter both use it. At 0.44 it read
-     4.16:1 on ink-900 and 3.98:1 on ink-700 — under AA — so it sits at 0.52,
-     which clears 4.5 on all three ink surfaces (5.31 / 5.07 / 4.65). */
-  --ink-text-dim: rgba(251, 252, 249, 0.54);
-
-  /* Command surfaces are deeper than the navigation rail and reserved for
-     one page decision, never repeated as a tile grid. */
-  --command-900: #fbfcf9;
-  --command-800: #e9ece6;
-  --command-line: #cbd1c9;
-  --command-text: #171b18;
-  --command-muted: #596259;
-
-  /* ── Training green — position, completion, and positive signal ───────── */
-  /* Active nav, data emphasis, goal-met state. NOT spent on buttons — the
-     primary action is a solid ink button. */
-  --olive: #166a49;
-  --olive-bright: #79dda7;
-  --olive-subtle: #e3f2e9;
-  --olive-line: #afd7c1;
-  --olive-on: #fbfcf9;
-
-  /* ── Ember: the four sanctioned attention states ──────────────────────── */
-  /* recovery flag · streak at-risk · pain >=3 · pace guardrail */
-  --ember: #b94b22;
-  --ember-bright: #ff9a6c;
-  --ember-surface: #fff0e8;
-  --ember-line: #efc1aa;
-
-  /* ── Critical — destructive actions and errors only ───────────────────── */
-  /* Pushed toward true red (hue 33°) so it never reads as ember (47°). */
-  --critical: #a52b2b;
-  --critical-surface: #fcebea;
-  --critical-line: #e9b8b5;
-  --on-status: #fbfcf9;
-
-  /* ── Surfaces — deliberately few. The canvas does the work. ───────────── */
+  --font-family-sans: var(--font-archivo), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-display: var(--font-family-sans);
+  --font-family-mono: var(--font-ibm-plex-mono), ui-monospace, Consolas, monospace;
+  --paper-0: #ffffff;
+  --paper-50: #faf9f6;
+  --paper-100: #f1f0ec;
+  --paper-150: #ebeae5;
+  --paper-200: #d9d9d1;
+  --paper-300: #b6b9b1;
+  --paper-400: #898e88;
+  --paper-500: #646a65;
+  --paper-600: #4d554f;
+  --paper-900: #252e2a;
+  --ink-900: #252e2a;
+  --ink-800: #303d47;
+  --ink-700: #43525e;
+  --ink-line: #47545e;
+  --ink-line-strong: #70818f;
+  --ink-text: #ffffff;
+  --ink-text-muted: #c3cbd1;
+  --ink-text-dim: #bcc6ce;
+  --command-900: #ffffff;
+  --command-800: #edf0f2;
+  --command-line: #dce1e5;
+  --command-text: #202a31;
+  --command-muted: #626d77;
+  --olive: #934b35;
+  --olive-bright: #f0b395;
+  --olive-subtle: #f3e9e1;
+  --olive-line: #e8bea9;
+  --olive-on: #ffffff;
+  --ember: #865614;
+  --ember-bright: #865614;
+  --ember-surface: #fff6e8;
+  --ember-line: #e7cc9d;
+  --critical: #af293c;
+  --critical-surface: #fff0f2;
+  --critical-line: #e7b0b8;
+  --on-status: #ffffff;
   --surface-canvas: var(--paper-50);
-  --surface-raised: var(--paper-0); /* the single permitted container level */
-  --surface-sunken: var(--paper-150); /* input wells, chart tracks, table heads */
+  --surface-raised: var(--paper-0);
+  --surface-sunken: var(--paper-150);
   --surface-row-hover: var(--paper-100);
   --surface-overlay: var(--paper-0);
-  /* The one scrim behind every overlay — dialog and sheet both resolve here. */
-  --surface-scrim: rgb(23 27 24 / 0.48);
-
-  /* ── Rules — the primary structural device ────────────────────────────── */
-  /* These delimit content, not controls. A separator is decorative and WCAG
-     exempt, so they stay light enough to read as hairlines on paper. */
+  --surface-scrim: rgb(32 42 49 / 0.48);
   --rule: var(--paper-200);
   --rule-strong: var(--paper-300);
-
-  /* The edge of an interactive control — input, select, checkbox, secondary
-     button. WCAG 1.4.11 wants 3:1 against the adjacent surface, and the
-     hairline rules above only reach 1.14–1.51, so a control bounded by them
-     is not perceivably a control. Clears 3:1 on all four paper surfaces
-     (raised 3.67, canvas 3.46, row-hover 3.29, sunken 3.20). */
-  --control-border: #7b857b;
-
-  /* ── Text ─────────────────────────────────────────────────────────────── */
+  --control-border: #818d97;
   --text-primary: var(--paper-900);
   --text-secondary: var(--paper-600);
   --text-tertiary: var(--paper-500);
-  /* Non-text only — 2.18:1 on canvas. Use for empty-state marks and disabled
-     controls (WCAG-exempt), never for content. Tertiary is the quiet text. */
   --text-faint: var(--paper-400);
   --text-on-accent: var(--olive-on);
-
-  /* ── Data visualisation ───────────────────────────────────────────────── */
   --chart-ink: var(--paper-900);
   --chart-ink-muted: var(--paper-300);
   --chart-accent: var(--olive);
   --chart-attention: var(--ember);
   --chart-grid: var(--paper-200);
   --chart-track: var(--paper-150);
-
-  /* The numbered series vocabulary the Recharts components already speak.
-     These were never defined, so every fill and stroke resolved to the SVG
-     initial value — solid black — which flattened "today" against every other
-     bar and the goal line against the data. */
-  --chart-series-1: var(--paper-900); /* raw observations: bars, scatter */
-  --chart-series-2: var(--olive); /* trend line, today, goal reference */
-  --chart-series-3: var(--paper-500); /* projection and goal lines, 4.99:1 */
-
-  /* ── Type scale — tight. Only page titles are large. ──────────────────── */
-  --font-size-page-title: 2.5rem;
-  --line-height-page-title: 0.96;
-  --tracking-page-title: 0em;
-
-  --font-size-body-lg: 0.9375rem;
-  --line-height-body-lg: 1.5;
-
-  --font-size-body: 0.875rem;
-  --line-height-body: 1.45;
-
-  --font-size-row: 0.8125rem;
-  --line-height-row: 1.35;
-
-  --font-size-caption: 0.75rem;
-  --line-height-caption: 1.35;
-
-  --font-size-label: 0.6875rem;
-  --line-height-label: 1.3;
-  --tracking-label: 0.09em;
-
-  /* Numerals — JetBrains Mono, tabular, right-aligned in ledgers */
-  --font-size-data-sm: 0.8125rem;
-  --font-size-data-md: 1rem;
-  --font-size-data-lg: 1.375rem;
+  --chart-series-1: var(--paper-900);
+  --chart-series-2: var(--olive);
+  --chart-series-3: var(--paper-500);
+  --tone-clay: #934b35;
+  --tone-petrol: #386875;
+  --tone-plum: #71556e;
+  --tone-moss: #536d50;
+  --tone-ochre: #74632e;
+  --frame-accent: var(--tone-clay);
+  --frame-tint: #f3e9e1;
+  --font-size-page-title: 1.75rem;
+  --line-height-page-title: 1.2;
+  --tracking-page-title: -0.04em;
+  --font-size-body-lg: 1rem;
+  --line-height-body-lg: 1.6;
+  --font-size-body: 1rem;
+  --line-height-body: 1.5;
+  --font-size-row: 0.875rem;
+  --line-height-row: 1.5;
+  --font-size-caption: 0.8125rem;
+  --line-height-caption: 1.5;
+  --font-size-label: 0.875rem;
+  --line-height-label: 1.4;
+  --tracking-label: 0em;
+  --font-size-data-sm: 0.875rem;
+  --font-size-data-md: 1.125rem;
+  --font-size-data-lg: 1.625rem;
   --font-size-data-xl: 2.25rem;
-
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
-
-  /* ── Radii — small. Rules carry structure, not rounded panels. ────────── */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
+  --radius-sm: 0.1875rem;
+  --radius-md: 0.25rem;
   --radius-full: 9999px;
-
-  /* ── Spacing — 4px base ───────────────────────────────────────────────── */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -171,27 +104,19 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
-
-  /* ── Layout ───────────────────────────────────────────────────────────── */
-  --layout-content-max: 76rem;
-  --layout-rail-width: 15.5rem;
-  --layout-gutter: var(--space-10);
+  --layout-content-max: 80rem;
+  --layout-rail-width: 13rem;
+  --layout-gutter: var(--space-8);
   --layout-gutter-mobile: var(--space-4);
-  --layout-section-gap: var(--space-12);
-  --layout-section-gap-mobile: var(--space-10);
-  --layout-row-height: 2.75rem; /* 44px — ledger row = touch target */
-  --layout-touch-target: 2.75rem;
-
-  /* ── Focus ────────────────────────────────────────────────────────────── */
+  --layout-section-gap: var(--space-8);
+  --layout-section-gap-mobile: var(--space-8);
+  --layout-row-height: 3rem;
+  --layout-touch-target: 3rem;
   --focus-ring-width: 2px;
-  --focus-ring-offset: 2px;
+  --focus-ring-offset: 3px;
   --focus-ring-color: var(--olive);
-
-  /* ── Motion ───────────────────────────────────────────────────────────── */
   --duration-fast: 140ms;
-  --duration-base: 220ms;
+  --duration-base: 200ms;
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
-
-  /* ── Elevation — overlays only. Nothing else floats. ──────────────────── */
-  --shadow-overlay: 0 18px 45px -22px rgb(23 27 24 / 0.32), 0 4px 12px -6px rgb(23 27 24 / 0.16);
+  --shadow-overlay: 0 16px 48px -16px rgb(32 42 49 / 0.25);
 }

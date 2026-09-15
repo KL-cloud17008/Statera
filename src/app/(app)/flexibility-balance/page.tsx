@@ -52,9 +52,8 @@ export default function FlexibilityBalancePage() {
   return (
     <>
       <PageTitle
-        eyebrow="Movement quality"
-        title="Movement quality system."
-        lead="A six-part movement-quality map for ankle range, foot control, hips, thoracic motion, balance, and recovery. Doses and logging live on Mobility."
+        title="Flexibility & Balance"
+        lead="Movement reference for ankle range, foot control, and supported balance."
       />
 
       {/* Figures print directly on the canvas. Ink chrome is reserved for the
@@ -65,11 +64,11 @@ export default function FlexibilityBalancePage() {
           <Figure label="Daily minimum" value={dailyMinimum.duration} detail="Lower-leg base" />
           <Figure label="Balance" value={balanceDrills.length} detail="Supported drills" />
           <Figure label="Later recovery" value="8-16 min" detail="Every training day" />
-          <Figure label="Foot flare" value={footFlareBlock.duration} detail="When soles flare" />
+          <Figure label="Foot comfort" value={footFlareBlock.duration} detail="As needed" />
         </dl>
       </Section>
 
-      <Section title="Choose the layer">
+      <Section title="When to use each routine">
         <div className="grid gap-x-8 gap-y-6 md:grid-cols-2 lg:grid-cols-4">
           <ContextLine label="Before lower-body" value="Daily base + hip / hinge prep" href="/mobility#session" />
           <ContextLine label="Before upper-body" value="Daily base + thoracic / shoulder mobility" href="/mobility#session" />
@@ -139,7 +138,7 @@ export default function FlexibilityBalancePage() {
         purpose={FOOT_FLARE_RECOVERY_INTRO}
         standards={[...FOOT_FLARE_RECOVERY_RULES]}
         safety={FOOT_FLARE_RECOVERY_NOT_WORKOUT}
-        trigger="Activates when recent step load is high or logged sole pain reaches 5/10. Foot pain at 3/10 already reduces step load."
+        trigger="Choose this routine if comfortable. At 3/10, continue only with stable symptoms and normal gait; above 3/10 or with increasing symptoms, reduce load, range, or pace."
         progression={collectProgression(footFlareBlock)}
         drillCount={footFlareBlock.exercises.length}
         href="/mobility#later-recovery"
@@ -198,7 +197,7 @@ function ReferenceBlock({
     <Section>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-label uppercase text-tertiary">{eyebrow}</p>
+          <p className="text-label text-tertiary">{eyebrow}</p>
           <h2 className="mt-1 normal-case tracking-normal text-body font-medium text-primary">
             {title}
           </h2>
@@ -267,7 +266,7 @@ function PrincipleList({ title, items }: { title: string; items: string[] }) {
 function ContextLine({ label, value, href }: { label: string; value: string; href: string }) {
   return (
     <div className="border-t border-rule pt-3">
-      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="text-label text-tertiary">{label}</p>
       <p className="mt-1 text-row font-medium text-primary">{value}</p>
       <Link href={href} className="mt-2 inline-flex min-h-touch items-center gap-1 text-caption text-secondary underline-offset-4 hover:text-primary hover:underline">
         Open protocol <ArrowRight className="size-3.5" aria-hidden />

@@ -1,237 +1,48 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { SetInput } from "./SetInput";
-import { isLoggableTrainingExercise } from "@/lib/training-session";
-import { formatWorkoutLoad } from "@/lib/units";
+import { Check, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { SavedEntry } from "@/lib/workout-entry-state";
 
-type PlanExercise = {
-  id: string;
-  exerciseName: string;
-  sets: number;
-  reps: string;
-  tempo: string | null;
-  restSeconds: number | null;
-  targetRPE: string | null;
-  cues: string | null;
-  supersetGroup: string | null;
-  exerciseType: string;
+export type PlanExercise = {
+  id: string; exerciseName: string; sets: number; reps: string;
+  tempo: string | null; restSeconds: number | null; targetRPE: string | null;
+  cues: string | null; supersetGroup: string | null; exerciseType: string;
 };
 
-type SetData = {
-  setNumber: number;
-  weightUsed: number | null;
-  repsCompleted: number | null;
-  actualRPE: number | null;
-  notes: string | null;
-};
-
-type PrevSet = {
-  exerciseName: string;
-  setNumber: number;
-  weightUsed: number | null;
-  repsCompleted: number | null;
-};
-
-export function ExerciseCard({
-  exercise,
-  sessionId,
-  loggedSets,
-  previousSets,
-  onSetLogged,
-  exerciseComplete,
-  onExerciseCompleteChange,
-  completedSetNumbers,
-  onSetCompleteChange,
-  focusSetNumber = null,
-}: {
+/** One scannable row; only the selected set has an entry form. */
+export function ExerciseCard({ exercise, index, loggedSets, selectedSet, draftSetNumbers, disabled = false, onSelect }: {
   exercise: PlanExercise;
-  sessionId: string;
-  loggedSets: SetData[];
-  previousSets: PrevSet[];
-  onSetLogged: (setKey: string) => void;
-  exerciseComplete: boolean;
-  onExerciseCompleteChange: (complete: boolean) => void;
-  completedSetNumbers: Set<number>;
-  onSetCompleteChange: (exerciseName: string, setNumber: number, complete: boolean) => void;
-  focusSetNumber?: number | null;
+  index: number;
+  loggedSets: (SavedEntry & { setNumber: number })[];
+  selectedSet: number | null;
+  draftSetNumbers: number[];
+  disabled?: boolean;
+  onSelect: (setNumber: number) => void;
 }) {
-  const [showCues, setShowCues] = useState(false);
-  const [showCompletedDetails, setShowCompletedDetails] = useState(false);
-  const [sessionPrefills, setSessionPrefills] = useState<Record<number, { weightUsed: number | null; repsCompleted: number | null }>>({});
-  const [advanceTarget, setAdvanceTarget] = useState<number | null>(null);
-  const isLoggable = isLoggableTrainingExercise(exercise);
-  const isFinisher = exercise.exerciseType === "FINISHER";
-  const setCount = isFinisher ? 1 : exercise.sets;
-  const exercisePrevSets = previousSets.filter(
-    (set) => set.exerciseName === exercise.exerciseName
-  );
-
-  if (!isLoggable) {
-    return null;
-  }
-
-  if (exerciseComplete && !showCompletedDetails) {
-    return (
-      <section className="border-t border-rule py-3">
-        <div className="flex min-h-touch items-center gap-3">
-          <Checkbox
-            checked
-            onCheckedChange={(checked) => {
-              if (!checked) {
-                onExerciseCompleteChange(false);
-                setShowCompletedDetails(true);
-              }
-            }}
-            aria-label={`Mark ${exercise.exerciseName} incomplete`}
-          />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-row font-medium text-secondary">{exercise.exerciseName}</p>
-            <p className="mt-0.5 text-caption text-accent">{setCount} {setCount === 1 ? "set" : "sets"} logged</p>
-          </div>
-          <Button
-            type="button"
-            variant="link"
-            className="min-h-touch shrink-0 text-caption"
-            onClick={() => setShowCompletedDetails(true)}
-          >
-            Edit sets
-          </Button>
-        </div>
-      </section>
-    );
-  }
-
+  const count = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
+  const complete = Array.from({ length: count }, (_, i) => i + 1).every((setNumber) => loggedSets.some((set) => set.setNumber === setNumber));
+  const firstMissing = Array.from({ length: count }, (_, i) => i + 1).find((setNumber) => !loggedSets.some((set) => set.setNumber === setNumber)) ?? 1;
   return (
-    <section id={`exercise-${exercise.id}`}>
-      <div className="flex items-start gap-3">
-        <Checkbox
-          checked={exerciseComplete}
-          onCheckedChange={(checked) => onExerciseCompleteChange(!!checked)}
-          className="mt-1"
-          aria-label={`Mark ${exercise.exerciseName} complete`}
-        />
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
-            <div className="min-w-0">
-              <p className="text-label uppercase text-tertiary">{getExerciseLabel(exercise)}</p>
-              <p
-                className={cn(
-                  "mt-1 text-body font-medium",
-                  exerciseComplete ? "text-tertiary line-through" : "text-primary"
-                )}
-              >
-                {exercise.exerciseName}
-              </p>
-              <p className="mt-0.5 text-caption text-tertiary">{getExerciseMeta(exercise)}</p>
-            </div>
-
-            <div className="flex shrink-0 flex-wrap items-center gap-4">
-              <span className="num text-right text-row text-secondary">
-                {setCount} {setCount === 1 ? "set" : "sets"}
-              </span>
-              {exercise.cues ? (
-                <Button
-                  type="button"
-                  variant="link"
-                  onClick={() => setShowCues((current) => !current)}
-                  className="gap-1 text-caption"
-                  aria-expanded={showCues}
-                >
-                  {showCues ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
-                  {showCues ? "Hide cues" : "Show cues"}
-                </Button>
-              ) : null}
-            </div>
-          </div>
-
-          {showCues && exercise.cues ? (
-            <p className="mt-3 max-w-2xl rounded-control border-l-2 border-rule-strong bg-sunken px-3 py-2 text-row text-secondary">
-              {exercise.cues}
-            </p>
-          ) : null}
-
-          {exercisePrevSets.length > 0 ? (
-            <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <span className="text-label uppercase text-tertiary">Last session</span>
-              {exercisePrevSets.map((set) => (
-                <span key={set.setNumber} className="num text-right text-caption text-secondary">
-                  S{set.setNumber} {formatWorkoutLoad(set.weightUsed)} x {set.repsCompleted ?? "--"}
-                </span>
-              ))}
-            </div>
-          ) : null}
-
-          <div className="ledger-rows mt-3 border-t border-rule">
-            {Array.from({ length: setCount }, (_, index) => {
-              const setNum = index + 1;
-              if (setNum === focusSetNumber) {
-                return null;
-              }
-              const logged = loggedSets.find((set) => set.setNumber === setNum);
-              const previous = exercisePrevSets.find((set) => set.setNumber === setNum);
-
-              return (
-                <SetInput
-                  key={setNum}
-                  sessionId={sessionId}
-                  planExerciseId={exercise.id}
-                  exerciseName={exercise.exerciseName}
-                  setNumber={setNum}
-                  isFinisher={isFinisher}
-                  logged={logged ?? null}
-                  previous={previous ?? null}
-                  prefill={sessionPrefills[setNum] ?? null}
-                  shouldAdvance={advanceTarget === setNum}
-                  onSaved={(setKey, values) => {
-                    onSetLogged(setKey);
-                    if (setNum < setCount) {
-                      setSessionPrefills((current) => ({ ...current, [setNum + 1]: values }));
-                      setAdvanceTarget(setNum + 1);
-                    }
-                  }}
-                  completed={completedSetNumbers.has(setNum)}
-                  onCompletedChange={(checked) => onSetCompleteChange(exercise.exerciseName, setNum, checked)}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
+    <div className={cn("border-b border-rule py-3", selectedSet && "border-l-2 border-l-accent pl-3")}>
+      <button type="button" disabled={disabled} onClick={() => onSelect(draftSetNumbers[0] ?? firstMissing)} aria-current={selectedSet ? "step" : undefined} className="flex min-h-12 w-full items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60">
+        <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-control text-caption tabular-nums", complete ? "bg-accent-subtle text-accent" : "bg-sunken text-secondary")}>
+          {complete ? <Check className="size-4" /> : String(index + 1).padStart(2, "0")}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-row font-medium text-primary">{exercise.exerciseName}</span>
+          <span className="mt-1 block text-caption text-secondary">{complete ? `${count} sets saved` : `${loggedSets.length}/${count} sets · ${exercise.reps}`}{draftSetNumbers.length ? " · Draft" : ""}</span>
+        </span>
+        <ChevronRight className="size-4 shrink-0 text-tertiary" />
+      </button>
+      {selectedSet !== null ? <div className="mt-2 flex flex-wrap gap-2 pl-11" aria-label={`${exercise.exerciseName} sets`}>
+        {Array.from({ length: count }, (_, i) => i + 1).map((number) => {
+          const saved = loggedSets.find((set) => set.setNumber === number);
+          return <button key={number} type="button" disabled={disabled} onClick={() => onSelect(number)} aria-pressed={selectedSet === number} className={cn("min-h-12 min-w-12 rounded-control border px-3 py-2 text-caption focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60", selectedSet === number ? "border-accent bg-accent-subtle text-accent" : "border-rule text-secondary hover:bg-sunken")}>
+            {saved ? <Check className="mr-1 inline size-3.5" /> : null}Set {number}{draftSetNumbers.includes(number) ? " · Draft" : ""}
+          </button>;
+        })}
+      </div> : null}
+    </div>
   );
-}
-
-function getExerciseLabel(exercise: PlanExercise) {
-  if (exercise.exerciseType === "ACCESSORY") {
-    return "Low-dose accessory";
-  }
-  if (exercise.exerciseType === "FINISHER") {
-    return "Finisher";
-  }
-  if (exercise.supersetGroup) {
-    return `Superset ${exercise.supersetGroup}`;
-  }
-  return "Working sets";
-}
-
-function getExerciseMeta(exercise: PlanExercise) {
-  const parts = [exercise.reps];
-
-  if (exercise.tempo) {
-    parts.push(`Tempo ${exercise.tempo}`);
-  }
-  if (exercise.restSeconds != null && exercise.restSeconds > 0) {
-    parts.push(`Rest ${exercise.restSeconds}s`);
-  }
-  if (exercise.targetRPE) {
-    parts.push(`RPE ${exercise.targetRPE}`);
-  }
-
-  return parts.join(" / ");
 }

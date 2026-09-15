@@ -20,7 +20,8 @@ function parsePainValue(raw: FormDataEntryValue | null) {
     return undefined;
   }
 
-  const value = Number.parseInt(String(raw), 10);
+  if (typeof raw !== "string" || !/^\d{1,2}$/.test(raw)) return null;
+  const value = Number(raw);
   if (Number.isNaN(value) || value < 0 || value > 10) {
     return null;
   }
@@ -67,6 +68,8 @@ export async function logPainCheckIn(formData: FormData): Promise<PainActionResu
 export async function getLatestPainCheckIn(
   userId: string
 ): Promise<SerializedPainCheckIn | null> {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return null;
   const latest = await prisma.painCheckIn.findFirst({
     where: { userId },
     orderBy: { date: "desc" },

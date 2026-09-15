@@ -25,7 +25,7 @@ export function SectionHeader({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0 max-w-2xl">
           {eyebrow ? (
-            <p className="text-label uppercase text-tertiary">{eyebrow}</p>
+            <p className="text-label text-tertiary">{eyebrow}</p>
           ) : null}
           <h1 className="mt-2">{title}</h1>
           {description ? (

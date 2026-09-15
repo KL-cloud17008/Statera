@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { parseCSV, getHeaders, getDataRows } from "@/lib/csv";
 import { parseCSVDate } from "@/lib/weight";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { parseDate } from "@/lib/dates";
+import { formText, measurementDate, parseMeasurementNumber, parseWeightPayload, validateMeasurementDate } from "@/lib/measurement-input";
 
 type WeightMutationResult = {
   error?: string;
@@ -24,9 +24,11 @@ type WeightExportResult = {
 };
 
 export async function getWeightEntries(userId: string) {
+  const user = await getOrCreateCurrentUser();
+  if (!user || user.id !== userId) return [];
   return prisma.weightEntry.findMany({
-    where: { userId },
-    orderBy: { date: "desc" },
+    where: { userId: user.id },
+    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
   });
 }
 
@@ -38,43 +40,36 @@ export async function addWeightEntry(
     return { error: "Not authenticated" };
   }
 
-  const dateStr = formData.get("date") as string;
-  const weightStr = formData.get("weight") as string;
-  const status = (formData.get("status") as string) || "NORMAL";
-  const bodyFatStr = formData.get("bodyFatPercent") as string;
-  const notes = (formData.get("notes") as string) || null;
-
-  const weight = parseFloat(weightStr);
-  if (Number.isNaN(weight) || weight < 50 || weight > 999) {
-    return { error: "Weight must be between 50 and 999 lbs" };
+  const parsed = parseWeightPayload(formData, user.timezone);
+  if ("error" in parsed) return { error: parsed.error };
+  const requestId = formText(formData, "requestId");
+  if (requestId && !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)) {
+    return { error: "Invalid save request. Reload the form and try again." };
   }
 
-  if (!dateStr) {
-    return { error: "Date is required" };
+  if (requestId) {
+    // The existing primary key supplies durable retry protection without a migration.
+    // Scope it to the authenticated user so request IDs cannot cross data boundaries.
+    const id = `weight:${user.id}:${requestId}`;
+    const saved = await prisma.weightEntry.upsert({
+      where: { id }, create: { id, userId: user.id, ...parsed.data }, update: {},
+    }).catch(async (error: unknown) => {
+      // Prisma can emulate an upsert with an empty update. If another request
+      // wins its insert race, confirm the existing owned row instead of failing.
+      if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+        const existing = await prisma.weightEntry.findFirst({ where: { id, userId: user.id } });
+        if (existing) return existing;
+      }
+      throw error;
+    });
+    if (saved.weight !== parsed.data.weight || saved.date.getTime() !== parsed.data.date.getTime() ||
+      saved.status !== parsed.data.status || saved.bodyFatPercent !== parsed.data.bodyFatPercent ||
+      saved.notes !== parsed.data.notes) {
+      return { error: "This weigh-in was already saved with different details. Refresh and edit it in history." };
+    }
+  } else {
+    await prisma.weightEntry.create({ data: { userId: user.id, ...parsed.data } });
   }
-
-  if (!["BASELINE", "FASTING", "NORMAL"].includes(status)) {
-    return { error: "Invalid status" };
-  }
-
-  const bodyFatPercent = bodyFatStr ? parseFloat(bodyFatStr) : null;
-  if (
-    bodyFatPercent != null &&
-    (Number.isNaN(bodyFatPercent) || bodyFatPercent < 1 || bodyFatPercent > 70)
-  ) {
-    return { error: "Body fat must be between 1% and 70%" };
-  }
-
-  await prisma.weightEntry.create({
-    data: {
-      userId: user.id,
-      date: parseDate(dateStr),
-      weight: Math.round(weight * 10) / 10,
-      status: status as WeighInStatus,
-      bodyFatPercent,
-      notes: notes || null,
-    },
-  });
 
   revalidatePath("/weight");
   revalidatePath("/");
@@ -89,55 +84,20 @@ export async function updateWeightEntry(
     return { error: "Not authenticated" };
   }
 
-  const id = formData.get("id") as string;
-  const dateStr = formData.get("date") as string;
-  const weightStr = formData.get("weight") as string;
-  const status = (formData.get("status") as string) || "NORMAL";
-  const bodyFatStr = formData.get("bodyFatPercent") as string;
-  const notes = (formData.get("notes") as string) || null;
+  const id = formText(formData, "id");
 
   if (!id) {
     return { error: "Entry ID is required" };
   }
 
-  const weight = parseFloat(weightStr);
-  if (Number.isNaN(weight) || weight < 50 || weight > 999) {
-    return { error: "Weight must be between 50 and 999 lbs" };
-  }
-
-  if (!dateStr) {
-    return { error: "Date is required" };
-  }
-
-  if (!["BASELINE", "FASTING", "NORMAL"].includes(status)) {
-    return { error: "Invalid status" };
-  }
-
-  const bodyFatPercent = bodyFatStr ? parseFloat(bodyFatStr) : null;
-  if (
-    bodyFatPercent != null &&
-    (Number.isNaN(bodyFatPercent) || bodyFatPercent < 1 || bodyFatPercent > 70)
-  ) {
-    return { error: "Body fat must be between 1% and 70%" };
-  }
-
-  const existing = await prisma.weightEntry.findFirst({
-    where: { id, userId: user.id },
+  const parsed = parseWeightPayload(formData, user.timezone);
+  if ("error" in parsed) return { error: parsed.error };
+  const result = await prisma.weightEntry.updateMany({
+    where: { id, userId: user.id }, data: parsed.data,
   });
-  if (!existing) {
+  if (!result.count) {
     return { error: "Entry not found" };
   }
-
-  await prisma.weightEntry.update({
-    where: { id },
-    data: {
-      date: parseDate(dateStr),
-      weight: Math.round(weight * 10) / 10,
-      status: status as WeighInStatus,
-      bodyFatPercent,
-      notes: notes || null,
-    },
-  });
 
   revalidatePath("/weight");
   revalidatePath("/");
@@ -152,19 +112,17 @@ export async function deleteWeightEntry(
     return { error: "Not authenticated" };
   }
 
-  const id = formData.get("id") as string;
+  const id = formText(formData, "id");
   if (!id) {
     return { error: "Entry ID is required" };
   }
 
-  const existing = await prisma.weightEntry.findFirst({
+  const deleted = await prisma.weightEntry.deleteMany({
     where: { id, userId: user.id },
   });
-  if (!existing) {
+  if (!deleted.count) {
     return { error: "Entry not found" };
   }
-
-  await prisma.weightEntry.delete({ where: { id } });
 
   revalidatePath("/weight");
   revalidatePath("/");
@@ -179,7 +137,7 @@ export async function importWeightCSV(
     return { error: "Not authenticated", imported: 0, errors: [] };
   }
 
-  const csvText = formData.get("csv") as string;
+  const csvText = formText(formData, "csv");
   if (!csvText) {
     return { error: "No CSV data", imported: 0, errors: [] };
   }
@@ -231,7 +189,7 @@ export async function importWeightCSV(
     }
 
     const isoDate = parseCSVDate(rawDate);
-    if (!isoDate) {
+    if (!isoDate || validateMeasurementDate(isoDate, user.timezone)) {
       errors.push(`Row ${rowNum}: Invalid date "${rawDate}"`);
       continue;
     }
@@ -242,8 +200,8 @@ export async function importWeightCSV(
     }
 
     const rawWeight = row[weightCol]?.trim();
-    const weight = parseFloat(rawWeight);
-    if (Number.isNaN(weight) || weight <= 0) {
+    const weight = parseMeasurementNumber(rawWeight ?? "");
+    if (weight == null || weight < 50 || weight > 999) {
       errors.push(`Row ${rowNum}: Invalid weight "${rawWeight}"`);
       continue;
     }
@@ -264,16 +222,18 @@ export async function importWeightCSV(
     if (bfCol !== -1) {
       const rawBf = row[bfCol]?.trim();
       if (rawBf) {
-        const bf = parseFloat(rawBf);
-        if (!Number.isNaN(bf) && bf > 0 && bf < 100) {
-          bodyFatPercent = bf;
+        const bf = parseMeasurementNumber(rawBf);
+        if (bf == null || bf < 1 || bf > 70) {
+          errors.push(`Row ${rowNum}: Body fat must be between 1% and 70%`);
+          continue;
         }
+        bodyFatPercent = bf;
       }
     }
 
     entries.push({
       userId: user.id,
-      date: parseDate(isoDate),
+      date: measurementDate(isoDate),
       weight: Math.round(weight * 10) / 10,
       status,
       bodyFatPercent,
@@ -306,7 +266,7 @@ export async function exportWeightCSV(): Promise<WeightExportResult> {
   const header = "Status,Date,Weight (Scale),Body Fat % (Scale)";
   const rows = entries.map((entry) => {
     const date = entry.date;
-    const dateStr = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+    const dateStr = `${date.getUTCMonth() + 1}/${date.getUTCDate()}/${date.getUTCFullYear()}`;
     const statusLabel =
       entry.status === "BASELINE"
         ? "Baseline"

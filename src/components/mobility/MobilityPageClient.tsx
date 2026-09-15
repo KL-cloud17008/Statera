@@ -22,6 +22,7 @@ import {
 } from "@/lib/mobility";
 import { Button } from "@/components/ui/button";
 import { Figure, Notice, PageTitle, Section } from "@/components/ui/ledger";
+import { getPainGuidance, initialRecoveryMode } from "@/lib/movement-guidance";
 import { cn } from "@/lib/utils";
 
 export function MobilityPageClient({
@@ -30,8 +31,6 @@ export function MobilityPageClient({
   sessionName = null,
   isResumedSession = false,
   completedTypes,
-  highStepLoad,
-  recentStepTotal,
   painCheckIn = null,
   todayFootPain = null,
   timezone,
@@ -47,20 +46,13 @@ export function MobilityPageClient({
   sessionName?: string | null;
   isResumedSession?: boolean;
   completedTypes: string[];
-  highStepLoad?: boolean;
-  recentStepTotal?: number;
   painCheckIn?: SerializedPainCheckIn | null;
   todayFootPain?: number | null;
   timezone?: string;
 }) {
   const router = useRouter();
   const [pendingType, setPendingType] = useState<string | null>(null);
-  // Logged sole pain >= 5/10 activates foot-flare recovery alongside the
-  // existing step-load threshold (foot-load rules).
-  const highFootPain = todayFootPain != null && todayFootPain >= 5;
-  const [recoveryMode, setRecoveryMode] = useState<RecoveryMode>(
-    highStepLoad || highFootPain ? "footFlare" : "standard"
-  );
+  const [recoveryMode, setRecoveryMode] = useState<RecoveryMode>(initialRecoveryMode(todayFootPain));
   const [isPending, startTransition] = useTransition();
 
   const program = getMobilityProgram(dayOfWeek);
@@ -73,15 +65,8 @@ export function MobilityPageClient({
       : program.blocks;
   const laterRecoveryBlocks = getRequiredLaterRecoveryBlocks(recoveryMode, dayOfWeek);
   const laterRecoveryTitle = getRequiredLaterRecoveryTitle(recoveryMode, dayOfWeek);
-  const highStepLoadNote = highFootPain
-    ? `Sole pain ${todayFootPain}/10 logged today. Required foot-flare recovery is active; keep it easy and foot-focused.`
-    : highStepLoad
-      ? `High step load detected${
-          recentStepTotal ? ` (${recentStepTotal.toLocaleString()} steps across the last 3 days)` : ""
-        }. Required foot-flare recovery is active; keep it easy and foot-focused.`
-      : todayFootPain != null && todayFootPain >= 3
-        ? `Foot pain ${todayFootPain}/10 logged today. Reduce step load, split walking into smaller chunks, no gym walking.`
-        : undefined;
+  const painGuidance = getPainGuidance(todayFootPain);
+  const symptomNote = painGuidance.attention ? painGuidance.text : undefined;
 
   const sessionCompleted = completedTypes.includes(program.logType);
   const undoCount = completedTypes.filter((type) => type === "UNDO_SITTING").length;
@@ -93,7 +78,12 @@ export function MobilityPageClient({
       const formData = new FormData();
       formData.set("type", type);
       formData.set("version", version);
-      const result = await logMobility(formData);
+      let result;
+      try { result = await logMobility(formData); } catch {
+        toast.error("Could not save. Your routine is still here; try again.");
+        setPendingType(null);
+        return;
+      }
       if (result.error) {
         toast.error(result.error);
         setPendingType(null);
@@ -120,14 +110,12 @@ export function MobilityPageClient({
           program.dayName is the weekday the program was authored for, which is
           not the same thing once training days move or a session is resumed. */}
       <PageTitle
-        eyebrow="Mobility protocol"
-        title={`${dayLabel ?? program.dayName} — ${program.trainingRole}`}
-        lead={`${program.todayPurpose} The progression target is ankle capacity, foot control, and walking resilience.`}
+        eyebrow={dayLabel ?? program.dayName}
+        title="Mobility"
+        lead="Preparation and recovery for your training day."
       />
 
-      <Notice tone="accent" className="mt-4 max-w-3xl">
-        {RIGHT_SOLE_PACE_RULE}
-      </Notice>
+      {symptomNote ? <Notice tone="ember" className="mt-4">{symptomNote}</Notice> : null}
 
       {isResumedSession && sessionName ? (
         <Notice className="mt-4">
@@ -144,6 +132,10 @@ export function MobilityPageClient({
         </dl>
       </Section>
 
+      <details className="my-4 border-y border-rule" id="pain-check-in">
+        <summary className="flex min-h-14 cursor-pointer items-center text-body font-medium focus-visible:outline-2 focus-visible:outline-accent">Pain check-in & movement guidance</summary>
+        <p className="pt-3 text-row text-secondary">{program.todayPurpose}</p>
+        <p className="py-3 text-row text-secondary">{RIGHT_SOLE_PACE_RULE}</p>
       <Section title="Today's focus">
         <div className="grid gap-x-6 gap-y-4 md:grid-cols-3">
           {program.focus.map((item) => (
@@ -152,17 +144,19 @@ export function MobilityPageClient({
         </div>
       </Section>
 
-      <Section id="pain-check-in">
+      <Section>
         <PainCheckInCard latest={painCheckIn} timezone={timezone} />
         <p className="mt-4 border-t border-rule pt-3 text-caption text-tertiary">{RIGHT_SOLE_STOP_RULE}</p>
       </Section>
+
+      </details>
 
       <RoutineSection
         id="session"
         title={program.sessionTitle}
         summary={
           program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-            ? "Required foot-flare recovery puts seated ankle motion, calf mobility, supported balance, quiet foot pressure, and supported breathing first."
+            ? "Foot comfort routine puts seated ankle motion, calf mobility, supported balance, quiet foot pressure, and supported breathing first."
             : program.adaptationNote
         }
         completed={sessionCompleted}
@@ -173,7 +167,7 @@ export function MobilityPageClient({
           handleLogCompletion(
             program.logType,
             program.logType === "POST_WORKOUT" && recoveryMode === "footFlare"
-              ? `${program.sessionTitle} - required foot-flare recovery`
+              ? `${program.sessionTitle} - foot comfort routine`
               : program.sessionTitle
           )
         }
@@ -183,7 +177,7 @@ export function MobilityPageClient({
           ) : undefined
         }
         meta={program.completionSummary}
-        contextNote={program.logType === "POST_WORKOUT" ? highStepLoadNote : undefined}
+        contextNote={program.logType === "POST_WORKOUT" ? symptomNote : undefined}
         hideAction={sessionBlocks.length === 0}
       >
         {sessionBlocks.length > 0 ? (
@@ -205,7 +199,7 @@ export function MobilityPageClient({
         summary={
           recoveryMode === "footFlare"
             ? "Complete later today. Keep it easy. This is tissue-tolerance work, not another workout."
-            : "This does not have to be done immediately after training. Complete it later the same day after walking home, food, shower, or before bed. It is part of the training system, not extra work."
+            : "Complete later in the day, at a comfortable pace."
         }
         completed={laterRecoveryCompleted}
         isPending={isPending}
@@ -216,11 +210,11 @@ export function MobilityPageClient({
         meta={
           recoveryMode === "footFlare"
             ? "Effort 1-3/10. Pain 0-2/10 maximum. No aggressive stretching, no digging hard into the sole, and no extra fatigue."
-            : "Required means consistently completed, not intense. Effort 1-3/10, pain 0-2/10 maximum, no fatigue."
+            : "Keep effort at 1-3/10 and pain at 0-2/10. Finish without fatigue."
         }
-        contextNote={highStepLoadNote}
+        contextNote={symptomNote}
       >
-        <MobilityChecklist blocks={laterRecoveryBlocks} title="Required later recovery" />
+        <MobilityChecklist blocks={laterRecoveryBlocks} title="Later recovery" />
       </RoutineSection>
         ) : null}
 
@@ -266,7 +260,7 @@ function FocusCell({
 }) {
   return (
     <div className="border-t border-rule pt-3">
-      <p className="text-label uppercase text-tertiary">{label}</p>
+      <p className="text-label text-tertiary">{label}</p>
       <p className="mt-1 text-row font-medium text-primary">{value}</p>
       <p className="mt-1 text-caption text-tertiary">{note}</p>
     </div>
@@ -303,16 +297,12 @@ function RoutineSection({
   hideAction?: boolean;
 }) {
   return (
-    <Section id={id}>
+    <Section id={id} title={title} action={<span className="text-caption text-tertiary">{completed ? "Logged" : "Ready"}</span>}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
         <div className="min-w-0">
-          <p className="text-label uppercase text-tertiary">
-            {completed ? "Completed today" : "Ready protocol"}
-          </p>
-          <p className="mt-1 text-body font-medium text-primary">{title}</p>
           <p className="mt-2 max-w-2xl text-row text-secondary">{summary}</p>
           {meta ? <p className="mt-1 max-w-2xl text-caption text-tertiary">{meta}</p> : null}
-          {/* Foot-load state: high step load, sole pain >=5, or foot pain >=3. */}
+          {/* Guidance comes from reported symptoms, never from step totals. */}
           {contextNote ? <Notice className="mt-3 max-w-2xl">{contextNote}</Notice> : null}
         </div>
 
@@ -356,14 +346,14 @@ function RecoveryModeControl({
     },
     {
       value: "footFlare",
-      label: "Foot flare recovery",
-      note: "Required when soles are irritated or step load is high",
+      label: "Foot comfort",
+      note: "Optional gentle motion when comfortable",
     },
   ];
 
   return (
     <div className="w-full min-w-0 sm:w-auto sm:min-w-[19rem]">
-      <p className="text-label uppercase text-tertiary">Recovery mode</p>
+      <p className="text-label text-tertiary">Recovery mode</p>
       <div
         className="mt-1.5 grid grid-cols-2 gap-0.5 rounded-pill border border-rule bg-sunken p-0.5"
         aria-label="Recovery mode"

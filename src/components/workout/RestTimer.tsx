@@ -1,217 +1,61 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { parseRestState, readWorkoutStorage, restSecondsRemaining, restStorageKey, startSessionRest, subscribeWorkoutStorage, writeWorkoutStorage } from "@/lib/workout-entry-state";
 
-export function RestTimer({
-  defaultSeconds = 90,
-  variant = "inline",
-}: {
-  defaultSeconds?: number;
-  variant?: "inline" | "bar";
-}) {
-  const [isRunning, setIsRunning] = useState(false);
-  const [duration, setDuration] = useState(defaultSeconds);
-  const [timeLeft, setTimeLeft] = useState(defaultSeconds);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const hasAlertedRef = useRef(false);
-  const [prevDefault, setPrevDefault] = useState(defaultSeconds);
-
-  // The sticky bar follows the current exercise, so pick up its programmed
-  // rest when it changes — but never interrupt a countdown in progress.
-  if (prevDefault !== defaultSeconds) {
-    setPrevDefault(defaultSeconds);
-    if (!isRunning) {
-      setDuration(defaultSeconds);
-      setTimeLeft(defaultSeconds);
-    }
-  }
+export function RestTimer({ defaultSeconds = 90, sessionId = "preview" }: { defaultSeconds?: number; sessionId?: string }) {
+  const key = restStorageKey(sessionId);
+  const raw = useSyncExternalStore(subscribeWorkoutStorage, () => readWorkoutStorage(key), () => null);
+  const state = parseRestState(raw) ?? { duration: defaultSeconds, deadline: null };
+  const [now, setNow] = useState(() => Date.now());
+  const hasAlerted = useRef<number | null>(null);
+  const remaining = restSecondsRemaining(state, now);
+  const finished = state.deadline !== null && remaining === 0;
+  const running = state.deadline !== null && !finished;
 
   useEffect(() => {
-    if (!isRunning) {
-      return;
+    const tick = () => setNow(Date.now());
+    const timer = window.setInterval(tick, 250);
+    window.addEventListener("focus", tick);
+    document.addEventListener("visibilitychange", tick);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", tick); document.removeEventListener("visibilitychange", tick); };
+  }, []);
+
+  useEffect(() => {
+    if (finished && state.deadline !== hasAlerted.current) {
+      hasAlerted.current = state.deadline;
+      if (document.visibilityState === "visible") navigator.vibrate?.([150, 75, 150]);
     }
+  }, [finished, state.deadline]);
 
-    intervalRef.current = setInterval(() => {
-      setTimeLeft((previous) => {
-        if (previous <= 1) {
-          if (!hasAlertedRef.current) {
-            hasAlertedRef.current = true;
-            if (typeof navigator !== "undefined" && navigator.vibrate) {
-              navigator.vibrate([200, 100, 200]);
-            }
-          }
-          setIsRunning(false);
-          return 0;
-        }
-
-        return previous - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isRunning]);
-
-  function stop() {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    setIsRunning(false);
-    setTimeLeft(duration);
-    hasAlertedRef.current = false;
-  }
-
-  function start() {
-    setTimeLeft(duration);
-    setIsRunning(true);
-    hasAlertedRef.current = false;
-  }
-
-  function adjustDuration(delta: number) {
-    if (isRunning) {
-      setTimeLeft((current) => Math.max(1, current + delta));
-      return;
-    }
-
-    setDuration((current) => {
-      const next = Math.max(15, current + delta);
-      setTimeLeft(next);
-      return next;
-    });
-  }
-
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  const display = `${minutes}:${seconds.toString().padStart(2, "0")}`;
-
-  /* The bar variant sits in the session dock, which is ink chrome — its tones
-     come from the ink ramp, not the paper ramp, or the controls vanish. */
-  if (variant === "bar") {
-    const inkControl =
-      "text-ink-muted hover:bg-ink-700 hover:text-ink-text focus-visible:outline-accent-bright";
-
-    return (
-      <div className="flex shrink-0 items-center gap-0.5">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => adjustDuration(-15)}
-          disabled={!isRunning && duration <= 15}
-          className={cn("num text-right text-caption", inkControl)}
-          aria-label="Reduce rest timer by 15 seconds"
-        >
-          -15
-        </Button>
-        {isRunning ? (
-          <span
-            className={cn(
-              "num min-w-[3.25rem] text-center text-data-md font-medium",
-              /* Elapsed reads as the goal-met state; olive-bright is the only
-                 olive legible on ink. */
-              timeLeft === 0 ? "text-accent-bright" : "text-ink-text"
-            )}
-          >
-            {timeLeft === 0 ? "GO" : display}
-          </span>
-        ) : (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={start}
-            className="gap-1.5 border-ink-line bg-ink-800 px-2.5 text-ink-text hover:bg-ink-700 hover:text-ink-text focus-visible:outline-accent-bright"
-            aria-label={`Start ${duration} second rest timer`}
-          >
-            <Timer className="size-3.5" />
-            <span className="num text-right">{duration}s</span>
-          </Button>
-        )}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => adjustDuration(15)}
-          className={cn("num text-right text-caption", inkControl)}
-          aria-label="Increase rest timer by 15 seconds"
-        >
-          +15
-        </Button>
-        {isRunning ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={stop}
-            className={cn("px-2 text-caption", inkControl)}
-            aria-label="Stop rest timer"
-          >
-            {timeLeft === 0 ? "Reset" : "Stop"}
-          </Button>
-        ) : null}
-      </div>
-    );
-  }
-
-  /* The inline variant sits on the paper canvas. */
-  if (!isRunning) {
-    return (
-      <div className="flex items-center gap-3">
-        <span className="text-label uppercase text-tertiary">Rest</span>
-        <Button
-          type="button"
-          variant="link"
-          onClick={() => adjustDuration(-15)}
-          disabled={duration <= 15}
-          className="num text-right text-row"
-          aria-label="Reduce rest timer by 15 seconds"
-        >
-          -15
-        </Button>
-        <Button type="button" variant="link" onClick={start} className="gap-2 text-row">
-          <Timer className="size-3.5" />
-          <span className="num text-right">{duration}s</span>
-        </Button>
-        <Button
-          type="button"
-          variant="link"
-          onClick={() => adjustDuration(15)}
-          className="num text-right text-row"
-          aria-label="Increase rest timer by 15 seconds"
-        >
-          +15
-        </Button>
-      </div>
-    );
+  function adjust(delta: number) {
+    const next = state.deadline !== null && !finished
+      ? { ...state, deadline: Math.max(Date.now() + 1000, state.deadline + delta * 1000) }
+      : { duration: Math.max(15, state.duration + delta), deadline: null };
+    writeWorkoutStorage(key, JSON.stringify(next));
+    setNow(Date.now());
   }
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-label uppercase text-tertiary">Rest</span>
-      <span
-        className={cn(
-          "num text-right text-data-md font-medium",
-          timeLeft === 0 ? "text-accent" : "text-primary"
-        )}
-      >
-        {timeLeft === 0 ? "GO" : display}
-      </span>
-      <Button
-        type="button"
-        variant="link"
-        onClick={stop}
-        className="text-row"
-        aria-label="Stop rest timer"
-      >
-        {timeLeft === 0 ? "Reset" : "Stop"}
-      </Button>
+    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-rule pt-4">
+      <div className="flex items-center gap-2">
+        <Timer className="size-4 text-tertiary" />
+        <span className="text-caption text-secondary">Rest</span>
+        <span role="timer" aria-label={finished ? "Rest complete" : `${remaining} seconds remaining`} className={cn("min-w-14 text-xl font-medium tabular-nums", finished ? "text-accent" : "text-primary")}>{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, "0")}</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <Button type="button" variant="ghost" className="min-h-12 min-w-12 px-2 tabular-nums" onClick={() => adjust(-15)} aria-label="Reduce rest by 15 seconds" disabled={!running && state.duration <= 15}>−15</Button>
+        <Button type="button" variant="ghost" className="min-h-12 min-w-12 px-2 tabular-nums" onClick={() => adjust(15)} aria-label="Increase rest by 15 seconds">+15</Button>
+        <Button type="button" variant="secondary" className="min-h-12 min-w-16" onClick={() => {
+          if (running) writeWorkoutStorage(key, JSON.stringify({ duration: defaultSeconds, deadline: null }));
+          else startSessionRest(sessionId, finished ? defaultSeconds : state.duration);
+          setNow(Date.now());
+        }}>{running ? "Stop" : finished ? "Restart" : "Start"}</Button>
+      </div>
+      {finished ? <p role="status" className="w-full text-caption text-accent">Rest complete</p> : null}
     </div>
   );
 }
