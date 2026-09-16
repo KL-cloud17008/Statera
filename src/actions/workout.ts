@@ -346,7 +346,7 @@ export async function logSet(formData: FormData): Promise<WorkoutMutationResult>
     const planExercise = session.workoutPlan?.exercises.find((exercise) => exercise.exerciseName === exerciseName);
     const existingSet = session.sets.find((set) => set.exerciseName === exerciseName && set.setNumber === setNumber);
     // Derive the foreign key from the owned session. Never trust a submitted planExerciseId.
-    if (!planExercise && !meta?.exercises?.some((exercise) => exercise.name === exerciseName) && !session.sets.some((set) => set.exerciseName === exerciseName)) {
+    if (!planExercise && !meta?.retainedExerciseNames?.includes(exerciseName) && !meta?.exercises?.some((exercise) => exercise.name === exerciseName) && !session.sets.some((set) => set.exerciseName === exerciseName)) {
       return { error: "Exercise not found in this session. Refresh Training and try again." };
     }
     const loadUnit = getWorkoutSessionLoadUnit(session.notes);

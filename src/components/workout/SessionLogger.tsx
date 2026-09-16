@@ -12,17 +12,19 @@ import { SessionPrepStrip } from "./SessionPrepStrip";
 import { Button } from "@/components/ui/button";
 import { Notice, Section } from "@/components/ui/ledger";
 import { Progress } from "@/components/ui/progress";
-import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE } from "@/lib/default-workout-plan";
+import { LOWER_B_BACK_PAIN_READINESS_NOTE, LOWER_B_BACK_SAFE_TITLE, isOverheadPressExercise } from "@/lib/default-workout-plan";
 import { isLoggableTrainingExercise } from "@/lib/training-session";
-import { restStorageKey, sessionDraftSnapshot, startSessionRest, subscribeWorkoutStorage, workoutDraftKey, writeWorkoutStorage, type SavedEntry } from "@/lib/workout-entry-state";
+import { draftTargets, readWorkoutStorage, restStorageKey, sessionDraftSnapshot, startSessionRest, subscribeWorkoutStorage, workoutDraftKey, writeWorkoutStorage, type SavedEntry } from "@/lib/workout-entry-state";
+import { mergeSavedSessionExercises } from "@/lib/workout-session-exercises";
+import { getIntroductorySets, formatSetPrescription, previousPerformanceIdentity } from "@/lib/workout-prescription";
 
 type SessionSet = SavedEntry & { exerciseName: string; setNumber: number };
 type PrevSet = { exerciseName: string; setNumber: number; weightUsed: number | null; repsCompleted: number | null; actualRPE?: number | null };
 type Target = { exerciseName: string; setNumber: number };
 
-export function SessionLogger({ sessionId, sessionName, exercises, existingSets, previousSets, startTime, trainingDate, isStale }: {
+export function SessionLogger({ sessionId, sessionName, exercises, existingSets, previousSets, startTime, trainingDate, isStale, backPainGateActive = false }: {
   sessionId: string; sessionName: string; exercises: PlanExercise[]; existingSets: SessionSet[];
-  previousSets: PrevSet[]; startTime: string; trainingDate: string; isStale: boolean;
+  previousSets: PrevSet[]; startTime: string; trainingDate: string; isStale: boolean; backPainGateActive?: boolean;
 }) {
   const router = useRouter();
   const [pending, setPending] = useState<"complete" | "discard" | null>(null);
@@ -42,19 +44,26 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
   const editorRef = useRef<HTMLElement>(null);
   const draftsRaw = useSyncExternalStore(subscribeWorkoutStorage, () => sessionDraftSnapshot(sessionId), () => "[]");
   const draftKeys: string[] = JSON.parse(draftsRaw);
-  const loggableExercises = useMemo(() => exercises.filter(isLoggableTrainingExercise), [exercises]);
+  const volumeKey = `athanor:curl-target:${sessionId}`;
+  const targetConfirmed = useSyncExternalStore(subscribeWorkoutStorage, () => readWorkoutStorage(volumeKey) === "confirmed", () => false);
+  const loggableExercises = useMemo(() => mergeSavedSessionExercises(
+    exercises.filter(isLoggableTrainingExercise).filter((exercise) => !backPainGateActive || !isOverheadPressExercise(exercise.exerciseName)).map((exercise) => ({
+      ...exercise, sets: targetConfirmed ? exercise.sets : getIntroductorySets(exercise),
+    })), [...loggedSets, ...draftTargets(sessionId, JSON.parse(draftsRaw))]
+  ), [exercises, targetConfirmed, loggedSets, sessionId, draftsRaw, backPainGateActive]);
+  const hasIntro = exercises.some((exercise) => getIntroductorySets(exercise) < exercise.sets);
   const allTargets = buildSessionTargets(loggableExercises);
   const isSaved = (target: Target) => loggedSets.some((set) => set.exerciseName === target.exerciseName && set.setNumber === target.setNumber);
   const firstUnsaved = allTargets.find((target) => !isSaved(target));
   const draftTarget = allTargets.find((target) => draftKeys.includes(workoutDraftKey(sessionId, target.exerciseName, target.setNumber)));
-  const target = selected ?? draftTarget ?? firstUnsaved ?? allTargets.at(-1) ?? null;
+  const target = (selected && allTargets.find((candidate) => candidate.exerciseName === selected.exerciseName && candidate.setNumber === selected.setNumber)) || draftTarget || firstUnsaved || allTargets.at(-1) || null;
   const currentExercise = loggableExercises.find((exercise) => exercise.exerciseName === target?.exerciseName);
   const currentIndex = currentExercise ? loggableExercises.indexOf(currentExercise) : -1;
   const savedCount = allTargets.filter(isSaved).length;
   const complete = savedCount === allTargets.length;
   const progressPercent = allTargets.length ? Math.round(savedCount / allTargets.length * 100) : 0;
   const currentLogged = loggedSets.find((set) => set.exerciseName === target?.exerciseName && set.setNumber === target?.setNumber) ?? null;
-  const previousSet = previousSets.find((set) => set.exerciseName === target?.exerciseName && set.setNumber === target?.setNumber) ?? null;
+  const previousSet = target ? previousSets.find((set) => previousPerformanceIdentity(set.exerciseName) === previousPerformanceIdentity(target.exerciseName) && set.setNumber === target.setNumber) ?? null : null;
   const prefill = target && !currentLogged ? loggedSets.find((set) => set.exerciseName === target.exerciseName && set.setNumber === target.setNumber - 1) ?? null : null;
 
   useEffect(() => {
@@ -136,6 +145,13 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
 
   return (
     <div className="mt-5">
+      {hasIntro ? <Notice className="mb-4">Working curls: {exercises.filter((exercise) => getIntroductorySets(exercise) < exercise.sets).map(formatSetPrescription).join(", ")} sets. Introductory volume stays active until you confirm tolerable recovery, normal gait and stable performance. No automatic increase.
+        {!targetConfirmed ? <Button type="button" variant="secondary" className="mt-3 min-h-12" disabled={saving || pending !== null} onClick={() => {
+          if (window.confirm("Have you confirmed tolerable recovery, normal gait and stable performance? Enable the optional final working curl set for this session?")) writeWorkoutStorage(volumeKey, "confirmed");
+        }}>Confirm recovery & enable target set</Button> : <p>Target set enabled for this session.</p>}
+      </Notice> : null}
+      {/Lower B/.test(sessionName) ? <Notice className="mb-4">Warm-up: Lying Leg Curl, 1-2 easy sets of 12-15. Not working hamstring volume.</Notice> : null}
+      {loggableExercises.some((exercise) => exercise.id.startsWith("retained-")) ? <Notice className="mb-4">The plan was updated. Earlier saved sets and drafts remain under their original exercise names; they have not been reassigned. Unlogged sets can be left empty when finishing.</Notice> : null}
       {isStale ? <Notice className="mb-4 flex items-start gap-2"><AlertTriangle className="mt-0.5 size-4 shrink-0" /><span>Open session from {formatSessionDate(trainingDate)}. Continue it or discard it to start today’s training.</span></Notice> : null}
       <div className="mb-5 space-y-2">
         <div className="flex flex-wrap items-baseline justify-between gap-2 text-caption text-secondary"><span><span className="font-medium text-primary tabular-nums">{savedCount}/{allTargets.length}</span> sets saved{draftKeys.length ? ` · ${draftKeys.length} draft${draftKeys.length === 1 ? "" : "s"}` : ""}</span><span className="tabular-nums">{elapsedMinutes} min</span></div>
@@ -182,7 +198,7 @@ function FocusedSetPanel({ children }: { children: React.ReactNode }) { return <
 function getPairedExercises(exercises: PlanExercise[], exercise: PlanExercise) {
   if (!exercise.supersetGroup) return [];
   const group = exercises.filter((candidate) => candidate.supersetGroup === exercise.supersetGroup);
-  return group.length > 1 && group.some((candidate) => candidate.restSeconds === 0) ? group : [];
+  return group.length > 1 ? group : [];
 }
 
 function buildSessionTargets(exercises: PlanExercise[]): Target[] {

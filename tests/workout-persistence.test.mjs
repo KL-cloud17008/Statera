@@ -329,3 +329,12 @@ test("training date storage and weekdays are independent of process timezone acr
     assert.deepEqual(JSON.parse(result.stdout), expected, `process timezone ${timezone}`);
   }
 });
+
+test("rotated plans authorize recovered drafts only from the owned old exercise identities",async()=>{
+ const f=fixture();const oldName="Retired draft movement";f.state.plans[0].exercises[0].exerciseName=oldName;
+ const session=f.addSession();await f.load("src/lib/workout-plan-seed.ts").ensureDefaultWorkoutPlans(f.client,"owner");
+ assert.ok(JSON.parse(f.state.sessions[0].notes).retainedExerciseNames.includes(oldName));
+ const result=await f.actions.logSet(f.form(session.id,{exerciseName:oldName,weightUsed:"22.5",repsCompleted:"12",actualRPE:"7"}));
+ assert.ok(!result.error,result.error);assert.equal(f.state.sets[0].exerciseName,oldName);assert.equal(f.state.sets[0].planExerciseId,null);
+ assert.ok((await f.actions.logSet(f.form(session.id,{exerciseName:"Foreign injected exercise"}))).error);
+});

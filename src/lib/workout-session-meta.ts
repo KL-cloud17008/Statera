@@ -11,6 +11,7 @@ export type WorkoutSessionMeta = {
   generatedAt?: string;
   dayOfWeek?: number;
   workoutPlanId?: string;
+  retainedExerciseNames?: string[];
 };
 
 export function serializeWorkoutSessionMeta(meta: WorkoutSessionMeta) {

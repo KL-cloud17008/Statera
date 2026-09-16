@@ -35,6 +35,11 @@ function buildCurrentPlanSessionNotes(
     generatedAt: meta?.generatedAt ?? session.createdAt.toISOString(),
     dayOfWeek: plan.dayOfWeek,
     workoutPlanId: plan.id,
+    // Keep old identities authorized for recoverable device-local drafts.
+    retainedExerciseNames: [...new Set([
+      ...(meta?.retainedExerciseNames ?? []),
+      ...(session.workoutPlan?.exercises.map((exercise) => exercise.exerciseName) ?? []),
+    ])],
   });
 }
 

@@ -319,3 +319,51 @@ test("the rest timer uses a persisted deadline through background throttling and
   assert.equal(env.vibrations.length, 1); refreshed.render(); assert.equal(env.vibrations.length, 1);
   assert.equal(refreshed.button("Restart").props.disabled, undefined);
 });
+
+test("introductory curl sets are actionable, explicit confirmation unlocks targets, and refresh retains the choice", () => {
+  for (const [name,target,intro] of [["E1 Seated Leg Curl — Working Sets",3,2],["C2 Seated Leg Curl",4,3]]) {
+    const env=fixture(), props=loggerProps({exercises:[{id:"curl",exerciseName:name,sets:target,reps:"10-15",restSeconds:120,exerciseType:"WORKING",cues:"Introduction: lower volume"}]});
+    const host=env.mount("SessionLogger",props);
+    assert.equal(host.nodes("ExerciseCard")[0].props.exercise.sets,intro);
+    env.now += 14*86400000;host.render();assert.equal(host.nodes("ExerciseCard")[0].props.exercise.sets,intro);
+    env.window.confirm=()=>false;host.button("Confirm recovery & enable target set").props.onClick();host.render();assert.equal(host.nodes("ExerciseCard")[0].props.exercise.sets,intro);
+    env.window.confirm=()=>true;host.button("Confirm recovery & enable target set").props.onClick();host.render();assert.equal(host.nodes("ExerciseCard")[0].props.exercise.sets,target);
+    assert.equal(env.mount("SessionLogger",props).nodes("ExerciseCard")[0].props.exercise.sets,target);
+    const fresh=fixture(), introduction=fresh.mount("SessionLogger",props);
+    for(let i=0;i<intro;i++){introduction.nodes("SetInput")[0].props.onSaved("",saved);introduction.render();}
+    assert.match(text(introduction.tree),/All planned sets saved/);
+  }
+});
+
+test("Tuesday 2/1 and Friday 2/3 pairs have no phantom sets or completion blocks",()=>{
+  for(const counts of [[2,1],[2,3]]){
+    const env=fixture(),host=env.mount("SessionLogger",loggerProps({exercises:counts.map((sets,i)=>({id:String(i),exerciseName:i?"Partner":"First",sets,reps:"10-15",restSeconds:i?120:0,supersetGroup:"B",exerciseType:"WORKING"}))}));
+    const observed=[];
+    for(let n=0;n<counts[0]+counts[1];n++){const editor=host.nodes("SetInput")[0];observed.push([editor.props.exerciseName,editor.props.setNumber]);editor.props.onSaved("",saved);host.render();}
+    assert.deepEqual(observed,counts[0]===2&&counts[1]===1?[["First",1],["Partner",1],["First",2]]:[["First",1],["Partner",1],["First",2],["Partner",2],["Partner",3]]);
+    assert.match(text(host.tree),/All planned sets saved/);
+  }
+});
+
+test("removed exercise drafts remain reachable under original names after plan refresh",()=>{
+  const env=fixture(),key=env.lib.workoutDraftKey("session","Removed curl",3);
+  env.lib.writeWorkoutStorage(key,JSON.stringify({version:1,fields:{weight:"22.5",reps:"12",rpe:"7",notes:""},baseline:null,revision:"recovery",status:"draft"}));
+  const host=env.mount("SessionLogger",loggerProps());
+  assert.equal(host.nodes("SetInput")[0].props.exerciseName,"Removed curl");assert.equal(host.nodes("SetInput")[0].props.setNumber,3);
+  assert.match(text(host.tree),/original exercise names/);
+  assert.equal(host.button("Finish session").props.disabled,true);
+  assert.equal(env.lib.parseWorkoutDraft(env.lib.readWorkoutStorage(key)).fields.weight,"22.5");
+});
+
+test("Thursday triset alternates all three identities while preserving programmed rest",()=>{
+ const env=fixture(),host=env.mount("SessionLogger",loggerProps({exercises:["Pressdown","Reverse crossover","Bayesian curl"].map((exerciseName,i)=>({id:String(i),exerciseName,sets:3,reps:"10-15",restSeconds:120,supersetGroup:"C",exerciseType:"WORKING"}))}));
+ const names=[];for(let i=0;i<9;i++){const editor=host.nodes("SetInput")[0];names.push(editor.props.exerciseName);editor.props.onSaved("",saved);host.render();assert.equal(env.lib.parseRestState(env.lib.readWorkoutStorage(env.lib.restStorageKey("session"))).duration,120);}
+ assert.deepEqual(names,["Pressdown","Reverse crossover","Bayesian curl","Pressdown","Reverse crossover","Bayesian curl","Pressdown","Reverse crossover","Bayesian curl"]);
+ assert.match(text(host.tree),/All planned sets saved/);
+});
+
+test("shoulder press is gated but existing entries survive; previous performance ignores only safe label changes",()=>{
+ const env=fixture(),props=loggerProps({backPainGateActive:true,exercises:[{id:"press",exerciseName:"C1 Seated Machine Shoulder Press",sets:2,exerciseType:"WORKING"},{id:"ext",exerciseName:"D1 Seated Leg Extension",sets:2,exerciseType:"WORKING"}],previousSets:[{exerciseName:"D1 Leg Extension",setNumber:1,...saved}]});
+ const host=env.mount("SessionLogger",props);assert.equal(host.nodes("SetInput")[0].props.exerciseName,"D1 Seated Leg Extension");assert.equal(host.nodes("SetInput")[0].props.previous.weightUsed,42.5);
+ const retained=env.mount("SessionLogger",{...props,existingSets:[{exerciseName:"C1 Seated Machine Shoulder Press",setNumber:1,...saved}]});assert.ok(retained.nodes("ExerciseCard").some(n=>n.props.exercise.exerciseName==="C1 Seated Machine Shoulder Press"));
+});

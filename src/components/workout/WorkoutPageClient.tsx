@@ -150,6 +150,7 @@ export function WorkoutPageClient({
           startTime={activeSession.startTime}
           trainingDate={activeSession.trainingDate}
           isStale={activeSession.isStale}
+          backPainGateActive={backPainGateActive}
         />
       ) : todayPlan ? (
         <>

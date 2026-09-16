@@ -8,8 +8,8 @@ export const SESSION_PREP_ITEMS = [
     detail: "Ramp set 1: very easy x 8-10, RPE 3-4. Set 2: easy/moderate x 5-8, RPE 4-5 only if needed",
   },
   {
-    label: "Main work",
-    detail: "Working sets only",
+    label: "Session ledger",
+    detail: "Prescribed sets; Monday's easy primer is separate from working curls. Wednesday warm-up stays outside the ledger.",
   },
   {
     label: "Required later recovery",

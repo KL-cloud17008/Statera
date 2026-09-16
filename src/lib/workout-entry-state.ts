@@ -28,6 +28,19 @@ export function workoutDraftKey(sessionId: string, exerciseName: string, setNumb
   return `${sessionDraftPrefix(sessionId)}${encodeURIComponent(exerciseName)}:${setNumber}`;
 }
 
+export function draftTargets(sessionId: string, keys: string[]) {
+  const prefix = sessionDraftPrefix(sessionId);
+  return keys.flatMap((key) => {
+    if (!key.startsWith(prefix)) return [];
+    const split = key.lastIndexOf(":");
+    const setNumber = Number(key.slice(split + 1));
+    try {
+      return Number.isInteger(setNumber) && setNumber > 0
+        ? [{ exerciseName: decodeURIComponent(key.slice(prefix.length, split)), setNumber }] : [];
+    } catch { return []; }
+  });
+}
+
 export function entryFields(entry?: SavedEntry | null): EntryFields {
   return {
     weight: entry?.weightUsed?.toString() ?? "",
