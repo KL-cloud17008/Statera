@@ -13,10 +13,8 @@ import {
 import { toast } from "sonner";
 import { importWeightCSV } from "@/actions/weight";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { PageTitle } from "@/components/ui/ledger";
+import { PageTitle, Section } from "@/components/ui/ledger";
 import { parseCSV, getDataRows, getHeaders } from "@/lib/csv";
 import { parseCSVDate } from "@/lib/weight";
 import { formatBodyweightWithConversions } from "@/lib/units";
@@ -41,6 +39,7 @@ export function WeightImportClient() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<ImportState>({ step: "idle" });
+  const [visibleCount, setVisibleCount] = useState(30);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -107,6 +106,7 @@ export function WeightImportClient() {
         };
       });
 
+      setVisibleCount(30);
       setState({
         step: "preview",
         rows: parsed,
@@ -114,6 +114,7 @@ export function WeightImportClient() {
         fileName: file.name,
       });
     };
+    reader.onerror = () => toast.error("Could not read this file. Choose it again or try another CSV.");
     reader.readAsText(file);
   }
 
@@ -155,74 +156,76 @@ export function WeightImportClient() {
         title="Bring in past weigh-ins"
         lead="Preview the parsed rows before importing so you can confirm dates, status, and body-fat data."
         action={
-          <Link href="/weight">
-            <Button variant="secondary" className="gap-2">
+          <Button asChild variant="secondary" className="gap-2">
+            <Link href="/weight">
               <ArrowLeft className="h-4 w-4" />
               Back to weight
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         }
         className="mb-6"
       />
 
       {state.step === "idle" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Choose CSV file</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <Section>
+          <div className="mb-4 border-b border-rule pb-4">
+            <h2 className="text-body font-medium text-primary">Choose CSV file</h2>
+          </div>
+          <div className="space-y-4">
             <p className="text-row text-secondary">
-              Expected columns: Status, Date (M/D/YYYY), Weight, and optional Body Fat %.
+              Expected columns: Date (M/D/YYYY), Weight in lb, and optional Status and Body Fat %.
             </p>
             <div className="rounded-panel border border-dashed border-control-border p-10 text-center">
               <FileText className="mx-auto size-8 text-faint" />
-              <p className="mt-4 text-row text-secondary">Drag a file here or browse from your device.</p>
+              <p className="mt-4 text-row text-secondary">Choose a CSV from your device. Review the dates and pounds before importing.</p>
               <input ref={fileInputRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" />
               <Button className="mt-5" onClick={() => fileInputRef.current?.click()}>
                 <Upload className="h-4 w-4" />
                 Choose File
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </Section>
       )}
 
       {state.step === "preview" && (
-        <Card>
-          <CardHeader>
+        <Section>
+          <div className="mb-4 border-b border-rule pb-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <CardTitle>Preview: {state.fileName}</CardTitle>
+              <h2 className="text-body font-medium text-primary">Preview: {state.fileName}</h2>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">{validCount} valid</Badge>
                 {errorCount > 0 ? <Badge variant="critical">{errorCount} invalid</Badge> : null}
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          </div>
+          <div className="space-y-4">
             <div className="max-h-80 overflow-auto rounded-control border border-rule">
-              <div className="min-w-[44rem]">
-                <div className="sticky top-0 grid grid-cols-4 gap-2 bg-sunken px-4 py-2.5 text-label text-tertiary">
+              <div className="min-w-0">
+                <div className="sticky top-0 z-10 grid grid-cols-2 gap-2 bg-sunken px-4 py-2.5 text-label text-tertiary md:grid-cols-4">
                   <span>Date</span>
                   <span>Weight</span>
-                  <span>Status</span>
-                  <span>Body Fat</span>
+                  <span className="hidden md:block">Status</span>
+                  <span className="hidden md:block">Body fat</span>
                 </div>
-                {state.rows.map((row, i) => (
+                {state.rows.slice(0, visibleCount).map((row, i) => (
                   <div
                     key={i}
-                    className={`grid grid-cols-4 gap-2 border-t border-rule px-4 py-2.5 text-row ${!row.valid ? "bg-critical-surface text-critical" : "text-primary"}`}
+                    className={`grid grid-cols-2 gap-2 border-t border-rule px-4 py-2.5 text-row md:grid-cols-4 ${!row.valid ? "bg-critical-surface text-critical" : "text-primary"}`}
                   >
-                    <span className="truncate">{row.date}</span>
+                    <span className="min-w-0">{row.parsedDate || row.date}</span>
                     <span>
                       {row.valid ? formatBodyweightWithConversions(row.weight) : "Invalid"}
                     </span>
-                    <span className="truncate">{row.status}</span>
-                    <span>{row.bodyFatPercent != null ? `${row.bodyFatPercent}%` : "-"}</span>
+                    <span className="text-caption md:text-row">{row.status}</span>
+                    <span className="text-caption md:text-row">{row.bodyFatPercent != null ? `${row.bodyFatPercent}% body fat` : "—"}</span>
+                    {row.error ? <span className="col-span-full text-caption">{row.error}</span> : null}
                   </div>
                 ))}
               </div>
             </div>
 
+            {state.rows.length > visibleCount ? <Button type="button" variant="secondary" onClick={() => setVisibleCount(count => count + 30)}>Show more preview rows ({state.rows.length - visibleCount} remaining)</Button> : null}
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Button
                 variant="secondary"
@@ -237,23 +240,22 @@ export function WeightImportClient() {
                 Import {validCount} Entries
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </Section>
       )}
 
       {state.step === "importing" && (
-        <Card>
-          <CardContent className="space-y-4 py-12 text-center">
+        <Section>
+          <div className="space-y-4 py-12 text-center">
             <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-            <p className="text-row text-secondary">Importing entries...</p>
-            <Progress className="mx-auto max-w-xs" value={66} />
-          </CardContent>
-        </Card>
+            <p role="status" className="text-row text-secondary">Importing entries… Keep this page open until the result is confirmed.</p>
+          </div>
+        </Section>
       )}
 
       {state.step === "done" && (
-        <Card>
-          <CardContent className="space-y-4 py-12 text-center">
+        <Section>
+          <div className="space-y-4 py-12 text-center">
             <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
             <div>
               <p className="text-body font-medium text-primary">Import complete</p>
@@ -271,8 +273,8 @@ export function WeightImportClient() {
               </div>
             ) : null}
             <Button onClick={() => router.push("/weight")}>View Weight Data</Button>
-          </CardContent>
-        </Card>
+          </div>
+        </Section>
       )}
     </>
   );

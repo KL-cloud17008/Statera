@@ -83,7 +83,7 @@
 .dashboard-totals { grid-area: totals; }
 .dashboard-last { grid-area: last; }
 .dashboard-checkin { grid-area: checkin; }
-.dashboard-grid { grid-template-areas: "training" "steps" "weight" "week" "totals" "last" "checkin"; }
+.dashboard-grid { grid-template-areas: "training" "weight" "steps" "week" "totals" "last" "checkin"; }
 .dashboard-steps .section-body, .dashboard-weight .section-body { padding: 0 10px 10px; }
 .week-index-row { min-height: 60px; padding-block: 10px; }
 .week-index-row:last-child { border-bottom: 0; }
@@ -139,7 +139,7 @@
 }
 @media (min-width: 1000px) {
   .measurement-overview { grid-template-columns: minmax(0,1.3fr) minmax(20rem,1fr); gap: 24px; }
-  .dashboard-grid { grid-template-columns: minmax(0,1.45fr) minmax(18rem,1fr); grid-template-areas: "training steps" "week weight" "week totals" "last checkin"; gap: 28px; }
+  .dashboard-grid { grid-template-columns: minmax(0,1.45fr) minmax(18rem,1fr); grid-template-areas: "training weight" "week steps" "week totals" "last checkin"; gap: 28px; }
   .dashboard-training { min-height: 260px; }
 }
 @media (max-width: 767px) {
@@ -155,4 +155,57 @@
   .measurement-summary .supporting-figures dd { margin: 0; font-size: 20px; text-align: right; }
   .measurement-summary .supporting-figures p { grid-column: 1 / -1; margin-top: 0; text-align: right; font-size: 12px; }
   .section-rail { min-height: 42px; }
+}
+
+/* Keep the existing palette and ledger composition; improve working surfaces. */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  transform: translateY(calc(-100% - 2rem));
+  padding: 0.75rem 1rem;
+  background: var(--surface-overlay);
+  color: var(--text-primary);
+  border: 1px solid var(--control-border);
+}
+.skip-link:focus { transform: none; }
+
+.section-rail { flex-wrap: wrap; }
+.section-title { flex: 1 1 10rem; min-width: 0; overflow-wrap: anywhere; }
+.section-action { min-width: 0; max-width: 100%; flex-shrink: 1; }
+.section-action > a { display: inline-flex; align-items: center; min-height: 44px; }
+.ledger-row > *, .ledger-head > * { min-width: 0; }
+
+.page-jump-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+}
+.page-jump-index a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: var(--font-size-row);
+}
+.page-jump-index a:hover, .page-jump-index a:focus-visible {
+  background: var(--surface-sunken);
+  border-bottom-color: var(--frame-accent);
+  color: var(--text-primary);
+}
+.ledger-section[id], .settings-panel[id] {
+  scroll-margin-top: calc(4.5rem + env(safe-area-inset-top));
+}
+@media (min-width: 768px) {
+  .ledger-section[id], .settings-panel[id] { scroll-margin-top: 2rem; }
+}
+@media (max-width: 767px) {
+  .settings-panel [data-slot="card-content"] { padding-inline: 12px; }
+  .page-masthead-action { max-width: 100%; }
+  .page-masthead-action > * { min-width: 0; }
 }

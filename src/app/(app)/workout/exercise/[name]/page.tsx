@@ -79,8 +79,8 @@ export default async function ExerciseHistoryPage({
       />
 
       {bestSet ? (
-        <Section className="mt-6" title="Best set">
-          <dl className="grid grid-cols-3 gap-4">
+        <Section className="mt-6" title="Highest-volume set">
+          <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <Figure label="Load" value={formatWorkoutLoad(bestSet.weightUsed, bestSetLoadUnit)} size="lg" tone="accent" />
             <Figure label="Reps" value={bestSet.repsCompleted ?? "--"} size="lg" />
             <Figure label="Volume" value={formatWorkoutVolume(bestVolume)} size="lg" />
@@ -107,6 +107,7 @@ export default async function ExerciseHistoryPage({
               weekday: "short",
               month: "short",
               day: "numeric",
+              year: "numeric",
             })}
           >
             <Rows

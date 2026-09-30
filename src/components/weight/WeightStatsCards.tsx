@@ -46,8 +46,8 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
     requiredPace != null && targetDate
       ? `Required ${formatBodyweightRate(-requiredPace)} to hit ${formatGoalDate(targetDate)}`
       : targetDate
-        ? `No further loss required by ${formatGoalDate(targetDate)}`
-        : "Set a target date in settings to compare";
+        ? "Target pace unavailable; check your latest reading, goal and date"
+        : "Based on logged weight history";
 
   /* Six metrics that used to be six cards. As ledger rows they share one
      numeral column, so the values line up and can be read down. */
@@ -64,11 +64,6 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
     numeric?: boolean;
   }> = [
     {
-      label: "Projected goal date",
-      value: stats.projectedGoalDate ? formatGoalDate(stats.projectedGoalDate) : "--",
-      hint: projectedHint,
-    },
-    {
       label: "Weekly pace",
       value: formatBodyweightRatePrimary(stats.weeklyRate),
       secondary: formatBodyweightRateSecondary(stats.weeklyRate),
@@ -77,15 +72,20 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
     },
     {
       label: "Remaining to goal",
-      value: remainingToGoal != null ? formatBodyweight(Math.abs(remainingToGoal)) : "--",
+      value: remainingToGoal != null ? formatBodyweight(Math.max(0, -remainingToGoal)) : "--",
       secondary:
         remainingToGoal != null
-          ? formatBodyweightSecondary(Math.abs(remainingToGoal))
+          ? formatBodyweightSecondary(Math.max(0, -remainingToGoal))
           : "",
       hint:
         stats.goalWeight != null
-          ? `To go — goal ${formatBodyweightWithConversions(stats.goalWeight)}`
+          ? `${remainingToGoal != null && remainingToGoal >= 0 ? "Goal reached" : "To go"} — goal ${formatBodyweightWithConversions(stats.goalWeight)}`
           : "Set a goal weight in settings",
+    },
+    {
+      label: "Estimated goal date",
+      value: stats.projectedGoalDate ? formatGoalDate(stats.projectedGoalDate) : "--",
+      hint: `${projectedHint}. This estimate changes with your pace.`,
     },
     { label: "BMI", value: stats.bmi?.toFixed(1) ?? "--", hint: "Based on height set in profile" },
     {
@@ -103,7 +103,7 @@ export function WeightStatsCards({ stats }: { stats: WeightStats }) {
   ];
 
   return (
-    <Section title="Projection">
+    <Section title="Progress review">
       {paceGuardrailActive ? (
         <Notice className="mb-4">
           Pace above ~1% of bodyweight/wk — consider easing to protect muscle.

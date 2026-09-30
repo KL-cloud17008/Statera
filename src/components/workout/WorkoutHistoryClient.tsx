@@ -23,6 +23,7 @@ type HistorySession = {
 
 export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] }) {
   const [monthDate, setMonthDate] = useState(() => new Date());
+  const [visibleCount, setVisibleCount] = useState(20);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const sessionMap = useMemo(() => {
@@ -48,6 +49,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
   }, [monthDate, sessions]);
 
   const filteredSessions = selectedDate ? sessionMap.get(selectedDate) ?? [] : sessions;
+  const visibleSessions = selectedDate ? filteredSessions : filteredSessions.slice(0, visibleCount);
 
   return (
     <>
@@ -72,11 +74,11 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
             title={monthDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
             action={
               <div className="flex gap-2">
-                <Button type="button" variant="secondary" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}>
+                <Button type="button" variant="secondary" size="icon-sm" className="size-11" onClick={() => { setSelectedDate(null); setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1)); }}>
                   <ChevronLeft className="size-4" />
                   <span className="sr-only">Previous month</span>
                 </Button>
-                <Button type="button" variant="secondary" size="icon-sm" onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}>
+                <Button type="button" variant="secondary" size="icon-sm" className="size-11" onClick={() => { setSelectedDate(null); setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1)); }}>
                   <ChevronRight className="size-4" />
                   <span className="sr-only">Next month</span>
                 </Button>
@@ -151,7 +153,7 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
               <p className="text-body text-tertiary">No completed sessions in this view yet.</p>
             ) : (
               <div className="ledger-rows">
-                {filteredSessions.map((session) => (
+                {visibleSessions.map((session) => (
                   <div key={session.id} className="py-4">
                     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                       <span className="text-body font-medium text-primary">{session.label}</span>
@@ -167,21 +169,23 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                       <Figure label="PRs" value={session.prCount} tone={session.prCount > 0 ? "accent" : "primary"} />
                     </dl>
 
-                    <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                    <details className="mt-3"><summary className="flex min-h-11 cursor-pointer items-center text-caption font-medium text-secondary">Exercise history · {session.exercises.length} movements</summary>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1">
                       {session.exercises.map((exercise) => (
                         <Link
                           key={`${session.id}-${exercise}`}
                           href={`/workout/exercise/${encodeURIComponent(exercise)}`}
-                          className="text-caption text-secondary underline-offset-4 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                          className="inline-flex min-h-11 items-center text-caption text-secondary underline-offset-4 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                         >
                           {exercise}
                         </Link>
                       ))}
-                    </div>
+                    </div></details>
                   </div>
                 ))}
               </div>
             )}
+            {!selectedDate && filteredSessions.length > visibleCount ? <Button type="button" variant="secondary" className="mt-4 w-full sm:w-auto" onClick={() => setVisibleCount(count => count + 20)}>Show 20 more sessions</Button> : null}
           </Section>
         </>
       )}

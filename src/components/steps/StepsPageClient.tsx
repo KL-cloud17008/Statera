@@ -76,7 +76,7 @@ export function StepsPageClient({
               label="7-day avg"
               size="lg"
               value={stats.sevenDayAverage.toLocaleString()}
-              detail={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} vs last week`}
+              detail={`${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toLocaleString()} today vs 7 days ago`}
             />
             <Figure
               label="Best day"

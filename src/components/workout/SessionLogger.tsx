@@ -59,6 +59,12 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
   const target = (selected && allTargets.find((candidate) => candidate.exerciseName === selected.exerciseName && candidate.setNumber === selected.setNumber)) || draftTarget || firstUnsaved || allTargets.at(-1) || null;
   const currentExercise = loggableExercises.find((exercise) => exercise.exerciseName === target?.exerciseName);
   const currentIndex = currentExercise ? loggableExercises.indexOf(currentExercise) : -1;
+  const currentBlock = currentExercise ? getPairedExercises(loggableExercises, currentExercise) : [];
+  const roundMembers = currentBlock.filter(exercise => target && target.setNumber <= (exercise.exerciseType === "FINISHER" ? 1 : exercise.sets));
+  const remainingAfterSave = allTargets.filter(candidate => !isSaved(candidate) && !(candidate.exerciseName === target?.exerciseName && candidate.setNumber === target?.setNumber));
+  const nextTarget = (currentBlock.length
+    ? remainingAfterSave.find(candidate => currentBlock.some(exercise => exercise.exerciseName === candidate.exerciseName))
+    : remainingAfterSave.find(candidate => candidate.exerciseName === target?.exerciseName)) ?? remainingAfterSave[0];
   const savedCount = allTargets.filter(isSaved).length;
   const complete = savedCount === allTargets.length;
   const progressPercent = allTargets.length ? Math.round(savedCount / allTargets.length * 100) : 0;
@@ -163,12 +169,22 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
             <div className="mb-3 flex items-center justify-between gap-3"><p className="text-caption font-medium text-accent">Exercise {currentIndex + 1} of {loggableExercises.length}</p><span className="text-caption font-medium tabular-nums text-primary">Set {target.setNumber} / {currentExercise.exerciseType === "FINISHER" ? 1 : currentExercise.sets}</span></div>
             <h2 className="text-xl leading-tight font-semibold text-primary sm:text-2xl">{currentExercise.exerciseName}</h2>
             <p className="mt-2 text-caption text-secondary">{currentExercise.reps}{currentExercise.targetRPE ? ` · RPE ${currentExercise.targetRPE}` : ""}{currentExercise.tempo ? ` · Tempo ${currentExercise.tempo}` : ""}</p>
+            {roundMembers.length > 1 ? <p className="mt-2 border-l-2 border-accent pl-3 text-caption text-secondary">{roundMembers.length === 2 ? "Superset" : "Triset"} · Round {target.setNumber} · Movement {roundMembers.indexOf(currentExercise) + 1} of {roundMembers.length}</p> : null}
             {currentExercise.cues ? <details className="mt-2 text-caption text-secondary"><summary className="flex min-h-10 cursor-pointer items-center focus-visible:outline-2 focus-visible:outline-accent">Technique &amp; guidance</summary><p className="pb-3 leading-relaxed">{currentExercise.cues}</p></details> : null}
             <SetInput key={`${sessionId}:${currentExercise.id}:${target.setNumber}`} sessionId={sessionId} planExerciseId={currentExercise.id || null} exerciseName={currentExercise.exerciseName} setNumber={target.setNumber} isFinisher={currentExercise.exerciseType === "FINISHER"} logged={currentLogged} previous={previousSet} prefill={prefill} shouldAdvance={advanceFocus} disabled={pending !== null} onPendingChange={(nextSaving) => { saveInFlight.current = nextSaving; setSaving(nextSaving); }} onSaved={onSaved} className="mt-4" />
+            {nextTarget && !currentLogged ? <p className="mt-3 text-caption text-secondary">After saving: <span className="font-medium text-primary">{nextTarget.exerciseName}</span> · Set {nextTarget.setNumber}</p> : null}
             <div className="mt-4"><RestTimer sessionId={sessionId} defaultSeconds={getProgrammedRestSeconds(loggableExercises, currentExercise)} /></div>
-            <div className="mt-4 flex justify-between gap-2 border-t border-rule pt-3">
-              <Button type="button" variant="ghost" className="min-h-12 px-2 text-caption" disabled={currentIndex <= 0 || saving || pending !== null} onClick={() => selectExercise(loggableExercises[currentIndex - 1])}><ChevronLeft className="size-4" />Previous exercise</Button>
-              <Button type="button" variant="ghost" className="min-h-12 px-2 text-caption" disabled={currentIndex >= loggableExercises.length - 1 || saving || pending !== null} onClick={() => selectExercise(loggableExercises[currentIndex + 1])}>Next exercise<ChevronRight className="size-4" /></Button>
+            <div className="mt-4 flex items-center gap-2 border-t border-rule pt-3">
+              <Button type="button" variant="ghost" aria-label="Previous exercise" className="min-h-12 min-w-12 px-2" disabled={currentIndex <= 0 || saving || pending !== null} onClick={() => selectExercise(loggableExercises[currentIndex - 1])}><ChevronLeft className="size-4" /></Button>
+              <label className="min-w-0 flex-1" htmlFor="session-exercise-jump"><span className="sr-only">Jump to exercise</span>
+              <select id="session-exercise-jump" className="h-12 w-full min-w-0 rounded-control border border-control-border bg-raised px-3 text-row text-primary" value={currentExercise.exerciseName} disabled={saving || pending !== null} onChange={event => {
+                const exercise = loggableExercises.find(item => item.exerciseName === event.target.value);
+                if (exercise) selectExercise(exercise);
+              }}>
+                {loggableExercises.map((exercise, index) => <option key={exercise.id || exercise.exerciseName} value={exercise.exerciseName}>{index + 1}. {exercise.exerciseName} · {loggedSets.filter(set => set.exerciseName === exercise.exerciseName).length}/{exercise.sets} saved</option>)}
+              </select>
+              </label>
+              <Button type="button" variant="ghost" aria-label="Next exercise" className="min-h-12 min-w-12 px-2" disabled={currentIndex >= loggableExercises.length - 1 || saving || pending !== null} onClick={() => selectExercise(loggableExercises[currentIndex + 1])}><ChevronRight className="size-4" /></Button>
             </div>
           </FocusedSetPanel> : <p className="text-body text-secondary">There are no working sets in this session.</p>}
         </section>

@@ -56,6 +56,8 @@ export default function FlexibilityBalancePage() {
         lead="Movement reference for ankle range, foot control, and supported balance."
       />
 
+      <nav aria-label="Movement reference sections" className="page-jump-index my-4"><a href="#ankle-range">Ankle range</a><a href="#supported-balance">Balance</a><a href="#weekday-recovery">Recovery</a><a href="#walking-resilience">Walking</a><a href="#back-care">Back care</a></nav>
+
       {/* Figures print directly on the canvas. Ink chrome is reserved for the
           rail and the masthead — a dark block mid-page is the card-era idiom
           the ledger grammar removed. */}
@@ -78,6 +80,7 @@ export default function FlexibilityBalancePage() {
       </Section>
 
       <ReferenceBlock
+        id="ankle-range"
         icon={CircleDot}
         eyebrow="Ankle range"
         title="Controlled range before load"
@@ -94,6 +97,7 @@ export default function FlexibilityBalancePage() {
       />
 
       <ReferenceBlock
+        id="supported-balance"
         icon={ShieldCheck}
         eyebrow="Foot control / balance"
         title="Supported control before challenge"
@@ -114,6 +118,7 @@ export default function FlexibilityBalancePage() {
       />
 
       <ReferenceBlock
+        id="weekday-recovery"
         icon={RotateCcw}
         eyebrow="Recovery"
         /* Pinned copy: tests/workout-plan.test.mjs asserts this exact heading. */
@@ -132,6 +137,7 @@ export default function FlexibilityBalancePage() {
       />
 
       <ReferenceBlock
+        id="walking-resilience"
         icon={Footprints}
         eyebrow="Walking resilience"
         title={footFlareBlock.title}
@@ -146,6 +152,7 @@ export default function FlexibilityBalancePage() {
       />
 
       <ReferenceBlock
+        id="back-care"
         icon={Spline}
         eyebrow="Recovery / back care"
         title={BACK_CARE_DECOMPRESSION.title}
@@ -169,6 +176,7 @@ export default function FlexibilityBalancePage() {
 }
 
 function ReferenceBlock({
+  id,
   icon: Icon,
   eyebrow,
   title,
@@ -181,6 +189,7 @@ function ReferenceBlock({
   href,
   hrefLabel,
 }: {
+  id: string;
   icon: LucideIcon;
   eyebrow: string;
   title: string;
@@ -194,7 +203,7 @@ function ReferenceBlock({
   hrefLabel: string;
 }) {
   return (
-    <Section>
+    <Section id={id}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-label text-tertiary">{eyebrow}</p>

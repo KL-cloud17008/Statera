@@ -140,14 +140,14 @@ export function CustomWorkoutBuilder({
       formData.set("label", nextLabel.trim() || "Custom Session");
       formData.set("source", source);
       formData.set("exercises", JSON.stringify(exercises));
-      const result = await startCustomWorkoutSession(formData);
-      if (result.error) {
-        toast.error(result.error);
-        return;
+      try {
+        const result = await startCustomWorkoutSession(formData);
+        if (result.error) { toast.error(result.error); return; }
+        toast.success(result.warning ?? "Custom session started");
+        router.refresh();
+      } catch {
+        toast.error("Starting was interrupted. Your selected exercises are still here; retry when connected.");
       }
-
-      toast.success(result.warning ?? "Custom session started");
-      router.refresh();
     });
   }
 
@@ -168,7 +168,7 @@ export function CustomWorkoutBuilder({
         </p>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          <Button type="button" variant="primary" onClick={() => startSession("free")} disabled={hasActiveSession || isPending}>
+          <Button type="button" variant="primary" onClick={() => startSession("free")} disabled={hasActiveSession || isPending || selectedExercises.length === 0}>
             {isPending ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4" />}
             Start session
           </Button>
@@ -300,6 +300,7 @@ export function CustomWorkoutBuilder({
 
                 <Input
                   type="number"
+                  inputMode="numeric"
                   min="1"
                   max="10"
                   value={exercise.sets}
@@ -331,6 +332,7 @@ export function CustomWorkoutBuilder({
                     the mobile row rather than shrinking all four to nothing. */}
                 <Input
                   type="number"
+                  inputMode="numeric"
                   min="0"
                   max="600"
                   value={exercise.restSeconds}
@@ -351,7 +353,7 @@ export function CustomWorkoutBuilder({
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  className="justify-self-end text-critical hover:text-critical"
+                  className="size-11 justify-self-end text-critical hover:text-critical"
                   onClick={() =>
                     setSelectedExercises((current) =>
                       current.filter((_, itemIndex) => itemIndex !== index)
@@ -436,8 +438,8 @@ export function CustomWorkoutBuilder({
 }
 
 /* Exercise, sets, reps, [rest], remove. Rest joins the row from 768px up. */
-const BUILDER_COLUMNS = "minmax(0,1fr) 4rem 4.5rem 2rem";
-const BUILDER_COLUMNS_MD = "minmax(0,1fr) 4.5rem 5rem 5rem 2rem";
+const BUILDER_COLUMNS = "minmax(0,1fr) 3rem 3.5rem 2.75rem";
+const BUILDER_COLUMNS_MD = "minmax(0,1fr) 4.5rem 5rem 5rem 2.75rem";
 
 /* These remain native <select> elements — they carry <optgroup>, which the
    Radix Select in ui/select.tsx has no equivalent for. Styled to match Input

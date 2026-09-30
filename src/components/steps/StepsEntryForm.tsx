@@ -100,7 +100,8 @@ export function StepsEntryForm({
               step="1"
               min="0"
               max="200000"
-              placeholder="8500"
+              placeholder="12000"
+              enterKeyHint="done"
               value={steps}
               onChange={(event) => { setSteps(event.target.value); setSaved(null); }}
               required
@@ -113,7 +114,7 @@ export function StepsEntryForm({
                 Cancel
               </Button>
             ) : null}
-            <Button type="submit" variant="primary" className="min-w-32" disabled={isPending}>
+            <Button type="submit" variant="primary" className="w-full min-w-32 md:w-auto" disabled={isPending}>
               {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
               {isPending ? "Saving…" : editEntry ? "Save changes" : existing ? "Update steps" : "Save steps"}
             </Button>
