@@ -163,7 +163,8 @@ export function MobilityChecklist({
                             <button
                               type="button"
                               onClick={() => toggle(key)}
-                              className="w-full min-w-0 rounded-control text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-1"
+                              aria-pressed={isDone}
+                              className="min-h-11 w-full min-w-0 rounded-control text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:flex-1"
                             >
                               <p className={cn("text-row font-medium", isDone ? "text-tertiary line-through" : "text-primary")}>
                                 {exercise.name}
@@ -186,7 +187,7 @@ export function MobilityChecklist({
                                   aria-expanded={isExpanded}
                                   aria-controls={detailsId}
                                   onClick={() => toggleExpanded(key)}
-                                  className="inline-flex min-h-8 items-center gap-1.5 rounded-pill border border-control-border bg-raised px-2.5 py-1 text-label text-secondary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
+                                  className="inline-flex min-h-11 items-center gap-1.5 rounded-pill border border-control-border bg-raised px-2.5 py-1 text-label text-secondary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-row-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none"
                                 >
                                   <span>How to do it</span>
                                   <ChevronDown

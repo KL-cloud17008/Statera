@@ -107,7 +107,7 @@ export default async function WeightPage() {
             </span>
             <span className="num text-right text-accent">{progress}%</span>
           </div>
-          <div className="mt-2 h-1 overflow-hidden bg-sunken">
+          <div role="progressbar" aria-label="Progress to goal weight" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} className="mt-2 h-1 overflow-hidden bg-sunken">
             <div className="h-full bg-accent" style={{ width: `${progress}%` }} />
           </div>
         </div>

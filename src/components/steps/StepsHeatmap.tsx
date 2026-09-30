@@ -38,6 +38,9 @@ export function StepsHeatmap({
 }) {
   const today = getTodayDateString(timezone);
   const [monthDate, setMonthDate] = useState(() => parseDate(today));
+  const [selectedDate, setSelectedDate] = useState<string | null>(today);
+  const stepsByDate = new Map(entries.map(entry => [entry.date, entry.steps]));
+  const selectedSteps = selectedDate ? stepsByDate.get(selectedDate) : null;
 
   const days = useMemo(() => buildMonthlyHeatmap(entries, monthDate), [entries, monthDate]);
   const startWeekday = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).getDay();
@@ -57,7 +60,7 @@ export function StepsHeatmap({
             variant="ghost"
             size="icon-sm"
             className="size-11"
-            onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1))}
+            onClick={() => { setSelectedDate(null); setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1)); }}
           >
             <ChevronLeft className="size-4" />
             <span className="sr-only">Previous month</span>
@@ -68,7 +71,7 @@ export function StepsHeatmap({
             size="icon-sm"
             className="size-11"
             disabled={monthDate.getFullYear() === Number(today.slice(0, 4)) && monthDate.getMonth() === Number(today.slice(5, 7)) - 1}
-            onClick={() => setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1))}
+            onClick={() => { setSelectedDate(null); setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1)); }}
           >
             <ChevronRight className="size-4" />
             <span className="sr-only">Next month</span>
@@ -85,21 +88,33 @@ export function StepsHeatmap({
         {Array.from({ length: startWeekday }).map((_, index) => (
           <div key={`pad-${index}`} className="aspect-square rounded-control border border-transparent" />
         ))}
-        {days.map((day) => (
-          <div
-            key={day.date}
-            className={`flex min-h-14 min-w-0 flex-col justify-between overflow-hidden rounded-control border p-1.5 sm:min-h-20 ${getHeatLevel(day.steps, goal)}`}
-            title={`${day.date}: ${day.steps.toLocaleString()} steps`}
-          >
-            {/* Day-of-month in a fixed grid — the column only reads as a grid
-                if the figures are the same width. */}
-            <span className="num text-xs leading-none sm:text-sm">{day.day}</span>
-            <span className="num num-left whitespace-nowrap text-xs leading-none sm:text-sm">
-              {formatCellSteps(day.steps)}
-            </span>
-          </div>
-        ))}
+        {days.map(day => {
+          const steps = stepsByDate.get(day.date);
+          const future = day.date > today;
+          const selected = day.date === selectedDate;
+          const label = new Date(`${day.date}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+          return (
+            <button
+              key={day.date}
+              type="button"
+              disabled={future}
+              aria-pressed={selected}
+              aria-current={day.date === today ? "date" : undefined}
+              aria-label={`${label}: ${future ? "future date" : steps == null ? "not logged" : `${steps.toLocaleString()} steps`}`}
+              onClick={() => setSelectedDate(day.date)}
+              className={`flex min-h-14 min-w-0 flex-col justify-between overflow-hidden rounded-control border p-1.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40 sm:min-h-20 ${getHeatLevel(steps ?? 0, goal)} ${selected ? "ring-2 ring-primary ring-inset" : ""}`}
+            >
+              <span className="num text-xs leading-none sm:text-sm">{day.day}</span>
+              <span className="num num-left text-xs leading-none sm:text-sm">
+                {future || steps == null ? "—" : steps === 0 ? "0" : formatCellSteps(steps)}
+              </span>
+            </button>
+          );
+        })}
       </div>
+      <p role="status" className="mt-3 min-h-6 text-row text-secondary">
+        {selectedDate ? `${new Date(`${selectedDate}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · ${selectedSteps == null ? "Not logged" : `${selectedSteps.toLocaleString()} steps`}` : "Select a day to see its exact total."}
+      </p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-caption text-tertiary">
         <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-sunken" /> Some movement</span>
         <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-accent-subtle border border-accent-line" /> Near goal</span>

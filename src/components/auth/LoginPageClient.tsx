@@ -36,7 +36,7 @@ export function LoginPageClient() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-canvas px-4 py-8 sm:px-6">
+    <div className="flex min-h-dvh items-center justify-center bg-canvas px-4 py-8 sm:px-6">
       <div className="w-full max-w-md">
         <div className="overflow-hidden rounded-panel border border-rule bg-raised">
           <section className="flex flex-col bg-raised p-6 sm:p-8">
@@ -50,14 +50,14 @@ export function LoginPageClient() {
                 </p>
               </div>
 
-              <form action={handleSubmit} className="space-y-4">
+              <form action={handleSubmit} className="space-y-4" aria-busy={isPending}>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" placeholder="you@example.com" required autoComplete="email" autoCapitalize="none" />
+                  <Input id="email" name="email" type="email" placeholder="you@example.com" required autoComplete="email" autoCapitalize="none" spellCheck={false} disabled={isPending} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" name="password" type="password" placeholder="Password" required minLength={6} autoComplete={isSignUp ? "new-password" : "current-password"} />
+                  <Input id="password" name="password" type="password" placeholder="Password" required minLength={6} autoComplete={isSignUp ? "new-password" : "current-password"} disabled={isPending} />
                   {isSignUp ? <p className="text-caption text-tertiary">Must be at least 6 characters.</p> : null}
                 </div>
 
@@ -77,7 +77,7 @@ export function LoginPageClient() {
 
                 <Button type="submit" variant="primary" size="lg" className="w-full" disabled={isPending}>
                   {isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-                  {isSignUp ? "Create account" : "Sign in"}
+                  {isPending ? (isSignUp ? "Creating account…" : "Signing in…") : isSignUp ? "Create account" : "Sign in"}
                 </Button>
               </form>
 
@@ -85,6 +85,7 @@ export function LoginPageClient() {
                 {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
                 <button
                   type="button"
+                  disabled={isPending}
                   onClick={() => {
                     setIsSignUp(!isSignUp);
                     setError(null);

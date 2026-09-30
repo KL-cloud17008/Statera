@@ -93,10 +93,7 @@ export default async function DashboardPage() {
     <DashboardPageClient
       stepsEntries={serializedSteps}
       todaySteps={todaySteps ?? 0}
-      weightStats={{
-        currentWeight: weightStats.currentWeight,
-        trend: weightStats.trend,
-      }}
+      weightStats={weightStats}
       workoutSummary={{
         weeklyVolume,
         prevWeeklyVolume,

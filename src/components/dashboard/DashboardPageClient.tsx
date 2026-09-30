@@ -11,9 +11,10 @@ import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionA
 import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
 import { DAY_NAMES, buildPlanDayStats, getPlanDay, isStepGoalSuspendedByPlan } from "@/lib/plan-preview";
 import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
-import { formatBodyweight, formatBodyweightSecondary, formatWorkoutVolume } from "@/lib/units";
+import { formatBodyweight, formatBodyweightDeltaPrimary, formatBodyweightDeltaSecondary, formatBodyweightRate, formatBodyweightSecondary, formatWorkoutVolume } from "@/lib/units";
 import { getPainGuidance, MOVEMENT_STOP_RULE } from "@/lib/movement-guidance";
 import { cn } from "@/lib/utils";
+import type { WeightStats } from "@/lib/weight";
 
 type WorkoutSummary = {
   weeklyVolume: number; prevWeeklyVolume: number; weeklySessions: number;
@@ -24,7 +25,7 @@ type WorkoutDayStatus = { planId: string; dayOfWeek: number; status: "start" | "
 
 export function DashboardPageClient({ stepsEntries, todaySteps, weightStats, workoutSummary, workoutDayStatuses, mobilitySummary, latestWeightDate, timezone, trainingDayOfWeek, painCheckIn }: {
   stepsEntries: SerializedStepsEntry[]; todaySteps: number;
-  weightStats: { currentWeight: number | null; trend: "down" | "up" | "stable" };
+  weightStats: Pick<WeightStats, "currentWeight" | "trend"> & Partial<Pick<WeightStats, "avg7Day" | "totalChange" | "weeklyRate" | "goalWeight">>;
   workoutSummary: WorkoutSummary; workoutDayStatuses: WorkoutDayStatus[];
   mobilitySummary: { completedTypes: string[]; footFlareLogged: boolean };
   latestWeightDate: string | null; timezone?: string; trainingDayOfWeek: number;
@@ -45,9 +46,13 @@ export function DashboardPageClient({ stepsEntries, todaySteps, weightStats, wor
   const stepPercent = settings.stepGoal > 0 ? Math.min(100, Math.round(todaySteps / settings.stepGoal * 100)) : 0;
   const restDay = !getPlanDay(trainingDayOfWeek);
   const stepGoalSuspended = isStepGoalSuspendedByPlan(today);
-  const stepsByDate = new Map(stepsEntries.map(e => [e.date, e.steps ?? 0]));
-  const chartDays = Array.from({ length: 7 }, (_, i) => { const date = addDaysToDateString(today, i - 6); return {date, steps: date === today ? todaySteps : stepsByDate.get(date) ?? 0}; });
-  const maxSteps = Math.max(settings.stepGoal, ...chartDays.map(d => d.steps), 1);
+  const stepsByDate = new Map(stepsEntries.map(entry => [entry.date, entry.steps]));
+  const chartDays = Array.from({ length: 7 }, (_, index) => {
+    const date = addDaysToDateString(today, index - 6);
+    return { date, steps: stepsByDate.get(date) ?? null };
+  });
+  const maxSteps = Math.max(settings.stepGoal, ...chartDays.map(day => day.steps ?? 0), 1);
+  const stepsChartLabel = chartDays.map(day => `${day.date}: ${day.steps == null ? "not logged" : `${day.steps.toLocaleString()} steps`}`).join("; ");
 
   return <>
     <PageTitle title="Dashboard" action={<p className="text-row text-tertiary">{dateLabel}</p>} />
@@ -68,13 +73,24 @@ export function DashboardPageClient({ stepsEntries, todaySteps, weightStats, wor
         </section>
         <Section title="Steps" tone="movement" className="dashboard-steps" action={<Link href="/steps" className="text-row text-accent hover:underline">Log steps</Link>}>
           <dl className="flex flex-wrap justify-between gap-4"><Figure label="Today" value={todaySteps.toLocaleString()} size="xl" detail={stepGoalSuspended ? "Rest day · no goal" : `of ${settings.stepGoal.toLocaleString()}`} /><Figure label="7-day average" value={stepStats.sevenDayAverage.toLocaleString()} size="lg" /></dl>
-          <div className="mt-4 grid h-24 grid-cols-7 items-end gap-2" aria-label="Steps over the last seven days">
-            {chartDays.map(day => <div key={day.date} className="flex h-full flex-col justify-end gap-2 text-center" title={`${day.date}: ${day.steps.toLocaleString()} steps`}><div className={cn("min-h-1 rounded-t-sm",day.date === today ? "bg-accent" : "bg-chart-ink-muted")} style={{height:`${Math.max(3,day.steps/maxSteps*75)}%`}} /><span className="text-caption text-tertiary">{new Date(`${day.date}T12:00:00`).toLocaleDateString("en-US",{weekday:"narrow"})}</span></div>)}
+          <div className="mt-4 grid h-24 grid-cols-7 items-end gap-2" role="img" aria-label={`Steps over the last seven days. ${stepsChartLabel}`}>
+            {chartDays.map(day => <div key={day.date} aria-hidden="true" className="flex h-full flex-col justify-end gap-2 text-center" title={`${day.date}: ${day.steps == null ? "not logged" : `${day.steps.toLocaleString()} steps`}`}>
+              {day.steps == null ? <span className="text-caption text-tertiary">—</span> : <div className={cn("rounded-t-sm", day.date === today ? "bg-accent" : "bg-chart-ink-muted")} style={{ height: `${day.steps / maxSteps * 75}%` }} />}
+              <span className="text-caption text-tertiary">{new Date(`${day.date}T12:00:00`).toLocaleDateString("en-US", { weekday: "narrow" })}</span>
+            </div>)}
           </div>
           {!stepGoalSuspended ? <p className="mt-4 text-row text-tertiary">{stepPercent}% of goal · {stepStats.currentStreak} day streak</p> : null}
         </Section>
         <Section title="Weight" tone="weight" className="dashboard-weight" action={<Link href="/weight" className="text-row text-accent hover:underline">Weigh in</Link>}>
-          <dl><Figure label={latestWeightDate ? `Latest · ${latestWeightDate}` : "Latest"} value={formatBodyweight(weightStats.currentWeight)} detail={formatBodyweightSecondary(weightStats.currentWeight)} size="xl" /></dl>
+          <dl>
+            <Figure label={latestWeightDate ? `Latest · ${latestWeightDate}` : "Latest"} value={formatBodyweight(weightStats.currentWeight)} detail={formatBodyweightSecondary(weightStats.currentWeight) || "No weigh-ins yet"} size="xl" />
+            <div className="mt-4 grid gap-3 border-t border-rule pt-3">
+              <Figure label="7-day average" value={formatBodyweight(weightStats.avg7Day ?? null)} detail={formatBodyweightSecondary(weightStats.avg7Day ?? null)} />
+              <Figure label="Change from start" value={formatBodyweightDeltaPrimary(weightStats.totalChange ?? null)} detail={formatBodyweightDeltaSecondary(weightStats.totalChange ?? null)} />
+            </div>
+          </dl>
+          {weightStats.weeklyRate != null ? <p className="mt-3 text-row text-secondary">Recent pace · {formatBodyweightRate(weightStats.weeklyRate)}</p> : null}
+          {weightStats.goalWeight != null ? <p className="mt-2 text-caption text-tertiary">Goal {formatBodyweight(weightStats.goalWeight)} · {formatBodyweightSecondary(weightStats.goalWeight)}</p> : null}
         </Section>
         <Section title="This week" className="dashboard-week" action={<Link className="text-row text-secondary hover:underline" href="/workout/plan">Full plan</Link>}>
           <div>

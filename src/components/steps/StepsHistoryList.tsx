@@ -22,9 +22,11 @@ type StepsEntry = {
 };
 
 export function StepsHistoryList({ entries, timezone }: { entries: StepsEntry[]; timezone?: string }) {
+  const [visibleCount, setVisibleCount] = useState(14);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const deletingEntry = entries.find(entry => entry.id === deleteId);
 
   async function handleDelete() {
     if (!deleteId || isDeleting) {
@@ -68,7 +70,7 @@ export function StepsHistoryList({ entries, timezone }: { entries: StepsEntry[];
           </>
         }
       >
-        {entries.map((entry) => {
+        {entries.slice(0, visibleCount).map((entry) => {
           const label = new Date(`${entry.date}T12:00:00`).toLocaleDateString("en-US", {
             weekday: "short",
             month: "short",
@@ -113,13 +115,14 @@ export function StepsHistoryList({ entries, timezone }: { entries: StepsEntry[];
           );
         })}
       </Rows>
+      {entries.length > visibleCount ? <Button type="button" variant="secondary" className="mt-4 w-full sm:w-auto" onClick={() => setVisibleCount(count => count + 14)}>Show more entries <span className="text-caption">({entries.length - visibleCount} remaining)</span></Button> : null}
 
       <Dialog open={deleteId != null} onOpenChange={(open) => !open && !isDeleting && setDeleteId(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete this step entry?</DialogTitle>
             <DialogDescription>
-              This removes the recorded step count for that day.
+              {deletingEntry ? `This removes ${(deletingEntry.steps ?? 0).toLocaleString()} steps recorded for ${deletingEntry.date}.` : "This removes the recorded step count for that day."}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

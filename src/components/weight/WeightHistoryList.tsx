@@ -37,9 +37,11 @@ export function WeightHistoryList({
   entries: SerializedWeightEntry[];
   timezone?: string;
 }) {
+  const [visibleCount, setVisibleCount] = useState(30);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const deletingEntry = entries.find(entry => entry.id === deleteId);
 
   async function handleDelete() {
     if (!deleteId || isDeleting) {
@@ -65,7 +67,7 @@ export function WeightHistoryList({
   }
 
   const grouped = new Map<string, SerializedWeightEntry[]>();
-  for (const entry of entries) {
+  for (const entry of entries.slice(0, visibleCount)) {
     const bucket = grouped.get(entry.date) ?? [];
     bucket.push(entry);
     grouped.set(entry.date, bucket);
@@ -188,12 +190,14 @@ export function WeightHistoryList({
         </Rows>
       )}
 
+      {entries.length > visibleCount ? <Button type="button" variant="secondary" className="mt-4 w-full sm:w-auto" onClick={() => setVisibleCount(count => count + 30)}>Show more weigh-ins <span className="text-caption">({entries.length - visibleCount} remaining)</span></Button> : null}
+
       <Dialog open={deleteId != null} onOpenChange={() => !isDeleting && setDeleteId(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete this entry?</DialogTitle>
             <DialogDescription>
-              This action cannot be undone.
+              {deletingEntry ? `Remove the ${formatBodyweight(deletingEntry.weight)} weigh-in from ${deletingEntry.date}? This action cannot be undone.` : "This action cannot be undone."}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

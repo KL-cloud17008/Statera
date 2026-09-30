@@ -37,7 +37,7 @@ type WeightChartPoint = {
   avg7: number | null;
   displayWeight: number | null;
   displayAvg7: number | null;
-  projection: number | null;
+  targetPath: number | null;
 };
 
 type TargetDateSummary = {
@@ -102,7 +102,7 @@ export function WeightChart({
       ...point,
       displayWeight: point.weight,
       displayAvg7: point.avg7,
-      projection: null,
+      targetPath: null,
     }));
 
     if (
@@ -115,6 +115,7 @@ export function WeightChart({
     }
 
     const lastPoint = transformed[transformed.length - 1];
+    if (targetDate <= lastPoint.date) return transformed;
     const currentWeight = lastPoint.displayWeight;
     const targetWeight = goalWeight;
     if (currentWeight == null) {
@@ -126,18 +127,18 @@ export function WeightChart({
     );
     const base = transformed.map((point) => ({
       ...point,
-      projection: point.date === lastPoint.date ? currentWeight : null,
+      targetPath: point.date === lastPoint.date ? currentWeight : null,
     }));
 
     if (hasTarget) {
       return base.map((point) => ({
         ...point,
-        projection:
+        targetPath:
           point.date === lastPoint.date
             ? currentWeight
             : point.date === targetDate
               ? targetWeight
-              : point.projection,
+              : point.targetPath,
       }));
     }
 
@@ -149,7 +150,7 @@ export function WeightChart({
         avg7: null,
         displayWeight: null,
         displayAvg7: null,
-        projection: targetWeight,
+        targetPath: targetWeight,
       },
     ].sort((a, b) => a.date.localeCompare(b.date));
   }, [filteredData, goalWeight, showFullGoal, targetDate]);
@@ -166,7 +167,7 @@ export function WeightChart({
   }
 
   const values = chartData.flatMap((point) =>
-    [point.displayWeight, point.displayAvg7, point.projection].filter(
+    [point.displayWeight, point.displayAvg7, point.targetPath].filter(
       (value): value is number => value != null
     )
   );
@@ -176,7 +177,9 @@ export function WeightChart({
 
   return (
     <div>
-      <div className="mb-4 flex justify-end gap-1">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-caption text-secondary">Weight · lb</p>
+        <div role="group" aria-label="Weight chart period" className="flex gap-1">
         {(["1W", "1M", "3M", "ALL"] as const).map((range) => (
           <Button
             key={range}
@@ -190,8 +193,9 @@ export function WeightChart({
             {range}
           </Button>
         ))}
+        </div>
       </div>
-        <div className="relative">
+      {filteredData.length === 0 ? <div className="flex min-h-40 flex-col items-center justify-center gap-3 border border-dashed border-rule bg-sunken px-4 text-center"><p className="text-row text-secondary">No weigh-ins in this period.</p><Button type="button" variant="secondary" onClick={() => setZoom("ALL")}>View all history</Button></div> : <div className="relative">
         {!showFullGoal && goalWeight != null ? (
           <span className="absolute bottom-4 right-5 z-10 max-w-[calc(100%-2rem)] rounded-control border border-rule bg-sunken px-2.5 py-1.5 text-right font-mono text-label text-secondary">
             <span className="block">
@@ -252,7 +256,7 @@ export function WeightChart({
                   ? "Weight"
                   : name === "displayAvg7"
                     ? "7-day average"
-                    : "Projection",
+                    : "Target path",
               ]}
             />
             {showFullGoal && goalLine != null ? (
@@ -280,7 +284,7 @@ export function WeightChart({
             />
             <Line
               isAnimationActive={false}
-              dataKey="projection"
+              dataKey="targetPath"
               stroke="var(--color-chart-3)"
               strokeWidth={2}
               strokeDasharray="6 4"
@@ -290,6 +294,11 @@ export function WeightChart({
             />
           </ComposedChart>
         </ResponsiveContainer>
+        </div>}
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-caption text-secondary" aria-label="Chart legend">
+          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="size-2 rounded-full bg-chart-1" />Weigh-ins</span>
+          <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="h-0.5 w-5 bg-chart-2" />7-day average</span>
+          {chartData.some(point => point.targetPath != null) ? <span className="inline-flex items-center gap-2"><span aria-hidden="true" className="w-5 border-t-2 border-dashed border-chart-3" />Target path</span> : null}
         </div>
         <TargetDateNote summary={targetSummary} />
     </div>
@@ -316,7 +325,7 @@ function TargetDateNote({ summary }: { summary: TargetDateSummary | null }) {
 
   return (
     <Notice tone={isAggressive ? "ember" : "accent"} className="mt-4">
-      Target date: {formatTargetDate(summary.targetDate)}. {paceCopy}
+      Target date: {formatTargetDate(summary.targetDate)}. {paceCopy} The target path connects your latest reading to your chosen goal; it is not a prediction.
     </Notice>
   );
 }

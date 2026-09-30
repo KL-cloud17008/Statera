@@ -80,7 +80,7 @@ export default async function WorkoutPlanPage() {
       ) : null}
 
       <nav aria-label="Plan days" className="plan-day-index my-4 grid grid-cols-7 gap-1">
-        {WEEK_STRUCTURE.map(day => <a key={day.day} aria-label={day.day} href={`#${day.day.toLowerCase()}`} className="inline-flex min-h-12 items-center justify-center border-b border-rule bg-sunken px-1 text-caption font-medium hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent"><span className="sm:hidden">{day.day.slice(0,3)}</span><span className="hidden sm:inline">{day.day}</span></a>)}
+        {WEEK_STRUCTURE.map((day, index) => <a key={day.day} aria-label={day.day} aria-current={[1,2,3,4,5,6,0][index] === trainingDayOfWeek ? "location" : undefined} href={`#${day.day.toLowerCase()}`} className="inline-flex min-h-12 items-center justify-center border-b border-rule bg-sunken px-1 text-caption font-medium aria-[current=location]:border-accent aria-[current=location]:bg-accent-subtle aria-[current=location]:text-accent hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent"><span className="sm:hidden">{day.day.slice(0,3)}</span><span className="hidden sm:inline">{day.day}</span></a>)}
       </nav>
       <details className="border-y border-rule">
         <summary className="flex min-h-14 cursor-pointer items-center text-body font-medium focus-visible:outline-2 focus-visible:outline-accent">Load rules, progression & preparation</summary>

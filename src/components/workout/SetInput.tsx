@@ -44,6 +44,8 @@ export function SetInput({
   const [storageUnavailable, setStorageUnavailable] = useState(!isWorkoutStorageDurable(key));
   const [showNotes, setShowNotes] = useState(Boolean(fields.notes));
   const weightRef = useRef<HTMLInputElement>(null);
+  const repsRef = useRef<HTMLInputElement>(null);
+  const rpeRef = useRef<HTMLInputElement>(null);
   const statusId = `set-status-${planExerciseId ?? "custom"}-${setNumber}`;
   const hasValue = Object.values(fields).some((value) => value.trim());
   const isSaved = Boolean(logged) && !draft;
@@ -124,15 +126,15 @@ export function SetInput({
       <fieldset disabled={pending || disabled} className="grid grid-cols-3 gap-3">
         <label className="grid gap-2 text-caption text-secondary">
           {isFinisher ? "Score" : "Weight · kg"}
-          <Input ref={weightRef} aria-label={`${exerciseName} set ${setNumber} weight`} aria-describedby={statusId} type="number" inputMode="decimal" min="0" max="1500" step="any" value={fields.weight} placeholder="0" onChange={(event) => updateFields({ ...fields, weight: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
+          <Input ref={weightRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); repsRef.current?.focus(); } }} aria-label={`${exerciseName} set ${setNumber} weight`} aria-describedby={statusId} type="number" inputMode="decimal" min="0" max="1500" step="any" value={fields.weight} placeholder="0" onChange={(event) => updateFields({ ...fields, weight: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
         </label>
         <label className="grid gap-2 text-caption text-secondary">
           {isFinisher ? "Notes" : "Reps"}
-          <Input aria-label={`${exerciseName} set ${setNumber} ${isFinisher ? "notes" : "reps"}`} type={isFinisher ? "text" : "number"} inputMode={isFinisher ? "text" : "numeric"} min="0" max="1000" maxLength={isFinisher ? 240 : undefined} step="1" value={isFinisher ? fields.notes : fields.reps} placeholder={isFinisher ? "Optional" : "0"} onChange={(event) => updateFields({ ...fields, [isFinisher ? "notes" : "reps"]: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
+          <Input ref={repsRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); rpeRef.current?.focus(); } }} aria-label={`${exerciseName} set ${setNumber} ${isFinisher ? "notes" : "reps"}`} type={isFinisher ? "text" : "number"} inputMode={isFinisher ? "text" : "numeric"} min="0" max="1000" maxLength={isFinisher ? 240 : undefined} step="1" value={isFinisher ? fields.notes : fields.reps} placeholder={isFinisher ? "Optional" : "0"} onChange={(event) => updateFields({ ...fields, [isFinisher ? "notes" : "reps"]: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
         </label>
         <label className="grid gap-2 text-caption text-secondary">
           RPE
-          <Input aria-label={`${exerciseName} set ${setNumber} RPE`} type="number" inputMode="numeric" min="1" max="10" step="1" value={fields.rpe} placeholder="1–10" onChange={(event) => updateFields({ ...fields, rpe: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
+          <Input ref={rpeRef} enterKeyHint="done" aria-label={`${exerciseName} set ${setNumber} RPE`} type="number" inputMode="numeric" min="1" max="10" step="1" value={fields.rpe} placeholder="1–10" onChange={(event) => updateFields({ ...fields, rpe: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
         </label>
       </fieldset>
       {!isFinisher && (showNotes || fields.notes) ? <label className="grid gap-2 text-caption text-secondary">Notes<Input aria-label={`${exerciseName} set ${setNumber} notes`} value={fields.notes} disabled={pending || disabled} maxLength={240} onChange={(event) => updateFields({ ...fields, notes: event.target.value })} className="min-h-12" placeholder="Optional" /></label> : null}
@@ -149,7 +151,7 @@ export function SetInput({
         {!isFinisher && !showNotes && !fields.notes ? <Button type="button" variant="link" className="min-h-12 text-caption" disabled={pending || disabled} onClick={() => setShowNotes(true)}>Add note</Button> : null}
         <Button type="submit" variant="primary" disabled={!hasValue || pending || disabled || isSaved} className="min-h-12 flex-1 text-body">
           {pending ? <Loader2 className="size-4 animate-spin" /> : error || draft?.status === "pending" ? <RotateCcw className="size-4" /> : <Check className="size-4" />}
-          {pending ? "Saving…" : isSaved ? "Saved" : error || draft?.status === "pending" ? "Retry save" : logged ? "Save changes" : "Save set"}
+          {pending ? "Saving…" : isSaved ? "Saved" : error || draft?.status === "pending" ? "Retry save" : logged ? "Save changes" : `Save set ${setNumber}`}
         </Button>
       </div>
       {draft && !pending ? <Button type="button" variant="link" disabled={disabled} className="min-h-10 justify-self-start text-caption text-secondary" onClick={() => {

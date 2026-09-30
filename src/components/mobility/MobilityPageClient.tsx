@@ -125,12 +125,19 @@ export function MobilityPageClient({
       ) : null}
 
       <Section className="mt-6">
-        <dl className="grid grid-cols-3 gap-4">
+        <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <Figure label="Session" value={sessionCompleted ? "Logged" : "Open"} tone={sessionCompleted ? "accent" : "primary"} />
           <Figure label="Duration" value={program.totalDuration} />
           <Figure label="Desk resets" value={undoCount} />
         </dl>
       </Section>
+
+      <nav aria-label="Mobility routines" className="page-jump-index my-4">
+        <a href="#session">Today’s routine</a>
+        {showLaterRecovery ? <a href="#later-recovery">Later recovery</a> : null}
+        <a href="#back-care">Back care</a>
+        <a href="#desk-reset">Desk reset</a>
+      </nav>
 
       <details className="my-4 border-y border-rule" id="pain-check-in">
         <summary className="flex min-h-14 cursor-pointer items-center text-body font-medium focus-visible:outline-2 focus-visible:outline-accent">Pain check-in & movement guidance</summary>
@@ -367,7 +374,7 @@ function RecoveryModeControl({
               aria-pressed={isActive}
               onClick={() => onChange(option.value)}
               className={cn(
-                "min-h-9 rounded-pill px-3 py-2 text-caption font-medium leading-tight",
+                "min-h-11 rounded-pill px-3 py-2 text-caption font-medium leading-tight",
                 "transition-colors duration-(--duration-fast) ease-(--ease-out) motion-reduce:transition-none",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
                 /* Was bg-primary/text-primary-foreground; primary-foreground

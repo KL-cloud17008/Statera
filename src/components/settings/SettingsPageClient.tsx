@@ -334,7 +334,9 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         className="mb-6"
       />
 
-      <Card className="mb-6 settings-panel">
+      <nav aria-label="Settings sections" className="page-jump-index mb-6"><a href="#profile">Profile</a><a href="#targets">Targets & units</a><a href="#data">Backups</a><a href="#danger-zone">Data removal</a></nav>
+
+      <Card id="profile" className="mb-6 settings-panel">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
@@ -398,7 +400,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <Card className="mb-6 settings-panel">
+      <Card id="targets" className="mb-6 settings-panel">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-sunken text-secondary">
@@ -449,7 +451,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 </p>
               ) : null}
             </Field>
-            <Field label="Goal target date" htmlFor="goalDate">
+            <Field label="Goal target date (optional)" htmlFor="goalDate">
               <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
                 <Input
                   id="goalDate"
@@ -485,6 +487,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 </p>
               ) : null}
             </Field>
+            <p className="text-caption text-tertiary">Leave the target date empty to follow your weight trend without a deadline.</p>
             <div className="grid gap-4 md:grid-cols-3">
               <Field label="Bodyweight unit" htmlFor="bodyweightUnit">
                 <Input id="bodyweightUnit" value={`Pounds (${BODYWEIGHT_UNIT})`} readOnly className="h-12" />
@@ -515,7 +518,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <Card className="mb-6 settings-panel">
+      <Card id="data" className="mb-6 settings-panel">
         <CardHeader>
           <CardTitle>Data</CardTitle>
         </CardHeader>
@@ -553,7 +556,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <Card className="mb-6 settings-panel border-t-2 border-t-critical">
+      <Card id="danger-zone" className="mb-6 settings-panel border-t-2 border-t-critical">
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-control bg-critical-surface text-critical">
@@ -570,8 +573,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </CardContent>
       </Card>
 
-      <Dialog open={!!pendingImport} onOpenChange={(open) => !open && setPendingImport(null)}>
-        <DialogContent>
+      <Dialog open={!!pendingImport} onOpenChange={(open) => !open && !isImporting && setPendingImport(null)}>
+        <DialogContent showCloseButton={!isImporting}>
           <DialogHeader>
             <DialogTitle>Preview destructive import</DialogTitle>
             <DialogDescription>
@@ -630,8 +633,8 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isClearOpen} onOpenChange={setIsClearOpen}>
-        <DialogContent>
+      <Dialog open={isClearOpen} onOpenChange={(open) => !isClearing && setIsClearOpen(open)}>
+        <DialogContent showCloseButton={!isClearing}>
           <DialogHeader>
             <DialogTitle>Clear all data?</DialogTitle>
             <DialogDescription>
