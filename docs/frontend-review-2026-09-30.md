@@ -2,7 +2,11 @@
 
 Base: `4aa7d1bf9d5e95138f90786f21a4a57b3c0faeaa`.
 
-This is a source review and a draft implementation. The execution environment was unavailable. Lint, tests, typecheck, production build, authenticated browser checks and deployment verification have **not** been run. Do not treat this branch as release-ready.
+The development environment became available for release validation. `npm run lint`, `npm test` (74 passing tests), `npm run typecheck` and `npm run build` passed on 30 September 2026. The build used placeholder Supabase/database configuration; no production credentials or database were used.
+
+Rendered QA used a separate, disposable copy with synthetic records and substituted authentication/database adapters. All 12 reviewed routes returned 200 with no page error or horizontal overflow at 320, 375, 390, 768, 1280 and 1440 px (72 checks). Desktop and phone screenshots were inspected. The fixture adapters and screenshots are outside the repository and are not deployed. Automated tests also covered Resume navigation, draft recovery, retries, conflicts, paired-set advancement and completed-history protection.
+
+These checks do not constitute an authenticated production-data audit. Production verification requires Vercel Ready for the exact resulting `origin/main` commit. Full device-keyboard, screen-reader and 200% zoom checks below remain useful follow-up coverage.
 
 ## Scope reviewed
 
@@ -58,4 +62,4 @@ Use synthetic or isolated data for mutations; never overwrite production history
 
 ## Release status
 
-Draft branch only. No changes to main, Supabase or live production were made during this review. Only merge after the checks above pass, then verify the exact resulting origin/main commit has a Vercel production deployment marked Ready.
+Repository checks and synthetic render checks passed. No Supabase data was changed. Production verification is pending: verify the exact resulting origin/main commit has a Vercel production deployment marked Ready.
