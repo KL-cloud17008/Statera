@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v8";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v9";
 export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
 export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
 export const UPPER_A_TITLE = "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders";
@@ -43,7 +43,7 @@ export const FOOT_LOAD_RULES = [
   "Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening or new/worsening rest/night pain.",
   "Protected exercise preferences do not override stopping rules.",
   "Numbness, tingling, weakness, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.",
-  "Calves: skip at sole/plantar pain 3/10 or higher, increasing pain, or symptoms worse afterwards or the following morning. One set per lower day, no automatic increase.",
+  "Calves: three sets per lower day, conditional on foot tolerance. Skip at sole/plantar pain 3/10 or higher, increasing pain, or symptoms worse afterwards or the following morning.",
   "No standing calf substitution. Slow reps, no bouncing or forced end-range stretch. Seated calf work still loads the foot.",
   "Use the fastest pace that keeps gait normal and sole discomfort mild. Speed is optional; tolerable volume matters more."
 ] as const;
@@ -62,7 +62,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Hips: three rounds of abduction/adduction each lower day.",
   "Chest, back/lats, rear delts and arms: supported work across upper days.",
   "Side delts: seated dumbbell lateral raises Friday; front delts also receive pressing.",
-  "Calves: one conditional seated straight-leg slot per lower day.",
+  "Calves: three conditional seated straight-leg sets per lower day; six weekly sets.",
   "Home abs twice weekly: pair one existing movement with dead bugs and a comfortable side-plank variation, replacing overlapping work rather than adding to all four exercises."
 ] as const;
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
@@ -112,12 +112,12 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
-        sets: 1,
+        sets: 3,
         reps: "12-20",
         tempo: "controlled",
         restSeconds: 90,
         targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. One initial set; no automatic increase.",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. Three sets of 12-20 at RPE 5-6; rest 90 seconds between sets.",
         supersetGroup: null,
         exerciseType: "WORKING"
       },
@@ -289,12 +289,12 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
-        sets: 1,
+        sets: 3,
         reps: "12-20",
         tempo: "controlled",
         restSeconds: 90,
         targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. One initial set; no automatic increase.",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. Three sets of 12-20 at RPE 5-6; rest 90 seconds between sets.",
         supersetGroup: null,
         exerciseType: "WORKING"
       },

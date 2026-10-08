@@ -244,6 +244,50 @@ test("concurrent first plan reads do not create duplicate defaults", async () =>
   assert.equal(f.state.plans.length, 5); assert.equal(new Set(f.state.plans.map((plan) => plan.dayOfWeek)).size, 5);
 });
 
+test("both lower-day calf increases retain set one, allow sets two and three, and preserve completed history", async () => {
+  for (const dayOfWeek of [1, 3]) {
+    const f = fixture();
+    const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === dayOfWeek);
+    const calf = oldPlan.exercises.find((exercise) => /Calf/.test(exercise.exerciseName));
+    calf.sets = 1;
+    calf.cues = "One initial set; no automatic increase.";
+    const notes = JSON.stringify({
+      label: oldPlan.sessionName, source: "plan", loadUnit: "kg",
+      dayOfWeek, planTemplateVersion: "five-day-mon-fri-v8",
+      planContentHash: f.load("src/lib/workout-plan-version.ts").getWorkoutPlanContentHash(oldPlan),
+    });
+    const open = f.addSession({ workoutPlanId: oldPlan.id, notes });
+    const completed = f.addSession({ workoutPlanId: oldPlan.id, notes, completed: true, endTime: new Date("2026-10-01") });
+    const saved = { exerciseName: calf.exerciseName, setNumber: 1, weightUsed: 30, repsCompleted: 15, actualRPE: 6, notes: null };
+    f.state.sets.push(
+      { id: "open-calf", workoutSessionId: open.id, ...saved },
+      { id: "historical-calf", workoutSessionId: completed.id, ...saved },
+    );
+    const originalCompleted = copy(completed), originalSets = copy(f.state.sets), oldExercises = copy(oldPlan.exercises);
+    const ensure = f.load("src/lib/workout-plan-seed.ts").ensureDefaultWorkoutPlans;
+    assert.equal(await ensure(f.client, "owner"), true);
+    const current = await f.actions.getSessionWithSets(open.id);
+    assert.equal(current.id, open.id);
+    assert.equal(current.workoutPlan.dayOfWeek, dayOfWeek);
+    const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
+    assert.equal(visible.find((exercise) => exercise.exerciseName === calf.exerciseName).sets, 3);
+    assert.deepEqual(f.state.sets, originalSets);
+    assert.equal(JSON.parse(current.notes).loadUnit, "kg");
+    for (const setNumber of [2, 3]) {
+      const result = await f.actions.logSet(f.form(open.id, { exerciseName: calf.exerciseName, setNumber: String(setNumber), weightUsed: "30", repsCompleted: "15", actualRPE: "6" }));
+      assert.ok(!result.error, result.error);
+    }
+    assert.deepEqual(f.state.sets.filter((set) => set.workoutSessionId === open.id).map((set) => set.setNumber), [1, 2, 3]);
+    assert.deepEqual(f.state.sets.find((set) => set.id === "open-calf"), originalSets[0]);
+    assert.deepEqual(f.state.sets.find((set) => set.id === "historical-calf"), originalSets[1]);
+    assert.deepEqual(f.state.sessions.find((session) => session.id === completed.id), originalCompleted);
+    assert.deepEqual(oldPlan.exercises, oldExercises);
+    const writes = f.state.writes;
+    assert.equal(await ensure(f.client, "owner"), false);
+    assert.equal(f.state.writes, writes);
+  }
+});
+
 test("plan reset never silently discards an active workout", async () => {
   const f = fixture(); f.addSession(); const before = copy(f.state);
   assert.ok((await f.actions.resetCurrentWorkoutPlan()).error);
