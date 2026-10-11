@@ -89,7 +89,7 @@ export default function FlexibilityBalancePage() {
         standards={[
           `${HOME_CORE_SCHEDULE}: two sessions per week, with an easy day between if the schedule moves.`,
           "Best after the gym or later at home. Before the gym, use the easy one-set option and finish fresh.",
-          "Bracing practice, heel slides, leg-slide bird dogs and knee-supported side planks. No equipment needed.",
+          "Lying leg raises, reach-up crunches, leg-slide bird dogs and knee-supported side planks. No equipment needed.",
           "Start at one set and build to two when comfortable. Rest between sets; breathe throughout and keep a few clean reps or seconds in reserve.",
         ]}
         progression={[...HOME_CORE_PROGRESSION]}

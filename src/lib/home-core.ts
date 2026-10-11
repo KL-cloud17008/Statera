@@ -2,16 +2,16 @@ import { formatDate, toLocalDate } from "@/lib/dates";
 import type { MobilityBlock, MobilityExercise } from "@/lib/mobility";
 
 export const HOME_CORE_LOG_TYPE = "HOME_CORE";
-export const HOME_CORE_VERSION = "home-core-v1";
+export const HOME_CORE_VERSION = "home-core-v2";
 export const HOME_CORE_DAYS = [2, 5] as const;
 export const HOME_CORE_SCHEDULE = "Tuesday & Friday";
-export const HOME_CORE_PURPOSE = "Build abdominal and oblique strength while learning to keep your ribs and pelvis steady. Bodyweight only, with supported positions and short movements to start.";
+export const HOME_CORE_PURPOSE = "Build abdominal and oblique strength with leg raises, reach-ups and controlled trunk stability. Bodyweight only; keep your breathing steady and use a range your back can tolerate.";
 export const HOME_CORE_SAFETY = "Keep discomfort at 0–2/10 and stable. At 3/10, shorten the movement or use the easier option. Stop for increasing or sharp pain, symptoms down a leg, numbness, tingling or weakness. New persistent worsening or rest/night pain needs medical advice.";
 export const HOME_CORE_PROGRESSION = [
   "Start with one set of each movement. After two comfortable sessions with steady breathing and no worse symptoms the following day, try two sets.",
-  "At two sets, add one clean repetition per side or five seconds to a hold. Change one thing at a time, keeping effort at 4–6/10.",
-  "Cap heel slides at 10 per side, bird dogs at 8 per side and side-plank holds at 20 seconds before trying a harder variation.",
-  "Progress heel slides to bent-knee dead-bug heel taps; progress leg slides to a low leg lift, then opposite arm and leg. Keep the knee-supported side plank until it is comfortably controlled.",
+  "At two sets, add one clean repetition or five seconds to a hold. For bird dogs, add the repetition on each side. Change one thing at a time, keeping effort at 4–6/10.",
+  "Build leg raises to 10 reps, reach-ups to 15, bird dogs to 8 per side and side-plank holds to 20 seconds before increasing difficulty.",
+  "For leg raises, gradually straighten your knees or lower your legs farther only while your back stays steady. Add a brief pause at the top of reach-ups. Progress bird-dog leg slides to a low leg lift, then opposite arm and leg. Keep the knee-supported side plank until it is comfortably controlled.",
 ] as const;
 
 export type HomeCoreDose = "intro" | "full";
@@ -44,7 +44,6 @@ export const HOME_CORE_VIDEO_REFERENCES = [
 ] as const;
 
 export const HOME_CORE_SOURCES = [
-  { title: "NHS: braced heel slides", href: "https://msk-bexley.nhs.uk/conditions/back-pain/acute-low-back-pain" },
   { title: "AAOS: bird dog and modified side plank", href: "https://www.orthoinfo.org/recovery/spine-conditioning-program/" },
   { title: "ACSM: home strength training and frequency", href: "https://acsm.org/resistance-training-guidelines-update-2026/" },
 ] as const;
@@ -62,30 +61,30 @@ export function getHomeCoreBlock(dose: HomeCoreDose): MobilityBlock {
   const intensity = { ...baseIntensity, effort: dose === "full" ? baseIntensity.effort : "Effort: 3–4/10 for first sessions or before the gym" };
   const exercises: MobilityExercise[] = [
     {
-      id: "core-brace-breathing", name: "Abdominal brace + breathing", category: "Preparation",
-      dose: "1 set of 5 easy breaths", cues: "Knees bent, feet resting; gently tighten your middle and keep breathing.",
-      goal: "Find a light abdominal brace before moving your limbs.",
-      setup: "Lie on your back in a clear floor space, knees bent and feet resting. Keep your head relaxed.",
-      howTo: ["Breathe in comfortably, then breathe out slowly.", "Gently tighten around your waist as if preparing for a light nudge; keep your ribs relaxed.", "Take five normal breaths without letting the brace turn into a breath-hold."],
-      breathingCue: "Use a gentle brace that still lets you breathe and speak.",
-      beginnerPointers: ["A small effort is enough for this preparation step.", "Roll onto your side to get up; take your time changing positions."],
-      commonMistakes: ["Bracing as hard as possible or holding your breath.", "Forcing your lower back hard into the floor."],
-      scaleDown: ["Use a lighter brace. If floor transfers are uncomfortable, practise breathing and bracing sitting upright with feet resting."],
-      completionTarget: "Five relaxed breaths with a gentle brace.", painRule: HOME_CORE_SAFETY,
-      intensity: { ...intensity, effort: "Effort: 2–3/10; preparation only" },
+      id: "core-leg-raise", name: "Lying leg raise", category: "Abdominals / trunk control",
+      dose: `${setLabel} of 6–10 reps`, cues: "Raise both legs slowly; lower only as far as you can keep your back steady.",
+      goal: "Keep your trunk controlled against the pull of your legs as they rise and lower.",
+      setup: "Lie on your back in a clear floor space, arms beside you and head resting. Start with bent knees; use straighter legs if that is already comfortable and controlled.",
+      howTo: ["Gently brace, then raise both legs towards vertical without swinging or lifting your hips.", "Lower slowly over two to three seconds. Stop before your lower back arches or discomfort increases; you do not need to reach the floor.", "Raise again with control, keeping your ribs and pelvis steady.", "Rest 45–60 seconds before the next set or movement."],
+      breathingCue: "Breathe out as you raise your legs; breathe in as you lower. Keep breathing without straining.",
+      beginnerPointers: ["A bent-knee leg raise counts. Use the same controlled range for each rep.", "End the set while you still have a few clean reps in reserve."],
+      commonMistakes: ["Swinging the legs, bouncing or allowing the back to arch.", "Forcing straight legs or lowering to the floor after control is lost."],
+      scaleDown: ["Bend your knees more and shorten the lowering range.", "If raising both legs is uncomfortable, raise one bent knee at a time with the other foot resting; use 4–6 reps per side. Skip the movement if symptoms still increase."],
+      progression: ["Build to 10 clean reps at two sets. Then gradually straighten the knees or increase the lowering range, changing only one thing at a time."],
+      completionTarget: "Six to ten controlled reps with steady breathing and no increase in symptoms.", painRule: HOME_CORE_SAFETY, intensity,
     },
     {
-      id: "core-heel-slide", name: "Braced heel slide", category: "Abdominals / trunk control",
-      dose: `${setLabel} of 6–8 reps per side`, cues: "Slide one heel slowly; keep your pelvis still and stop before your back arches.",
-      goal: "Keep your trunk steady as one leg moves, starting with the heel supported.",
-      setup: "Stay on your back with both knees bent, feet resting and arms relaxed beside you.",
-      howTo: ["Set a gentle brace and breathe out as you slide one heel away.", "Keep the heel touching the floor. Use only the range that lets your pelvis and back stay steady.", "Slide back slowly, then alternate legs. Count each side separately.", "Rest 45–60 seconds before the next set or movement."],
-      breathingCue: "Breathe out during the slide; breathe in as you return.",
-      beginnerPointers: ["A short slide with control counts as a complete rep.", "Keep both arms still at first."],
-      commonMistakes: ["Lifting both legs or rushing.", "Straightening the leg farther than your trunk can control."],
-      scaleDown: ["Shorten the slide or use four reps per side.", "If sliding is uncomfortable, repeat the gentle brace without moving your legs."],
-      progression: ["Build to 10 clean reps per side at two sets, then try bent-knee dead-bug heel taps over a small range."],
-      completionTarget: "The chosen reps with steady breathing and no increase in symptoms.", painRule: HOME_CORE_SAFETY, intensity,
+      id: "core-reach-up", name: "Reach-up crunch", category: "Abdominals / controlled curl-up",
+      dose: `${setLabel} of 10–15 reps`, cues: "Feet resting, arms reaching towards the ceiling; lift your shoulder blades a little and lower slowly.",
+      goal: "Train a controlled abdominal curl without turning the movement into a full sit-up.",
+      setup: "Lie on your back with knees bent and feet resting on the floor. Point both arms towards the ceiling and keep your neck relaxed.",
+      howTo: ["Breathe out and reach upwards as you gently lift your head and shoulder blades a little from the floor.", "Keep your pelvis steady and lower back comfortable; use a small curl rather than sitting up.", "Pause briefly, then lower your shoulders and head slowly. Keep your feet resting throughout.", "Rest 45–60 seconds before the next set or movement."],
+      breathingCue: "Breathe out as you reach up; breathe in as you lower.",
+      beginnerPointers: ["Look upwards and keep a comfortable space between chin and chest.", "A small shoulder-blade lift counts; do not chase height with your neck."],
+      commonMistakes: ["Jerking the head forward, swinging the arms or holding your breath.", "Turning each rep into a full sit-up or pushing through back discomfort."],
+      scaleDown: ["Use a smaller lift or start with six to eight reps.", "If your neck tires, lightly support your head with one hand and reach with the other. Skip the movement if back or neck symptoms increase."],
+      progression: ["Build to 15 controlled reps at two sets. Then add a one- to two-second pause at the top while keeping a few clean reps in reserve."],
+      completionTarget: "Ten to fifteen controlled reaches with relaxed neck, steady breathing and no increase in symptoms.", painRule: HOME_CORE_SAFETY, intensity,
     },
     {
       id: "core-bird-dog-slide", name: "Bird dog — leg slide", category: "Trunk stability / back control",

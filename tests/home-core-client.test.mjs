@@ -69,7 +69,7 @@ test("home core keeps the selected dose after a failed save and supports retry w
   host.button("Build: 2 sets").props.onClick(); host.render();
   const checklist = () => host.nodes(node => node.type === "MobilityChecklist")[0];
   assert.equal(checklist().key, "full");
-  assert.equal(checklist().props.blocks[0].exercises[1].dose, "2 sets of 6–8 reps per side");
+  assert.equal(checklist().props.blocks[0].exercises[1].dose, "2 sets of 10–15 reps");
   let reject;
   env.response = () => new Promise((_resolve, fail) => { reject = fail; });
   const staleSubmit = host.button("Mark core complete").props.onClick;

@@ -76,7 +76,7 @@ export function HomeCoreRoutine({ week }: { week: HomeCoreWeek }) {
       <details className="mt-5 border-y border-rule py-2">
         <summary className="flex min-h-11 cursor-pointer items-center text-row font-medium text-primary focus-visible:outline-2 focus-visible:outline-accent">Progression & comfort</summary>
         <ul className="my-3 space-y-2 text-row text-secondary">{HOME_CORE_PROGRESSION.map((item) => <li key={item}>{item}</li>)}</ul>
-        <p className="pb-3 text-caption text-tertiary">{HOME_CORE_SAFETY} If floor transfers are uncomfortable, use the seated brace and wall options; reduce the dose to what you can control.</p>
+        <p className="pb-3 text-caption text-tertiary">{HOME_CORE_SAFETY} Use the easier variation in each movement’s details when needed. If floor transfers are uncomfortable, skip floor exercises; the wall side-plank option may suit you if foot and shoulder comfort allow.</p>
       </details>
       <details className="mt-2 border-b border-rule py-2">
         <summary className="flex min-h-11 cursor-pointer items-center text-row font-medium text-primary focus-visible:outline-2 focus-visible:outline-accent">Video references & exercise guidance</summary>

@@ -17,7 +17,8 @@ export async function getHomeCoreWeek(userId: string): Promise<HomeCoreWeek | nu
   });
   const completedDates = [...new Set(logs.map((log) => log.date.toISOString().slice(0, 10)))];
   const todayLog = logs.find((log) => log.date.toISOString().slice(0, 10) === today.date);
-  const todayDose = todayLog?.version === `${HOME_CORE_VERSION}:full` ? "full" : todayLog?.version === `${HOME_CORE_VERSION}:intro` ? "intro" : null;
+  // Restore the selected dose from earlier routines without rewriting their logs.
+  const todayDose = [`${HOME_CORE_VERSION}:full`, "home-core-v1:full"].includes(todayLog?.version ?? "") ? "full" : [`${HOME_CORE_VERSION}:intro`, "home-core-v1:intro"].includes(todayLog?.version ?? "") ? "intro" : null;
   return { date: today.date, dayOfWeek: today.dayOfWeek, completedToday: completedDates.includes(today.date), completedDates, todayDose };
 }
 

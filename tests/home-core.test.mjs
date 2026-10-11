@@ -117,7 +117,7 @@ test("core completion is idempotent across concurrent taps and a lost response, 
   assert.ok(["/mobility", "/flexibility-balance", "/"].every((path) => f.state.invalidations.includes(path)));
   f.setTime("2026-10-16T18:00:00Z");
   await f.actions.logHomeCore(f.form("full"));
-  assert.equal(f.state.logs.at(-1).version, "home-core-v1:full");
+  assert.equal(f.state.logs.at(-1).version, "home-core-v2:full");
   assert.equal((await f.actions.getHomeCoreWeek("owner")).todayDose, "full");
 });
 
@@ -150,4 +150,17 @@ test("a failed core save rolls back and the same completion remains retryable", 
   f.state.failWrite = false;
   assert.ok(!(await f.actions.logHomeCore(f.form())).error);
   assert.equal(f.state.writes, 1);
+});
+
+test("revised home core restores a previous completed dose without rewriting its history", async () => {
+  const f = fixture();
+  const previous = { id: "previous-routine", userId: "owner", date: new Date("2026-10-13"), type: "HOME_CORE", completed: true, version: "home-core-v1:full" };
+  f.state.logs.push(previous);
+  const original = copy(f.state.logs);
+  const week = await f.actions.getHomeCoreWeek("owner");
+  assert.equal(week.completedToday, true);
+  assert.equal(week.todayDose, "full");
+  await f.actions.logHomeCore(f.form("intro"));
+  assert.equal(f.state.writes, 0);
+  assert.deepEqual(f.state.logs, original);
 });

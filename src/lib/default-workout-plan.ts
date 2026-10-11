@@ -63,7 +63,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Chest, back/lats, rear delts and arms: supported work across upper days.",
   "Side delts: seated dumbbell lateral raises Friday; front delts also receive pressing.",
   "Calves: three conditional seated straight-leg sets per lower day; six weekly sets.",
-  "Home core twice weekly (Tuesday/Friday): beginner bracing, heel slides, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression."
+  "Home core twice weekly (Tuesday/Friday): lying leg raises, reach-up crunches, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression."
 ] as const;
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
   "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.",
