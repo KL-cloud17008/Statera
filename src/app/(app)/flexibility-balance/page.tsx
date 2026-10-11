@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, CircleDot, Footprints, RotateCcw, ShieldCheck, Spline, type LucideIcon } from "lucide-react";
+import { Activity, ArrowRight, CircleDot, Footprints, RotateCcw, ShieldCheck, Spline, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Figure, PageTitle, Section } from "@/components/ui/ledger";
+import { HOME_CORE_PROGRESSION, HOME_CORE_PURPOSE, HOME_CORE_SAFETY, HOME_CORE_SCHEDULE, getHomeCoreBlock } from "@/lib/home-core";
 import {
   BACK_CARE_DECOMPRESSION,
   FOOT_FLARE_RECOVERY_INTRO,
@@ -20,7 +21,7 @@ import {
 export const metadata: Metadata = {
   title: "Flexibility & Balance | Athanor",
   description:
-    "The reference for each mobility block — its purpose, standards, and progression logic. Perform the work on the Mobility page.",
+    "The reference for home core strength, mobility and balance — purpose, standards and progression. Perform and log routines on Mobility.",
 };
 
 /**
@@ -53,10 +54,10 @@ export default function FlexibilityBalancePage() {
     <>
       <PageTitle
         title="Flexibility & Balance"
-        lead="Movement reference for ankle range, foot control, and supported balance."
+        lead="Home core strength, ankle range, foot control and supported balance."
       />
 
-      <nav aria-label="Movement reference sections" className="page-jump-index my-4"><a href="#ankle-range">Ankle range</a><a href="#supported-balance">Balance</a><a href="#weekday-recovery">Recovery</a><a href="#walking-resilience">Walking</a><a href="#back-care">Back care</a></nav>
+      <nav aria-label="Movement reference sections" className="page-jump-index my-4"><a href="#home-core">Home core</a><a href="#ankle-range">Ankle range</a><a href="#supported-balance">Balance</a><a href="#weekday-recovery">Recovery</a><a href="#walking-resilience">Walking</a><a href="#back-care">Back care</a></nav>
 
       {/* Figures print directly on the canvas. Ink chrome is reserved for the
           rail and the masthead — a dark block mid-page is the card-era idiom
@@ -78,6 +79,25 @@ export default function FlexibilityBalancePage() {
           <ContextLine label="Rest day" value="10-15 min, no fatigue or conditioning" href="/mobility#session" />
         </div>
       </Section>
+
+      <ReferenceBlock
+        id="home-core"
+        icon={Activity}
+        eyebrow="Home strength / abdominals + obliques"
+        title="Beginner home core"
+        purpose={HOME_CORE_PURPOSE}
+        standards={[
+          `${HOME_CORE_SCHEDULE}: two sessions per week, with an easy day between if the schedule moves.`,
+          "Best after the gym or later at home. Before the gym, use the easy one-set option and finish fresh.",
+          "Bracing practice, heel slides, leg-slide bird dogs and knee-supported side planks. No equipment needed.",
+          "Start at one set and build to two when comfortable. Rest between sets; breathe throughout and keep a few clean reps or seconds in reserve.",
+        ]}
+        progression={[...HOME_CORE_PROGRESSION]}
+        safety={HOME_CORE_SAFETY}
+        drillCount={getHomeCoreBlock("intro").exercises.length}
+        href="/mobility#home-core"
+        hrefLabel="Open home core routine"
+      />
 
       <ReferenceBlock
         id="ankle-range"
@@ -203,7 +223,7 @@ function ReferenceBlock({
   hrefLabel: string;
 }) {
   return (
-    <Section id={id}>
+    <Section id={id} className={id === "home-core" ? "scroll-mt-24" : undefined}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-label text-tertiary">{eyebrow}</p>

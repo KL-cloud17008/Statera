@@ -89,7 +89,7 @@ Side delts: seated dumbbell lateral raises Friday; front delts also receive pres
 
 Calves: three conditional seated straight-leg sets per lower day; six weekly sets.
 
-Home abs twice weekly: pair one existing movement with dead bugs and a comfortable side-plank variation, replacing overlapping work rather than adding to all four exercises.
+Home core twice weekly (Tuesday/Friday): beginner bracing, heel slides, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression.
 
 Pain 0-2/10: acceptable only if stable.
 

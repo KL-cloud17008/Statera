@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { getTodayMobilityLogs } from "@/actions/mobility";
+import { getHomeCoreWeek } from "@/actions/home-core";
 import { getLatestPainCheckIn } from "@/actions/pain";
 import { MobilityPageClient } from "@/components/mobility/MobilityPageClient";
 import { getTodayDateString, getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
@@ -9,7 +10,7 @@ import { getMobilityProgramDay } from "@/lib/mobility";
 
 export const metadata: Metadata = {
   title: "Mobility | Athanor",
-  description: "Run pre-workout, post-workout, and undo-sitting mobility flows and log completion.",
+  description: "Run mobility and recovery flows, practise beginner home core strength, and log completion.",
 };
 
 export default async function MobilityPage() {
@@ -31,9 +32,10 @@ export default async function MobilityPage() {
   );
   const dayOfWeek = getMobilityProgramDay(activeSession.sessionKey, calendarDayOfWeek);
 
-  const [logs, painCheckIn] = await Promise.all([
+  const [logs, painCheckIn, homeCoreWeek] = await Promise.all([
     getTodayMobilityLogs(user.id, user.timezone),
     getLatestPainCheckIn(user.id),
+    getHomeCoreWeek(user.id),
   ]);
   const completedTypes = logs.map((log) => log.type);
   const todayFootPain =
@@ -56,6 +58,7 @@ export default async function MobilityPage() {
       painCheckIn={painCheckIn}
       todayFootPain={todayFootPain}
       timezone={user.timezone}
+      homeCoreWeek={homeCoreWeek}
     />
   );
 }

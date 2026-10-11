@@ -9,6 +9,8 @@ import { logMobility } from "@/actions/mobility";
 import type { SerializedPainCheckIn } from "@/actions/pain";
 import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
 import { MobilityChecklist } from "./MobilityChecklist";
+import { HomeCoreRoutine } from "./HomeCoreRoutine";
+import type { HomeCoreWeek } from "@/lib/home-core";
 import {
   BACK_CARE_DECOMPRESSION,
   getRequiredLaterRecoveryBlocks,
@@ -34,6 +36,7 @@ export function MobilityPageClient({
   painCheckIn = null,
   todayFootPain = null,
   timezone,
+  homeCoreWeek = null,
 }: {
   /**
    * The mobility program index, already resolved from the active or next
@@ -49,6 +52,7 @@ export function MobilityPageClient({
   painCheckIn?: SerializedPainCheckIn | null;
   todayFootPain?: number | null;
   timezone?: string;
+  homeCoreWeek?: HomeCoreWeek | null;
 }) {
   const router = useRouter();
   const [pendingType, setPendingType] = useState<string | null>(null);
@@ -112,7 +116,7 @@ export function MobilityPageClient({
       <PageTitle
         eyebrow={dayLabel ?? program.dayName}
         title="Mobility"
-        lead="Preparation and recovery for your training day."
+        lead="Preparation, recovery and home core strength."
       />
 
       {symptomNote ? <Notice tone="ember" className="mt-4">{symptomNote}</Notice> : null}
@@ -134,6 +138,7 @@ export function MobilityPageClient({
 
       <nav aria-label="Mobility routines" className="page-jump-index my-4">
         <a href="#session">Today’s routine</a>
+        <a href="#home-core">Home core</a>
         {showLaterRecovery ? <a href="#later-recovery">Later recovery</a> : null}
         <a href="#back-care">Back care</a>
         <a href="#desk-reset">Desk reset</a>
@@ -198,6 +203,8 @@ export function MobilityPageClient({
           </div>
         )}
       </RoutineSection>
+
+      {homeCoreWeek ? <HomeCoreRoutine key={homeCoreWeek.date} week={homeCoreWeek} /> : null}
 
         {showLaterRecovery ? (
       <RoutineSection
