@@ -18,9 +18,9 @@ Increase load only when all sets reach the top of the rep range with clean form 
 
 RPE 7 is approximately three clean repetitions in reserve. No failure or grinding.
 
-Working curls: Monday 2 introductory / 3 target; Wednesday 3 introductory / 4 target. Confirm tolerable recovery, normal gait and stable performance before enabling optional final sets. No calendar-based increase.
+Working hamstring curls: Monday 2 introductory / 3 target; Wednesday 3 introductory / 4 target. Confirm tolerable recovery, normal gait and stable performance before enabling optional final sets. No calendar-based increase.
 
-Protected lower-body work: rest approximately 2-3 minutes. Working curls: 90-120 seconds.
+Protected lower-body work: rest approximately 2-3 minutes. Working hamstring curls: 90-120 seconds.
 
 Supersets: quick safe transition, then enough recovery to retain control; do not chase breathlessness.
 
@@ -34,6 +34,7 @@ Supersets: quick safe transition, then enough recovery to retain control; do not
 - E1 Seated Leg Curl — Working Sets: 3 × 10-15, RPE 7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Introduction: 2 working sets; target: 3. Final set optional only after confirming tolerable recovery, normal gait and stable performance. No automatic weekly increase. Lying Leg Curl is the equipment alternative if seated is occupied; this working slot is distinct from the easy primer. Hips heavy, smooth curl, slow return. Rest 90-120 seconds.
 - F1 Hip Abduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
 - F2 Hip Adduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
+- G1 Seated Machine Preacher Curl: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session. Rest 90 seconds between sets.
 
 ## Upper A — Incline Machine Press + Row / Pulldowns + Shoulders
 
@@ -55,6 +56,7 @@ Supersets: quick safe transition, then enough recovery to retain control; do not
 - C2 Seated Leg Curl: 4 × 10-12, RPE 7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Introduction: 3 working sets; target: 4. Final set optional only after confirming tolerable recovery, normal gait and stable performance. No automatic weekly increase. Hips heavy, smooth curl, pause gently, slow return, no jerking. Rest 90-120 seconds.
 - D1 Hip Adduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
 - D2 Hip Abduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
+- E1 Seated Machine Preacher Curl: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session. Rest 90 seconds between sets.
 
 ## Upper B — Machine Chest + Dual Pulldown / Arms
 
@@ -84,6 +86,8 @@ Working hamstring curls: 5 introductory / 7 target; Monday primer and Wednesday 
 Hips: three rounds of abduction/adduction each lower day.
 
 Chest, back/lats, rear delts and arms: supported work across upper days.
+
+Direct biceps: nine weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3, barbell preacher curl Friday 2.
 
 Side delts: seated dumbbell lateral raises Friday; front delts also receive pressing.
 

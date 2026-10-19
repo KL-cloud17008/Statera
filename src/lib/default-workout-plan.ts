@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v9";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v10";
 export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
 export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
 export const UPPER_A_TITLE = "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders";
@@ -32,8 +32,8 @@ export const PROGRESSIVE_OVERLOAD_RULES = [
   "Add clean reps before load.",
   "Increase load only when all sets reach the top of the rep range with clean form and assigned RPE.",
   "RPE 7 is approximately three clean repetitions in reserve. No failure or grinding.",
-  "Working curls: Monday 2 introductory / 3 target; Wednesday 3 introductory / 4 target. Confirm tolerable recovery, normal gait and stable performance before enabling optional final sets. No calendar-based increase.",
-  "Protected lower-body work: rest approximately 2-3 minutes. Working curls: 90-120 seconds.",
+  "Working hamstring curls: Monday 2 introductory / 3 target; Wednesday 3 introductory / 4 target. Confirm tolerable recovery, normal gait and stable performance before enabling optional final sets. No calendar-based increase.",
+  "Protected lower-body work: rest approximately 2-3 minutes. Working hamstring curls: 90-120 seconds.",
   "Supersets: quick safe transition, then enough recovery to retain control; do not chase breathlessness."
 ] as const;
 export const FOOT_LOAD_RULES = [
@@ -61,6 +61,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Working hamstring curls: 5 introductory / 7 target; Monday primer and Wednesday warm-up are separate preparation.",
   "Hips: three rounds of abduction/adduction each lower day.",
   "Chest, back/lats, rear delts and arms: supported work across upper days.",
+  "Direct biceps: nine weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3, barbell preacher curl Friday 2.",
   "Side delts: seated dumbbell lateral raises Friday; front delts also receive pressing.",
   "Calves: three conditional seated straight-leg sets per lower day; six weekly sets.",
   "Home core twice weekly (Tuesday/Friday): lying leg raises, reach-up crunches, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression."
@@ -174,6 +175,17 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         targetRPE: "5-6",
         cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.",
         supersetGroup: "F",
+        exerciseType: "WORKING"
+      },
+      {
+        exerciseName: "G1 Seated Machine Preacher Curl",
+        sets: 2,
+        reps: "10-15",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "6-7",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session.",
+        supersetGroup: null,
         exerciseType: "WORKING"
       }
     ]
@@ -351,6 +363,17 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         targetRPE: "5-6",
         cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.",
         supersetGroup: "D",
+        exerciseType: "WORKING"
+      },
+      {
+        exerciseName: "E1 Seated Machine Preacher Curl",
+        sets: 2,
+        reps: "10-15",
+        tempo: "controlled",
+        restSeconds: 90,
+        targetRPE: "6-7",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session.",
+        supersetGroup: null,
         exerciseType: "WORKING"
       }
     ]

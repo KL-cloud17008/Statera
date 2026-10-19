@@ -76,6 +76,7 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "cable-lateral-raise", name: "Cable Lateral Raise", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 120, source: "builtin" },
   { id: "face-pull", name: "Face Pull", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "12-20", defaultRestSeconds: 120, source: "builtin" },
   { id: "barbell-curl", name: "Barbell Curl", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
+  { id: "seated-machine-preacher-curl", name: "Seated Machine Preacher Curl", muscleGroup: "Arms", defaultSets: 2, defaultReps: "10-15", defaultRestSeconds: 90, source: "builtin" },
   { id: "hammer-curl", name: "Hammer Curl", muscleGroup: "Arms", defaultSets: 3, defaultReps: "10-12", defaultRestSeconds: 60, source: "builtin" },
   { id: "triceps-pushdown", name: "Triceps Pushdown", muscleGroup: "Arms", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 60, source: "builtin" },
   { id: "rope-triceps-pressdown", name: "Rope Triceps Pressdown", muscleGroup: "Arms", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 120, source: "builtin" },

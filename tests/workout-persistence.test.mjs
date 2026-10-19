@@ -288,6 +288,57 @@ test("both lower-day calf increases retain set one, allow sets two and three, an
   }
 });
 
+test("both lower-day preacher curl additions refresh open sessions and future plans without changing completed history", async () => {
+  for (const dayOfWeek of [1, 3]) {
+    const f = fixture();
+    const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === dayOfWeek);
+    oldPlan.exercises = oldPlan.exercises.filter((exercise) => !exercise.exerciseName.includes("Machine Preacher Curl"));
+    const notes = JSON.stringify({
+      label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek,
+      planTemplateVersion: "five-day-mon-fri-v9",
+      planContentHash: f.load("src/lib/workout-plan-version.ts").getWorkoutPlanContentHash(oldPlan),
+    });
+    const open = f.addSession({ workoutPlanId: oldPlan.id, notes });
+    const completed = f.addSession({ workoutPlanId: oldPlan.id, notes, completed: true, endTime: new Date("2026-10-12") });
+    const saved = { exerciseName: oldPlan.exercises[1].exerciseName, setNumber: 1, weightUsed: 20, repsCompleted: 10, actualRPE: 6, notes: null };
+    f.state.sets.push(
+      { id: "open-lower-set", workoutSessionId: open.id, ...saved },
+      { id: "historical-lower-set", workoutSessionId: completed.id, ...saved },
+    );
+    const originalCompleted = copy(completed), originalSets = copy(f.state.sets), oldExercises = copy(oldPlan.exercises);
+    const plans = await f.actions.getWorkoutPlans("owner");
+    for (const day of [1, 3]) {
+      const lastExercise = plans.find((plan) => plan.dayOfWeek === day).exercises.at(-1);
+      assert.match(lastExercise.exerciseName, /Seated Machine Preacher Curl$/);
+      assert.equal(lastExercise.sets, 2);
+    }
+    const current = await f.actions.getSessionWithSets(open.id);
+    assert.equal(current.id, open.id);
+    assert.notEqual(current.workoutPlanId, oldPlan.id);
+    assert.equal(JSON.parse(current.notes).planTemplateVersion, "five-day-mon-fri-v10");
+    const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
+    const curl = visible.at(-1);
+    assert.match(curl.exerciseName, /Seated Machine Preacher Curl$/);
+    assert.equal(curl.sets, 2);
+    assert.equal(curl.supersetGroup, null);
+    assert.deepEqual(f.state.sets, originalSets);
+    for (const setNumber of [1, 2]) {
+      const result = await f.actions.logSet(f.form(open.id, { exerciseName: curl.exerciseName, setNumber: String(setNumber), weightUsed: "15", repsCompleted: "12", actualRPE: "6" }));
+      assert.ok(!result.error, result.error);
+      const persisted = f.state.sets.find((set) => set.workoutSessionId === open.id && set.exerciseName === curl.exerciseName && set.setNumber === setNumber);
+      assert.equal(persisted.planExerciseId, curl.id);
+    }
+    assert.equal(f.state.sets.filter((set) => set.workoutSessionId === open.id && set.exerciseName === curl.exerciseName).length, 2);
+    assert.deepEqual(f.state.sets.find((set) => set.id === "open-lower-set"), originalSets[0]);
+    assert.deepEqual(f.state.sets.find((set) => set.id === "historical-lower-set"), originalSets[1]);
+    assert.deepEqual(f.state.sessions.find((session) => session.id === completed.id), originalCompleted);
+    assert.deepEqual(oldPlan.exercises, oldExercises);
+    const writes = f.state.writes;
+    await f.actions.getWorkoutPlans("owner");
+    assert.equal(f.state.writes, writes);
+  }
+});
+
 test("plan reset never silently discards an active workout", async () => {
   const f = fixture(); f.addSession(); const before = copy(f.state);
   assert.ok((await f.actions.resetCurrentWorkoutPlan()).error);

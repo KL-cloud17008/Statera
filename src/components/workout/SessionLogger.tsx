@@ -151,9 +151,9 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
 
   return (
     <div className="mt-5">
-      {hasIntro ? <Notice className="mb-4">Working curls: {exercises.filter((exercise) => getIntroductorySets(exercise) < exercise.sets).map(formatSetPrescription).join(", ")} sets. Introductory volume stays active until you confirm tolerable recovery, normal gait and stable performance. No automatic increase.
+      {hasIntro ? <Notice className="mb-4">Working hamstring curls: {exercises.filter((exercise) => getIntroductorySets(exercise) < exercise.sets).map(formatSetPrescription).join(", ")} sets. Introductory volume stays active until you confirm tolerable recovery, normal gait and stable performance. No automatic increase.
         {!targetConfirmed ? <Button type="button" variant="secondary" className="mt-3 min-h-12" disabled={saving || pending !== null} onClick={() => {
-          if (window.confirm("Have you confirmed tolerable recovery, normal gait and stable performance? Enable the optional final working curl set for this session?")) writeWorkoutStorage(volumeKey, "confirmed");
+          if (window.confirm("Have you confirmed tolerable recovery, normal gait and stable performance? Enable the optional final working hamstring curl set for this session?")) writeWorkoutStorage(volumeKey, "confirmed");
         }}>Confirm recovery & enable target set</Button> : <p>Target set enabled for this session.</p>}
       </Notice> : null}
       {/Lower B/.test(sessionName) ? <Notice className="mb-4">Warm-up: Lying Leg Curl, 1-2 easy sets of 12-15. Not working hamstring volume.</Notice> : null}

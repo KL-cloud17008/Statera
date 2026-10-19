@@ -52,22 +52,22 @@ const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts
 test("revised programme has exact order, prescriptions and introductory totals", () => {
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const prescription = loadTypescriptModule("src/lib/workout-prescription.ts");
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "five-day-mon-fri-v9");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "five-day-mon-fri-v10");
   assert.deepEqual(Array.from(days, d => d.dayOfWeek), [1,2,3,4,5]);
   const expected = [
-    [["A1 Lying Leg Curl — Easy Primer",2,"10-15","5-6"],["B1 Walking Lunges",2,"6-10 steps per leg","5-6"],["B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",3,"12-20","5-6"],["C1 Pendulum Squat",3,"8-12","6-7"],["D1 Seated Leg Extension",2,"10-15","6-7"],["E1 Seated Leg Curl — Working Sets",3,"10-15","7"],["F1 Hip Abduction Machine",3,"12-20","5-6"],["F2 Hip Adduction Machine",3,"12-20","5-6"]],
+    [["A1 Lying Leg Curl — Easy Primer",2,"10-15","5-6"],["B1 Walking Lunges",2,"6-10 steps per leg","5-6"],["B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",3,"12-20","5-6"],["C1 Pendulum Squat",3,"8-12","6-7"],["D1 Seated Leg Extension",2,"10-15","6-7"],["E1 Seated Leg Curl — Working Sets",3,"10-15","7"],["F1 Hip Abduction Machine",3,"12-20","5-6"],["F2 Hip Adduction Machine",3,"12-20","5-6"],["G1 Seated Machine Preacher Curl",2,"10-15","6-7"]],
     [["A1 Incline Machine Chest Press",3,"8-12","6-7"],["A2 Seated Chest-Supported Machine Row",3,"8-12","6-7"],["B1 Neutral-Grip Lat Pulldown",2,"8-12","6-7"],["B2 Close-Grip Lat Pulldown",1,"10-12","5-6"],["C1 Seated Machine Shoulder Press",2,"8-12","6-7"],["D1 Seated Machine Chest Fly",2,"12-15","6-7"],["D2 Reverse Pec Deck / Seated Machine Reverse Fly",2,"12-20","6-7"]],
-    [["A1 Lying Leg Curl (warm-up)",2,"12-15","4-5"],["B1 Supported Stationary Bulgarian Split Squat",3,"8-10 per leg","5-6"],["B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",3,"12-20","5-6"],["B3 Pendulum Squat",3,"8-12","6-7"],["C1 Seated Leg Extension",2,"10-15","6"],["C2 Seated Leg Curl",4,"10-12","7"],["D1 Hip Adduction Machine",3,"12-20","5-6"],["D2 Hip Abduction Machine",3,"12-20","5-6"]],
+    [["A1 Lying Leg Curl (warm-up)",2,"12-15","4-5"],["B1 Supported Stationary Bulgarian Split Squat",3,"8-10 per leg","5-6"],["B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",3,"12-20","5-6"],["B3 Pendulum Squat",3,"8-12","6-7"],["C1 Seated Leg Extension",2,"10-15","6"],["C2 Seated Leg Curl",4,"10-12","7"],["D1 Hip Adduction Machine",3,"12-20","5-6"],["D2 Hip Abduction Machine",3,"12-20","5-6"],["E1 Seated Machine Preacher Curl",2,"10-15","6-7"]],
     null,
     [["A1 Seated Machine Chest Fly",2,"12-15","6"],["A2 Reverse Pec Deck / Seated Machine Reverse Fly",2,"12-20","6"],["B1 Back Extension — Hyperextension Bench",2,"10-15","5-6"],["B2 Seated Dumbbell Lateral Raise",3,"12-20","6-7"],["C1 Seated Barbell Preacher Curl",2,"10-15","6-7"],["C2 Seated Triceps-Extension Machine",2,"10-15","6-7"]],
   ];
   days.forEach((d,i) => { if(expected[i]) assert.deepEqual(JSON.parse(JSON.stringify(d.exercises.map(e => [e.exerciseName,e.sets,e.reps,e.targetRPE]))),expected[i]); });
   assert.deepEqual(JSON.parse(JSON.stringify(days[3])), JSON.parse(readFileSync("tests/fixtures/thursday-programme.json","utf8")));
   const total = (d, intro=false) => d.exercises.filter(e=>e.exerciseType!=="WARMUP").reduce((n,e)=>n+(intro?prescription.getIntroductorySets(e):e.sets),0);
-  assert.deepEqual(Array.from(days,d=>total(d)),[21,15,21,20,13]);
-  assert.deepEqual(Array.from(days,d=>total(d,true)),[20,15,20,20,13]);
-  assert.equal(days.reduce((n,d)=>n+total(d),0),90);
-  assert.equal(days.reduce((n,d)=>n+total(d,true),0),88);
+  assert.deepEqual(Array.from(days,d=>total(d)),[23,15,23,20,13]);
+  assert.deepEqual(Array.from(days,d=>total(d,true)),[22,15,22,20,13]);
+  assert.equal(days.reduce((n,d)=>n+total(d),0),94);
+  assert.equal(days.reduce((n,d)=>n+total(d,true),0),92);
   const quads=days.flatMap(d=>d.exercises).filter(e=>/Lunges|Bulgarian|Pendulum|Leg Extension/.test(e.exerciseName));
   assert.equal(quads.reduce((n,e)=>n+e.sets,0),15);
   assert.equal(days[2].exercises[0].exerciseType,"WARMUP");
