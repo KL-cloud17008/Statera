@@ -37,6 +37,8 @@ function fixture(sharedStorage = new Map()) {
   class ClockDate extends Date { constructor(...args) { super(...(args.length ? args : [env.now])); } static now() { return env.now; } }
   env.actions = {
     logSet: async (form) => { env.requests.push(Object.fromEntries(form)); return { savedSet: saved }; },
+    saveCompletedWorkoutSet: async (form) => { env.requests.push({ history: true, ...Object.fromEntries(form) }); return { savedSet: saved }; },
+    deleteCompletedWorkoutSet: async (form) => { env.requests.push({ removeHistory: true, ...Object.fromEntries(form) }); return {}; },
     startWorkoutSession: async (planId) => { env.requests.push({ planId }); return { sessionId: "session" }; },
     completeSession: async (sessionId) => { env.requests.push({ complete: sessionId }); return {}; },
     discardWorkoutSession: async (sessionId) => { env.requests.push({ discard: sessionId }); return {}; },
@@ -136,7 +138,66 @@ test("Resume and View render direct links without invoking the start action", ()
   assert.equal(resume.nodes("Button")[0].props.onClick, undefined);
   const view = env.mount("WorkoutSessionActionButton", { planId: "plan", status: "view" });
   assert.equal(view.nodes("Link")[0].props.href, "/workout/history");
+  const specific = env.mount("WorkoutSessionActionButton", { planId: "plan", status: "view", sessionId: "saved-upper-a" });
+  assert.equal(specific.nodes("Link")[0].props.href, "/workout/history/saved-upper-a");
   assert.deepEqual(env.requests, []);
+});
+
+test("history set entry uses the explicit correction action and retains interrupted drafts", async () => {
+  const env = fixture(); let calls = 0;
+  env.actions.saveCompletedWorkoutSet = async (form) => {
+    env.requests.push({ history: true, ...Object.fromEntries(form) });
+    if (++calls === 1) throw new Error("Connection interrupted");
+    return { savedSet: saved };
+  };
+  const host = env.mount("SetInput", { ...entryProps(), saveMode: "history", showPrevious: false });
+  host.change("weight", "42.5").change("reps", "10").change("RPE", "7");
+  host.submit(); await flush(); host.render();
+  assert.match(text(host.tree), /Connection interrupted/);
+  assert.equal(host.input("weight").props.value, "42.5");
+  host.submit(); await flush(); host.render();
+  assert.equal(env.requests.length, 2);
+  assert.ok(env.requests.every((request) => request.history));
+  assert.equal(env.requests[0].expectedSet, "null");
+  assert.equal(env.lib.readWorkoutStorage(env.lib.workoutDraftKey("session", "Machine Row", 1)), null);
+});
+
+test("history editor exposes missing sets, additional exercises and saved-set removal without starting a session", async () => {
+  const env = fixture(), props = loggerProps();
+  const host = env.mount("WorkoutHistoryEditor", props);
+  let editor = host.nodes("SetInput")[0];
+  assert.equal(editor.props.saveMode, "history");
+  assert.equal(editor.props.logged, null);
+  assert.equal(editor.props.prefill, undefined, "missed performances are not fabricated from previous sessions");
+  editor.props.onSaved("", saved); host.render();
+  assert.equal(host.nodes("SetInput")[0].props.setNumber, 2);
+  host.button("Add set").props.onClick(); host.render();
+  assert.equal(host.nodes("SetInput")[0].props.setNumber, 3);
+  host.change("Additional exercise name", "Standing curl");
+  host.nodes("form")[0].props.onSubmit({ preventDefault() {} }); host.render();
+  editor = host.nodes("SetInput")[0];
+  assert.equal(editor.props.exerciseName, "Standing curl");
+  editor.props.onSaved("", saved); host.render();
+  host.nodes("select")[0].props.onChange({ target: { value: "Standing curl" } }); host.render();
+  env.window.confirm = () => false;
+  await host.button("Remove saved set").props.onClick(); await flush(); host.render();
+  assert.equal(env.requests.length, 0);
+  env.window.confirm = () => true;
+  host.button("Remove saved set").props.onClick(); await flush(); host.render();
+  assert.equal(env.requests.length, 1);
+  assert.equal(env.requests[0].removeHistory, true);
+  assert.equal(env.requests[0].exerciseName, "Standing curl");
+  assert.equal(host.nodes("SetInput")[0].props.logged, null);
+});
+
+test("a removed historical set can be accepted from another tab without reviving stale saved values", async () => {
+  const env = fixture(); let missing = false;
+  env.actions.saveCompletedWorkoutSet = async () => ({ error: "Removed elsewhere", conflict: true, savedSet: null });
+  const host = env.mount("SetInput", { ...entryProps(), logged: { setNumber: 1, ...saved }, saveMode: "history", onMissing: () => { missing = true; } });
+  host.change("reps", "12"); host.submit(); await flush(); host.render();
+  host.button("Use saved set").props.onClick(); host.render();
+  assert.equal(missing, true);
+  assert.equal(env.lib.readWorkoutStorage(env.lib.workoutDraftKey("session", "Machine Row", 1)), null);
 });
 
 test("Start guards double taps, resets after interruption, and navigates after retry", async () => {

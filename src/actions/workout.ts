@@ -21,7 +21,7 @@ import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/tr
 import { WORKOUT_LOAD_UNIT, poundsToKg, workoutLoadToKg } from "@/lib/units";
 import type { WorkoutTemplateExercise } from "@/lib/exercise-library";
 import { withWorkoutTransaction } from "@/lib/workout-transaction";
-import { parseWorkoutSetInput, sameSavedWorkoutSet, type SavedWorkoutSet } from "@/lib/workout-set-input";
+import { parseWorkoutSetBaseline, parseWorkoutSetInput, parseWorkoutSetTarget, sameSavedWorkoutSet, type SavedWorkoutSet } from "@/lib/workout-set-input";
 
 type WorkoutSessionActionResult = {
   error?: string;
@@ -329,11 +329,21 @@ export async function startCustomWorkoutSession(formData: FormData): Promise<Wor
 }
 
 export async function logSet(formData: FormData): Promise<WorkoutMutationResult> {
+  return saveWorkoutSet(formData, false);
+}
+
+/** Explicit corrections to completed history never reopen or re-date a session. */
+export async function saveCompletedWorkoutSet(formData: FormData): Promise<WorkoutMutationResult> {
+  return saveWorkoutSet(formData, true);
+}
+
+async function saveWorkoutSet(formData: FormData, editingHistory: boolean): Promise<WorkoutMutationResult> {
   const user = await getOrCreateCurrentUser();
   if (!user) return { error: "Not authenticated" };
   const parsed = parseWorkoutSetInput(formData);
   if (!parsed.value) return { error: parsed.error };
   const { sessionId, exerciseName, setNumber, weightUsed, repsCompleted, actualRPE, duration, notes, isAMRAP, expectedSet, hasDuration, hasAMRAP } = parsed.value;
+  if (editingHistory && expectedSet === undefined) return { error: "Reload this saved workout before making changes." };
   if (isAtHomePrimerExerciseName(exerciseName)) return { error: "Session prep is not a loggable training exercise" };
   const result = await withWorkoutTransaction(prisma, user.id, async (tx): Promise<WorkoutMutationResult> => {
     const session = await tx.workoutSession.findFirst({
@@ -341,12 +351,14 @@ export async function logSet(formData: FormData): Promise<WorkoutMutationResult>
       include: { sets: true, workoutPlan: { include: { exercises: true } } },
     });
     if (!session) return { error: "Session not found" };
-    if (session.completed) return { error: "This session is complete. Saved history has not been changed." };
+    if (session.completed !== editingHistory) return { error: editingHistory
+      ? "This session is still open. Use Training to log it."
+      : "This session is complete. Saved history has not been changed." };
     const meta = parseWorkoutSessionMeta(session.notes);
     const planExercise = session.workoutPlan?.exercises.find((exercise) => exercise.exerciseName === exerciseName);
     const existingSet = session.sets.find((set) => set.exerciseName === exerciseName && set.setNumber === setNumber);
     // Derive the foreign key from the owned session. Never trust a submitted planExerciseId.
-    if (!planExercise && !meta?.retainedExerciseNames?.includes(exerciseName) && !meta?.exercises?.some((exercise) => exercise.name === exerciseName) && !session.sets.some((set) => set.exerciseName === exerciseName)) {
+    if (!editingHistory && !planExercise && !meta?.retainedExerciseNames?.includes(exerciseName) && !meta?.exercises?.some((exercise) => exercise.name === exerciseName) && !session.sets.some((set) => set.exerciseName === exerciseName)) {
       return { error: "Exercise not found in this session. Refresh Training and try again." };
     }
     const loadUnit = getWorkoutSessionLoadUnit(session.notes);
@@ -377,7 +389,58 @@ export async function logSet(formData: FormData): Promise<WorkoutMutationResult>
     else await tx.sessionSet.create({ data: { workoutSessionId: session.id, planExerciseId: planExercise?.id ?? null, exerciseName, setNumber, ...data } });
     return { savedSet };
   });
-  if (!result.error) revalidateWorkoutSessionPaths();
+  if (!result.error) {
+    revalidateWorkoutSessionPaths();
+    if (editingHistory) {
+      revalidatePath(`/workout/history/${sessionId}`);
+      revalidatePath(`/workout/exercise/${encodeURIComponent(exerciseName)}`);
+    }
+  }
+  return result;
+}
+
+export async function deleteCompletedWorkoutSet(formData: FormData): Promise<WorkoutMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) return { error: "Not authenticated" };
+  const target = parseWorkoutSetTarget(formData);
+  const baseline = parseWorkoutSetBaseline(formData);
+  if (!target.value) return { error: target.error };
+  if (baseline.error || !baseline.expectedSet) return { error: baseline.error || "Reload the saved set before removing it." };
+  let expectedDuration: number | null;
+  const expectedAMRAP = formData.get("expectedAMRAP");
+  try {
+    const rawDuration = formData.get("expectedDuration");
+    if (typeof rawDuration !== "string") throw new Error("Missing duration");
+    expectedDuration = JSON.parse(rawDuration);
+    if ((expectedDuration !== null && (!Number.isInteger(expectedDuration) || expectedDuration < 0)) ||
+      (expectedAMRAP !== "true" && expectedAMRAP !== "false")) throw new Error("Invalid details");
+  } catch {
+    return { error: "Reload the saved set before removing it." };
+  }
+  const { sessionId, exerciseName, setNumber } = target.value;
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx): Promise<WorkoutMutationResult> => {
+    const session = await tx.workoutSession.findFirst({
+      where: { id: sessionId, userId: user.id }, include: { sets: true },
+    });
+    if (!session) return { error: "Session not found" };
+    if (!session.completed) return { error: "This session is still open. Use Training to log it." };
+    const set = session.sets.find((set) => set.exerciseName === exerciseName && set.setNumber === setNumber);
+    if (!set) return {}; // A lost-response retry is already complete.
+    const current: SavedWorkoutSet = {
+      weightUsed: workoutLoadToKg(set.weightUsed, getWorkoutSessionLoadUnit(session.notes)),
+      repsCompleted: set.repsCompleted, actualRPE: set.actualRPE, notes: set.notes,
+    };
+    if (!sameSavedWorkoutSet(current, baseline.expectedSet!) || set.duration !== expectedDuration || set.isAMRAP !== (expectedAMRAP === "true")) {
+      return { error: "This set changed in another tab or device. Reload the session before removing it.", conflict: true, savedSet: current };
+    }
+    await tx.sessionSet.delete({ where: { id: set.id } });
+    return {};
+  });
+  if (!result.error) {
+    revalidateWorkoutSessionPaths();
+    revalidatePath(`/workout/history/${sessionId}`);
+    revalidatePath(`/workout/exercise/${encodeURIComponent(exerciseName)}`);
+  }
   return result;
 }
 

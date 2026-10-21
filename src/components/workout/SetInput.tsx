@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Check, Loader2, RotateCcw } from "lucide-react";
-import { logSet } from "@/actions/workout";
+import { logSet, saveCompletedWorkoutSet } from "@/actions/workout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,7 +17,7 @@ type PrevSet = { weightUsed: number | null; repsCompleted: number | null; actual
 
 export function SetInput({
   sessionId, planExerciseId, exerciseName, setNumber, isFinisher, logged, previous,
-  prefill = null, shouldAdvance = false, disabled = false, onSaved, onPendingChange, className,
+  prefill = null, shouldAdvance = false, disabled = false, saveMode = "live", showPrevious = true, onSaved, onMissing, onPendingChange, className,
 }: {
   sessionId: string;
   planExerciseId: string | null;
@@ -29,7 +29,10 @@ export function SetInput({
   prefill?: PrevSet | null;
   shouldAdvance?: boolean;
   disabled?: boolean;
+  saveMode?: "live" | "history";
+  showPrevious?: boolean;
   onSaved: (setKey: string, values: SavedEntry, advance?: boolean) => void;
+  onMissing?: () => void;
   onPendingChange?: (pending: boolean) => void;
   className?: string;
 }) {
@@ -89,7 +92,7 @@ export function SetInput({
       for (const [field, value] of Object.entries(parsed.values)) {
         if (value !== null) formData.set(field, String(value));
       }
-      const result = await logSet(formData);
+      const result = await (saveMode === "history" ? saveCompletedWorkoutSet : logSet)(formData);
       if (result.error) {
         if (result.conflict) setConflict({ savedSet: result.savedSet ?? null });
         throw new Error(result.error);
@@ -117,12 +120,12 @@ export function SetInput({
 
   return (
     <form className={cn("grid gap-4", className)} onSubmit={(event) => { event.preventDefault(); void handleSave(); }} aria-busy={pending}>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule pb-3">
+      {showPrevious ? <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule pb-3">
         <p className="text-caption text-secondary">
           {previous ? <>Previous: <span className="num font-medium text-primary">{previous.weightUsed ?? "—"} kg × {previous.repsCompleted ?? "—"}{previous.actualRPE != null ? ` · RPE ${previous.actualRPE}` : ""}</span></> : "No previous result"}
         </p>
         {previous ? <Button type="button" variant="link" className="min-h-10 text-caption" disabled={pending || disabled} onClick={() => updateFields({ ...fields, weight: previous.weightUsed?.toString() ?? "", reps: previous.repsCompleted?.toString() ?? "" })}>Use previous</Button> : null}
-      </div>
+      </div> : null}
       <fieldset disabled={pending || disabled} className="grid grid-cols-3 gap-3">
         <label className="grid gap-2 text-caption text-secondary">
           {isFinisher ? "Score" : "Weight · kg"}
@@ -145,7 +148,7 @@ export function SetInput({
       {conflict ? <div className="grid gap-2 border border-rule bg-sunken p-3 text-caption">
         <p>Saved elsewhere: {conflict.savedSet ? `${conflict.savedSet.weightUsed ?? "—"} kg × ${conflict.savedSet.repsCompleted ?? "—"}, RPE ${conflict.savedSet.actualRPE ?? "—"}` : "No saved set"}. Your draft is preserved.</p>
         <Button type="button" variant="secondary" disabled={pending || disabled} onClick={() => void handleSave(conflict.savedSet)}>Replace saved set with my draft</Button>
-        <Button type="button" variant="link" disabled={pending || disabled} onClick={() => { writeWorkoutStorage(key, null); if (conflict.savedSet) onSaved(`${exerciseName}:${setNumber}`, conflict.savedSet, false); setConflict(null); setError(null); }}>Use saved set</Button>
+        <Button type="button" variant="link" disabled={pending || disabled} onClick={() => { writeWorkoutStorage(key, null); if (conflict.savedSet) onSaved(`${exerciseName}:${setNumber}`, conflict.savedSet, false); else onMissing?.(); setConflict(null); setError(null); }}>Use saved set</Button>
       </div> : null}
       <div className="flex items-center gap-3">
         {!isFinisher && !showNotes && !fields.notes ? <Button type="button" variant="link" className="min-h-12 text-caption" disabled={pending || disabled} onClick={() => setShowNotes(true)}>Add note</Button> : null}

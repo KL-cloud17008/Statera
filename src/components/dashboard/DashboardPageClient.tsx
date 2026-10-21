@@ -66,7 +66,7 @@ export function DashboardPageClient({ stepsEntries, todaySteps, weightStats, wor
           <p className="mt-2 text-body text-secondary">{plan?.sessionName.split(" — ").slice(1).join(" — ") ?? "No strength session scheduled today."}</p>
           {planStats ? <p className="mt-3 text-row text-tertiary">{planStats.exerciseCount} exercises · About {planStats.estimatedMinutes} min</p> : null}
           <div className="training-action mt-6 flex flex-wrap items-center gap-3">
-            {plan ? <WorkoutSessionActionButton planId={active?.planId ?? todayStatus?.planId} status={status} prominent className="min-h-touch px-5 text-body" /> : <Button asChild variant="secondary"><Link href="/workout/plan">View training plan</Link></Button>}
+            {plan ? <WorkoutSessionActionButton planId={active?.planId ?? todayStatus?.planId} sessionId={active?.sessionId ?? todayStatus?.sessionId} status={status} prominent className="min-h-touch px-5 text-body" /> : <Button asChild variant="secondary"><Link href="/workout/plan">View training plan</Link></Button>}
             <Button asChild variant="ghost"><Link href="/mobility">Mobility <ArrowRight className="size-4" /></Link></Button>
           </div>
           {guidance.attention ? <Notice className="mt-5">Foot pain {guidance.text}</Notice> : null}
@@ -101,7 +101,7 @@ export function DashboardPageClient({ stepsEntries, todaySteps, weightStats, wor
               return <div key={day} className={cn("week-index-row grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 border-b border-rule", isToday && "border-l-2 border-l-accent pl-3 bg-accent-subtle/40")}>
                 <span className={cn("text-row",isToday ? "font-semibold text-accent" : "text-tertiary")}>{DAY_NAMES[day].slice(0,3)}</span>
                 <div className="min-w-0"><p className="text-row font-medium">{item?.sessionName.split(" — ")[0] ?? "Complete Rest"}</p>{item ? <p className="mt-1 hidden text-caption text-tertiary sm:block">{item.sessionName.split(" — ").slice(1).join(" — ")}</p> : null}</div>
-                {item ? <WorkoutSessionActionButton planId={dayStatus?.planId} status={dayStatus?.status ?? "start"} className="text-caption [&_svg]:hidden" /> : <span className="text-caption text-tertiary">Rest</span>}
+                {item ? <WorkoutSessionActionButton planId={dayStatus?.planId} sessionId={dayStatus?.sessionId} status={dayStatus?.status ?? "start"} className="text-caption [&_svg]:hidden" /> : <span className="text-caption text-tertiary">Rest</span>}
               </div>;
             })}
           </div>

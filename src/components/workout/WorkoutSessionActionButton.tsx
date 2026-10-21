@@ -31,12 +31,14 @@ const ACTION_COPY = {
 
 export function WorkoutSessionActionButton({
   planId,
+  sessionId,
   status,
   prominent = false,
   fullWidth = false,
   className,
 }: {
   planId?: string;
+  sessionId?: string;
   status: SessionActionStatus;
   prominent?: boolean;
   fullWidth?: boolean;
@@ -68,7 +70,7 @@ export function WorkoutSessionActionButton({
   if (status === "view") {
     return (
       <Button asChild variant="secondary" size="sm" className={buttonClassName}>
-        <Link href="/workout/history">
+        <Link href={sessionId ? `/workout/history/${sessionId}` : "/workout/history"}>
           <Icon className="size-4" aria-hidden />
           {copy.label}
         </Link>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, History } from "lucide-react";
+import { ChevronLeft, ChevronRight, History, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Figure, PageTitle, Section } from "@/components/ui/ledger";
@@ -161,6 +161,10 @@ export function WorkoutHistoryClient({ sessions }: { sessions: HistorySession[] 
                         {new Date(`${session.trainingDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
                       </span>
                     </div>
+
+                    <Button asChild variant="secondary" size="sm" className="mt-3 min-h-11">
+                      <Link href={`/workout/history/${session.id}`}><Pencil className="size-4" aria-hidden />Edit session</Link>
+                    </Button>
 
                     <dl className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
                       <Figure label="Sets" value={session.setCount} />

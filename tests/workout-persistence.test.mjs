@@ -198,6 +198,104 @@ test("empty completion fails, finish racing a queued save does not create a part
   assert.ok(!saved.error && !completed.error); assert.equal(f.state.sessions[0].completed, true); assert.equal(f.state.sets.length, 1);
 });
 
+test("explicit history edits fill missed sets and correct values without reopening or redating the workout", async () => {
+  const f = fixture();
+  const session = f.addSession({ completed: true, startTime: new Date("2026-10-20T10:00Z"), endTime: new Date("2026-10-20T11:00Z"), trainingDate: new Date("2026-10-20") });
+  const other = f.addSession({ completed: true });
+  const open = f.addSession();
+  const snapshots = { session: copy(session), other: copy(other), open: copy(open), plans: copy(f.state.plans) };
+  assert.ok(!(await f.actions.saveCompletedWorkoutSet(f.form(session.id))).error);
+  const first = f.state.sets[0];
+  assert.equal(first.planExerciseId, f.state.plans[0].exercises[0].id);
+  assert.ok(!(await f.actions.saveCompletedWorkoutSet(f.form(session.id, { weightUsed: "30", expectedSet: JSON.stringify({ weightUsed: 25.5, repsCompleted: 12, actualRPE: 7, notes: null }) }))).error);
+  assert.ok(!(await f.actions.saveCompletedWorkoutSet(f.form(session.id, { setNumber: "2", repsCompleted: "10" }))).error);
+  assert.ok(!(await f.actions.saveCompletedWorkoutSet(f.form(session.id, { exerciseName: "Extra exercise", planExerciseId: "foreign", weightUsed: "0" }))).error);
+  assert.equal(f.state.sets.length, 3);
+  assert.equal(f.state.sets[0].weightUsed, 30);
+  assert.equal(f.state.sets[2].planExerciseId, null);
+  assert.deepEqual(session, snapshots.session);
+  assert.deepEqual(other, snapshots.other);
+  assert.deepEqual(open, snapshots.open);
+  assert.deepEqual(f.state.plans, snapshots.plans);
+  assert.ok(f.state.invalidations.includes(`/workout/history/${session.id}`));
+  assert.ok(f.state.invalidations.includes("/workout/exercise/Extra%20exercise"));
+  assert.ok((await f.actions.logSet(f.form(session.id))).error, "live logging remains unable to modify completed history");
+  assert.ok((await f.actions.saveCompletedWorkoutSet(f.form(open.id))).error, "history editor cannot modify an open workout");
+});
+
+test("history saves are retry-safe and stale edits require explicit conflict resolution", async () => {
+  const f = fixture(), session = f.addSession({ completed: true });
+  const results = await Promise.all([f.actions.saveCompletedWorkoutSet(f.form(session.id)), f.actions.saveCompletedWorkoutSet(f.form(session.id))]);
+  assert.ok(results.every((result) => !result.error));
+  assert.equal(f.state.sets.length, 1);
+  const writes = f.state.writes;
+  await f.actions.saveCompletedWorkoutSet(f.form(session.id));
+  assert.equal(f.state.writes, writes);
+  const stale = await f.actions.saveCompletedWorkoutSet(f.form(session.id, { weightUsed: "35" }));
+  assert.equal(stale.conflict, true);
+  assert.equal(stale.savedSet.weightUsed, 25.5);
+  assert.equal(f.state.sets[0].weightUsed, 25.5);
+  assert.ok(!(await f.actions.saveCompletedWorkoutSet(f.form(session.id, { weightUsed: "35", expectedSet: JSON.stringify(stale.savedSet) }))).error);
+  assert.ok((await f.actions.saveCompletedWorkoutSet(f.form(session.id, { expectedSet: undefined }))).error);
+});
+
+test("history corrections enforce ownership, valid input and completed state", async () => {
+  const f = fixture(), foreign = f.addSession({ userId: "other", completed: true });
+  const owner = f.addSession({ completed: true });
+  for (const values of [{ weightUsed: "NaN" }, { weightUsed: "30kg" }, { repsCompleted: "8.5" }, { actualRPE: "11" }, { setNumber: "51" }, { expectedSet: "{}" }, { exerciseName: "At-home mobility primer" }]) {
+    assert.ok((await f.actions.saveCompletedWorkoutSet(f.form(owner.id, values))).error);
+  }
+  assert.ok((await f.actions.saveCompletedWorkoutSet(f.form(foreign.id))).error);
+  assert.equal(f.state.sets.length, 0);
+  f.setAuth(null);
+  assert.ok((await f.actions.saveCompletedWorkoutSet(f.form(owner.id))).error);
+  assert.ok((await f.actions.deleteCompletedWorkoutSet(f.form(owner.id))).error);
+  assert.equal(f.state.writes, 0);
+});
+
+test("history edits preserve timed/AMRAP metadata and normalize legacy loads atomically", async () => {
+  const f = fixture(), session = f.addSession({ completed: true, notes: "Legacy Upper A" });
+  const exerciseName = f.state.plans[0].exercises[0].exerciseName;
+  f.state.sets.push({ id: "legacy", workoutSessionId: session.id, exerciseName, setNumber: 1, weightUsed: 100, repsCompleted: 12, actualRPE: 7, notes: "original", duration: 30, isAMRAP: true });
+  const baseline = { weightUsed: f.load("src/lib/units.ts").poundsToKg(100), repsCompleted: 12, actualRPE: 7, notes: "original" };
+  const result = await f.actions.saveCompletedWorkoutSet(f.form(session.id, { weightUsed: "50", notes: "corrected", expectedSet: JSON.stringify(baseline) }));
+  assert.ok(!result.error);
+  assert.equal(f.state.sets[0].weightUsed, 50);
+  assert.equal(f.state.sets[0].duration, 30);
+  assert.equal(f.state.sets[0].isAMRAP, true);
+  assert.equal(JSON.parse(f.state.sessions[0].notes).loadUnit, "kg");
+  const rollback = fixture(), old = rollback.addSession({ completed: true, notes: "legacy" });
+  rollback.state.sets.push({ id: "old", workoutSessionId: old.id, exerciseName, setNumber: 1, weightUsed: 100 });
+  const snapshot = copy(rollback.state);
+  rollback.state.failSetWrite = true;
+  await assert.rejects(rollback.actions.saveCompletedWorkoutSet(rollback.form(old.id, { setNumber: "2" })), /Simulated failed write/);
+  assert.deepEqual(rollback.state.sets, snapshot.sets);
+  assert.deepEqual(rollback.state.sessions, snapshot.sessions);
+});
+
+test("history set removal checks current values and ownership, is retry-safe, and keeps completion metadata", async () => {
+  const f = fixture(), session = f.addSession({ completed: true, endTime: new Date("2026-10-20T11:00Z") });
+  await f.actions.saveCompletedWorkoutSet(f.form(session.id, { duration: "30", isAMRAP: "true" }));
+  const original = copy(session);
+  const remove = f.form(session.id, { expectedSet: JSON.stringify({ weightUsed: 25.5, repsCompleted: 12, actualRPE: 7, notes: null }), expectedDuration: "30", expectedAMRAP: "true" });
+  const wrongDuration = f.form(session.id, { expectedSet: remove.get("expectedSet"), expectedDuration: "20", expectedAMRAP: "true" });
+  assert.equal((await f.actions.deleteCompletedWorkoutSet(wrongDuration)).conflict, true);
+  assert.ok((await f.actions.deleteCompletedWorkoutSet(f.form(session.id))).error, "missing baseline cannot remove a set");
+  const foreign = f.addSession({ userId: "other", completed: true });
+  remove.set("sessionId", foreign.id);
+  assert.ok((await f.actions.deleteCompletedWorkoutSet(remove)).error);
+  remove.set("sessionId", session.id);
+  assert.ok(!(await f.actions.deleteCompletedWorkoutSet(remove)).error);
+  const writes = f.state.writes;
+  assert.ok(!(await f.actions.deleteCompletedWorkoutSet(remove)).error);
+  assert.equal(f.state.writes, writes);
+  assert.equal(f.state.sets.length, 0);
+  assert.deepEqual(session, original);
+  const open = f.addSession();
+  remove.set("sessionId", open.id);
+  assert.ok((await f.actions.deleteCompletedWorkoutSet(remove)).error);
+});
+
 test("all workout reads and mutations enforce authenticated record ownership", async () => {
   const f = fixture(); const foreign = f.addSession({ userId: "other" });
   assert.equal(await f.actions.getSessionWithSets(foreign.id), null);
