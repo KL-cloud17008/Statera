@@ -1,19 +1,14 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
+import { getTodayMobilityLogs } from "@/actions/mobility";
 import { getLatestPainCheckIn } from "@/actions/pain";
-import { getStepsEntries } from "@/actions/steps";
-import { getWeightEntries } from "@/actions/weight";
-import { getRecentSessions, getWorkoutPlanDayStatuses } from "@/actions/workout";
+import { getWorkoutPlanDayStatuses } from "@/actions/workout";
 import { DashboardPageClient } from "@/components/dashboard/DashboardPageClient";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
-import { getTodayDateString, getTrainingDate, getTrainingDayOfWeek } from "@/lib/dates";
-import { prisma } from "@/lib/db";
-import { calculateSessionVolume, getSessionLabel } from "@/lib/workout-stats";
-import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
-import { computeWeightStats } from "@/lib/weight";
+import { getTrainingDayOfWeek } from "@/lib/dates";
 
 export const metadata: Metadata = {
   title: "Dashboard | Athanor",
-  description: "See your daily steps, current weight trend, recent training volume, and active streaks in one place.",
+  description: "Today's training programme and mobility routine.",
 };
 
 export default async function DashboardPage() {
@@ -22,94 +17,17 @@ export default async function DashboardPage() {
     return null;
   }
 
-  const trainingDate = getTrainingDate(new Date(), user.timezone);
   const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
-
-  const [stepsEntries, weightEntries, recentSessions, todayMobilityLogs, workoutDayStatuses, painCheckIn] = await Promise.all([
-    getStepsEntries(user.id, 180, user.timezone),
-    getWeightEntries(user.id),
-    getRecentSessions(user.id, 20),
-    prisma.mobilityLog.findMany({
-      where: { userId: user.id, date: trainingDate },
-      orderBy: { createdAt: "desc" },
-    }),
+  const [todayMobilityLogs, workoutDayStatuses, painCheckIn] = await Promise.all([
+    getTodayMobilityLogs(user.id, user.timezone),
     getWorkoutPlanDayStatuses(user.id, user.timezone),
     getLatestPainCheckIn(user.id),
   ]);
 
-  const todaySteps = stepsEntries.find(entry => entry.date.toISOString().slice(0,10) === getTodayDateString(user.timezone))?.steps ?? 0;
-  const serializedSteps = stepsEntries.map((entry) => ({
-    id: entry.id,
-    date: entry.date.toISOString().split("T")[0],
-    steps: entry.steps,
-  }));
-  const serializedWeights = weightEntries.map((entry) => ({
-    id: entry.id,
-    userId: entry.userId,
-    date: entry.date.toISOString().split("T")[0],
-    weight: entry.weight,
-    bodyFatPercent: entry.bodyFatPercent,
-    status: entry.status,
-    timeOfDay: entry.timeOfDay,
-    notes: entry.notes,
-    createdAt: entry.createdAt.toISOString(),
-  }));
-
-  const weightStats = computeWeightStats(serializedWeights, {
-    startWeight: user.startWeight,
-    heightInches: user.heightInches,
-    goalWeight: user.goalWeight,
-  });
-
-  const startOfWeek = new Date(trainingDate);
-  startOfWeek.setUTCDate(startOfWeek.getUTCDate() - (startOfWeek.getUTCDay() + 6) % 7);
-  startOfWeek.setUTCHours(0, 0, 0, 0);
-  const weeklySessions = recentSessions.filter((session) => session.trainingDate >= startOfWeek);
-  const hasCompletedWorkoutToday = recentSessions.some(
-    (session) => session.trainingDate.getTime() === trainingDate.getTime()
-  );
-  const weeklyVolume = weeklySessions.reduce(
-    (sum, session) => sum + calculateSessionVolume(session.sets, getWorkoutSessionLoadUnit(session.notes)),
-    0
-  );
-  const startOfPrevWeek = new Date(startOfWeek);
-  startOfPrevWeek.setUTCDate(startOfPrevWeek.getUTCDate() - 7);
-  const prevWeeklyVolume = recentSessions
-    .filter((session) => session.trainingDate >= startOfPrevWeek && session.trainingDate < startOfWeek)
-    .reduce(
-      (sum, session) => sum + calculateSessionVolume(session.sets, getWorkoutSessionLoadUnit(session.notes)),
-      0
-    );
-  const lastWorkout = recentSessions[0]
-    ? {
-        label: getSessionLabel(recentSessions[0]),
-        trainingDate: recentSessions[0].trainingDate.toISOString().split("T")[0],
-        volume: calculateSessionVolume(recentSessions[0].sets, getWorkoutSessionLoadUnit(recentSessions[0].notes)),
-        setCount: recentSessions[0].sets.length,
-      }
-    : null;
-
   return (
     <DashboardPageClient
-      stepsEntries={serializedSteps}
-      todaySteps={todaySteps ?? 0}
-      weightStats={weightStats}
-      workoutSummary={{
-        weeklyVolume,
-        prevWeeklyVolume,
-        weeklySessions: weeklySessions.length,
-        hasCompletedWorkoutToday,
-        lastWorkout,
-      }}
       workoutDayStatuses={workoutDayStatuses}
-      mobilitySummary={{
-        completedTypes: todayMobilityLogs.map((log) => log.type),
-        footFlareLogged: todayMobilityLogs.some((log) => {
-          const version = log.version.toLowerCase();
-          return version.includes("foot flare") || version.includes("foot-flare");
-        }),
-      }}
-      latestWeightDate={serializedWeights[0]?.date ?? null}
+      mobilitySummary={{ completedTypes: todayMobilityLogs.map((log) => log.type) }}
       timezone={user.timezone}
       trainingDayOfWeek={trainingDayOfWeek}
       painCheckIn={painCheckIn}

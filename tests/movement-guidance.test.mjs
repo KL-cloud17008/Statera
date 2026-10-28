@@ -40,11 +40,14 @@ function dashboardProps(pain=null) {
     weightStats:{currentWeight:270,trend:'down'},workoutSummary:{weeklyVolume:8115,prevWeeklyVolume:7500,weeklySessions:1,hasCompletedWorkoutToday:false,lastWorkout:null},
     workoutDayStatuses:[{planId:'mon',dayOfWeek:1,status:'resume'}],mobilitySummary:{completedTypes:['POST_WORKOUT'],footFlareLogged:true},latestWeightDate:today,timezone:'America/New_York',trainingDayOfWeek:3,painCheckIn:pain==null?null:{date:today,footPain:pain,lowerBackPain:1} };
 }
-test('high steps and a previously logged comfort routine never infer an acute flare',()=>{
+test('dashboard shows training and matching mobility without weight or step summaries',()=>{
   for (const pain of [null,0,1,2]) {
     const html=renderToStaticMarkup(React.createElement(DashboardPageClient,dashboardProps(pain)));
     assert.doesNotMatch(html,/Required foot-flare|recovery only|Foot pain|No flare signal|Readiness|High step load/i);
-    assert.match(html,/18,000/);assert.match(html,/of 9,000/);assert.match(html,/Session in progress/);assert.match(html,/270\.0 lb/);assert.match(html,/122\.5 kg/);
+    assert.match(html,/Session in progress/);assert.match(html,/Lower A primer/);
+    assert.match(html,/Matched to the Monday session/);
+    assert.match(html,/Today&#x27;s mobility/);
+    assert.doesNotMatch(html,/270\.0|122\.5|18,000|of 9,000|Weigh in|Training totals|Last session|This week/);
   }
 });
 test('reported pain protections distinguish stable 3 from above 3',()=>{
@@ -58,13 +61,14 @@ test('reported pain protections distinguish stable 3 from above 3',()=>{
   assert.match(html,/continue only if stable/);assert.doesNotMatch(html,/Recovery only|Required foot-flare/);
 });
 
-test('calendar-day step guidance stays on Sunday after training rolls to Monday',()=>{
+test('dashboard shows rest and optional mobility when no training is scheduled',()=>{
   today='2026-09-13';
   try {
-    const html=renderToStaticMarkup(React.createElement(DashboardPageClient,{...dashboardProps(),trainingDayOfWeek:1}));
-    assert.match(html,/Rest day · no goal/);
-    assert.doesNotMatch(html,/of 9,000/);
-    assert.match(html,/18,000/);
+    const html=renderToStaticMarkup(React.createElement(DashboardPageClient,{...dashboardProps(),workoutDayStatuses:[],trainingDayOfWeek:0}));
+    assert.match(html,/Rest day/);
+    assert.match(html,/No strength session scheduled today/);
+    assert.match(html,/Logged today/);
+    assert.doesNotMatch(html,/View today&#x27;s exercises|of 9,000|18,000/);
   } finally { today='2026-09-09'; }
 });
 test('logged step totals no longer trigger a mobility query or automatic mode',()=>{

@@ -235,7 +235,8 @@ test("daily step goal still supports 8000 and step streak behavior is stable", (
   assert.equal(appSettings.DEFAULT_APP_SETTINGS.stepGoal, 8000);
   assert.equal(appSettings.parseAppSettings(JSON.stringify({ stepGoal: 8000 })).stepGoal, 8000);
   assert.match(stepsPageClientSource, /calculateStepStats\(entries, settings\.stepGoal/);
-  assert.match(dashboardSource, /calculateStepStats\(stepsEntries, settings\.stepGoal/);
+  assert.doesNotMatch(dashboardSource, /calculateStepStats|weightStats|Weigh in/);
+  assert.doesNotMatch(dashboardPageSource, /getStepsEntries|getWeightEntries|computeWeightStats/);
   assert.doesNotMatch(dashboardSource, /At risk|streakUnloggedDays|streakBackfillDate/);
   assert.doesNotMatch(
     stepsPageClientSource,

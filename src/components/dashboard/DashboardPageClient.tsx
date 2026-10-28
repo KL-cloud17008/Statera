@@ -1,124 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Dumbbell, Footprints, Scale } from "lucide-react";
+import { ArrowRight, CheckCircle2, Dumbbell } from "lucide-react";
 import type { SerializedPainCheckIn } from "@/actions/pain";
-import { PainCheckInCard } from "@/components/pain/PainCheckInCard";
-import { useAppSettings } from "@/components/settings/AppSettingsProvider";
 import { Button } from "@/components/ui/button";
-import { Figure, Notice, PageTitle, Section } from "@/components/ui/ledger";
+import { Notice, PageTitle, Section } from "@/components/ui/ledger";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
-import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
-import { DAY_NAMES, buildPlanDayStats, getPlanDay, isStepGoalSuspendedByPlan } from "@/lib/plan-preview";
-import { calculateStepStats, type SerializedStepsEntry } from "@/lib/steps";
-import { formatBodyweight, formatBodyweightDeltaPrimary, formatBodyweightDeltaSecondary, formatBodyweightRate, formatBodyweightSecondary, formatWorkoutVolume } from "@/lib/units";
-import { getPainGuidance, MOVEMENT_STOP_RULE } from "@/lib/movement-guidance";
-import { cn } from "@/lib/utils";
-import type { WeightStats } from "@/lib/weight";
+import { getTodayDateString } from "@/lib/dates";
+import { getMobilityProgram } from "@/lib/mobility";
+import { getPainGuidance } from "@/lib/movement-guidance";
+import { DAY_NAMES, buildPlanDayStats, getPlanDay } from "@/lib/plan-preview";
+import { isLoggableTrainingExercise } from "@/lib/training-session";
+import { formatSetPrescription } from "@/lib/workout-prescription";
 
-type WorkoutSummary = {
-  weeklyVolume: number; prevWeeklyVolume: number; weeklySessions: number;
-  hasCompletedWorkoutToday: boolean;
-  lastWorkout: { label: string; trainingDate: string; volume: number; setCount: number } | null;
-};
 type WorkoutDayStatus = { planId: string; dayOfWeek: number; status: "start" | "resume" | "view"; sessionId?: string };
 
-export function DashboardPageClient({ stepsEntries, todaySteps, weightStats, workoutSummary, workoutDayStatuses, mobilitySummary, latestWeightDate, timezone, trainingDayOfWeek, painCheckIn }: {
-  stepsEntries: SerializedStepsEntry[]; todaySteps: number;
-  weightStats: Pick<WeightStats, "currentWeight" | "trend"> & Partial<Pick<WeightStats, "avg7Day" | "totalChange" | "weeklyRate" | "goalWeight">>;
-  workoutSummary: WorkoutSummary; workoutDayStatuses: WorkoutDayStatus[];
-  mobilitySummary: { completedTypes: string[]; footFlareLogged: boolean };
-  latestWeightDate: string | null; timezone?: string; trainingDayOfWeek: number;
+export function DashboardPageClient({ workoutDayStatuses, mobilitySummary, timezone, trainingDayOfWeek, painCheckIn }: {
+  workoutDayStatuses: WorkoutDayStatus[];
+  mobilitySummary: { completedTypes: string[] };
+  timezone?: string;
+  trainingDayOfWeek: number;
   painCheckIn: SerializedPainCheckIn | null;
 }) {
-  const { settings } = useAppSettings();
   const today = getTodayDateString(timezone);
   const dateLabel = new Date(`${today}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-  const stepStats = calculateStepStats(stepsEntries, settings.stepGoal, { timezone, isGoalSuspended: isStepGoalSuspendedByPlan });
   const active = workoutDayStatuses.find(day => day.status === "resume");
   const todayStatus = workoutDayStatuses.find(day => day.dayOfWeek === trainingDayOfWeek);
   const focusDay = active?.dayOfWeek ?? trainingDayOfWeek;
   const plan = getPlanDay(focusDay);
   const planStats = plan ? buildPlanDayStats(plan) : null;
+  const exercises = plan?.exercises.filter(isLoggableTrainingExercise) ?? [];
   const status = active?.status ?? todayStatus?.status ?? "start";
-  const footPain = painCheckIn?.date === today ? painCheckIn.footPain : null;
-  const guidance = getPainGuidance(footPain);
-  const stepPercent = settings.stepGoal > 0 ? Math.min(100, Math.round(todaySteps / settings.stepGoal * 100)) : 0;
-  const restDay = !getPlanDay(trainingDayOfWeek);
-  const stepGoalSuspended = isStepGoalSuspendedByPlan(today);
-  const stepsByDate = new Map(stepsEntries.map(entry => [entry.date, entry.steps]));
-  const chartDays = Array.from({ length: 7 }, (_, index) => {
-    const date = addDaysToDateString(today, index - 6);
-    return { date, steps: stepsByDate.get(date) ?? null };
-  });
-  const maxSteps = Math.max(settings.stepGoal, ...chartDays.map(day => day.steps ?? 0), 1);
-  const stepsChartLabel = chartDays.map(day => `${day.date}: ${day.steps == null ? "not logged" : `${day.steps.toLocaleString()} steps`}`).join("; ");
+  const guidance = getPainGuidance(painCheckIn?.date === today ? painCheckIn.footPain : null);
+  const mobility = getMobilityProgram(focusDay);
+  const mobilityCompleted = mobilitySummary.completedTypes.includes(mobility.logType);
+  const recoveryCompleted = mobilitySummary.completedTypes.includes("POST_WORKOUT");
 
   return <>
     <PageTitle title="Dashboard" action={<p className="text-row text-tertiary">{dateLabel}</p>} />
     <div className="dashboard-grid">
-        <section className="command-surface training-overview dashboard-training" aria-label="Today's training" data-tone="training">
-          <div className="training-caption flex items-center justify-between gap-3 text-row text-tertiary">
-            <span className="flex items-center gap-2"><Dumbbell className="size-4" />{active ? "Session in progress" : "Today's training"}</span>
-            <span>{active ? DAY_NAMES[focusDay] : status === "view" ? "Completed" : restDay ? "Rest day" : DAY_NAMES[focusDay]}</span>
+      <section className="dashboard-training min-w-0" aria-label="Today's training" data-tone="training">
+        <div className="command-surface training-overview">
+          <div className="training-caption flex flex-wrap items-center justify-between gap-3 text-row text-tertiary">
+            <span className="flex items-center gap-2"><Dumbbell className="size-4" aria-hidden />{active ? "Session in progress" : "Today's training"}</span>
+            <span>{active ? DAY_NAMES[focusDay] : status === "view" ? "Completed" : plan ? DAY_NAMES[focusDay] : "Rest day"}</span>
           </div>
           <h2 className="mt-5 text-2xl font-semibold tracking-tight text-primary">{plan?.sessionName.split(" — ")[0] ?? "Complete Rest"}</h2>
           <p className="mt-2 text-body text-secondary">{plan?.sessionName.split(" — ").slice(1).join(" — ") ?? "No strength session scheduled today."}</p>
           {planStats ? <p className="mt-3 text-row text-tertiary">{planStats.exerciseCount} exercises · About {planStats.estimatedMinutes} min</p> : null}
           <div className="training-action mt-6 flex flex-wrap items-center gap-3">
             {plan ? <WorkoutSessionActionButton planId={active?.planId ?? todayStatus?.planId} sessionId={active?.sessionId ?? todayStatus?.sessionId} status={status} prominent className="min-h-touch px-5 text-body" /> : <Button asChild variant="secondary"><Link href="/workout/plan">View training plan</Link></Button>}
-            <Button asChild variant="ghost"><Link href="/mobility">Mobility <ArrowRight className="size-4" /></Link></Button>
           </div>
-          {guidance.attention ? <Notice className="mt-5">Foot pain {guidance.text}</Notice> : null}
-        </section>
-        <Section title="Steps" tone="movement" className="dashboard-steps" action={<Link href="/steps" className="text-row text-accent hover:underline">Log steps</Link>}>
-          <dl className="flex flex-wrap justify-between gap-4"><Figure label="Today" value={todaySteps.toLocaleString()} size="xl" detail={stepGoalSuspended ? "Rest day · no goal" : `of ${settings.stepGoal.toLocaleString()}`} /><Figure label="7-day average" value={stepStats.sevenDayAverage.toLocaleString()} size="lg" /></dl>
-          <div className="mt-4 grid h-24 grid-cols-7 items-end gap-2" role="img" aria-label={`Steps over the last seven days. ${stepsChartLabel}`}>
-            {chartDays.map(day => <div key={day.date} aria-hidden="true" className="flex h-full flex-col justify-end gap-2 text-center" title={`${day.date}: ${day.steps == null ? "not logged" : `${day.steps.toLocaleString()} steps`}`}>
-              {day.steps == null ? <span className="text-caption text-tertiary">—</span> : <div className={cn("rounded-t-sm", day.date === today ? "bg-accent" : "bg-chart-ink-muted")} style={{ height: `${day.steps / maxSteps * 75}%` }} />}
-              <span className="text-caption text-tertiary">{new Date(`${day.date}T12:00:00`).toLocaleDateString("en-US", { weekday: "narrow" })}</span>
-            </div>)}
-          </div>
-          {!stepGoalSuspended ? <p className="mt-4 text-row text-tertiary">{stepPercent}% of goal · {stepStats.currentStreak} day streak</p> : null}
-        </Section>
-        <Section title="Weight" tone="weight" className="dashboard-weight" action={<Link href="/weight" className="text-row text-accent hover:underline">Weigh in</Link>}>
-          <dl>
-            <Figure label={latestWeightDate ? `Latest · ${latestWeightDate}` : "Latest"} value={formatBodyweight(weightStats.currentWeight)} detail={formatBodyweightSecondary(weightStats.currentWeight) || "No weigh-ins yet"} size="xl" />
-            <div className="mt-4 grid gap-3 border-t border-rule pt-3">
-              <Figure label="7-day average" value={formatBodyweight(weightStats.avg7Day ?? null)} detail={formatBodyweightSecondary(weightStats.avg7Day ?? null)} />
-              <Figure label="Change from start" value={formatBodyweightDeltaPrimary(weightStats.totalChange ?? null)} detail={formatBodyweightDeltaSecondary(weightStats.totalChange ?? null)} />
-            </div>
-          </dl>
-          {weightStats.weeklyRate != null ? <p className="mt-3 text-row text-secondary">Recent pace · {formatBodyweightRate(weightStats.weeklyRate)}</p> : null}
-          {weightStats.goalWeight != null ? <p className="mt-2 text-caption text-tertiary">Goal {formatBodyweight(weightStats.goalWeight)} · {formatBodyweightSecondary(weightStats.goalWeight)}</p> : null}
-        </Section>
-        <Section title="This week" className="dashboard-week" action={<Link className="text-row text-secondary hover:underline" href="/workout/plan">Full plan</Link>}>
+        </div>
+        {exercises.length > 0 ? <details className="mt-3 border-b border-rule">
+          <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-2 text-row font-medium focus-visible:outline-2 focus-visible:outline-accent">
+            View today&apos;s exercises <span className="text-caption text-tertiary">{exercises.length} exercises</span>
+          </summary>
+          <ol className="divide-y divide-rule" aria-label="Today's training exercises">
+            {exercises.map((exercise, index) => <li key={exercise.exerciseName} className="grid grid-cols-[1.5rem_minmax(0,1fr)] gap-3 px-2 py-3">
+              <span className="pt-0.5 text-caption tabular-nums text-tertiary">{String(index + 1).padStart(2, "0")}</span>
+              <div className="min-w-0">
+                <p className="text-row font-medium text-primary">{exercise.exerciseName}</p>
+                <p className="mt-1 text-caption text-secondary">{formatSetPrescription(exercise)} × {exercise.reps}{exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}</p>
+              </div>
+            </li>)}
+          </ol>
+        </details> : null}
+        {guidance.attention ? <Notice className="mt-4">Foot pain {guidance.text}</Notice> : null}
+      </section>
+
+      <Section title="Today's mobility" tone="movement" className="dashboard-mobility">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            {[1,2,3,4,5,6,0].map(day => {
-              const item = getPlanDay(day);
-              const dayStatus = workoutDayStatuses.find(s => s.dayOfWeek === day);
-              const isToday = day === trainingDayOfWeek;
-              return <div key={day} className={cn("week-index-row grid grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 border-b border-rule", isToday && "border-l-2 border-l-accent pl-3 bg-accent-subtle/40")}>
-                <span className={cn("text-row",isToday ? "font-semibold text-accent" : "text-tertiary")}>{DAY_NAMES[day].slice(0,3)}</span>
-                <div className="min-w-0"><p className="text-row font-medium">{item?.sessionName.split(" — ")[0] ?? "Complete Rest"}</p>{item ? <p className="mt-1 hidden text-caption text-tertiary sm:block">{item.sessionName.split(" — ").slice(1).join(" — ")}</p> : null}</div>
-                {item ? <WorkoutSessionActionButton planId={dayStatus?.planId} sessionId={dayStatus?.sessionId} status={dayStatus?.status ?? "start"} className="text-caption [&_svg]:hidden" /> : <span className="text-caption text-tertiary">Rest</span>}
-              </div>;
-            })}
+            <h3 className="text-body-lg font-semibold text-primary">{mobility.sessionTitle}</h3>
+            <p className="mt-1 text-row text-tertiary">{mobility.totalDuration}</p>
           </div>
-          <p className="text-caption text-tertiary">5 strength days · 2 full rest days</p>
-        </Section>
-        <Section title="Training totals" className="dashboard-totals">
-          <dl className="grid grid-cols-2 gap-4"><Figure label="Sessions this week" value={workoutSummary.weeklySessions} size="lg" /><Figure label="Volume" value={formatWorkoutVolume(workoutSummary.weeklyVolume)} detail="This week" /></dl>
-        </Section>
-        <Section title="Last session" className="dashboard-last" action={<Link className="text-row text-secondary hover:underline" href="/workout/history">History</Link>}>
-          {workoutSummary.lastWorkout ? <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-body font-medium">{workoutSummary.lastWorkout.label}</p><p className="mt-1 text-row text-tertiary">{workoutSummary.lastWorkout.trainingDate} · {workoutSummary.lastWorkout.setCount} sets</p></div><p className="num text-data-md">{formatWorkoutVolume(workoutSummary.lastWorkout.volume)}</p></div> : <p className="text-body text-secondary">Completed sessions will appear here.</p>}
-        </Section>
-        <Section title="Daily check-in" className="dashboard-checkin">
-          <p className="mb-4 text-row text-secondary">Mobility {mobilitySummary.completedTypes.includes("PRE_WORKOUT") ? "primer logged" : "primer not logged"}{mobilitySummary.completedTypes.includes("POST_WORKOUT") ? " · Recovery logged" : ""}</p>
-          <PainCheckInCard latest={painCheckIn} timezone={timezone} />
-          <details className="mt-4 text-caption text-tertiary"><summary className="cursor-pointer py-2">When to stop</summary><p className="mt-2">{MOVEMENT_STOP_RULE}</p></details>
-        </Section>
+          <p className="flex items-center gap-1.5 text-caption text-secondary">{mobilityCompleted ? <CheckCircle2 className="size-4 text-accent" aria-hidden /> : null}{mobilityCompleted ? "Logged today" : mobility.logType === "PRE_WORKOUT" ? "Before training" : "Optional recovery"}</p>
+        </div>
+        {active && focusDay !== trainingDayOfWeek ? <p className="mt-3 text-caption text-secondary">Matched to the {DAY_NAMES[focusDay]} session you are resuming.</p> : null}
+        <ul className="mt-4 divide-y divide-rule border-y border-rule" aria-label="Today's mobility blocks">
+          {mobility.blocks.map(block => <li key={block.id} className="flex items-baseline justify-between gap-3 py-3">
+            <span className="min-w-0 text-row font-medium text-primary">{block.title}</span>
+            <span className="shrink-0 text-caption text-tertiary">{block.duration}</span>
+          </li>)}
+        </ul>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Button asChild variant="secondary"><Link href="/mobility#session">{mobilityCompleted ? "Review mobility" : "Open mobility"}<ArrowRight className="size-4" aria-hidden /></Link></Button>
+          {mobility.logType === "PRE_WORKOUT" ? <Link href="/mobility#later-recovery" className="inline-flex min-h-11 items-center text-caption text-secondary hover:underline">{recoveryCompleted ? "Recovery logged" : "Later recovery"}<ArrowRight className="ml-1.5 size-3.5" aria-hidden /></Link> : null}
+        </div>
+      </Section>
     </div>
-    <div className="quick-links mt-8 border-t border-rule pt-5"><Button asChild variant="secondary"><Link href="/steps"><Footprints className="size-4" /> Log steps</Link></Button><Button asChild variant="secondary"><Link href="/weight"><Scale className="size-4" /> Weigh in</Link></Button></div>
   </>;
 }

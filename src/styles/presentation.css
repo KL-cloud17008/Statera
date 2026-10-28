@@ -77,16 +77,8 @@
 .dashboard-grid { display: grid; gap: 24px; align-items: start; }
 .dashboard-grid > .ledger-section { margin-top: 0; }
 .dashboard-training { grid-area: training; }
-.dashboard-steps { grid-area: steps; }
-.dashboard-weight { grid-area: weight; }
-.dashboard-week { grid-area: week; }
-.dashboard-totals { grid-area: totals; }
-.dashboard-last { grid-area: last; }
-.dashboard-checkin { grid-area: checkin; }
-.dashboard-grid { grid-template-areas: "training" "weight" "steps" "week" "totals" "last" "checkin"; }
-.dashboard-steps .section-body, .dashboard-weight .section-body { padding: 0 10px 10px; }
-.week-index-row { min-height: 60px; padding-block: 10px; }
-.week-index-row:last-child { border-bottom: 0; }
+.dashboard-mobility { grid-area: mobility; min-width: 0; }
+.dashboard-grid { grid-template-columns: minmax(0,1fr); grid-template-areas: "training" "mobility"; }
 .measurement-overview { display: grid; align-items: start; gap: 24px; margin-block: 8px 28px; }
 .measurement-overview > .ledger-section { margin: 0; }
 .measurement-summary { padding: 18px; background: var(--frame-tint); border-top: 4px solid var(--frame-accent); }
@@ -139,7 +131,7 @@
 }
 @media (min-width: 1000px) {
   .measurement-overview { grid-template-columns: minmax(0,1.3fr) minmax(20rem,1fr); gap: 24px; }
-  .dashboard-grid { grid-template-columns: minmax(0,1.45fr) minmax(18rem,1fr); grid-template-areas: "training weight" "week steps" "week totals" "last checkin"; gap: 28px; }
+  .dashboard-grid { grid-template-columns: minmax(0,1.45fr) minmax(18rem,1fr); grid-template-areas: "training mobility"; gap: 28px; }
   .dashboard-training { min-height: 260px; }
 }
 @media (max-width: 767px) {
