@@ -417,9 +417,9 @@ test("removed exercise drafts remain reachable under original names after plan r
 });
 
 test("Thursday triset alternates all three identities while preserving programmed rest",()=>{
- const env=fixture(),host=env.mount("SessionLogger",loggerProps({exercises:["Pressdown","Reverse crossover","Bayesian curl"].map((exerciseName,i)=>({id:String(i),exerciseName,sets:3,reps:"10-15",restSeconds:120,supersetGroup:"C",exerciseType:"WORKING"}))}));
+ const env=fixture(),host=env.mount("SessionLogger",loggerProps({exercises:["Overhead Cable Triceps Extension","Cable Lateral Raise","Bayesian curl"].map((exerciseName,i)=>({id:String(i),exerciseName,sets:3,reps:"10-15",restSeconds:120,supersetGroup:"C",exerciseType:"WORKING"}))}));
  const names=[];for(let i=0;i<9;i++){const editor=host.nodes("SetInput")[0];names.push(editor.props.exerciseName);editor.props.onSaved("",saved);host.render();assert.equal(env.lib.parseRestState(env.lib.readWorkoutStorage(env.lib.restStorageKey("session"))).duration,120);}
- assert.deepEqual(names,["Pressdown","Reverse crossover","Bayesian curl","Pressdown","Reverse crossover","Bayesian curl","Pressdown","Reverse crossover","Bayesian curl"]);
+ assert.deepEqual(names,["Overhead Cable Triceps Extension","Cable Lateral Raise","Bayesian curl","Overhead Cable Triceps Extension","Cable Lateral Raise","Bayesian curl","Overhead Cable Triceps Extension","Cable Lateral Raise","Bayesian curl"]);
  assert.match(text(host.tree),/All planned sets saved/);
 });
 

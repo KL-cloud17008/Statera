@@ -64,8 +64,8 @@ Supersets: quick safe transition, then enough recovery to retain control; do not
 - A2 Chest-Supported Row or Seated Cable Row: 3 × 8-12, RPE 6-7. Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. Equipment alternates: Chest-Supported Row or Seated Cable Row — use whichever is free. Tall posture, feet planted, row to lower ribs, pause, return under control, no body swing.
 - B1 Neutral-Grip Lat Pulldown: 3 × 8-12, RPE 6-7. Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. First half of the paired lat block; move to B2, then rest 120 seconds. Stay 2-3 reps in reserve. Pull to the upper chest with ribs down, do not lean far back, do not yank, and return smoothly.
 - B2 Close-Grip Lat Pulldown: 2 × 10-12, RPE 5-6. Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Complementary volume, not a second maximal pulldown block. Keep 2-3 reps in reserve, use a controlled tempo, pull without swinging or yanking, return smoothly, and rest 120 seconds after the pair.
-- C1 Triceps Pressdown, bar: 3 × 15-20, RPE 6-7. Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Elbows pinned, finish with control, avoid leaning over cable.
-- C2 Reverse Cable Crossover: 3 × 15-20, RPE 5-6. Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Rear delts, elbows soft and slightly bent, open smoothly wide, shoulder blades move under control, no jerking, no shrugging, do not chase load.
+- C1 Overhead Cable Triceps Extension: 3 × 15-20, RPE 6-7. Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a bar attachment and a light starting load for this new movement. Upper arms overhead, elbows comfortable, ribs down and trunk still; extend smoothly without arching the lower back or forcing shoulder range. Stop if the overhead position provokes pain. Triset order: C1, C2, C3; recover enough to keep control.
+- C2 Cable Lateral Raise: 3 × 15-20 per arm, RPE 5-6. Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a D-handle or cuff, one arm at a time. Soft elbow; raise out and slightly forward through a comfortable range, then lower slowly without shrugging or swinging the torso. Each set includes both arms; log the reps per arm. Triset order: C1, C2, C3; recover enough to keep control.
 - C3 Face-Away Bayesian Cable Curl: 3 × 10-15, RPE 6-7. Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Face away from the stack, elbows slightly behind the torso and pinned, tall posture with ribs down, no torso swing, controlled stretch at the bottom, smooth curl.
 
 ## Upper C — Chest / Rear Delts + Shoulders / Arms
@@ -89,7 +89,7 @@ Chest, back/lats, rear delts and arms: supported work across upper days.
 
 Direct biceps: nine weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3, barbell preacher curl Friday 2.
 
-Side delts: seated dumbbell lateral raises Friday; front delts also receive pressing.
+Side delts: cable lateral raises Thursday 3 / seated dumbbell lateral raises Friday 3; front delts also receive pressing.
 
 Calves: three conditional seated straight-leg sets per lower day; six weekly sets.
 

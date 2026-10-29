@@ -2236,7 +2236,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for machine press, rows, dual pulldowns, rear delts, and arms.",
+      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for machine press, rows, dual pulldowns, overhead triceps extensions, cable lateral raises, and curls.",
     previousDayReason:
       "Wednesday was Lower B, so this keeps lower-leg work quiet before upper-body training.",
     adaptationNote:
@@ -2244,7 +2244,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper B setup", note: "Machine press, row, dual pulldowns, rear delts, triceps, and biceps." },
+      { label: "Training match", value: "Upper B setup", note: "Machine press, row, dual pulldowns, overhead triceps extensions, side delts, and Bayesian curls." },
       { label: "Back rule", value: "Supported pulling", note: "Keep the torso controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],

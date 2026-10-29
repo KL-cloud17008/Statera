@@ -52,7 +52,7 @@ const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts
 test("revised programme has exact order, prescriptions and introductory totals", () => {
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const prescription = loadTypescriptModule("src/lib/workout-prescription.ts");
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "five-day-mon-fri-v10");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "five-day-mon-fri-v11");
   assert.deepEqual(Array.from(days, d => d.dayOfWeek), [1,2,3,4,5]);
   const expected = [
     [["A1 Lying Leg Curl — Easy Primer",2,"10-15","5-6"],["B1 Walking Lunges",2,"6-10 steps per leg","5-6"],["B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",3,"12-20","5-6"],["C1 Pendulum Squat",3,"8-12","6-7"],["D1 Seated Leg Extension",2,"10-15","6-7"],["E1 Seated Leg Curl — Working Sets",3,"10-15","7"],["F1 Hip Abduction Machine",3,"12-20","5-6"],["F2 Hip Adduction Machine",3,"12-20","5-6"],["G1 Seated Machine Preacher Curl",2,"10-15","6-7"]],
@@ -62,7 +62,15 @@ test("revised programme has exact order, prescriptions and introductory totals",
     [["A1 Seated Machine Chest Fly",2,"12-15","6"],["A2 Reverse Pec Deck / Seated Machine Reverse Fly",2,"12-20","6"],["B1 Back Extension — Hyperextension Bench",2,"10-15","5-6"],["B2 Seated Dumbbell Lateral Raise",3,"12-20","6-7"],["C1 Seated Barbell Preacher Curl",2,"10-15","6-7"],["C2 Seated Triceps-Extension Machine",2,"10-15","6-7"]],
   ];
   days.forEach((d,i) => { if(expected[i]) assert.deepEqual(JSON.parse(JSON.stringify(d.exercises.map(e => [e.exerciseName,e.sets,e.reps,e.targetRPE]))),expected[i]); });
-  assert.deepEqual(JSON.parse(JSON.stringify(days[3])), JSON.parse(readFileSync("tests/fixtures/thursday-programme.json","utf8")));
+  const previousThursday = JSON.parse(readFileSync("tests/fixtures/thursday-programme.json","utf8"));
+  assert.equal(days[3].sessionName, previousThursday.sessionName);
+  assert.deepEqual(JSON.parse(JSON.stringify(days[3].exercises.slice(0,4))), previousThursday.exercises.slice(0,4));
+  assert.deepEqual(JSON.parse(JSON.stringify(days[3].exercises.at(-1))), previousThursday.exercises.at(-1));
+  assert.deepEqual(JSON.parse(JSON.stringify(days[3].exercises.slice(-3).map(e => [e.exerciseName,e.sets,e.reps,e.targetRPE,e.supersetGroup]))), [
+    ["C1 Overhead Cable Triceps Extension",3,"15-20","6-7","C"],
+    ["C2 Cable Lateral Raise",3,"15-20 per arm","5-6","C"],
+    ["C3 Face-Away Bayesian Cable Curl",3,"10-15","6-7","C"],
+  ]);
   const total = (d, intro=false) => d.exercises.filter(e=>e.exerciseType!=="WARMUP").reduce((n,e)=>n+(intro?prescription.getIntroductorySets(e):e.sets),0);
   assert.deepEqual(Array.from(days,d=>total(d)),[23,15,23,20,13]);
   assert.deepEqual(Array.from(days,d=>total(d,true)),[22,15,22,20,13]);

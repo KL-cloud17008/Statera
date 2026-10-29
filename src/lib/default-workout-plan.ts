@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v10";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v11";
 export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
 export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
 export const UPPER_A_TITLE = "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders";
@@ -62,7 +62,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Hips: three rounds of abduction/adduction each lower day.",
   "Chest, back/lats, rear delts and arms: supported work across upper days.",
   "Direct biceps: nine weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3, barbell preacher curl Friday 2.",
-  "Side delts: seated dumbbell lateral raises Friday; front delts also receive pressing.",
+  "Side delts: cable lateral raises Thursday 3 / seated dumbbell lateral raises Friday 3; front delts also receive pressing.",
   "Calves: three conditional seated straight-leg sets per lower day; six weekly sets.",
   "Home core twice weekly (Tuesday/Friday): lying leg raises, reach-up crunches, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression."
 ] as const;
@@ -427,24 +427,24 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
         exerciseType: "WORKING"
       },
       {
-        exerciseName: "C1 Triceps Pressdown, bar",
+        exerciseName: "C1 Overhead Cable Triceps Extension",
         sets: 3,
         reps: "15-20",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: "Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Elbows pinned, finish with control, avoid leaning over cable.",
+        cues: "Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a bar attachment and a light starting load for this new movement. Upper arms overhead, elbows comfortable, ribs down and trunk still; extend smoothly without arching the lower back or forcing shoulder range. Stop if the overhead position provokes pain. Triset order: C1, C2, C3; recover enough to keep control.",
         supersetGroup: "C",
         exerciseType: "WORKING"
       },
       {
-        exerciseName: "C2 Reverse Cable Crossover",
+        exerciseName: "C2 Cable Lateral Raise",
         sets: 3,
-        reps: "15-20",
+        reps: "15-20 per arm",
         tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: "Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Rear delts, elbows soft and slightly bent, open smoothly wide, shoulder blades move under control, no jerking, no shrugging, do not chase load.",
+        cues: "Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a D-handle or cuff, one arm at a time. Soft elbow; raise out and slightly forward through a comfortable range, then lower slowly without shrugging or swinging the torso. Each set includes both arms; log the reps per arm. Triset order: C1, C2, C3; recover enough to keep control.",
         supersetGroup: "C",
         exerciseType: "WORKING"
       },

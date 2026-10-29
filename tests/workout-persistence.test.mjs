@@ -413,7 +413,7 @@ test("both lower-day preacher curl additions refresh open sessions and future pl
     const current = await f.actions.getSessionWithSets(open.id);
     assert.equal(current.id, open.id);
     assert.notEqual(current.workoutPlanId, oldPlan.id);
-    assert.equal(JSON.parse(current.notes).planTemplateVersion, "five-day-mon-fri-v10");
+    assert.equal(JSON.parse(current.notes).planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     const curl = visible.at(-1);
     assert.match(curl.exerciseName, /Seated Machine Preacher Curl$/);
@@ -430,6 +430,56 @@ test("both lower-day preacher curl additions refresh open sessions and future pl
     assert.deepEqual(f.state.sets.find((set) => set.id === "open-lower-set"), originalSets[0]);
     assert.deepEqual(f.state.sets.find((set) => set.id === "historical-lower-set"), originalSets[1]);
     assert.deepEqual(f.state.sessions.find((session) => session.id === completed.id), originalCompleted);
+    assert.deepEqual(oldPlan.exercises, oldExercises);
+    const writes = f.state.writes;
+    await f.actions.getWorkoutPlans("owner");
+    assert.equal(f.state.writes, writes);
+  }
+});
+
+test("Upper B cable substitutions refresh the open session without losing saved sets or rewriting completed history", async () => {
+  for (const retainOldCableSets of [false, true]) {
+    const f = fixture();
+    const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === 4);
+    const previous = JSON.parse(readFileSync("tests/fixtures/thursday-programme.json", "utf8"));
+    oldPlan.exercises = previous.exercises.map((exercise, index) => ({ id: `old-thursday-${index}`, sortOrder: index, ...exercise }));
+    const oldExercises = copy(oldPlan.exercises);
+    const notes = JSON.stringify({ label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek: 4,
+      planTemplateVersion: "five-day-mon-fri-v10", planContentHash: f.load("src/lib/workout-plan-version.ts").getWorkoutPlanContentHash(oldPlan) });
+    const open = f.addSession({ workoutPlanId: oldPlan.id, notes });
+    const completed = f.addSession({ workoutPlanId: oldPlan.id, notes, completed: true, endTime: new Date() });
+    const saved = [
+      ...[1,2,3].map(setNumber => ({ exerciseName: oldExercises[0].exerciseName, setNumber, weightUsed: 40, repsCompleted: 10, actualRPE: 6, notes: null })),
+      { exerciseName: oldExercises[1].exerciseName, setNumber: 1, weightUsed: 55, repsCompleted: 12, actualRPE: 6, notes: null },
+      ...(retainOldCableSets ? oldExercises.slice(4,6).map(exercise => ({ exerciseName: exercise.exerciseName, setNumber: 1, weightUsed: 15, repsCompleted: 15, actualRPE: 6, notes: null })) : []),
+    ];
+    for (const session of [open, completed]) {
+      f.state.sets.push(...saved.map((set, index) => ({ id: `${session.id}-saved-${index}`, workoutSessionId: session.id, ...set })));
+    }
+    const originalSets = copy(f.state.sets), originalCompleted = copy(completed);
+    const plans = await f.actions.getWorkoutPlans("owner");
+    const updatedPlan = plans.find(plan => plan.dayOfWeek === 4);
+    const current = await f.actions.getSessionWithSets(open.id);
+    assert.equal(current.id, open.id);
+    assert.equal(current.completed, false);
+    assert.equal(current.workoutPlanId, updatedPlan.id);
+    assert.notEqual(current.workoutPlanId, oldPlan.id);
+    assert.equal(JSON.parse(current.notes).planTemplateVersion, "five-day-mon-fri-v11");
+    const expectedNames = ["C1 Overhead Cable Triceps Extension", "C2 Cable Lateral Raise", "C3 Face-Away Bayesian Cable Curl"];
+    assert.deepEqual(updatedPlan.exercises.slice(-3).map(exercise => exercise.exerciseName), expectedNames);
+    assert.ok(updatedPlan.exercises.slice(-3).every(exercise => exercise.sets === 3 && exercise.supersetGroup === "C"));
+    const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
+    assert.deepEqual(Array.from(visible.slice(0,7), exercise => exercise.exerciseName), updatedPlan.exercises.map(exercise => exercise.exerciseName));
+    assert.equal(visible.slice(0,7).reduce((sum, exercise) => sum + exercise.sets, 0), 20);
+    assert.deepEqual(Array.from(visible.slice(7), exercise => exercise.exerciseName), retainOldCableSets ? oldExercises.slice(4,6).map(exercise => exercise.exerciseName) : []);
+    assert.deepEqual(f.state.sets, originalSets);
+    for (const exercise of updatedPlan.exercises.slice(-3)) {
+      const result = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, weightUsed: "10", repsCompleted: "15", actualRPE: "6" }));
+      assert.ok(!result.error, result.error);
+      assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === exercise.exerciseName).planExerciseId, exercise.id);
+    }
+    for (const set of originalSets) assert.deepEqual(f.state.sets.find(currentSet => currentSet.id === set.id), set);
+    assert.deepEqual(f.state.sessions.find(session => session.id === completed.id), originalCompleted);
     assert.deepEqual(oldPlan.exercises, oldExercises);
     const writes = f.state.writes;
     await f.actions.getWorkoutPlans("owner");
