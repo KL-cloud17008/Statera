@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { getTrainingDate, getTrainingDayNumber } from "@/lib/dates";
+import { getTrainingDate, getTrainingDayNumber, isValidISODateString } from "@/lib/dates";
+import { formText, measurementDate, validateMeasurementDate } from "@/lib/measurement-input";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { DEFAULT_WORKOUT_PLAN_VERSION } from "@/lib/default-workout-plan";
 import {
@@ -33,6 +34,12 @@ type WorkoutMutationResult = {
   error?: string;
   conflict?: boolean;
   savedSet?: SavedWorkoutSet | null;
+};
+
+type WorkoutDateMutationResult = {
+  error?: string;
+  conflict?: boolean;
+  trainingDate?: string;
 };
 
 export type WorkoutPlanDaySessionStatus = {
@@ -440,6 +447,47 @@ export async function deleteCompletedWorkoutSet(formData: FormData): Promise<Wor
     revalidateWorkoutSessionPaths();
     revalidatePath(`/workout/history/${sessionId}`);
     revalidatePath(`/workout/exercise/${encodeURIComponent(exerciseName)}`);
+  }
+  return result;
+}
+
+/** Correct the logged training day without changing the workout or its timing. */
+export async function updateCompletedWorkoutDate(formData: FormData): Promise<WorkoutDateMutationResult> {
+  const user = await getOrCreateCurrentUser();
+  if (!user) return { error: "Not authenticated" };
+  const sessionId = formText(formData, "sessionId");
+  const trainingDate = formText(formData, "trainingDate");
+  const expectedTrainingDate = formText(formData, "expectedTrainingDate");
+  if (!sessionId || sessionId.length > 200) return { error: "Choose a saved workout." };
+  const dateError = validateMeasurementDate(trainingDate, user.timezone);
+  if (dateError) return { error: dateError };
+  if (!isValidISODateString(expectedTrainingDate)) return { error: "Reload this workout before changing its date." };
+
+  let exerciseNames: string[] = [];
+  const result = await withWorkoutTransaction(prisma, user.id, async (tx): Promise<WorkoutDateMutationResult> => {
+    const session = await tx.workoutSession.findFirst({
+      where: { id: sessionId, userId: user.id }, include: { sets: true },
+    });
+    if (!session) return { error: "Session not found" };
+    if (!session.completed) return { error: "Finish this session before changing its history date." };
+    const currentDate = session.trainingDate.toISOString().slice(0, 10);
+    exerciseNames = [...new Set(session.sets.map(set => set.exerciseName))];
+    // A lost-response retry is already saved; other edits require review.
+    if (currentDate === trainingDate) return { trainingDate: currentDate };
+    if (currentDate !== expectedTrainingDate) return {
+      error: "The date changed in another tab or device. Review the saved date before replacing it.",
+      conflict: true, trainingDate: currentDate,
+    };
+    await tx.workoutSession.update({
+      where: { id: session.id, userId: user.id, completed: true },
+      data: { trainingDate: measurementDate(trainingDate) },
+    });
+    return { trainingDate };
+  });
+  if (!result.error) {
+    revalidateWorkoutSessionPaths();
+    revalidatePath(`/workout/history/${sessionId}`);
+    for (const name of exerciseNames) revalidatePath(`/workout/exercise/${encodeURIComponent(name)}`);
   }
   return result;
 }

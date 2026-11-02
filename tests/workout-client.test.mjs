@@ -39,6 +39,7 @@ function fixture(sharedStorage = new Map()) {
     logSet: async (form) => { env.requests.push(Object.fromEntries(form)); return { savedSet: saved }; },
     saveCompletedWorkoutSet: async (form) => { env.requests.push({ history: true, ...Object.fromEntries(form) }); return { savedSet: saved }; },
     deleteCompletedWorkoutSet: async (form) => { env.requests.push({ removeHistory: true, ...Object.fromEntries(form) }); return {}; },
+    updateCompletedWorkoutDate: async (form) => { env.requests.push({ dateHistory: true, ...Object.fromEntries(form) }); return { trainingDate: form.get("trainingDate") }; },
     startWorkoutSession: async (planId) => { env.requests.push({ planId }); return { sessionId: "session" }; },
     completeSession: async (sessionId) => { env.requests.push({ complete: sessionId }); return {}; },
     discardWorkoutSession: async (sessionId) => { env.requests.push({ discard: sessionId }); return {}; },
@@ -165,6 +166,9 @@ test("history set entry uses the explicit correction action and retains interrup
 test("history editor exposes missing sets, additional exercises and saved-set removal without starting a session", async () => {
   const env = fixture(), props = loggerProps();
   const host = env.mount("WorkoutHistoryEditor", props);
+  host.nodes("WorkoutHistoryDateEditor")[0].props.onPendingChange(true); host.render();
+  assert.equal(host.nodes("SetInput")[0].props.disabled, true, "date saving blocks competing set edits");
+  host.nodes("WorkoutHistoryDateEditor")[0].props.onPendingChange(false); host.render();
   let editor = host.nodes("SetInput")[0];
   assert.equal(editor.props.saveMode, "history");
   assert.equal(editor.props.logged, null);
@@ -188,6 +192,90 @@ test("history editor exposes missing sets, additional exercises and saved-set re
   assert.equal(env.requests[0].removeHistory, true);
   assert.equal(env.requests[0].exerciseName, "Standing curl");
   assert.equal(host.nodes("SetInput")[0].props.logged, null);
+});
+
+test("history date drafts recover after interruption and retries do not disturb set drafts", async () => {
+  const env = fixture(), first = deferred(), pending = [];
+  const setKey = env.lib.workoutDraftKey("session", "Machine Row", 1);
+  env.lib.writeWorkoutStorage(setKey, JSON.stringify({ version: 1, fields: { weight: "42.5", reps: "12", rpe: "7", notes: "" }, baseline: null, revision: "set", status: "draft" }));
+  const originalSetDraft = env.lib.readWorkoutStorage(setKey);
+  const props = { sessionId: "session", trainingDate: "2026-11-02", maxDate: "2026-11-02", onPendingChange: value => pending.push(value) };
+  env.actions.updateCompletedWorkoutDate = async form => { env.requests.push(Object.fromEntries(form)); return first.promise; };
+  const host = env.mount("WorkoutHistoryDateEditor", props).change("Training date", "2026-11-01");
+  assert.equal(env.requests.length, 0, "changing the date does not save automatically");
+  host.submit(); host.submit(); host.render();
+  assert.equal(env.requests.length, 1);
+  assert.equal(host.button("Saving…").props.disabled, true);
+  first.reject(new Error("Connection interrupted")); await flush(); host.render();
+  assert.match(text(host.tree), /Connection interrupted/);
+  assert.equal(host.input("Training date").props.value, "2026-11-01");
+  host.unmount();
+  const recovered = fixture(env.storage);
+  const retry = recovered.mount("WorkoutHistoryDateEditor", props);
+  assert.equal(retry.input("Training date").props.value, "2026-11-01");
+  await retry.submit(); retry.render();
+  assert.equal(recovered.requests[0].expectedTrainingDate, "2026-11-02");
+  assert.match(text(retry.tree), /Training date saved/);
+  assert.equal(retry.button("Save date").props.disabled, true);
+  assert.deepEqual(recovered.navigation, ["refresh"]);
+  assert.equal(recovered.lib.readWorkoutStorage(setKey), originalSetDraft);
+  assert.equal(recovered.lib.sessionDraftSnapshot("session"), JSON.stringify([setKey]));
+  assert.deepEqual(pending, [true, false, true, false]);
+});
+
+test("history date conflicts keep the selection until saved values are accepted or explicitly replaced", async () => {
+  for (const replace of [false, true]) {
+    const env = fixture(); let calls = 0;
+    env.actions.updateCompletedWorkoutDate = async form => {
+      env.requests.push(Object.fromEntries(form));
+      return ++calls === 1 ? { error: "Date changed elsewhere", conflict: true, trainingDate: "2026-10-31" } : { trainingDate: form.get("trainingDate") };
+    };
+    const host = env.mount("WorkoutHistoryDateEditor", { sessionId: "session", trainingDate: "2026-11-02", maxDate: "2026-11-02" }).change("Training date", "2026-11-01");
+    await host.submit(); host.render();
+    assert.equal(host.input("Training date").props.value, "2026-11-01");
+    assert.match(text(host.tree), /Saved date: 2026-10-31/);
+    assert.ok(host.button("Save my date"));
+    if (replace) {
+      await host.submit(); host.render();
+      assert.equal(env.requests[1].expectedTrainingDate, "2026-10-31");
+      assert.equal(env.requests[1].trainingDate, "2026-11-01");
+    } else {
+      host.button("Use saved date").props.onClick(); host.render();
+      assert.equal(host.input("Training date").props.value, "2026-10-31");
+      assert.equal(env.requests.length, 1);
+      assert.deepEqual(env.navigation, ["refresh"]);
+    }
+  }
+});
+
+test("date acknowledgments retain a newer cross-tab selection with the confirmed baseline", async () => {
+  const env = fixture(), response = deferred();
+  env.actions.updateCompletedWorkoutDate = async () => response.promise;
+  const props = { sessionId: "session", trainingDate: "2026-11-02", maxDate: "2026-11-02" };
+  const first = env.mount("WorkoutHistoryDateEditor", props).change("Training date", "2026-11-01");
+  first.submit();
+  const second = env.mount("WorkoutHistoryDateEditor", props).change("Training date", "2026-10-31");
+  response.resolve({ trainingDate: "2026-11-01" }); await flush(); first.render(); second.render();
+  assert.equal(first.input("Training date").props.value, "2026-10-31");
+  assert.match(text(first.tree), /newer selection is still unsaved/);
+  env.actions.updateCompletedWorkoutDate = async form => { env.requests.push(Object.fromEntries(form)); return { trainingDate: form.get("trainingDate") }; };
+  await second.submit(); second.render();
+  assert.equal(env.requests[0].expectedTrainingDate, "2026-11-01");
+  assert.equal(env.requests[0].trainingDate, "2026-10-31");
+});
+
+test("the date control discloses storage failures and respects a competing save", async () => {
+  const env = fixture(); env.blockStorage = true;
+  const host = env.mount("WorkoutHistoryDateEditor", { sessionId: "session", trainingDate: "2026-11-02", maxDate: "2026-11-02" }).change("Training date", "2026-11-01");
+  assert.match(text(host.tree), /cannot survive a page refresh/);
+  host.render({ disabled: true });
+  await host.submit();
+  assert.equal(env.requests.length, 0);
+  assert.equal(host.button("Save date").props.disabled, true);
+  host.render({ disabled: false });
+  await host.submit(); host.render();
+  assert.equal(host.input("Training date").props.value, "2026-11-01");
+  assert.match(text(host.tree), /Training date saved/);
 });
 
 test("a removed historical set can be accepted from another tab without reviving stale saved values", async () => {

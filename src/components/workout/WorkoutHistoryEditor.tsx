@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageTitle } from "@/components/ui/ledger";
 import { SetInput } from "@/components/workout/SetInput";
+import { WorkoutHistoryDateEditor } from "@/components/workout/WorkoutHistoryDateEditor";
 import { mergeSavedSessionExercises, type SessionExercise } from "@/lib/workout-session-exercises";
 import { draftTargets, sessionDraftSnapshot, subscribeWorkoutStorage, workoutDraftKey, writeWorkoutStorage, type SavedEntry } from "@/lib/workout-entry-state";
 import { isAtHomePrimerExerciseName } from "@/lib/training-session";
@@ -22,10 +23,11 @@ export type HistoricalWorkoutSet = SavedEntry & {
 };
 type Target = { exerciseName: string; setNumber: number };
 
-export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, exercises, existingSets }: {
+export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, todayDate, exercises, existingSets }: {
   sessionId: string;
   sessionName: string;
   trainingDate: string;
+  todayDate?: string;
   exercises: SessionExercise[];
   existingSets: HistoricalWorkoutSet[];
 }) {
@@ -44,6 +46,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, exe
   const [notice, setNotice] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const [savingDate, setSavingDate] = useState(false);
   const operationInFlight = useRef(false);
   const editorRef = useRef<HTMLElement>(null);
   const draftRaw = useSyncExternalStore(subscribeWorkoutStorage, () => sessionDraftSnapshot(sessionId), () => "[]");
@@ -60,7 +63,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, exe
     ?? targets.find((candidate) => !isSaved(candidate)) ?? targets[0];
   const currentExercise = movements.find((exercise) => exercise.exerciseName === target?.exerciseName);
   const currentSet = loggedSets.find((set) => set.exerciseName === target?.exerciseName && set.setNumber === target?.setNumber) ?? null;
-  const busy = saving || removing;
+  const busy = saving || removing || savingDate;
 
   useEffect(() => {
     if (!draftKeys.length) return;
@@ -146,6 +149,8 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, exe
     <div className="mb-5 border-b border-rule-strong pb-4">
       <p className="text-caption text-secondary">{new Date(`${trainingDate}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })} · Completed</p>
       <h2 className="mt-2 text-body-lg font-medium">{sessionName}</h2>
+      <WorkoutHistoryDateEditor key={sessionId} sessionId={sessionId} trainingDate={trainingDate} maxDate={todayDate} disabled={saving || removing}
+        onPendingChange={(pending) => { operationInFlight.current = pending; setSavingDate(pending); }} />
       <p className="mt-2 text-caption text-secondary">Add missed sets or correct saved values. Each set saves separately; empty sets stay unlogged.</p>
     </div>
     <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-caption">
@@ -183,7 +188,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, exe
             }}><Plus className="size-4" aria-hidden />Add set</Button>
           </div>
           <SetInput key={`${target.exerciseName}:${target.setNumber}`} sessionId={sessionId} planExerciseId={null} exerciseName={target.exerciseName} setNumber={target.setNumber}
-            isFinisher={currentExercise.exerciseType === "FINISHER"} logged={currentSet} previous={null} showPrevious={false} saveMode="history" disabled={removing}
+            isFinisher={currentExercise.exerciseType === "FINISHER"} logged={currentSet} previous={null} showPrevious={false} saveMode="history" disabled={removing || savingDate}
             onSaved={onSaved} onMissing={() => {
               setLoggedSets((current) => current.filter((set) => !(set.exerciseName === target.exerciseName && set.setNumber === target.setNumber)));
               setNotice("Saved values reloaded. This set was removed elsewhere.");

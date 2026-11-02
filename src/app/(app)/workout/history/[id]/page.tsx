@@ -7,16 +7,18 @@ import { mergeSavedSessionExercises } from "@/lib/workout-session-exercises";
 import { getSessionLabel } from "@/lib/workout-stats";
 import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/training-session";
 import { workoutLoadToKg } from "@/lib/units";
+import { getOrCreateCurrentUser } from "@/lib/current-user";
+import { getTodayDateString } from "@/lib/dates";
 
 export const metadata: Metadata = {
   title: "Edit Training Session | Athanor",
-  description: "Add missed sets and correct a saved workout.",
+  description: "Correct a workout's training date, add missed sets, and edit saved values.",
 };
 
 export default async function EditWorkoutSessionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await getSessionWithSets(id);
-  if (!session) notFound();
+  const [session, user] = await Promise.all([getSessionWithSets(id), getOrCreateCurrentUser()]);
+  if (!session || !user) notFound();
   if (!session.completed) redirect("/workout");
 
   const meta = parseWorkoutSessionMeta(session.notes);
@@ -33,6 +35,7 @@ export default async function EditWorkoutSessionPage({ params }: { params: Promi
     sessionId={session.id}
     sessionName={getSessionLabel(session)}
     trainingDate={session.trainingDate.toISOString().split("T")[0]}
+    todayDate={getTodayDateString(user.timezone)}
     exercises={mergeSavedSessionExercises(exercises, sets)}
     existingSets={sets.map((set) => ({
       exerciseName: set.exerciseName, setNumber: set.setNumber,

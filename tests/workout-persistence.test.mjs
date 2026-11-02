@@ -12,7 +12,11 @@ const copy = (value) => structuredClone(value);
 // Execute real action/library code with an isolated in-memory repository. The
 // repository models transaction rollback and the cross-request user row lock;
 // it never loads environment credentials or connects to the production DB.
-function fixture() {
+function fixture({ now } = {}) {
+  const TestDate = now == null ? Date : class extends Date {
+    constructor(...args) { super(...(args.length ? args : [now])); }
+    static now() { return new Date(now).getTime(); }
+  };
   const state = { plans: [], sessions: [], sets: [], invalidations: [], locks: 0, writes: 0, failSetWrite: false };
   let auth = { id: "owner", timezone: "America/New_York" };
   let serial = 0;
@@ -101,7 +105,7 @@ function fixture() {
     if (cache.has(filename)) return cache.get(filename).exports;
     const compiledModule = { exports: {} }; cache.set(filename, compiledModule);
     const output = ts.transpileModule(readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }, fileName: filename }).outputText;
-    vm.runInNewContext(output, { module: compiledModule, exports: compiledModule.exports, Date, FormData, Number, Map, Set, JSON,
+    vm.runInNewContext(output, { module: compiledModule, exports: compiledModule.exports, Date: TestDate, FormData, Number, Map, Set, JSON,
       require: (specifier) => {
         if (specifier === "@/lib/db") return { prisma: client };
         if (specifier === "@/lib/current-user") return { getOrCreateCurrentUser: async () => auth };
@@ -221,6 +225,85 @@ test("explicit history edits fill missed sets and correct values without reopeni
   assert.ok(f.state.invalidations.includes("/workout/exercise/Extra%20exercise"));
   assert.ok((await f.actions.logSet(f.form(session.id))).error, "live logging remains unable to modify completed history");
   assert.ok((await f.actions.saveCompletedWorkoutSet(f.form(open.id))).error, "history editor cannot modify an open workout");
+});
+
+test("a completed workout can move from Monday to Sunday without changing sets, timing, plan or other sessions", async () => {
+  const f = fixture({ now: "2026-11-02T15:00:00Z" });
+  const session = f.addSession({ completed: true, date: new Date("2026-11-01"), trainingDate: new Date("2026-11-02"),
+    startTime: new Date("2026-11-01T13:00Z"), endTime: new Date("2026-11-01T14:00Z") });
+  session.notes = JSON.stringify({ ...JSON.parse(session.notes), loadUnit: "lb" });
+  const other = f.addSession({ completed: true, workoutPlanId: "plan-2", trainingDate: new Date("2026-11-01") });
+  f.state.sets.push({ id: "retained-history", workoutSessionId: session.id, exerciseName: "Saved row", setNumber: 1,
+    weightUsed: 100, repsCompleted: 12, actualRPE: 7, duration: 40, isAMRAP: true, notes: "Keep this" });
+  const before = copy({ session, other, sets: f.state.sets, plans: f.state.plans });
+  assert.equal((await f.actions.getWorkoutPlanDayStatuses("owner")).find(day => day.dayOfWeek === 1).status, "view");
+  const result = await f.actions.updateCompletedWorkoutDate(f.form(session.id, { trainingDate: "2026-11-01", expectedTrainingDate: "2026-11-02" }));
+  assert.ok(!result.error, result.error);
+  assert.equal(result.trainingDate, "2026-11-01");
+  assert.equal(session.trainingDate.toISOString(), "2026-11-01T00:00:00.000Z");
+  assert.deepEqual({ ...session, trainingDate: before.session.trainingDate }, before.session);
+  assert.deepEqual(other, before.other);
+  assert.deepEqual(f.state.sets, before.sets);
+  assert.deepEqual(f.state.plans, before.plans);
+  assert.equal(f.state.sessions.length, 2, "two workouts on Sunday remain separate");
+  assert.equal((await f.actions.getWorkoutPlanDayStatuses("owner")).find(day => day.dayOfWeek === 1).status, "start", "Sunday belongs to the previous training week");
+  assert.equal((await f.actions.getRecentSessions("owner")).find(item => item.id === session.id).trainingDate.toISOString(), "2026-11-01T00:00:00.000Z");
+  for (const path of ["/", "/workout", "/workout/plan", "/workout/history", `/workout/history/${session.id}`, "/workout/exercise/Saved%20row"]) assert.ok(f.state.invalidations.includes(path));
+});
+
+test("date corrections are retry-safe and concurrent edits require an explicit current baseline", async () => {
+  const f = fixture({ now: "2026-11-02T15:00:00Z" }), session = f.addSession({ completed: true, trainingDate: new Date("2026-11-02") });
+  const other = f.addSession({ completed: true, trainingDate: new Date("2026-11-01") });
+  const form = (date, baseline = "2026-11-02") => f.form(session.id, { trainingDate: date, expectedTrainingDate: baseline });
+  const results = await Promise.all([f.actions.updateCompletedWorkoutDate(form("2026-11-01")), f.actions.updateCompletedWorkoutDate(form("2026-11-01"))]);
+  assert.ok(results.every(result => !result.error));
+  assert.equal(f.state.writes, 1);
+  assert.ok(!(await f.actions.updateCompletedWorkoutDate(form("2026-11-01"))).error, "lost-response retry succeeds");
+  assert.equal(f.state.writes, 1);
+  const conflict = await f.actions.updateCompletedWorkoutDate(form("2026-10-31"));
+  assert.equal(conflict.conflict, true);
+  assert.equal(conflict.trainingDate, "2026-11-01");
+  assert.equal(f.state.writes, 1);
+  assert.ok(!(await f.actions.updateCompletedWorkoutDate(form("2026-10-31", conflict.trainingDate))).error);
+  assert.equal((await f.actions.updateCompletedWorkoutDate(form("2026-11-01"))).conflict, true, "an old retry cannot undo a newer correction");
+  assert.deepEqual((await f.actions.getRecentSessions("owner")).map(item => item.id), [other.id, session.id]);
+});
+
+test("date corrections reject invalid, future, foreign and open sessions before making any change", async () => {
+  const f = fixture({ now: "2026-11-02T15:00:00Z" });
+  const session = f.addSession({ completed: true, trainingDate: new Date("2026-11-02") });
+  const foreign = f.addSession({ userId: "other", completed: true });
+  const open = f.addSession();
+  for (const values of [{ trainingDate: "" }, { trainingDate: "2026-02-30" }, { trainingDate: "01/11/2026" },
+    { trainingDate: "2026-11-03" }, { expectedTrainingDate: undefined }, { expectedTrainingDate: "invalid" },
+    { sessionId: foreign.id }, { sessionId: open.id }, { sessionId: "missing" }]) {
+    assert.ok((await f.actions.updateCompletedWorkoutDate(f.form(session.id, { trainingDate: "2026-11-01", expectedTrainingDate: "2026-11-02", ...values }))).error);
+  }
+  assert.equal(f.state.writes, 0);
+  assert.equal(f.state.invalidations.length, 0);
+  const original = copy(f.state.sessions);
+  f.client.workoutSession.update = async () => { throw new Error("Simulated failed date write"); };
+  await assert.rejects(f.actions.updateCompletedWorkoutDate(f.form(session.id, { trainingDate: "2026-11-01", expectedTrainingDate: "2026-11-02" })), /Simulated failed date write/);
+  assert.deepEqual(f.state.sessions, original);
+  f.setAuth(null);
+  assert.ok((await f.actions.updateCompletedWorkoutDate(f.form(session.id))).error);
+  assert.equal(f.state.writes, 0);
+});
+
+test("manual history dates use the user's calendar today rather than the noon training boundary", async () => {
+  for (const [timezone, allowed] of [["America/New_York", false], ["Asia/Tokyo", true]]) {
+    const f = fixture({ now: "2026-11-02T00:30:00Z" });
+    f.setAuth({ id: "owner", timezone });
+    const session = f.addSession({ completed: true, trainingDate: new Date("2026-11-03") });
+    const result = await f.actions.updateCompletedWorkoutDate(f.form(session.id, { trainingDate: "2026-11-02", expectedTrainingDate: "2026-11-03" }));
+    assert.equal(Boolean(result.error), !allowed);
+    if (allowed) assert.equal(session.trainingDate.toISOString(), "2026-11-02T00:00:00.000Z");
+    else {
+      assert.equal(f.state.writes, 0);
+      assert.ok(!(await f.actions.updateCompletedWorkoutDate(f.form(session.id, { trainingDate: "2026-11-01", expectedTrainingDate: "2026-11-03" }))).error);
+      assert.equal(session.trainingDate.toISOString(), "2026-11-01T00:00:00.000Z");
+    }
+  }
 });
 
 test("history saves are retry-safe and stale edits require explicit conflict resolution", async () => {
