@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v12";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v13";
 export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
 export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
 export const UPPER_A_TITLE = "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders";
@@ -218,23 +218,23 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "B1 Neutral-Grip Lat Pulldown",
-        sets: 2,
+        sets: 3,
         reps: "8-12",
         tempo: "controlled",
         restSeconds: 0,
         targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Neutral set 1 → close-grip set 1 → rest → neutral set 2. Ribs down, pull to upper chest, no yanking or excessive lean.",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Three superset rounds: neutral-grip set → close-grip set → rest 120 seconds. Ribs down, pull to upper chest, no yanking or excessive lean.",
         supersetGroup: "B",
         exerciseType: "WORKING"
       },
       {
         exerciseName: "B2 Close-Grip Lat Pulldown",
-        sets: 1,
+        sets: 3,
         reps: "10-12",
         tempo: "controlled",
         restSeconds: 120,
         targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Complementary volume: one set only. Controlled pull and return, no swinging. Rest 120 seconds after the pair.",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Three sets, paired with neutral-grip pulldowns. Keep these lighter at RPE 5-6. Controlled pull and return, no swinging. Rest 120 seconds after each pair; recover enough to retain control.",
         supersetGroup: "B",
         exerciseType: "WORKING"
       },

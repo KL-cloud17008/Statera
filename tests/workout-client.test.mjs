@@ -484,12 +484,16 @@ test("introductory curl sets are actionable, explicit confirmation unlocks targe
   }
 });
 
-test("Tuesday 2/1 and Friday 2/3 pairs have no phantom sets or completion blocks",()=>{
-  for(const counts of [[2,1],[2,3]]){
+test("Tuesday 3/3 and unequal historical pairs have no phantom sets or completion blocks",()=>{
+  for(const [counts,expected] of [
+    [[3,3],[["First",1],["Partner",1],["First",2],["Partner",2],["First",3],["Partner",3]]],
+    [[2,1],[["First",1],["Partner",1],["First",2]]],
+    [[2,3],[["First",1],["Partner",1],["First",2],["Partner",2],["Partner",3]]],
+  ]){
     const env=fixture(),host=env.mount("SessionLogger",loggerProps({exercises:counts.map((sets,i)=>({id:String(i),exerciseName:i?"Partner":"First",sets,reps:"10-15",restSeconds:i?120:0,supersetGroup:"B",exerciseType:"WORKING"}))}));
     const observed=[];
     for(let n=0;n<counts[0]+counts[1];n++){const editor=host.nodes("SetInput")[0];observed.push([editor.props.exerciseName,editor.props.setNumber]);editor.props.onSaved("",saved);host.render();}
-    assert.deepEqual(observed,counts[0]===2&&counts[1]===1?[["First",1],["Partner",1],["First",2]]:[["First",1],["Partner",1],["First",2],["Partner",2],["Partner",3]]);
+    assert.deepEqual(observed,expected);
     assert.match(text(host.tree),/All planned sets saved/);
   }
 });

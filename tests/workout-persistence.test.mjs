@@ -520,13 +520,15 @@ test("both lower-day preacher curl additions refresh open sessions and future pl
   }
 });
 
-test("Tuesday chest press and three-set accessories refresh open sessions while retaining saved work and completed history", async () => {
+test("Tuesday chest press and three-set increases refresh open sessions while retaining saved work and completed history", async () => {
   for (const hasSavedInclineSet of [false, true]) {
     const f = fixture();
     const oldPlan = f.state.plans.find(plan => plan.dayOfWeek === 2);
     oldPlan.sessionName = "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders";
     oldPlan.exercises[0].exerciseName = "A1 Incline Machine Chest Press";
     oldPlan.exercises[0].cues = "Supported incline pressing.";
+    oldPlan.exercises[2].sets = 2;
+    oldPlan.exercises[3].sets = 1;
     for (const exercise of oldPlan.exercises.slice(4)) exercise.sets = 2;
     const oldExercises = copy(oldPlan.exercises);
     const notes = JSON.stringify({ label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek: 2,
@@ -534,6 +536,7 @@ test("Tuesday chest press and three-set accessories refresh open sessions while 
     const open = f.addSession({ workoutPlanId: oldPlan.id, notes });
     const completed = f.addSession({ workoutPlanId: oldPlan.id, notes, completed: true, endTime: new Date() });
     const saved = [{ exerciseName: oldExercises[1].exerciseName, setNumber: 1, weightUsed: 50, repsCompleted: 10, actualRPE: 6, notes: null }];
+    for (const exercise of oldExercises.slice(2, 4)) saved.push(...Array.from({ length: exercise.sets }, (_, index) => ({ exerciseName: exercise.exerciseName, setNumber: index + 1, weightUsed: 45, repsCompleted: 10, actualRPE: 6, notes: null })));
     for (const exercise of oldExercises.slice(4)) saved.push(...[1, 2].map(setNumber => ({ exerciseName: exercise.exerciseName, setNumber, weightUsed: 15, repsCompleted: 12, actualRPE: 6, notes: null })));
     if (hasSavedInclineSet) saved.push({ exerciseName: oldExercises[0].exerciseName, setNumber: 1, weightUsed: 40, repsCompleted: 12, actualRPE: 7, notes: "Incline machine" });
     for (const session of [open, completed]) f.state.sets.push(...saved.map((set, index) => ({ id: `${session.id}-${index}`, workoutSessionId: session.id, ...set })));
@@ -545,18 +548,18 @@ test("Tuesday chest press and three-set accessories refresh open sessions while 
     assert.equal(updated.exercises[0].sets, 3);
     assert.equal(updated.exercises[0].reps, "8-12");
     assert.equal(updated.exercises[0].targetRPE, "6-7");
-    assert.deepEqual(updated.exercises.slice(4).map(exercise => exercise.sets), [3, 3, 3]);
+    assert.deepEqual(updated.exercises.slice(2).map(exercise => exercise.sets), [3, 3, 3, 3, 3]);
     const current = await f.actions.getSessionWithSets(open.id);
     assert.equal(current.id, open.id);
     assert.equal(current.workoutPlanId, updated.id);
     assert.notEqual(current.workoutPlanId, oldPlan.id);
     const meta = JSON.parse(current.notes);
     assert.equal(meta.label, updated.sessionName);
-    assert.equal(meta.planTemplateVersion, "five-day-mon-fri-v12");
+    assert.equal(meta.planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
     assert.ok(meta.retainedExerciseNames.includes("A1 Incline Machine Chest Press"), "old device drafts remain recoverable");
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     assert.equal(visible[0].exerciseName, "A1 Machine Chest Press");
-    assert.deepEqual(Array.from(visible.slice(4, 7), exercise => exercise.sets), [3, 3, 3]);
+    assert.deepEqual(Array.from(visible.slice(2, 7), exercise => exercise.sets), [3, 3, 3, 3, 3]);
     assert.deepEqual(Array.from(visible.slice(7), exercise => exercise.exerciseName), hasSavedInclineSet ? ["A1 Incline Machine Chest Press"] : []);
     assert.deepEqual(f.state.sets, originalSets, "incline performance must never be relabelled as standard pressing");
     const historical = await f.actions.getSessionWithSets(completed.id);
@@ -566,7 +569,9 @@ test("Tuesday chest press and three-set accessories refresh open sessions while 
     const result = await f.actions.logSet(f.form(open.id, { exerciseName: "A1 Machine Chest Press", weightUsed: "35", repsCompleted: "10", actualRPE: "6" }));
     assert.ok(!result.error, result.error);
     assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === "A1 Machine Chest Press").planExerciseId, updated.exercises[0].id);
-    for (const exercise of updated.exercises.slice(4)) {
+    const closeSecond = await f.actions.logSet(f.form(open.id, { exerciseName: updated.exercises[3].exerciseName, setNumber: "2", weightUsed: "45", repsCompleted: "10", actualRPE: "6" }));
+    assert.ok(!closeSecond.error, closeSecond.error);
+    for (const exercise of updated.exercises.slice(2)) {
       const added = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, setNumber: "3", weightUsed: "15", repsCompleted: "12", actualRPE: "6" }));
       assert.ok(!added.error, added.error);
       assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === exercise.exerciseName && set.setNumber === 3).planExerciseId, exercise.id);
