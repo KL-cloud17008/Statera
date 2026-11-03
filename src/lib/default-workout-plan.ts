@@ -17,10 +17,10 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v11";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v12";
 export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
 export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
-export const UPPER_A_TITLE = "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders";
+export const UPPER_A_TITLE = "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders";
 export const LOWER_B_TAPER_TITLE = "Lower B — Split Squat → Calves → Pendulum / Hamstrings + Hips";
 export const UPPER_B_TITLE = "Upper B — Machine Chest + Dual Pulldown / Arms";
 export const UPPER_ACCESSORY_TITLE = "Upper C — Chest / Rear Delts + Shoulders / Arms";
@@ -76,7 +76,7 @@ export const DEFAULT_WORKOUT_PLAN_NOTES = [
 ] as const;
 export const DEFAULT_WEEKLY_RHYTHM = [
   "Monday: Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips",
-  "Tuesday: Upper A — Incline Machine Press + Row / Pulldowns + Shoulders",
+  "Tuesday: Upper A — Machine Chest Press + Row / Pulldowns + Shoulders",
   "Wednesday: Lower B — Split Squat → Calves → Pendulum / Hamstrings + Hips",
   "Thursday: Upper B — Machine Chest + Dual Pulldown / Arms",
   "Friday: Upper C — Chest / Rear Delts + Shoulders / Arms",
@@ -192,16 +192,16 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   },
   {
     dayOfWeek: 2,
-    sessionName: "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders",
+    sessionName: "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders",
     exercises: [
       {
-        exerciseName: "A1 Incline Machine Chest Press",
+        exerciseName: "A1 Machine Chest Press",
         sets: 3,
         reps: "8-12",
         tempo: "controlled",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Back supported, shoulder blades back/down, elbows slightly tucked, controlled bottom, no bounce or shoulder pinch. Remains first.",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated standard chest press, handles at mid-chest. Back supported, shoulder blades back/down, elbows slightly tucked, controlled comfortable range, no bounce or shoulder pinch. Remains first.",
         supersetGroup: null,
         exerciseType: "WORKING"
       },
@@ -240,7 +240,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "C1 Seated Machine Shoulder Press",
-        sets: 2,
+        sets: 3,
         reps: "8-12",
         tempo: "controlled",
         restSeconds: 120,
@@ -251,7 +251,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "D1 Seated Machine Chest Fly",
-        sets: 2,
+        sets: 3,
         reps: "12-15",
         tempo: "controlled",
         restSeconds: 0,
@@ -262,7 +262,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "D2 Reverse Pec Deck / Seated Machine Reverse Fly",
-        sets: 2,
+        sets: 3,
         reps: "12-20",
         tempo: "controlled",
         restSeconds: 120,

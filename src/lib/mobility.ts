@@ -2161,7 +2161,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, and wrists for incline pressing, the machine row, dual pulldowns, and rear-delt/lateral-delt cable work.",
+      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, and wrists for the standard seated machine chest press, supported row, dual pulldowns, shoulder press, and chest fly/reverse fly pair.",
     previousDayReason:
       "Monday was Lower A, so this keeps lower-leg prep low-dose before upper-body training.",
     adaptationNote:
@@ -2169,7 +2169,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Incline press, machine row, dual pulldowns, triceps, rear delts, lateral delts, and modest biceps." },
+      { label: "Training match", value: "Upper A setup", note: "Machine chest press, supported row, dual pulldowns, seated shoulder press, and chest fly/reverse fly." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
