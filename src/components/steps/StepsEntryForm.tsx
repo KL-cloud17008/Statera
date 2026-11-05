@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logSteps, updateStepsEntry } from "@/actions/steps";
@@ -21,29 +21,49 @@ export function StepsEntryForm({
   timezone,
   initialDate,
   entries = [],
+  selectedDate,
+  onDateChange,
+  focusRequest = 0,
+  onPendingChange,
 }: {
   editEntry?: StepsEntry;
   onDone?: () => void;
   timezone?: string;
   initialDate?: string;
   entries?: StepsEntry[];
+  selectedDate?: string;
+  onDateChange?: (date: string) => void;
+  focusRequest?: number;
+  onPendingChange?: (pending: boolean) => void;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const stepsRef = useRef<HTMLInputElement>(null);
   const savingRef = useRef(false);
   const [isPending, setIsPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<{ date: string; error?: string; saved?: string } | null>(null);
   const today = getTodayDateString(timezone);
-  const [date, setDate] = useState(editEntry?.date ?? initialDate ?? today);
-  const [steps, setSteps] = useState(String(editEntry?.steps ?? entries.find((entry) => entry.date === (initialDate ?? today))?.steps ?? ""));
+  const [localDate, setLocalDate] = useState(editEntry?.date ?? initialDate ?? today);
+  const date = selectedDate ?? localDate;
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [editSteps, setEditSteps] = useState(String(editEntry?.steps ?? ""));
   const existing = entries.find((entry) => entry.date === date);
+  const steps = editEntry ? editSteps : drafts[date] ?? String(existing?.steps ?? "");
+  const error = feedback?.date === date ? feedback.error : null;
+  const saved = feedback?.date === date ? feedback.saved : null;
+
+  useEffect(() => {
+    if (!focusRequest) return;
+    formRef.current?.scrollIntoView({ block: "center", behavior: "auto" });
+    stepsRef.current?.focus({ preventScroll: true });
+  }, [focusRequest]);
 
   async function handleSubmit(formData: FormData) {
     if (savingRef.current) return;
     savingRef.current = true;
     setIsPending(true);
-    setError(null);
-    setSaved(null);
+    onPendingChange?.(true);
+    setFeedback(null);
+    const submittedDate = String(formData.get("date"));
     if (editEntry) {
       formData.set("id", editEntry.id);
       formData.set("originalSteps", String(editEntry.steps));
@@ -52,18 +72,19 @@ export function StepsEntryForm({
     try {
       const result = await (editEntry ? updateStepsEntry(formData) : logSteps(formData));
       if (result.error) {
-        setError(result.error);
+        setFeedback({ date: submittedDate, error: result.error });
         return;
       }
       const message = `${Number(formData.get("steps")).toLocaleString()} steps saved for ${formData.get("date")}`;
-      setSaved(message);
+      setFeedback({ date: submittedDate, saved: message });
       toast.success(message);
       onDone?.();
     } catch {
-      setError("Save could not be confirmed. Your entry is still here; check your connection and retry.");
+      setFeedback({ date: submittedDate, error: "Save could not be confirmed. Your entry is still here; check your connection and retry." });
     } finally {
       setIsPending(false);
       savingRef.current = false;
+      onPendingChange?.(false);
     }
   }
 
@@ -82,9 +103,9 @@ export function StepsEntryForm({
               value={date}
               max={today}
               onChange={(event) => {
-                setDate(event.target.value);
-                if (!editEntry) setSteps(String(entries.find((entry) => entry.date === event.target.value)?.steps ?? ""));
-                setSaved(null);
+                setLocalDate(event.target.value);
+                onDateChange?.(event.target.value);
+                setFeedback(null);
               }}
               required
               className="h-12"
@@ -94,6 +115,7 @@ export function StepsEntryForm({
             <Label htmlFor={editEntry ? `edit-steps-${editEntry.id}` : "steps-value"}>Steps</Label>
             <Input
               id={editEntry ? `edit-steps-${editEntry.id}` : "steps-value"}
+              ref={stepsRef}
               name="steps"
               type="number"
               inputMode="numeric"
@@ -103,7 +125,12 @@ export function StepsEntryForm({
               placeholder="12000"
               enterKeyHint="done"
               value={steps}
-              onChange={(event) => { setSteps(event.target.value); setSaved(null); }}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (editEntry) setEditSteps(value);
+                else setDrafts(current => ({ ...current, [date]: value }));
+                setFeedback(null);
+              }}
               required
               className="h-12"
             />

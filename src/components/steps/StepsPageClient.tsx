@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Figure, Num, PageTitle, Row, Rows, Section } from "@/components/ui/ledger";
 import { StepsChart } from "@/components/steps/StepsChart";
@@ -9,7 +10,7 @@ import { StepsHeatmap } from "@/components/steps/StepsHeatmap";
 import { StepsHistoryList } from "@/components/steps/StepsHistoryList";
 
 import { useAppSettings } from "@/components/settings/AppSettingsProvider";
-import { getTodayDateString } from "@/lib/dates";
+import { getTodayDateString, isValidISODateString } from "@/lib/dates";
 import { isStepGoalSuspendedByPlan } from "@/lib/plan-preview";
 import {
   calculateStepStats,
@@ -34,6 +35,21 @@ export function StepsPageClient({
   });
   const weeklyChange = getWeeklyStepChange(entries, timezone);
   const today = getTodayDateString(timezone);
+  const initialDate = backfillDate && isValidISODateString(backfillDate) && backfillDate <= today ? backfillDate : today;
+  const [selection, setSelection] = useState({ initialDate, date: initialDate, focusRequest: 0 });
+  const [isSaving, setIsSaving] = useState(false);
+  const savingRef = useRef(false);
+  if (selection.initialDate !== initialDate) {
+    setSelection({ ...selection, initialDate, date: initialDate });
+  }
+  function selectDate(date: string, focusEntry = false) {
+    if (savingRef.current) return;
+    setSelection(current => ({ ...current, date, focusRequest: current.focusRequest + (focusEntry ? 1 : 0) }));
+  }
+  function handlePendingChange(pending: boolean) {
+    savingRef.current = pending;
+    setIsSaving(pending);
+  }
   const stepGoalSuspended = isStepGoalSuspendedByPlan(today);
   const monthPrefix = today.slice(0, 7);
   const daysIntoMonth = Number.parseInt(today.slice(8, 10), 10);
@@ -89,7 +105,7 @@ export function StepsPageClient({
       </Section>
 
       <Section title="Log steps" className="measurement-entry scroll-mt-24" id="quick-add">
-        <StepsEntryForm key={backfillDate ?? "today"} timezone={timezone} initialDate={backfillDate} entries={entries} />
+        <StepsEntryForm timezone={timezone} entries={entries} selectedDate={selection.date} onDateChange={date => selectDate(date)} focusRequest={selection.focusRequest} onPendingChange={handlePendingChange} />
       </Section>
       </div>
 
@@ -117,7 +133,8 @@ export function StepsPageClient({
       </Section>
 
       <Section title="Month">
-        <StepsHeatmap entries={entries} goal={settings.stepGoal} timezone={timezone} />
+        <p className="mb-3 text-caption text-secondary">Select a day to enter or correct its steps above.</p>
+        <StepsHeatmap entries={entries} goal={settings.stepGoal} timezone={timezone} selectedDate={selection.date} onSelectDate={date => selectDate(date, true)} disabled={isSaving} />
       </Section>
 
       <Section title="Recent entries">

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildMonthlyHeatmap, type SerializedStepsEntry } from "@/lib/steps";
-import { getTodayDateString, parseDate } from "@/lib/dates";
+import { getTodayDateString, isValidISODateString, parseDate } from "@/lib/dates";
 
 function formatCellSteps(steps: number) {
   if (steps <= 0) {
@@ -31,14 +31,24 @@ export function StepsHeatmap({
   entries,
   goal,
   timezone,
+  selectedDate,
+  onSelectDate,
+  disabled = false,
 }: {
   entries: SerializedStepsEntry[];
   goal: number;
   timezone?: string;
+  selectedDate: string;
+  onSelectDate: (date: string) => void;
+  disabled?: boolean;
 }) {
   const today = getTodayDateString(timezone);
-  const [monthDate, setMonthDate] = useState(() => parseDate(today));
-  const [selectedDate, setSelectedDate] = useState<string | null>(today);
+  const validSelection = isValidISODateString(selectedDate) && selectedDate <= today;
+  const [view, setView] = useState(() => ({ selectedDate, monthDate: parseDate(validSelection ? selectedDate : today) }));
+  if (view.selectedDate !== selectedDate) {
+    setView({ selectedDate, monthDate: validSelection ? parseDate(selectedDate) : view.monthDate });
+  }
+  const monthDate = view.monthDate;
   const stepsByDate = new Map(entries.map(entry => [entry.date, entry.steps]));
   const selectedSteps = selectedDate ? stepsByDate.get(selectedDate) : null;
 
@@ -60,7 +70,8 @@ export function StepsHeatmap({
             variant="ghost"
             size="icon-sm"
             className="size-11"
-            onClick={() => { setSelectedDate(null); setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() - 1, 1)); }}
+            disabled={disabled}
+            onClick={() => setView(current => ({ ...current, monthDate: new Date(current.monthDate.getFullYear(), current.monthDate.getMonth() - 1, 1) }))}
           >
             <ChevronLeft className="size-4" />
             <span className="sr-only">Previous month</span>
@@ -70,8 +81,8 @@ export function StepsHeatmap({
             variant="ghost"
             size="icon-sm"
             className="size-11"
-            disabled={monthDate.getFullYear() === Number(today.slice(0, 4)) && monthDate.getMonth() === Number(today.slice(5, 7)) - 1}
-            onClick={() => { setSelectedDate(null); setMonthDate((current) => new Date(current.getFullYear(), current.getMonth() + 1, 1)); }}
+            disabled={disabled || (monthDate.getFullYear() === Number(today.slice(0, 4)) && monthDate.getMonth() === Number(today.slice(5, 7)) - 1)}
+            onClick={() => setView(current => ({ ...current, monthDate: new Date(current.monthDate.getFullYear(), current.monthDate.getMonth() + 1, 1) }))}
           >
             <ChevronRight className="size-4" />
             <span className="sr-only">Next month</span>
@@ -97,11 +108,11 @@ export function StepsHeatmap({
             <button
               key={day.date}
               type="button"
-              disabled={future}
+              disabled={disabled || future}
               aria-pressed={selected}
               aria-current={day.date === today ? "date" : undefined}
               aria-label={`${label}: ${future ? "future date" : steps == null ? "not logged" : `${steps.toLocaleString()} steps`}`}
-              onClick={() => setSelectedDate(day.date)}
+              onClick={() => { if (!disabled && !future) onSelectDate(day.date); }}
               className={`flex min-h-14 min-w-0 flex-col justify-between overflow-hidden rounded-control border p-1.5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40 sm:min-h-20 ${getHeatLevel(steps ?? 0, goal)} ${selected ? "ring-2 ring-primary ring-inset" : ""}`}
             >
               <span className="num text-xs leading-none sm:text-sm">{day.day}</span>
@@ -113,7 +124,7 @@ export function StepsHeatmap({
         })}
       </div>
       <p role="status" className="mt-3 min-h-6 text-row text-secondary">
-        {selectedDate ? `${new Date(`${selectedDate}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · ${selectedSteps == null ? "Not logged" : `${selectedSteps.toLocaleString()} steps`}` : "Select a day to see its exact total."}
+        {validSelection ? `${new Date(`${selectedDate}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · ${selectedSteps == null ? "Not logged" : `${selectedSteps.toLocaleString()} steps`}` : "Select a day to enter its total."}
       </p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-caption text-tertiary">
         <span className="inline-flex items-center gap-1.5"><span className="size-2 rounded-sm bg-sunken" /> Some movement</span>
