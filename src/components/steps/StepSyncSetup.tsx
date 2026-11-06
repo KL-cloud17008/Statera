@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { createStepPairingCode, disconnectStepSync, getStepSyncStatus } from "@/actions/step-sync";
 import { Button } from "@/components/ui/button";
 import { Row, Rows, Section } from "@/components/ui/ledger";
+import { ANDROID_DOWNLOAD, ANDROID_STEP_CONNECTION } from "@/lib/android-app";
 
 type Status = Awaited<ReturnType<typeof getStepSyncStatus>>;
 export function StepSyncSetup({ initialStatus }: { initialStatus: Status }) {
@@ -29,14 +30,18 @@ export function StepSyncSetup({ initialStatus }: { initialStatus: Status }) {
     <Section title="Samsung Health → Athanor">
       <p className="max-w-2xl text-secondary">Your phone reads Samsung Health steps through Health Connect and sends daily totals to Athanor. Pair it once, then leave automatic uploads on.</p>
       <ol className="mt-6 grid gap-6 md:grid-cols-3">
-        <li><p className="mb-2 text-label text-tertiary">01 · Install</p><h3 className="font-medium">Athanor Steps for Android</h3>
+        <li><p className="mb-2 text-label text-tertiary">01 · Install</p><h3 className="font-medium">Athanor for Android</h3>
           <p className="mt-2 text-caption text-secondary">Download on your phone and allow your browser to install this app when Android asks.</p>
-          <Button asChild className="mt-3" variant="primary"><a href="/downloads/athanor-steps.apk" download>Download Android app</a></Button></li>
-        <li><p className="mb-2 text-label text-tertiary">02 · Allow steps</p><h3 className="font-medium">Open Athanor Steps</h3>
+          <Button asChild className="mt-3" variant="primary"><a href={ANDROID_DOWNLOAD} download="athanor.apk">Download Android app</a></Button></li>
+        <li><p className="mb-2 text-label text-tertiary">02 · Allow steps</p><h3 className="font-medium">Open Step connection</h3>
           <p className="mt-2 text-caption text-secondary">Allow steps and background reading in Health Connect. Keep Samsung Health allowed to write steps.</p></li>
         <li><p className="mb-2 text-label text-tertiary">03 · Pair</p><h3 className="font-medium">Enter a one-time code</h3>
-          <p className="mt-2 text-caption text-secondary">Create a code below and enter it in the Android app. Your Athanor password stays on the website.</p></li>
+          <p className="mt-2 text-caption text-secondary">Create a code below and enter it in the native Step connection screen. Your Athanor password stays on the website.</p></li>
       </ol>
+      <div className="mt-5 flex flex-wrap gap-3">
+        <Button asChild variant="secondary"><a href={ANDROID_STEP_CONNECTION}>Open step connection</a></Button>
+        <Button asChild variant="secondary"><Link href="/android">Install &amp; update help</Link></Button>
+      </div>
     </Section>
     <Section title="Connection" action={<Button variant="secondary" size="sm" disabled={busy} onClick={() => run(refresh)}>Refresh status</Button>}>
       <Rows columns="minmax(0,1fr) minmax(0,1fr)">
@@ -57,7 +62,7 @@ export function StepSyncSetup({ initialStatus }: { initialStatus: Status }) {
         })}>Disconnect phone</Button> : null}
       </div>
       {pairing ? <div className="mt-5 border-l-2 border-accent py-2 pl-4" role="status">
-        <p className="text-caption text-secondary">Enter in Athanor Steps</p>
+        <p className="text-caption text-secondary">Enter in Athanor → Step connection</p>
         <output aria-label="Pairing code" className="mt-2 block font-mono text-2xl tracking-wider sm:text-3xl">{pairing.code}</output>
         <p className="mt-2 text-caption text-secondary">One use · expires {new Date(pairing.expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}. {status?.paired ? "Your current phone stays connected until the new code is used." : "Refresh status after pairing."}</p>
       </div> : null}

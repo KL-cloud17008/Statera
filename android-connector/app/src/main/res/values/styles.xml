@@ -1,4 +1,15 @@
 <resources>
+    <color name="canvas">#FAF9F6</color>
+    <string name="asset_statements" translatable="false">[{\"relation\":[\"delegate_permission/common.handle_all_urls\"],\"target\":{\"namespace\":\"web\",\"site\":\"https://stateraone.vercel.app\"}}]</string>
+    <string name="shortcut_training">Training</string>
+    <string name="shortcut_weight">Weight</string>
+    <string name="shortcut_steps">Step connection</string>
+    <style name="LauncherTheme" parent="android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorAccent">#934B35</item>
+    </style>
     <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:colorAccent">#344F48</item>

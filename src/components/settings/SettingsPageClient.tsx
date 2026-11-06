@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
@@ -331,6 +332,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     <>
       <PageTitle
         title="Settings"
+        action={<Button asChild variant="secondary" size="sm"><Link href="/android">Android app</Link></Button>}
         className="mb-6"
       />
 

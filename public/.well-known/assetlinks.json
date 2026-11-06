@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.athanor.steps",
+      "sha256_cert_fingerprints": ["DD:43:D1:BA:F7:AD:52:DC:8E:35:6C:CF:10:1B:3D:1E:D8:32:AF:C3:38:11:D9:C8:95:0A:F5:AE:A2:55:D0:02"]
+    }
+  }
+]

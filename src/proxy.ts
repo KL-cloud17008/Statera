@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
   // Native endpoints verify their own pairing code / revocable device token.
-  if (["/api/health-connect/pair", "/api/health-connect/steps", "/downloads/athanor-steps.apk"].includes(request.nextUrl.pathname)) return NextResponse.next();
+  if (["/api/health-connect/pair", "/api/health-connect/steps", "/downloads/athanor-steps.apk", "/.well-known/assetlinks.json", "/android"].includes(request.nextUrl.pathname)) return NextResponse.next();
   let supabaseResponse = NextResponse.next({
     request,
   });

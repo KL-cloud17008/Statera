@@ -1,0 +1,11 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="training" android:shortcutShortLabel="@string/shortcut_training" android:icon="@drawable/ic_athanor">
+        <intent android:action="android.intent.action.VIEW" android:targetPackage="app.athanor.steps" android:targetClass="app.athanor.steps.WebShortcutActivity" android:data="https://stateraone.vercel.app/workout" />
+    </shortcut>
+    <shortcut android:shortcutId="weight" android:shortcutShortLabel="@string/shortcut_weight" android:icon="@drawable/ic_athanor">
+        <intent android:action="android.intent.action.VIEW" android:targetPackage="app.athanor.steps" android:targetClass="app.athanor.steps.WebShortcutActivity" android:data="https://stateraone.vercel.app/weight" />
+    </shortcut>
+    <shortcut android:shortcutId="step_connection" android:shortcutShortLabel="@string/shortcut_steps" android:icon="@drawable/ic_athanor">
+        <intent android:action="android.intent.action.VIEW" android:targetPackage="app.athanor.steps" android:targetClass="app.athanor.steps.StepShortcutActivity" />
+    </shortcut>
+</shortcuts>

@@ -1,10 +1,38 @@
-# Athanor Steps
+# Athanor for Android
 
-Personal Android companion for **Samsung Health → Health Connect → Athanor**.
-Install the signed APK at `https://stateraone.vercel.app/steps/connect`, allow
-steps and background reading, and enter the website's one-time pairing code.
-Only Samsung Health aggregates are read. No Google Fit API, email credentials,
-Health Connect writes, or other health data are used.
+Version **1.1.0** upgrades the existing step companion into the complete Athanor
+app. It uses Google Android Browser Helper 2.7.4 and a Trusted Web Activity for
+the production website. Training, Weight, Mobility, Steps and Settings use the
+same server-rendered pages and existing account. Loading and saving require
+an internet connection. Keep Chrome updated.
+
+The package remains `app.athanor.steps` and must be signed with the existing
+private key. Version code 2 installs over version 1, retaining Health Connect
+permissions, Keystore credentials, preferences and the existing WorkManager job.
+Do not uninstall the previous companion as part of an upgrade.
+
+`MainActivity` launches the website; `StepConnectionActivity` owns the existing
+Health Connect UI. Long-press shortcuts open Training, Weight or Step connection.
+A user-clicked `intent://steps` link on `/steps/connect` opens that native screen;
+its fallback is `/android`. No pairing codes or device tokens are put into links.
+
+The website serves `/.well-known/assetlinks.json` publicly, with the release
+certificate fingerprint. It must return JSON with no login redirect. It verifies
+website ownership for the full-screen browser activity; failed verification
+falls back to a browser tab with a visible address bar, not a TLS bypass.
+Only the production origin is trusted. Exported launcher input is restricted to
+ledger pages on that HTTPS origin; arbitrary origins, schemes and traversal are
+rejected. There is no JavaScript bridge or native access to the website's login
+cookies.
+
+The public APK path stays `/downloads/athanor-steps.apk` for compatibility; the
+install page downloads it as `athanor.apk`.
+
+The native **Samsung Health → Health Connect → Athanor** connection is included.
+Install at `https://stateraone.vercel.app/android`. Open `/steps/connect` to
+create its one-time pairing code, then enter it in the native connection screen.
+That connection reads Samsung Health aggregates only: no Google Fit API, email
+credentials, Health Connect writes or other Health Connect data are used.
 
 ## Build
 

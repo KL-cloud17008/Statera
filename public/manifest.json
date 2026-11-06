@@ -1,12 +1,12 @@
 {
   "name": "Athanor",
   "short_name": "Athanor",
-  "description": "Personal fitness tracking PWA",
+  "description": "A private ledger for training, mobility, steps and bodyweight.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#DCECF8",
-  "theme_color": "#0A1220",
+  "background_color": "#FAF9F6",
+  "theme_color": "#252E2A",
   "icons": [
     {
       "src": "/icons/icon-192.png",
