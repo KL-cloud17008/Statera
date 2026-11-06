@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
   turbopack: {},
   async headers() {
     return [
+      { source: "/downloads/athanor-steps.apk", headers: [
+        { key: "Content-Type", value: "application/vnd.android.package-archive" },
+        { key: "Cache-Control", value: "no-cache, must-revalidate" },
+        { key: "X-Content-Type-Options", value: "nosniff" },
+      ] },
       {
         source: "/sw.js",
         headers: [

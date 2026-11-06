@@ -95,6 +95,7 @@ function fixture() {
       },
     };
   }
+  client.$queryRaw = async () => [{ installed: false }];
   client.$transaction = async (operation, options) => {
     assert.equal(options.isolationLevel, "Serializable");
     const previous = tail; let release;

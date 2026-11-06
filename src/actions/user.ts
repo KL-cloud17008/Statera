@@ -1,6 +1,7 @@
-﻿"use server";
+"use server";
 
 import { prisma } from "@/lib/db";
+import { revokeStepSyncBeforeReplacement } from "@/lib/step-sync/schema";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { parseDate } from "@/lib/dates";
 import { revalidatePath } from "next/cache";
@@ -447,6 +448,7 @@ export async function clearAllUserData() {
     return { error: "Not authenticated" };
   }
 
+  await revokeStepSyncBeforeReplacement(user.id);
   await prisma.$transaction([
     prisma.sessionSet.deleteMany({ where: { workoutSession: { userId: user.id } } }),
     prisma.workoutSession.deleteMany({ where: { userId: user.id } }),
@@ -500,6 +502,7 @@ export async function importUserData(formData: FormData) {
     };
   }
 
+  await revokeStepSyncBeforeReplacement(user.id);
   await prisma.$transaction(async (tx) => {
     await tx.sessionSet.deleteMany({ where: { workoutSession: { userId: user.id } } });
     await tx.workoutSession.deleteMany({ where: { userId: user.id } });

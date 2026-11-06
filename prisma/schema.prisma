@@ -35,6 +35,7 @@ model User {
   dailyLogs        DailyLog[]
   progressPhotos   ProgressPhoto[]
   painCheckIns     PainCheckIn[]
+  stepSyncConnection StepSyncConnection?
 }
 
 // ─── WEIGHT TRACKING ───
@@ -274,4 +275,34 @@ model ProgressPhoto {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, date])
+}
+
+// Hashed, revocable, steps-only device capabilities. No credentials are exported.
+model StepSyncConnection {
+  id                String           @id @default(cuid())
+  userId            String           @unique
+  tokenHash         String?          @unique
+  pairCodeHash      String?          @unique
+  pairCodeExpiresAt DateTime?
+  startedOn         DateTime         @db.Date
+  timezone          String
+  deviceLabel       String?
+  pairedAt          DateTime?
+  lastSyncAt        DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  records           StepSyncRecord[]
+}
+
+model StepSyncRecord {
+  id           String             @id @default(cuid())
+  connectionId String
+  date         DateTime           @db.Date
+  lastSteps    Int?
+  observedAt   DateTime?
+  blocked      Boolean            @default(false)
+  connection   StepSyncConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@unique([connectionId, date])
 }

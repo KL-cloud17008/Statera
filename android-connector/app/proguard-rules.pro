@@ -1,0 +1,1 @@
+-keep class app.athanor.steps.StepSyncWorker { public <init>(...); }

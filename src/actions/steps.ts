@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { keepManualDates, lockStepUser } from "@/lib/step-sync/schema";
 import { revalidatePath } from "next/cache";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { addDaysToDateString, getTodayDateString } from "@/lib/dates";
@@ -56,11 +57,15 @@ export async function logSteps(formData: FormData): Promise<StepsActionResult> {
   if (!user) return { error: "Not authenticated" };
   const parsed = parseStepsPayload(formData, user.timezone);
   if ("error" in parsed) return { error: parsed.error };
-  await prisma.dailyLog.upsert({
-    where: { userId_date: { userId: user.id, date: parsed.date } },
-    update: { steps: parsed.steps },
-    create: { userId: user.id, date: parsed.date, steps: parsed.steps },
-  });
+  await prisma.$transaction(async tx => {
+    await lockStepUser(tx, user.id);
+    await tx.dailyLog.upsert({
+      where: { userId_date: { userId: user.id, date: parsed.date } },
+      update: { steps: parsed.steps },
+      create: { userId: user.id, date: parsed.date, steps: parsed.steps },
+    });
+    await keepManualDates(tx, user.id, [parsed.date]);
+  }, { isolationLevel: "Serializable" });
   refreshSteps();
   return {};
 }
@@ -75,48 +80,54 @@ export async function updateStepsEntry(formData: FormData): Promise<StepsActionR
 
   try {
     const result = await prisma.$transaction(async (tx) => {
+      await lockStepUser(tx, user.id);
       const existing = await tx.dailyLog.findFirst({ where: { id, userId: user.id } });
       if (!existing) return { error: "Entry changed or was removed. Refresh to see the latest total." };
+      const apply = async () => {
 
-      const originalSteps = formText(formData, "originalSteps");
-      const originalDate = formText(formData, "originalDate");
-      const sameDate = existing.date.getTime() === parsed.date.getTime();
-      // A lost response must be safe to retry, including a move that already
-      // cleared the source count. Confirm the requested result without writing.
-      if (sameDate && existing.steps === parsed.steps) return {};
-      if (existing.steps == null) {
-        if (!sameDate && originalDate === existing.date.toISOString().slice(0, 10)) {
-          const moved = await tx.dailyLog.findUnique({
-            where: { userId_date: { userId: user.id, date: parsed.date } },
-          });
-          if (moved?.steps === parsed.steps) return {};
+        const originalSteps = formText(formData, "originalSteps");
+        const originalDate = formText(formData, "originalDate");
+        const sameDate = existing.date.getTime() === parsed.date.getTime();
+        // A lost response must be safe to retry, including a move that already
+        // cleared the source count. Confirm the requested result without writing.
+        if (sameDate && existing.steps === parsed.steps) return {};
+        if (existing.steps == null) {
+          if (!sameDate && originalDate === existing.date.toISOString().slice(0, 10)) {
+            const moved = await tx.dailyLog.findUnique({
+              where: { userId_date: { userId: user.id, date: parsed.date } },
+            });
+            if (moved?.steps === parsed.steps) return {};
+          }
+          return { error: "Entry changed or was removed. Refresh to see the latest total." };
         }
-        return { error: "Entry changed or was removed. Refresh to see the latest total." };
-      }
-      if ((originalSteps && Number(originalSteps) !== existing.steps) ||
-        (originalDate && originalDate !== existing.date.toISOString().slice(0, 10))) {
-        return { error: "This entry changed elsewhere. Refresh before saving your correction." };
-      }
+        if ((originalSteps && Number(originalSteps) !== existing.steps) ||
+          (originalDate && originalDate !== existing.date.toISOString().slice(0, 10))) {
+          return { error: "This entry changed elsewhere. Refresh before saving your correction." };
+        }
 
-      if (sameDate) {
-        await tx.dailyLog.update({ where: { id, userId: user.id }, data: { steps: parsed.steps } });
+        if (sameDate) {
+          await tx.dailyLog.update({ where: { id, userId: user.id }, data: { steps: parsed.steps } });
+          return {};
+        }
+
+        const target = await tx.dailyLog.findUnique({
+          where: { userId_date: { userId: user.id, date: parsed.date } },
+        });
+        if (target?.steps != null) {
+          return { error: "That date already has steps. Edit its entry, or choose another date." };
+        }
+        // Move only steps. Sleep, mood and notes belong to their original dates.
+        await tx.dailyLog.upsert({
+          where: { userId_date: { userId: user.id, date: parsed.date } },
+          update: { steps: parsed.steps },
+          create: { userId: user.id, date: parsed.date, steps: parsed.steps },
+        });
+        await tx.dailyLog.update({ where: { id, userId: user.id }, data: { steps: null } });
         return {};
-      }
-
-      const target = await tx.dailyLog.findUnique({
-        where: { userId_date: { userId: user.id, date: parsed.date } },
-      });
-      if (target?.steps != null) {
-        return { error: "That date already has steps. Edit its entry, or choose another date." };
-      }
-      // Move only steps. Sleep, mood and notes belong to their original dates.
-      await tx.dailyLog.upsert({
-        where: { userId_date: { userId: user.id, date: parsed.date } },
-        update: { steps: parsed.steps },
-        create: { userId: user.id, date: parsed.date, steps: parsed.steps },
-      });
-      await tx.dailyLog.update({ where: { id, userId: user.id }, data: { steps: null } });
-      return {};
+      };
+      const result = await apply();
+      if (!result.error) await keepManualDates(tx, user.id, [existing.date, parsed.date]);
+      return result;
     }, { isolationLevel: "Serializable" });
     if (result.error) return result;
   } catch (error) {
@@ -135,7 +146,14 @@ export async function deleteStepsEntry(formData: FormData): Promise<StepsActionR
   if (!user) return { error: "Not authenticated" };
   const id = formText(formData, "id");
   if (!id) return { error: "Entry ID is required" };
-  const deleted = await prisma.dailyLog.updateMany({ where: { id, userId: user.id }, data: { steps: null } });
+  const deleted = await prisma.$transaction(async tx => {
+    await lockStepUser(tx, user.id);
+    const existing = await tx.dailyLog.findFirst({ where: { id, userId: user.id } });
+    if (!existing) return { count: 0 };
+    const changed = await tx.dailyLog.updateMany({ where: { id, userId: user.id }, data: { steps: null } });
+    await keepManualDates(tx, user.id, [existing.date]);
+    return changed;
+  }, { isolationLevel: "Serializable" });
   if (!deleted.count) return { error: "Entry not found" };
   refreshSteps();
   return {};

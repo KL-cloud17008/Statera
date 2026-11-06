@@ -44,3 +44,11 @@ next-env.d.ts
 
 /src/generated/prisma
 public/sw.js
+
+# Android build output and private signing material
+android-connector/.gradle/
+android-connector/**/build/
+android-connector/local.properties
+*.keystore
+*.jks
+*.p12

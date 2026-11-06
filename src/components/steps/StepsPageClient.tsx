@@ -62,9 +62,14 @@ export function StepsPageClient({
       <PageTitle
         title="Steps"
         action={
-          <Button asChild variant="primary" size="sm">
-            <Link href="#quick-add">Log steps</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="secondary" size="sm">
+              <Link href="/steps/connect">Automatic sync</Link>
+            </Button>
+            <Button asChild variant="primary" size="sm">
+              <Link href="#quick-add">Log steps</Link>
+            </Button>
+          </div>
         }
       />
 
