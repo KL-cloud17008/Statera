@@ -19,13 +19,13 @@ export default function AndroidPage() {
         <Button asChild variant="primary"><a href={ANDROID_DOWNLOAD} download="athanor.apk">Download Athanor · Android</a></Button>
         <Button asChild variant="secondary"><Link href="/">Open website</Link></Button>
       </div>
-      <p className="mt-3 text-caption text-tertiary">Version 1.1.0 · Android 9 or later · Personal APK installation</p>
+      <p className="mt-3 text-caption text-tertiary">Version 1.1.1 · Android 9 or later · Personal APK installation</p>
       <ol className="mt-6 list-decimal space-y-3 pl-5 text-secondary">
         <li>Download the APK on your Android phone.</li>
         <li>Open the download and allow your browser to install it when Android asks.</li>
         <li>Open <strong className="font-medium text-primary">Athanor</strong> and sign in to your existing account if needed.</li>
       </ol>
-      <p className="mt-5 border-l-2 border-accent pl-4 text-caption text-secondary">Already installed Athanor Steps? Install this update over it. Keep the existing app installed so its step pairing stays on your phone.</p>
+      <p className="mt-5 border-l-2 border-accent pl-4 text-caption text-secondary">Already installed Athanor or Athanor Steps? Install this update over it. Version 1.1.1 fixes an Android startup error. Keep the existing app installed so its step pairing stays on your phone.</p>
     </Section>
     <Section title="Inside the app">
       <Rows columns="minmax(0,1fr)">

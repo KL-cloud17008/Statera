@@ -11,6 +11,10 @@
     </queries>
     <application android:allowBackup="false" android:usesCleartextTraffic="false" android:label="Athanor" android:icon="@drawable/ic_athanor" android:theme="@style/AppTheme" android:supportsRtl="true">
         <meta-data android:name="asset_statements" android:resource="@string/asset_statements" />
+        <!-- LauncherActivity toggles this component on every launch, including browser fallbacks. -->
+        <activity android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity" android:exported="true" android:theme="@style/LauncherTheme">
+            <meta-data android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL" android:value="https://stateraone.vercel.app/" />
+        </activity>
         <activity android:name=".MainActivity" android:exported="true" android:theme="@style/LauncherTheme">
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
             <meta-data android:name="android.support.customtabs.trusted.DEFAULT_URL" android:value="https://stateraone.vercel.app/" />

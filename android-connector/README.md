@@ -1,15 +1,21 @@
 # Athanor for Android
 
-Version **1.1.0** upgrades the existing step companion into the complete Athanor
-app. It uses Google Android Browser Helper 2.7.4 and a Trusted Web Activity for
+Version **1.1.1** fixes a startup error in the complete Athanor app introduced
+in 1.1.0. It uses Google Android Browser Helper 2.7.4 and a Trusted Web Activity for
 the production website. Training, Weight, Mobility, Steps and Settings use the
 same server-rendered pages and existing account. Loading and saving require
 an internet connection. Keep Chrome updated.
 
 The package remains `app.athanor.steps` and must be signed with the existing
-private key. Version code 2 installs over version 1, retaining Health Connect
+private key. Version code 3 installs over versions 1 and 2, retaining Health Connect
 permissions, Keystore credentials, preferences and the existing WorkManager job.
 Do not uninstall the previous companion as part of an upgrade.
+
+The browser helper enables/disables `ManageDataLauncherActivity` during every
+launcher startup. It must be registered even when the app does not expose a
+separate storage-management screen. Leaving it out causes Android's package
+manager to reject that component change. `LauncherActivityTest` validates the
+merged manifest and runs the launcher lifecycle on Android API 28 and 35.
 
 `MainActivity` launches the website; `StepConnectionActivity` owns the existing
 Health Connect UI. Long-press shortcuts open Training, Weight or Step connection.
