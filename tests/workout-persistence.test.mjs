@@ -425,6 +425,40 @@ test("concurrent first plan reads do not create duplicate defaults", async () =>
   assert.equal(f.state.plans.length, 5); assert.equal(new Set(f.state.plans.map((plan) => plan.dayOfWeek)).size, 5);
 });
 
+test("an open Upper C keeps the four saved fly sets and can log the new third sets after refresh", async () => {
+  const f = fixture();
+  const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === 5);
+  const retired = ["B2 Seated Dumbbell Lateral Raise", "C1 Seated Barbell Preacher Curl", "C2 Seated Triceps-Extension Machine"];
+  oldPlan.exercises.forEach((exercise, index) => {
+    exercise.sets = index === 3 ? 3 : 2;
+    if (index >= 3) exercise.exerciseName = retired[index - 3];
+  });
+  const notes = JSON.stringify({ label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek: 5, planTemplateVersion: "five-day-mon-fri-v13" });
+  const open = f.addSession({ workoutPlanId: oldPlan.id, notes });
+  const completed = f.addSession({ workoutPlanId: oldPlan.id, notes, completed: true });
+  for (const exercise of oldPlan.exercises.slice(0, 2)) {
+    for (const setNumber of [1, 2]) {
+      f.state.sets.push({ id: `${exercise.id}-${setNumber}`, workoutSessionId: open.id, exerciseName: exercise.exerciseName, setNumber, weightUsed: 25, repsCompleted: 12, actualRPE: 6, notes: null });
+    }
+  }
+  const saved = copy(f.state.sets), oldHistory = copy(completed);
+  await f.actions.getWorkoutPlans("owner");
+  const session = await f.actions.getSessionWithSets(open.id);
+  assert.equal(session.id, open.id);
+  const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(session.workoutPlan.exercises, session.sets);
+  assert.deepEqual(Array.from(visible.slice(-3), exercise => exercise.exerciseName), ["Triceps Pressdown, bar", "Reverse Cable Crossover", "Cable Chest Press"]);
+  assert.ok(visible.every(exercise => exercise.sets === 3));
+  assert.deepEqual(f.state.sets, saved);
+  for (const exercise of visible.slice(0, 2)) {
+    const result = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, setNumber: "3" }));
+    assert.ok(!result.error, result.error);
+  }
+  assert.equal(f.state.sets.length, 6);
+  assert.deepEqual(f.state.sets.slice(0, 4), saved);
+  assert.deepEqual(f.state.sessions.find(s => s.id === completed.id), oldHistory);
+  assert.equal(oldPlan.exercises[0].sets, 2);
+});
+
 test("both lower-day calf increases retain set one, allow sets two and three, and preserve completed history", async () => {
   for (const dayOfWeek of [1, 3]) {
     const f = fixture();

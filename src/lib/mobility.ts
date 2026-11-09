@@ -2273,16 +2273,16 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper C primer",
     totalDuration: "12-16 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for high-to-low fly work, supported rows, arms, face pulls, and core.",
+      "Prepare feet, ankles, upper back, chest, shoulders, and arms for the fly pair, back extensions, and cable work.",
     previousDayReason:
-      "Thursday was Upper B, so Friday keeps prep simple before lower-fatigue chest isolation, supported rows, arms, face pulls, and core.",
+      "Thursday was Upper B, so Friday keeps prep simple before accessory strength work.",
     adaptationNote:
       "Keep prep easy. Friday is accessory strength work, not conditioning.",
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper C setup", note: "High-to-low fly, chest-supported row, arms, face pulls, and core." },
-      { label: "Back rule", value: "Supported pulling", note: "Keep the chest-supported row controlled and stop for nerve-like symptoms." },
+      { label: "Training match", value: "Upper C setup", note: "Machine chest fly, reverse pec deck, back extension, bar pressdown, reverse cable crossover, and cable chest press." },
+      { label: "Back rule", value: "Controlled range", note: "Keep back extensions controlled and omit them if they provoke lower-back symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
@@ -2290,7 +2290,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
       ankleCapacityBlock(),
       block({
         id: "friday-upper-accessory-prep",
-        title: "Chest + row prep block",
+        title: "Chest + shoulder prep block",
         duration: "3-5 min",
         purpose: "Prepare upper back, lats, rear delts, shoulders, elbows, and trunk before controlled accessory work.",
         adaptationNote: "Do not force shoulder range. Stop before pinch.",

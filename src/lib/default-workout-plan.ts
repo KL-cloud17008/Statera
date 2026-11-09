@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v13";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v14";
 export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
 export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
 export const UPPER_A_TITLE = "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders";
@@ -61,8 +61,8 @@ export const WEEKLY_SET_SUMMARY = [
   "Working hamstring curls: 5 introductory / 7 target; Monday primer and Wednesday warm-up are separate preparation.",
   "Hips: three rounds of abduction/adduction each lower day.",
   "Chest, back/lats, rear delts and arms: supported work across upper days.",
-  "Direct biceps: nine weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3, barbell preacher curl Friday 2.",
-  "Side delts: cable lateral raises Thursday 3 / seated dumbbell lateral raises Friday 3; front delts also receive pressing.",
+  "Direct biceps: seven weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3.",
+  "Side delts: three cable lateral raise sets Thursday. Rear delts: reverse pec deck Tuesday and Friday, plus reverse cable crossovers Friday.",
   "Calves: three conditional seated straight-leg sets per lower day; six weekly sets.",
   "Home core twice weekly (Tuesday/Friday): lying leg raises, reach-up crunches, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression."
 ] as const;
@@ -467,7 +467,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     exercises: [
       {
         exerciseName: "A1 Seated Machine Chest Fly",
-        sets: 2,
+        sets: 3,
         reps: "12-15",
         tempo: "controlled",
         restSeconds: 0,
@@ -478,7 +478,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "A2 Reverse Pec Deck / Seated Machine Reverse Fly",
-        sets: 2,
+        sets: 3,
         reps: "12-20",
         tempo: "controlled",
         restSeconds: 120,
@@ -489,46 +489,46 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       },
       {
         exerciseName: "B1 Back Extension — Hyperextension Bench",
-        sets: 2,
+        sets: 3,
         reps: "10-15",
         tempo: "controlled",
-        restSeconds: 0,
+        restSeconds: 120,
         targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Bodyweight initially. Controlled comfortable range. Finish aligned, without deliberately arching beyond neutral. Omit if it provokes lower-back symptoms. Two rounds of back extension → lateral raise, then lateral-raise set 3 alone.",
-        supersetGroup: "B",
+        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Bodyweight initially. Controlled comfortable range. Finish aligned, without deliberately arching beyond neutral. Omit if it provokes lower-back symptoms.",
+        supersetGroup: null,
         exerciseType: "WORKING"
       },
       {
-        exerciseName: "B2 Seated Dumbbell Lateral Raise",
+        exerciseName: "Triceps Pressdown, bar",
+        sets: 3,
+        reps: "10-15",
+        tempo: "2-1-2",
+        restSeconds: 120,
+        targetRPE: "6-7",
+        cues: "Add clean reps before load. Keep 1-3 reps in reserve; no failure or grinding. Kg load. Use a straight bar, keep elbows at your sides, and return under control without leaning over the cable.",
+        supersetGroup: null,
+        exerciseType: "WORKING"
+      },
+      {
+        exerciseName: "Reverse Cable Crossover",
         sets: 3,
         reps: "12-20",
-        tempo: "controlled",
+        tempo: "2-1-2",
         restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, light load, elbows soft, raise to shoulder height or below, no shrugging or swinging. Rest after each pair; third set alone.",
-        supersetGroup: "B",
+        targetRPE: "5-6",
+        cues: "Rear delts. Add clean reps before load. Keep 1-3 reps in reserve; no failure or grinding. Kg load. Keep elbows soft, open the arms wide under control, and avoid shrugging or swinging.",
+        supersetGroup: null,
         exerciseType: "WORKING"
       },
       {
-        exerciseName: "C1 Seated Barbell Preacher Curl",
-        sets: 2,
+        exerciseName: "Cable Chest Press",
+        sets: 3,
         reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 0,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported, smooth curl, controlled return, no swinging. Pair where equipment permits.",
-        supersetGroup: "C",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C2 Seated Triceps-Extension Machine",
-        sets: 2,
-        reps: "10-15",
-        tempo: "controlled",
+        tempo: "2-1-2",
         restSeconds: 120,
         targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated and supported, elbows stable, controlled comfortable range. Alternative: securely positioned seated cable triceps extension. Two superset rounds where equipment permits.",
-        supersetGroup: "C",
+        cues: "Add clean reps before load. Keep 1-3 reps in reserve; no failure or grinding. Kg load. Set the handles around chest height. Press forward from a stable position, then return slowly through a comfortable range without arching the lower back.",
+        supersetGroup: null,
         exerciseType: "WORKING"
       }
     ]
