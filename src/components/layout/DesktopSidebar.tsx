@@ -8,6 +8,7 @@ import { BrandMark } from "@/components/layout/BrandMark";
 import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { cn } from "@/lib/utils";
 import { routeTone } from "@/lib/presentation";
+import { bindOfflineWorkoutAccount } from "@/lib/offline-workout";
 
 export function DesktopSidebar() {
   const pathname = usePathname();
@@ -56,7 +57,7 @@ export function DesktopSidebar() {
         </ul>
       </nav>
 
-      <form action={signOut} className="shrink-0 border-t border-rule">
+      <form action={signOut} onSubmit={() => bindOfflineWorkoutAccount(null)} className="shrink-0 border-t border-rule">
         <button
           type="submit"
           className="flex min-h-touch w-full items-center gap-3 px-6 text-row text-tertiary transition-colors duration-(--duration-fast) ease-(--ease-out) hover:bg-sunken hover:text-primary motion-reduce:transition-none"

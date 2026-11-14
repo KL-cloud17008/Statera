@@ -31,6 +31,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+Vercel production builds from `main` apply the additive training journal migration after the Next.js build succeeds. Enable automatic exposure of the Vercel system environment variables. The migration uses the server's `DIRECT_URL` when set, or `DATABASE_URL`. Preview and local builds leave the database alone.
+
+To apply the same migration manually to an existing database with its server connection configured:
+
+```bash
+npx prisma db execute --schema prisma/schema.prisma --file prisma/migrations/20261114_training_journal/migration.sql
+```
+
+The migration creates the recovery, supplement, and workout check-in tables, enables row-level security, and can be rerun. Use the direct server database connection for schema changes.
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

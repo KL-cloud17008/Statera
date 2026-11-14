@@ -76,7 +76,7 @@ export default function FlexibilityBalancePage() {
           <ContextLine label="Before lower-body" value="Daily base + hip / hinge prep" href="/mobility#session" />
           <ContextLine label="Before upper-body" value="Daily base + thoracic / shoulder mobility" href="/mobility#session" />
           <ContextLine label="After long walking" value="Ankle motion + gentle calf / soleus reset" href="/mobility#later-recovery" />
-          <ContextLine label="Rest day" value="10-15 min, no fatigue or conditioning" href="/mobility#session" />
+          <ContextLine label="Saturday rest" value="Optional easy reset for 0–8 min" href="/mobility#session" />
         </div>
       </Section>
 
@@ -87,7 +87,7 @@ export default function FlexibilityBalancePage() {
         title="Beginner home core"
         purpose={HOME_CORE_PURPOSE}
         standards={[
-          `${HOME_CORE_SCHEDULE}: two sessions per week, with an easy day between if the schedule moves.`,
+          `${HOME_CORE_SCHEDULE} for a missed gym abs session.`,
           "Best after the gym or later at home. Before the gym, use the easy one-set option and finish fresh.",
           "Lying leg raises, reach-up crunches, leg-slide bird dogs and knee-supported side planks. No equipment needed.",
           "Start at one set and build to two when comfortable. Rest between sets; breathe throughout and keep a few clean reps or seconds in reserve.",

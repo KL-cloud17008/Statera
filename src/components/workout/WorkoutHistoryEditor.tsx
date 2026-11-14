@@ -12,7 +12,7 @@ import { SetInput } from "@/components/workout/SetInput";
 import { WorkoutHistoryDateEditor } from "@/components/workout/WorkoutHistoryDateEditor";
 import { mergeSavedSessionExercises, type SessionExercise } from "@/lib/workout-session-exercises";
 import { draftTargets, sessionDraftSnapshot, subscribeWorkoutStorage, workoutDraftKey, writeWorkoutStorage, type SavedEntry } from "@/lib/workout-entry-state";
-import { isAtHomePrimerExerciseName } from "@/lib/training-session";
+import { isAtHomePrimerExerciseName, isTimedTrainingExercise } from "@/lib/training-session";
 import { cn } from "@/lib/utils";
 
 export type HistoricalWorkoutSet = SavedEntry & {
@@ -188,12 +188,12 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
             }}><Plus className="size-4" aria-hidden />Add set</Button>
           </div>
           <SetInput key={`${target.exerciseName}:${target.setNumber}`} sessionId={sessionId} planExerciseId={null} exerciseName={target.exerciseName} setNumber={target.setNumber}
-            isFinisher={currentExercise.exerciseType === "FINISHER"} logged={currentSet} previous={null} showPrevious={false} saveMode="history" disabled={removing || savingDate}
+            isFinisher={currentExercise.exerciseType === "FINISHER"} timed={isTimedTrainingExercise(currentExercise)} logged={currentSet} previous={null} showPrevious={false} saveMode="history" disabled={removing || savingDate}
             onSaved={onSaved} onMissing={() => {
               setLoggedSets((current) => current.filter((set) => !(set.exerciseName === target.exerciseName && set.setNumber === target.setNumber)));
               setNotice("Saved values reloaded. This set was removed elsewhere.");
             }} onPendingChange={(pending) => { operationInFlight.current = pending; setSaving(pending); }} />
-          {currentSet?.duration != null ? <p className="mt-3 text-caption text-secondary">Recorded duration: {currentSet.duration}s{currentSet.isAMRAP ? " · AMRAP" : ""}. Retained when saving changes.</p> : null}
+          {currentSet?.duration != null && !isTimedTrainingExercise(currentExercise) ? <p className="mt-3 text-caption text-secondary">Recorded duration: {currentSet.duration}s{currentSet.isAMRAP ? " · AMRAP" : ""}.</p> : null}
           {currentSet ? <Button type="button" variant="link" className="mt-4 min-h-11 text-critical" disabled={busy} onClick={() => void removeSet()}>
             {removing ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />}Remove saved set
           </Button> : null}

@@ -1740,18 +1740,18 @@ function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): Mob
   });
 }
 
-function sundayFootFlareResetBlock(): MobilityBlock {
+function sundayCarryRecoveryBlock(): MobilityBlock {
   return block({
-    id: "sunday-foot-flare-supported-reset",
-    title: "Supported full-body downshift",
+    id: "sunday-carry-recovery",
+    title: "Carry and foot reset",
     duration: "6-10 min",
     purpose: "Very gentle seated and supported options for a full reset without fatigue.",
     adaptationNote:
       "No aggressive stretching today. Keep every position supported and stop before anything feels worked.",
     exercises: [
-      footFlareMovement("seatedHipRotations", "sunday-foot-flare-seated-hip-rotations"),
-      footFlareMovement("seatedSpinalFlexionExtension", "sunday-foot-flare-seated-spine"),
-      footFlareMovement("supportedBreathingReset", "sunday-foot-flare-supported-breathing-reset", {
+      footFlareMovement("anklePumps", "sunday-carry-ankle-pumps"),
+      footFlareMovement("seatedHipRotations", "sunday-carry-seated-hip-rotations"),
+      footFlareMovement("supportedBreathingReset", "sunday-carry-supported-breathing-reset", {
         dose: "90 sec",
         completionTarget: "Breathe calmly for about 90 seconds and finish quieter than you started.",
       }),
@@ -2079,6 +2079,7 @@ const DAY_5_LATER_RECOVERY: MobilityBlock = block({
 });
 
 const STANDARD_LATER_RECOVERY_BY_DAY: Record<number, MobilityBlock> = {
+  0: sundayCarryRecoveryBlock(),
   1: REQUIRED_LATER_RECOVERY,
   2: DAY_2_LATER_RECOVERY,
   3: DAY_3_LATER_RECOVERY,
@@ -2125,7 +2126,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     todayPurpose:
       "Prepare feet, ankles, knees, hips, hamstrings, glutes, trunk, and breathing before the heaviest lower-body day.",
     previousDayReason:
-      "Sunday was full rest, so this restores easy motion before leg press and lunge work.",
+      "After Sunday’s carries, check that your feet feel steady before lunges and pendulum squats.",
     adaptationNote:
       "Use support. Keep range comfortable. Do not force feet, knees, hips, or balance. This is preparation, not a workout.",
     completionSummary: "Done means ankles, hips, and trunk feel ready without fatigue.",
@@ -2161,7 +2162,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, shoulders, chest, lats, elbows, and wrists for the standard seated machine chest press, supported row, dual pulldowns, shoulder press, and chest fly/reverse fly pair.",
+      "Prepare your upper back, shoulders, chest and elbows for the chest press, paired pulldowns and supported row.",
     previousDayReason:
       "Monday was Lower A, so this keeps lower-leg prep low-dose before upper-body training.",
     adaptationNote:
@@ -2169,7 +2170,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Machine chest press, supported row, dual pulldowns, seated shoulder press, and chest fly/reverse fly." },
+      { label: "Training match", value: "Upper A setup", note: "Machine chest press, paired pulldowns, supported row, rear and side delts, and paired ab machines." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
@@ -2206,7 +2207,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means hips and ankles feel easier to position without adding fatigue.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Lower B setup", note: "Supported split squat, leg curls, leg extension, hip machines, calves, and a light cable crunch." },
+      { label: "Training match", value: "Lower B setup", note: "Supported split squat, pendulum squat, hip machines, leg curls, leg extension, calves, and preacher curls." },
       { label: "Foot rule", value: "No step chasing", note: "Gym walking is removed if soles are flaring." },
       { label: "Feel target", value: "Stable", note: "Hips stay quiet and breathing stays easy." },
     ],
@@ -2236,7 +2237,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, lats, chest, shoulders, arms, and breathing for machine press, rows, dual pulldowns, overhead triceps extensions, cable lateral raises, and curls.",
+      "Prepare your chest, upper back, shoulders and trunk for machine chest press, supported T-bar rows, arm work and machine abs.",
     previousDayReason:
       "Wednesday was Lower B, so this keeps lower-leg work quiet before upper-body training.",
     adaptationNote:
@@ -2244,7 +2245,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper B setup", note: "Machine press, row, dual pulldowns, overhead triceps extensions, side delts, and Bayesian curls." },
+      { label: "Training match", value: "Upper B setup", note: "Machine chest press, supported T-bar row, overhead bar extensions, cable laterals, Bayesian curls and paired ab machines." },
       { label: "Back rule", value: "Supported pulling", note: "Keep the torso controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
@@ -2273,7 +2274,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper C primer",
     totalDuration: "12-16 min",
     todayPurpose:
-      "Prepare feet, ankles, upper back, chest, shoulders, and arms for the fly pair, back extensions, and cable work.",
+      "Prepare your chest, shoulders and upper back for the pec deck pair, cable work and light hip machines.",
     previousDayReason:
       "Thursday was Upper B, so Friday keeps prep simple before accessory strength work.",
     adaptationNote:
@@ -2281,8 +2282,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper C setup", note: "Machine chest fly, reverse pec deck, back extension, bar pressdown, reverse cable crossover, and cable chest press." },
-      { label: "Back rule", value: "Controlled range", note: "Keep back extensions controlled and omit them if they provoke lower-back symptoms." },
+      { label: "Training match", value: "Upper C setup", note: "Chest fly and reverse pec deck, cable chest press and crossovers, triceps and light hip machines." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
@@ -2313,7 +2313,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     todayPurpose:
       "Rest at home. Use mobility only if it improves foot, ankle, hip, or lower-back comfort.",
     previousDayReason:
-      "Friday closed the five-day training week, so Saturday stays deliberately restful.",
+      "Saturday gives your feet and back a break before Sunday’s short session.",
     adaptationNote:
       "Optional only if it improves comfort. No gym, no make-up sets, and no step chasing.",
     completionSummary: "Done means you stayed rested and did not turn mobility into training.",
@@ -2360,34 +2360,27 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
   0: {
     dayOfWeek: 0,
     dayName: "Sunday",
-    trainingRole: "Complete Rest",
-    sessionTitle: "Complete Rest",
-    totalDuration: "10-15 min",
-    todayPurpose:
-      "Rest day movement quality. Keep the session easy, supported, and free of conditioning so the next week starts fresh.",
-    previousDayReason:
-      "Saturday was complete rest, so Sunday keeps movement quality easy and optional.",
-    adaptationNote:
-      "No gym and no make-up training. This is optional movement-quality work, not conditioning.",
-    completionSummary: "Done means you moved well without creating fatigue.",
-    logType: "POST_WORKOUT",
+    trainingRole: "Sunday accessories",
+    sessionTitle: "Carry and core primer",
+    totalDuration: "4-6 min",
+    todayPurpose: "Check foot comfort and prepare to pick up the kettlebells and brace with easy breathing.",
+    previousDayReason: "After Saturday rest, start with a short, comfortable range of motion.",
+    adaptationNote: "Walk a short stretch unloaded. Skip loaded carries if pain is 3/10 or higher, increases or changes your gait.",
+    completionSummary: "Finish with easy breathing and a steady gait.",
+    logType: "PRE_WORKOUT",
     focus: [
-      { label: "Movement quality", value: "10-15 min", note: "Easy range, no conditioning." },
-      { label: "Previous day", value: "Recovery rest", note: "No make-up training after Saturday." },
-      { label: "Feel target", value: "Fresh", note: "Finish calmer than you started." },
+      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, reverse EZ-bar curls, machine hip thrusts and paired ab machines." },
+      { label: "Foot rule", value: "Steady gait", note: "Short, easy steps before adding any load." },
     ],
     blocks: [
-      dailyLowerLegBase(),
       block({
-        id: "sunday-rest-movement-quality",
-        title: "Rest-day movement quality",
-        duration: "4-7 min",
-        purpose: "Add easy hip, thoracic, hinge, and breathing work after the daily base.",
-        adaptationNote: "Stop before fatigue. Use the supported version of every movement you need.",
+        id: "sunday-carry-prep",
+        title: "Carry and core preparation",
+        duration: "4-6 min",
+        purpose: "Warm up the feet and practise a controlled hip hinge.",
+        adaptationNote: "Use support and keep effort easy.",
         exercises: [
-          movement("hipFlexorStretch"),
-          movement("thoracicOpenBooks"),
-          movement("catCow"),
+          movement("anklePumps"),
           movement("supportedHipHingeRockBack"),
           movement("supportedBreathingReset"),
         ],
@@ -2525,7 +2518,7 @@ export const UNDO_SITTING: MobilityBlock = block({
 });
 
 export function getMobilityProgram(dayOfWeek: number): MobilityDayProgram {
-  return MOBILITY_PROGRAMS[dayOfWeek] ?? MOBILITY_PROGRAMS[0];
+  return MOBILITY_PROGRAMS[dayOfWeek] ?? MOBILITY_PROGRAMS[6];
 }
 
 /**
@@ -2539,6 +2532,7 @@ export function getMobilityProgram(dayOfWeek: number): MobilityDayProgram {
  * protocol follows the session, never the calendar.
  */
 export type TrainingSessionKey =
+  | "SUNDAY_ACCESSORY"
   | "LOWER_A"
   | "UPPER_A"
   | "LOWER_B"
@@ -2550,6 +2544,8 @@ export function getTrainingSessionKeyForPlanDay(
   dayOfWeek: number | null | undefined
 ): TrainingSessionKey {
   switch (dayOfWeek) {
+    case 0:
+      return "SUNDAY_ACCESSORY";
     case 1:
       return "LOWER_A";
     case 2:
@@ -2567,12 +2563,13 @@ export function getTrainingSessionKeyForPlanDay(
 
 /** The weekday each program was authored for — an index, not a schedule. */
 const MOBILITY_PROGRAM_INDEX_BY_SESSION: Record<TrainingSessionKey, number> = {
+  SUNDAY_ACCESSORY: 0,
   LOWER_A: 1,
   UPPER_A: 2,
   LOWER_B: 3,
   UPPER_B: 4,
   UPPER_ACCESSORY: 5,
-  REST: 0,
+  REST: 6,
 };
 
 /** Classify a plan's session name. Matching is on the session, not the day. */
@@ -2584,6 +2581,7 @@ export function getTrainingSessionKey(
   }
 
   const name = sessionName.toLowerCase();
+  if (/^sunday accessories\b/.test(name)) return "SUNDAY_ACCESSORY";
   if (/^lower a\b|lower a —|lower a -/.test(name)) return "LOWER_A";
   if (/^upper a\b|upper a —|upper a -/.test(name)) return "UPPER_A";
   if (/^lower b\b|lower b —|lower b -/.test(name)) return "LOWER_B";
@@ -2608,7 +2606,7 @@ export function getMobilityProgramForSession(
     if (calendarProgram && calendarProgram.logType === "POST_WORKOUT") {
       return calendarProgram;
     }
-    return MOBILITY_PROGRAMS[0];
+    return MOBILITY_PROGRAMS[6];
   }
 
   return getMobilityProgram(MOBILITY_PROGRAM_INDEX_BY_SESSION[sessionKey]);
@@ -2630,14 +2628,6 @@ export function getRecoverySessionBlocks(
 
   if (mode !== "footFlare" || program.logType !== "POST_WORKOUT") {
     return program.blocks;
-  }
-
-  if (program.dayOfWeek === 0) {
-    return [
-      footFlareFootBlock("sunday-foot-flare"),
-      sundayFootFlareResetBlock(),
-      breathingFinisher("Calm finish"),
-    ];
   }
 
   const idPrefix = `day-${program.dayOfWeek}-foot-flare`;

@@ -62,6 +62,7 @@ export async function logPainCheckIn(formData: FormData): Promise<PainActionResu
 
   revalidatePath("/");
   revalidatePath("/mobility");
+  revalidatePath("/workout/suggestions");
   return {};
 }
 

@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Row, Rows } from "@/components/ui/ledger";
+import { ExerciseFormGuide } from "./ExerciseFormGuide";
 import {
   makeCustomExerciseId,
   type MuscleGroup,
@@ -44,6 +45,7 @@ export function CustomWorkoutBuilder({
   const [selectedExercises, setSelectedExercises] = useState<WorkoutTemplateExercise[]>([]);
   const [customName, setCustomName] = useState("");
   const [customGroup, setCustomGroup] = useState<MuscleGroup>("Full Body");
+  const selectedExercise = allExercises.find((exercise) => exercise.id === selectedExerciseId);
 
   const groupedLibrary = useMemo(() => {
     const groups = new Map<MuscleGroup, typeof allExercises>();
@@ -217,6 +219,7 @@ export function CustomWorkoutBuilder({
               Add
             </Button>
           </div>
+          {selectedExercise ? <ExerciseFormGuide key={selectedExercise.id} name={selectedExercise.name} cues={selectedExercise.notes} /> : null}
         </div>
       </div>
 

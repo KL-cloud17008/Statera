@@ -12,7 +12,7 @@ const copy = (value) => structuredClone(value);
 function fixture() {
   const state = { logs: [], reads: 0, writes: 0, invalidations: [], failWrite: false, failInvalidation: false };
   let auth = { id: "owner", timezone: "America/New_York" };
-  let instant = "2026-10-13T18:00:00.000Z"; // Tuesday afternoon; the gym training date has already rolled to Wednesday.
+  let instant = "2026-10-13T18:00:00.000Z"; // Tuesday afternoon.
   let serial = 0, tail = Promise.resolve();
   class Clock extends Date {
     constructor(...args) { super(...(args.length ? args : [instant])); }
@@ -75,9 +75,9 @@ function fixture() {
     setAuth: (value) => { auth = value; }, setTime: (value) => { instant = value; } };
 }
 
-test("home core uses the user's calendar day and Monday week independently of the gym noon boundary", async () => {
+test("home core and gym training use the user's calendar day", async () => {
   const f = fixture();
-  assert.equal(f.load("src/lib/dates.ts").getTrainingDate(new Date("2026-10-13T18:00:00Z"), "America/New_York").getUTCDay(), 3);
+  assert.equal(f.load("src/lib/dates.ts").getTrainingDate(new Date("2026-10-13T18:00:00Z"), "America/New_York").getUTCDay(), 2);
   await f.actions.logHomeCore(f.form("intro", { date: "2030-01-01", userId: "other" }));
   assert.equal(f.state.logs[0].date.toISOString(), "2026-10-13T00:00:00.000Z");
   assert.equal(f.state.logs[0].userId, "owner");
@@ -87,7 +87,6 @@ test("home core uses the user's calendar day and Monday week independently of th
   assert.equal(week.todayDose, "intro");
   assert.deepEqual(Array.from(week.completedDates), ["2026-10-13"]);
   const core = f.load("src/lib/home-core.ts");
-  assert.equal(core.getHomeCoreDayLabel(week.dayOfWeek), "Core day");
   for (const [time, zone, date, day] of [
     ["2026-10-13T03:00:00Z", "America/New_York", "2026-10-12", 1],
     ["2026-10-12T16:30:00Z", "Asia/Tokyo", "2026-10-13", 2],

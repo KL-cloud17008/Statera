@@ -21,7 +21,7 @@ model User {
   carbTarget      Int?     @default(207)
   fatTarget       Int?     @default(83)
   timezone        String   @default("America/New_York")
-  trainingDays    Int[]    @default([1, 2, 4, 5]) // 0=Sun, 1=Mon; Wed/Sat recovery, Sun rest
+  trainingDays    Int[]    @default([1, 2, 4, 5]) // Legacy preference, 0=Sun and 1=Mon
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -36,6 +36,8 @@ model User {
   progressPhotos   ProgressPhoto[]
   painCheckIns     PainCheckIn[]
   stepSyncConnection StepSyncConnection?
+  recoveryCheckIns RecoveryCheckIn[]
+  supplementEntries SupplementEntry[]
 }
 
 // ─── WEIGHT TRACKING ───
@@ -160,7 +162,7 @@ model PlanExercise {
   targetRPE      String? // "7" or "7-8"
   cues           String? // coaching notes (can be long)
   supersetGroup  String? // "A", "B", "C" — exercises with same letter are superset
-  exerciseType   String  @default("WORKING") // WORKING, WARMUP, FINISHER
+  exerciseType   String  @default("WORKING") // WORKING, ACCESSORY, TIMED, WARMUP, FINISHER
   sortOrder      Int     @default(0)
 
   workoutPlan WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
@@ -174,7 +176,7 @@ model WorkoutSession {
   userId        String
   workoutPlanId String?
   date          DateTime  @db.Date
-  trainingDate  DateTime  @db.Date // resolved training date (noon boundary)
+  trainingDate  DateTime  @db.Date // Session's assigned calendar date
   startTime     DateTime?
   endTime       DateTime?
   notes         String?
@@ -185,6 +187,7 @@ model WorkoutSession {
   sets         SessionSet[]
   workoutPlan  WorkoutPlan? @relation(fields: [workoutPlanId], references: [id])
   user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkIn      WorkoutCheckIn?
 
   @@index([userId, trainingDate])
 }
@@ -208,6 +211,45 @@ model SessionSet {
 
   @@index([workoutSessionId])
   @@index([exerciseName])
+}
+
+model WorkoutCheckIn {
+  workoutSessionId String @id
+  effort           Int
+  notes            String?
+  updatedAt        DateTime @updatedAt
+
+  workoutSession WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
+}
+
+model RecoveryCheckIn {
+  userId    String
+  date      DateTime @db.Date
+  energy    Int
+  soreness  Int
+  sleepHours Float?
+  notes     String?
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, date])
+}
+
+model SupplementEntry {
+  userId    String
+  id        String   @default(uuid())
+  date      DateTime @db.Date
+  name      String
+  amount    String?
+  time      String?
+  notes     String?
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, id])
+  @@index([userId, date])
 }
 
 // ─── MOBILITY TRACKING ───

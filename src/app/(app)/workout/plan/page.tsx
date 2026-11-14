@@ -6,32 +6,26 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Figure, Notice, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
 import { SessionPrepStrip } from "@/components/workout/SessionPrepStrip";
+import { ExerciseFormGuide } from "@/components/workout/ExerciseFormGuide";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { WorkoutPlanResetButton } from "@/components/workout/WorkoutPlanResetButton";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getTodayDateString, getTrainingDayOfWeek } from "@/lib/dates";
 import {
-  DEFAULT_WORKOUT_PLAN,
   BACK_PAIN_RULES,
   FOOT_LOAD_RULES,
+  LOWER_BODY_WARMUP,
   LOWER_B_BACK_PAIN_READINESS_NOTE,
   PROGRESSIVE_OVERLOAD_RULES,
   WEEKLY_SET_SUMMARY,
-  isOverheadPressExercise,
+  isBackPainGatedExercise,
 } from "@/lib/default-workout-plan";
-import { getIntroductorySets, formatSetPrescription } from "@/lib/workout-prescription";
+import { getRequiredLaterRecoveryTitle } from "@/lib/mobility";
+import { DAY_NAMES, getPlanDay } from "@/lib/plan-preview";
+import { formatSetPrescription } from "@/lib/workout-prescription";
 import { isLoggableTrainingExercise } from "@/lib/training-session";
 
-const WEEK_STRUCTURE = [
-  ...DEFAULT_WORKOUT_PLAN.map((day, index) => ({
-    day: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"][index],
-    title: day.sessionName, protocol: "Strength Protocol", dayOfWeek: day.dayOfWeek,
-    note: day.dayOfWeek === 3 ? "Warm-up: Lying Leg Curl, 1-2 easy sets of 12-15. Not working hamstring volume." : "Add clean reps before load; keep every set controlled.",
-    laterRecovery: ["Lower-Body Flush + Sole Care, 10-14 minutes.", "Upper-Body Downshift + Foot/Ankle Base, 8-12 minutes.", "Lower-Body Flush + Back Care, 10-14 minutes.", "Shoulder / Upper-Back Reset + Foot Base, 8-12 minutes.", "Weekly Downshift / Foot-Flare Recovery, 12-16 minutes."][index],
-    details: [],
-  })),
-  ...["Saturday", "Sunday"].map(day => ({day, title: "Complete Rest", protocol: "Full Rest", note: "Complete rest from scheduled strength training.", laterRecovery: "No required block. No make-up training.", details: []})),
-];
+const PLAN_DAYS = [0, 1, 2, 3, 4, 5, 6] as const;
 
 export const metadata: Metadata = {
   title: "Training Plan | Athanor",
@@ -66,7 +60,7 @@ export default async function WorkoutPlanPage() {
       <PageTitle
         eyebrow="Training"
         title="Full plan"
-        lead="Five training days. Progress by controlled reps, then load."
+        lead="Train Sunday through Friday. Build reps before adding weight."
       />
 
       {plans.length === 0 ? (
@@ -80,7 +74,10 @@ export default async function WorkoutPlanPage() {
       ) : null}
 
       <nav aria-label="Plan days" className="plan-day-index my-4 grid grid-cols-7 gap-1">
-        {WEEK_STRUCTURE.map((day, index) => <a key={day.day} aria-label={day.day} aria-current={[1,2,3,4,5,6,0][index] === trainingDayOfWeek ? "location" : undefined} href={`#${day.day.toLowerCase()}`} className="inline-flex min-h-12 items-center justify-center border-b border-rule bg-sunken px-1 text-caption font-medium aria-[current=location]:border-accent aria-[current=location]:bg-accent-subtle aria-[current=location]:text-accent hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent"><span className="sm:hidden">{day.day.slice(0,3)}</span><span className="hidden sm:inline">{day.day}</span></a>)}
+        {PLAN_DAYS.map((dayOfWeek) => {
+          const day = DAY_NAMES[dayOfWeek];
+          return <a key={day} aria-label={day} aria-current={dayOfWeek === trainingDayOfWeek ? "location" : undefined} href={`#${day.toLowerCase()}`} className="inline-flex min-h-12 items-center justify-center border-b border-rule bg-sunken px-1 text-caption font-medium aria-[current=location]:border-accent aria-[current=location]:bg-accent-subtle aria-[current=location]:text-accent hover:bg-raised focus-visible:outline-2 focus-visible:outline-accent"><span className="sm:hidden">{day.slice(0,3)}</span><span className="hidden sm:inline">{day}</span></a>;
+        })}
       </nav>
       <details className="border-y border-rule">
         <summary className="flex min-h-14 cursor-pointer items-center text-body font-medium focus-visible:outline-2 focus-visible:outline-accent">Load rules, progression & preparation</summary>
@@ -108,26 +105,26 @@ export default async function WorkoutPlanPage() {
       </details>
 
       <div className="mt-6">
-        {WEEK_STRUCTURE.map((day, index) => {
-            const plan = "dayOfWeek" in day && typeof day.dayOfWeek === "number" ? plansByDay.get(day.dayOfWeek) : null;
+        {PLAN_DAYS.map((dayOfWeek) => {
+            const day = DAY_NAMES[dayOfWeek];
+            const plan = plansByDay.get(dayOfWeek);
             const loggableExercises = plan?.exercises.filter(isLoggableTrainingExercise) ?? [];
             const workingCount = loggableExercises.length;
-            const totalSets = loggableExercises
-              .reduce((sum, exercise) => sum + exercise.sets, 0) ?? 0;
-            const showBackReadiness = plan?.dayOfWeek === 3 || plan?.dayOfWeek === 4;
+            const totalSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+            const showBackReadiness = loggableExercises.some((exercise) => isBackPainGatedExercise(exercise.exerciseName));
 
             return (
-              <Section key={day.day} id={day.day.toLowerCase()} title={`${String(index + 1).padStart(2, "0")} · ${day.day}`} action={<Badge variant={day.protocol === "Strength Protocol" ? "accent" : "outline"}>{day.protocol}</Badge>}>
+              <Section key={day} id={day.toLowerCase()} title={day} action={<Badge variant={plan ? "accent" : "outline"}>{plan ? "Strength Protocol" : "Full Rest"}</Badge>}>
 
                 <p className="mt-2 text-body font-medium text-primary">
-                  {plan?.sessionName ?? day.title}
+                  {plan?.sessionName ?? getPlanDay(dayOfWeek)?.sessionName ?? "Complete Rest"}
                 </p>
 
                 {plan ? (
                   <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
                     <dl className="flex gap-8">
                       <Figure label="Exercises" value={workingCount} />
-                      <Figure label="Intro / target sets" value={`${loggableExercises.reduce((sum, exercise) => sum + getIntroductorySets(exercise), 0)} / ${totalSets}`} />
+                      <Figure label="Working sets" value={totalSets} />
                     </dl>
                     <WorkoutSessionActionButton
                       planId={plan.id}
@@ -139,17 +136,9 @@ export default async function WorkoutPlanPage() {
                   </div>
                 ) : null}
 
-                <details className="mt-4" open={plan?.dayOfWeek === trainingDayOfWeek}><summary className="flex min-h-12 cursor-pointer items-center text-row font-medium focus-visible:outline-2 focus-visible:outline-accent">{plan ? "Exercises & guidance" : "Rest-day guidance"}</summary><p className="mt-3 max-w-2xl text-row text-secondary">{day.note}</p>
-                <p className="mt-2 max-w-2xl text-row text-secondary">
-                  <span className="font-medium text-primary">Later recovery:</span> {day.laterRecovery}
-                </p>
-                {"details" in day && Array.isArray(day.details) ? (
-                  <ul className="mt-3 grid gap-1.5">
-                    {day.details.map((detail) => (
-                      <li key={detail} className="text-caption text-tertiary">{detail}</li>
-                    ))}
-                  </ul>
-                ) : null}
+                <details className="mt-4" open={dayOfWeek === trainingDayOfWeek}><summary className="flex min-h-12 cursor-pointer items-center text-row font-medium focus-visible:outline-2 focus-visible:outline-accent">{plan ? "Exercises & guidance" : "Rest-day guidance"}</summary>
+                {dayOfWeek === 1 || dayOfWeek === 3 ? <p className="mt-3 max-w-2xl text-row text-secondary">{LOWER_BODY_WARMUP}</p> : null}
+                {plan ? <p className="mt-2 max-w-2xl text-row text-secondary">Later recovery · {getRequiredLaterRecoveryTitle("standard", dayOfWeek)}</p> : null}
                 {showBackReadiness ? (
                   <Notice tone="accent" className="mt-3">
                     {LOWER_B_BACK_PAIN_READINESS_NOTE}
@@ -184,13 +173,11 @@ export default async function WorkoutPlanPage() {
                               {exercise.supersetGroup ? <Badge variant="secondary">Block {exercise.supersetGroup}</Badge> : null}
                               {exercise.exerciseType === "ACCESSORY" ? <Badge variant="secondary">Low-dose accessory</Badge> : null}
                               {exercise.exerciseType === "FINISHER" ? <Badge variant="secondary">Finisher</Badge> : null}
-                              {backPainGateActive && isOverheadPressExercise(exercise.exerciseName) ? (
+                              {backPainGateActive && isBackPainGatedExercise(exercise.exerciseName) ? (
                                 <Badge variant="ember">Removed — lower-back ≥3/10</Badge>
                               ) : null}
                             </div>
-                            {exercise.cues ? (
-                              <p className="mt-1 text-caption text-tertiary">{exercise.cues}</p>
-                            ) : null}
+                            <ExerciseFormGuide name={exercise.exerciseName} cues={exercise.cues} />
                             <Sub className="mt-1 block md:hidden">{programming}</Sub>
                           </div>
                           <span className="hidden text-row text-secondary md:block md:text-right">

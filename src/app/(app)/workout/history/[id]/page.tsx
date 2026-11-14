@@ -9,6 +9,8 @@ import { isAtHomePrimerExerciseName, isLoggableTrainingExercise } from "@/lib/tr
 import { workoutLoadToKg } from "@/lib/units";
 import { getOrCreateCurrentUser } from "@/lib/current-user";
 import { getTodayDateString } from "@/lib/dates";
+import { getWorkoutCheckIn } from "@/actions/training-journal";
+import { WorkoutCheckIn } from "@/components/workout/TrainingJournal";
 
 export const metadata: Metadata = {
   title: "Edit Training Session | Athanor",
@@ -20,6 +22,7 @@ export default async function EditWorkoutSessionPage({ params }: { params: Promi
   const [session, user] = await Promise.all([getSessionWithSets(id), getOrCreateCurrentUser()]);
   if (!session || !user) notFound();
   if (!session.completed) redirect("/workout");
+  const checkIn = await getWorkoutCheckIn(session.id);
 
   const meta = parseWorkoutSessionMeta(session.notes);
   const loadUnit = getWorkoutSessionLoadUnit(session.notes);
@@ -31,7 +34,7 @@ export default async function EditWorkoutSessionPage({ params }: { params: Promi
   })) ?? []).filter(isLoggableTrainingExercise);
   const sets = session.sets.filter((set) => !isAtHomePrimerExerciseName(set.exerciseName));
 
-  return <WorkoutHistoryEditor
+  return <><WorkoutHistoryEditor
     sessionId={session.id}
     sessionName={getSessionLabel(session)}
     trainingDate={session.trainingDate.toISOString().split("T")[0]}
@@ -43,5 +46,5 @@ export default async function EditWorkoutSessionPage({ params }: { params: Promi
       repsCompleted: set.repsCompleted, actualRPE: set.actualRPE, notes: set.notes,
       duration: set.duration, isAMRAP: set.isAMRAP,
     }))}
-  />;
+  />{checkIn.available ? <WorkoutCheckIn sessionId={session.id} entry={checkIn.entry} /> : null}</>;
 }

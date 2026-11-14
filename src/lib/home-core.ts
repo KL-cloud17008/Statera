@@ -3,8 +3,7 @@ import type { MobilityBlock, MobilityExercise } from "@/lib/mobility";
 
 export const HOME_CORE_LOG_TYPE = "HOME_CORE";
 export const HOME_CORE_VERSION = "home-core-v2";
-export const HOME_CORE_DAYS = [2, 5] as const;
-export const HOME_CORE_SCHEDULE = "Tuesday & Friday";
+export const HOME_CORE_SCHEDULE = "Optional home alternative";
 export const HOME_CORE_PURPOSE = "Build abdominal and oblique strength with leg raises, reach-ups and controlled trunk stability. Bodyweight only; keep your breathing steady and use a range your back can tolerate.";
 export const HOME_CORE_SAFETY = "Keep discomfort at 0–2/10 and stable. At 3/10, shorten the movement or use the easier option. Stop for increasing or sharp pain, symptoms down a leg, numbness, tingling or weakness. New persistent worsening or rest/night pain needs medical advice.";
 export const HOME_CORE_PROGRESSION = [
@@ -23,7 +22,7 @@ export type HomeCoreWeek = {
   todayDose: HomeCoreDose | null;
 };
 
-/** Home sessions follow the local calendar, independently of a resumed gym session or noon rollover. */
+/** Home sessions follow the local calendar, independently of a resumed gym session. */
 export function getHomeCoreCalendar(timestamp: Date, timezone?: string) {
   const date = formatDate(toLocalDate(timestamp, timezone));
   const calendarDate = new Date(`${date}T00:00:00.000Z`);
@@ -31,11 +30,6 @@ export function getHomeCoreCalendar(timestamp: Date, timezone?: string) {
   const weekStart = new Date(calendarDate);
   weekStart.setUTCDate(weekStart.getUTCDate() - (dayOfWeek + 6) % 7);
   return { date, calendarDate, dayOfWeek, weekStart };
-}
-
-export function getHomeCoreDayLabel(dayOfWeek: number) {
-  if (HOME_CORE_DAYS.some((day) => day === dayOfWeek)) return "Core day";
-  return dayOfWeek < 2 || dayOfWeek > 5 ? "Next: Tuesday" : "Next: Friday";
 }
 
 export const HOME_CORE_VIDEO_REFERENCES = [

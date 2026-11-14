@@ -13,6 +13,7 @@ const withSerwist = withSerwistInit({
   swDest: "public/sw.js",
   register: false,
   disable: process.env.NODE_ENV === "development",
+  additionalPrecacheEntries: [],
 });
 
 const nextConfig: NextConfig = {

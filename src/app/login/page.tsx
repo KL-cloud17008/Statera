@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { LoginPageClient } from "@/components/auth/LoginPageClient";
+import { OfflineWorkoutAccount } from "@/components/workout/OfflineWorkout";
 
 export const metadata: Metadata = {
   title: "Sign In | Athanor",
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  return <LoginPageClient />;
+  return <><OfflineWorkoutAccount accountId={null} /><LoginPageClient /></>;
 }

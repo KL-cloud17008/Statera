@@ -93,7 +93,7 @@ function revalidateWorkoutResetPaths() {
 }
 
 function revalidateWorkoutSessionPaths() {
-  for (const path of ["/", "/workout", "/workout/plan", "/workout/history", "/mobility", "/flexibility-balance"]) {
+  for (const path of ["/", "/workout", "/workout/plan", "/workout/history", "/workout/suggestions", "/mobility", "/flexibility-balance"]) {
     revalidatePath(path);
   }
 }
@@ -160,8 +160,7 @@ export async function getWorkoutPlanDayStatuses(
 
   const currentTrainingDate = getTrainingDate(new Date(), user.timezone ?? timezone);
   const startOfWeek = new Date(currentTrainingDate);
-  startOfWeek.setUTCDate(startOfWeek.getUTCDate() - (startOfWeek.getUTCDay() + 6) % 7);
-  startOfWeek.setUTCHours(0, 0, 0, 0);
+  startOfWeek.setUTCDate(startOfWeek.getUTCDate() - startOfWeek.getUTCDay());
 
   const [openSessions, completedSessions] = await Promise.all([
     prisma.workoutSession.findMany({
@@ -182,7 +181,7 @@ export async function getWorkoutPlanDayStatuses(
         userId,
         workoutPlanId: { not: null },
         completed: true,
-        trainingDate: { gte: startOfWeek },
+        trainingDate: { gte: startOfWeek, lte: currentTrainingDate },
       },
       include: {
         workoutPlan: {
@@ -226,7 +225,7 @@ export async function getTodaysPlan(userId: string, timezone?: string) {
   await ensureDefaultWorkoutPlans(prisma, userId);
 
   const dayNum = getTrainingDayNumber(new Date(), user.timezone ?? timezone);
-  if (!dayNum) {
+  if (dayNum === null) {
     return null;
   }
 
@@ -372,14 +371,16 @@ async function saveWorkoutSet(formData: FormData, editingHistory: boolean): Prom
     const current: SavedWorkoutSet | null = existingSet ? {
       weightUsed: workoutLoadToKg(existingSet.weightUsed, loadUnit), repsCompleted: existingSet.repsCompleted,
       actualRPE: existingSet.actualRPE, notes: existingSet.notes,
+      ...(hasDuration || expectedSet?.duration !== undefined ? { duration: existingSet.duration ?? null } : {}),
     } : null;
-    const savedSet = { weightUsed, repsCompleted, actualRPE, notes };
+    const savedSet = { weightUsed, repsCompleted, actualRPE, notes, ...(hasDuration ? { duration } : {}) };
     const savedDuration = hasDuration ? duration : existingSet?.duration ?? null;
     const savedAMRAP = hasAMRAP ? isAMRAP : existingSet?.isAMRAP ?? false;
     const identical = sameSavedWorkoutSet(current, savedSet) && existingSet?.duration === savedDuration && existingSet.isAMRAP === savedAMRAP;
     // A retry after a lost response is successful; a different edit from another tab requires review.
     if (identical) return { savedSet };
-    if (expectedSet !== undefined && !sameSavedWorkoutSet(current, expectedSet)) {
+    if (expectedSet !== undefined && (!sameSavedWorkoutSet(current, expectedSet) ||
+      (expectedSet?.duration !== undefined && current?.duration !== expectedSet.duration))) {
       return { error: "This set changed in another tab or device. Review the saved values before replacing them.", conflict: true, savedSet: current };
     }
     if (loadUnit !== WORKOUT_LOAD_UNIT) {
@@ -560,6 +561,7 @@ export async function getPreviousSessionSets(
     weightUsed: number | null;
     repsCompleted: number | null;
     actualRPE: number | null;
+    duration?: number | null;
   }>
 > {
   const user = await getOrCreateCurrentUser();
@@ -591,6 +593,7 @@ export async function getPreviousSessionSets(
       weightUsed: workoutLoadToKg(set.weightUsed, loadUnit),
       repsCompleted: set.repsCompleted,
       actualRPE: set.actualRPE,
+      ...(set.duration != null ? { duration: set.duration } : {}),
     }));
 }
 

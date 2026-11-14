@@ -24,25 +24,24 @@ export function getPlanDay(dayOfWeek: number): DefaultWorkoutDay | null {
 
 /**
  * The plan-day arm of `stepGoalSuspended`, resolved for an arbitrary date
- * rather than only today: a date the plan gives no session has no step goal.
- *
- * One definition shared by both step cards. It deliberately reuses `getPlanDay`
- * rather than testing for Saturday/Sunday, so a plan whose rest days move stays
- * consistent. It does NOT cover the recovery arm — see `isGoalSuspended` in
- * lib/steps.ts for why that cannot be resolved for a past date.
+ * rather than only today. The Sunday carry session leaves the step goal
+ * suspended so walking for work and carrying don't add a target to chase.
  */
 export function isStepGoalSuspendedByPlan(date: string): boolean {
-  return getPlanDay(parseDate(date).getDay()) == null;
+  const dayOfWeek = parseDate(date).getDay();
+  return dayOfWeek === 0 || getPlanDay(dayOfWeek) == null;
 }
 
 export function buildPlanDayStats(day: DefaultWorkoutDay): PlanDayStats {
   const loggable = day.exercises.filter(isLoggableTrainingExercise);
   const estimatedSeconds = loggable.reduce((sum, exercise) => {
     const sets = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
-    // ~45s of work per set plus the programmed rest between sets.
-    return sum + sets * (45 + exercise.restSeconds);
+    const timedSeconds = /^(\d+) sec$/.exec(exercise.reps);
+    const workSeconds = timedSeconds ? Number(timedSeconds[1]) : / per (arm|leg|side)$/.test(exercise.reps) ? 75 : 45;
+    return sum + sets * (workSeconds + exercise.restSeconds);
   }, 0);
-  const estimatedMinutes = Math.max(5, Math.round(estimatedSeconds / 60 / 5) * 5);
+  const rampUpMinutes = day.dayOfWeek === 1 || day.dayOfWeek === 3 ? 5 : 0;
+  const estimatedMinutes = Math.max(5, Math.round((estimatedSeconds / 60 + rampUpMinutes) / 5) * 5);
   const topMovements = loggable
     .slice(0, 3)
     .map((exercise) => exercise.exerciseName.replace(/^[A-Z]\d*\s+/, ""));

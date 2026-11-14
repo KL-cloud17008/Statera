@@ -8,7 +8,9 @@ import { revalidatePath } from "next/cache";
 import { WORKOUT_LOAD_UNIT, cmToInches, workoutLoadToKg } from "@/lib/units";
 import { getWorkoutSessionLoadUnit } from "@/lib/workout-session-meta";
 import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload } from "@/lib/backup";
-import { formText, parseMeasurementNumber } from "@/lib/measurement-input";
+import { formText, measurementDate, parseMeasurementNumber } from "@/lib/measurement-input";
+import type { RecoveryValues, SupplementValues, WorkoutCheckInValues } from "@/lib/training-journal";
+import { trainingJournalInstalled } from "@/lib/training-journal-storage";
 
 type WeighInStatus = "BASELINE" | "FASTING" | "NORMAL";
 
@@ -86,6 +88,7 @@ type BackupWorkoutSession = {
   weekNumber?: number;
   completed?: boolean;
   sets?: BackupSessionSet[];
+  checkIn?: WorkoutCheckInValues | null;
 };
 
 type BackupMobilityLog = {
@@ -158,6 +161,8 @@ type BackupPayload = {
   savedMeals?: BackupSavedMeal[];
   progressPhotos?: BackupProgressPhoto[];
   painCheckIns?: BackupPainCheckIn[];
+  recoveryCheckIns?: (RecoveryValues & { date: string })[];
+  supplementEntries?: (SupplementValues & { date: string })[];
 };
 
 type ExportedDailyLog = {
@@ -218,6 +223,9 @@ function revalidateAllUserRoutes() {
   revalidatePath("/steps");
   revalidatePath("/weight");
   revalidatePath("/workout");
+  revalidatePath("/workout/journal");
+  revalidatePath("/workout/suggestions");
+  revalidatePath("/workout/history");
   revalidatePath("/mobility");
   revalidatePath("/settings");
 }
@@ -288,6 +296,7 @@ export async function exportUserData() {
     return { error: "Not authenticated", payload: null };
   }
 
+  const journalInstalled = await trainingJournalInstalled();
   const [
     weightEntries,
     dailyLogs,
@@ -299,6 +308,9 @@ export async function exportUserData() {
     savedMeals,
     progressPhotos,
     painCheckIns,
+    recoveryCheckIns,
+    supplementEntries,
+    workoutCheckIns,
   ] = await Promise.all([
     prisma.weightEntry.findMany({
       where: { userId: user.id },
@@ -344,11 +356,15 @@ export async function exportUserData() {
       where: { userId: user.id },
       orderBy: { date: "asc" },
     }),
+    journalInstalled ? prisma.recoveryCheckIn.findMany({ where: { userId: user.id }, orderBy: { date: "asc" } }) : [],
+    journalInstalled ? prisma.supplementEntry.findMany({ where: { userId: user.id }, orderBy: [{ date: "asc" }, { time: "asc" }] }) : [],
+    journalInstalled ? prisma.workoutCheckIn.findMany({ where: { workoutSession: { userId: user.id, completed: true } } }) : [],
   ]);
 
   // Backup dates are date-only strings — the same format the import
   // validator requires, so an export always round-trips.
   const toDateOnly = (date: Date) => date.toISOString().split("T")[0];
+  const checkInsBySession = new Map(workoutCheckIns.map(({ workoutSessionId, effort, notes }) => [workoutSessionId, { effort, notes }]));
 
   const payload = {
     version: 1,
@@ -371,6 +387,7 @@ export async function exportUserData() {
       ...session,
       date: toDateOnly(session.date),
       trainingDate: toDateOnly(session.trainingDate),
+      checkIn: checkInsBySession.get(session.id),
     })),
     mobilityLogs: mobilityLogs.map((log) => ({ ...log, date: toDateOnly(log.date) })),
     nutritionDays: nutritionDays.map((day) => ({ ...day, date: toDateOnly(day.date) })),
@@ -382,6 +399,8 @@ export async function exportUserData() {
       footPain: checkIn.footPain,
       lowerBackPain: checkIn.lowerBackPain,
     })),
+    recoveryCheckIns: recoveryCheckIns.map(({ date, energy, soreness, sleepHours, notes }) => ({ date: toDateOnly(date), energy, soreness, sleepHours, notes })),
+    supplementEntries: supplementEntries.map(({ date, name, amount, time, notes }) => ({ date: toDateOnly(date), name, amount, time, notes })),
   };
 
   const stepsCsv = [
@@ -449,6 +468,7 @@ export async function clearAllUserData() {
   }
 
   await revokeStepSyncBeforeReplacement(user.id);
+  const journalInstalled = await trainingJournalInstalled();
   await prisma.$transaction([
     prisma.sessionSet.deleteMany({ where: { workoutSession: { userId: user.id } } }),
     prisma.workoutSession.deleteMany({ where: { userId: user.id } }),
@@ -464,6 +484,10 @@ export async function clearAllUserData() {
     prisma.savedFood.deleteMany({ where: { userId: user.id } }),
     prisma.progressPhoto.deleteMany({ where: { userId: user.id } }),
     prisma.painCheckIn.deleteMany({ where: { userId: user.id } }),
+    ...(journalInstalled ? [
+      prisma.recoveryCheckIn.deleteMany({ where: { userId: user.id } }),
+      prisma.supplementEntry.deleteMany({ where: { userId: user.id } }),
+    ] : []),
   ]);
 
   revalidateAllUserRoutes();
@@ -502,6 +526,10 @@ export async function importUserData(formData: FormData) {
     };
   }
 
+  const journalInstalled = await trainingJournalInstalled();
+  if (!journalInstalled && (payload.recoveryCheckIns?.length || payload.supplementEntries?.length || payload.workoutSessions?.some(session => session.checkIn))) {
+    return { error: "The journal is unavailable. Try importing this backup once it is available." };
+  }
   await revokeStepSyncBeforeReplacement(user.id);
   await prisma.$transaction(async (tx) => {
     await tx.sessionSet.deleteMany({ where: { workoutSession: { userId: user.id } } });
@@ -518,6 +546,10 @@ export async function importUserData(formData: FormData) {
     await tx.savedFood.deleteMany({ where: { userId: user.id } });
     await tx.progressPhoto.deleteMany({ where: { userId: user.id } });
     await tx.painCheckIn.deleteMany({ where: { userId: user.id } });
+    if (journalInstalled) {
+      await tx.recoveryCheckIn.deleteMany({ where: { userId: user.id } });
+      await tx.supplementEntry.deleteMany({ where: { userId: user.id } });
+    }
 
     const importedTimezone =
       payload.profile?.timezone && isValidTimeZone(payload.profile.timezone)
@@ -637,6 +669,9 @@ export async function importUserData(formData: FormData) {
           completed: session.completed ?? false,
         },
       });
+      if (session.checkIn) await tx.workoutCheckIn.create({ data: {
+        workoutSessionId: createdSession.id, effort: session.checkIn.effort, notes: session.checkIn.notes ?? null,
+      } });
 
       const sets = (session.sets ?? []).filter(
         (set) =>
@@ -804,6 +839,14 @@ export async function importUserData(formData: FormData) {
         })),
       });
     }
+    if (payload.recoveryCheckIns?.length) await tx.recoveryCheckIn.createMany({ data: payload.recoveryCheckIns.map(entry => ({
+      userId: user.id, date: measurementDate(entry.date), energy: entry.energy, soreness: entry.soreness,
+      sleepHours: entry.sleepHours ?? null, notes: entry.notes ?? null,
+    })) });
+    if (payload.supplementEntries?.length) await tx.supplementEntry.createMany({ data: payload.supplementEntries.map(entry => ({
+      userId: user.id, date: measurementDate(entry.date), name: entry.name,
+      amount: entry.amount ?? null, time: entry.time ?? null, notes: entry.notes ?? null,
+    })) });
   });
 
   revalidateAllUserRoutes();

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/ui/ledger";
 import { MobilityChecklist } from "@/components/mobility/MobilityChecklist";
 import {
-  getHomeCoreBlock, getHomeCoreDayLabel, HOME_CORE_PROGRESSION, HOME_CORE_SCHEDULE,
+  getHomeCoreBlock, HOME_CORE_PROGRESSION, HOME_CORE_SCHEDULE,
   HOME_CORE_SAFETY, HOME_CORE_SOURCES, HOME_CORE_VIDEO_REFERENCES,
   type HomeCoreDose, type HomeCoreWeek,
 } from "@/lib/home-core";
@@ -44,11 +44,11 @@ export function HomeCoreRoutine({ week }: { week: HomeCoreWeek }) {
   }
 
   return (
-    <Section id="home-core" title="Home core" tone="movement" className="scroll-mt-24" action={<span className="text-caption text-tertiary">{completed ? "Logged today" : getHomeCoreDayLabel(week.dayOfWeek)}</span>}>
+    <Section id="home-core" title="Home core" tone="movement" className="scroll-mt-24" action={completed ? <span className="text-caption text-tertiary">Logged today</span> : undefined}>
       <div className="grid gap-x-8 gap-y-4 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0">
-          <p className="text-body font-medium text-primary">{HOME_CORE_SCHEDULE} · 2 sessions a week</p>
-          <p className="mt-1 max-w-2xl text-row text-secondary">Start with one set of each movement, then build to two after two comfortable sessions. Keep a day between full sessions if your schedule changes.</p>
+          <p className="text-body font-medium text-primary">{HOME_CORE_SCHEDULE}</p>
+          <p className="mt-1 max-w-2xl text-row text-secondary">Use this if you miss a gym abs slot on Sunday, Tuesday or Thursday. Start with one set of each movement, then build to two after two comfortable sessions.</p>
           <p className="mt-2 text-caption text-tertiary">{count} {count === 1 ? "session" : "sessions"} logged this calendar week · {block.duration} · No equipment</p>
         </div>
         <Button type="button" variant={completed ? "secondary" : "primary"} onClick={markComplete} disabled={pending || completed} className="w-full md:w-auto md:self-start">

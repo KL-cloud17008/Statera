@@ -62,14 +62,23 @@ test('reported pain protections distinguish stable 3 from above 3',()=>{
 });
 
 test('dashboard shows rest and optional mobility when no training is scheduled',()=>{
-  today='2026-09-13';
+  today='2026-09-12';
   try {
-    const html=renderToStaticMarkup(React.createElement(DashboardPageClient,{...dashboardProps(),workoutDayStatuses:[],trainingDayOfWeek:0}));
+    const html=renderToStaticMarkup(React.createElement(DashboardPageClient,{...dashboardProps(),workoutDayStatuses:[],trainingDayOfWeek:6}));
     assert.match(html,/Rest day/);
     assert.match(html,/No strength session scheduled today/);
     assert.match(html,/Logged today/);
     assert.doesNotMatch(html,/View today&#x27;s exercises|of 9,000|18,000/);
   } finally { today='2026-09-09'; }
+});
+test("Sunday dashboard shows training and its matching primer", () => {
+  today = "2026-09-13";
+  try {
+    const html = renderToStaticMarkup(React.createElement(DashboardPageClient, { ...dashboardProps(), workoutDayStatuses: [], trainingDayOfWeek: 0 }));
+    assert.match(html, /Sunday accessories/);
+    assert.match(html, /Carry and core primer/);
+    assert.doesNotMatch(html, /No strength session scheduled today/);
+  } finally { today = "2026-09-09"; }
 });
 test('logged step totals no longer trigger a mobility query or automatic mode',()=>{
   const page=readFileSync('src/app/(app)/mobility/page.tsx','utf8');

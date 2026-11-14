@@ -73,7 +73,7 @@ function fixture(sharedStorage = new Map()) {
     const output = ts.transpileModule(readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.ReactJSX }, fileName: filename }).outputText;
     vm.runInNewContext(output, {
       module: compiledModule, exports: compiledModule.exports, Date: ClockDate, FormData, Event, Error, Number, Map, Set, JSON, window, document,
-      navigator: { vibrate: (pattern) => env.vibrations.push(pattern) }, crypto: { randomUUID },
+      navigator: { get onLine() { return env.online !== false; }, vibrate: (pattern) => env.vibrations.push(pattern) }, crypto: { randomUUID },
       require: (name) => {
         if (name === "react") return hooks;
         if (name === "react/jsx-runtime") return { jsx, jsxs: jsx, Fragment: "Fragment" };
@@ -91,6 +91,7 @@ function fixture(sharedStorage = new Map()) {
     return compiledModule.exports;
   }
   env.lib = load("src/lib/workout-entry-state.ts");
+  env.offline = load("src/lib/offline-workout.ts");
   env.mount = (name, props) => {
     const Component = load(`src/components/workout/${name}.tsx`)[name];
     const host = { slots: [], effects: [], props };
@@ -161,6 +162,30 @@ test("history set entry uses the explicit correction action and retains interrup
   assert.ok(env.requests.every((request) => request.history));
   assert.equal(env.requests[0].expectedSet, "null");
   assert.equal(env.lib.readWorkoutStorage(env.lib.workoutDraftKey("session", "Machine Row", 1)), null);
+});
+
+test("Friday triceps variation is saved with an offline set and shown when reopening its history", async () => {
+  const env = fixture();
+  env.online = false;
+  const exerciseName = "Triceps Pressdown or Overhead Extension";
+  const variation = "Straight-bar overhead cable extension";
+  const props = entryProps({ exerciseName, offlineLogging: true });
+  const host = env.mount("SetInput", props);
+  host.nodes("select")[0].props.onChange({ target: { value: variation } });
+  host.render();
+  assert.equal(host.button("Save set 1").props.disabled, true);
+  host.change("weight", "17.5").change("reps", "12");
+  host.button("Add note").props.onClick();
+  host.render().change("notes", "Seat supported");
+  host.submit();
+  await flush();
+
+  const [queued] = env.lib.queuedWorkoutSets("session");
+  assert.equal(queued.values.notes, `${variation}\nSeat supported`);
+  assert.equal(env.lib.workoutSetForm("session", exerciseName, 1, queued.draft, queued.values).get("notes"), queued.values.notes);
+  const history = fixture().mount("SetInput", { ...props, saveMode: "history", logged: { ...queued.values, setNumber: 1 } });
+  assert.equal(history.nodes("select")[0].props.value, variation);
+  assert.equal(history.input("notes").props.value, "Seat supported");
 });
 
 test("history editor exposes missing sets, additional exercises and saved-set removal without starting a session", async () => {
@@ -467,6 +492,54 @@ test("the rest timer uses a persisted deadline through background throttling and
   assert.equal(text(refreshed.nodes((node) => node.props.role === "timer")[0]), "0:00");
   assert.equal(env.vibrations.length, 1); refreshed.render(); assert.equal(env.vibrations.length, 1);
   assert.equal(refreshed.button("Restart").props.disabled, undefined);
+  refreshed.unmount();
+  const reopened = fixture(env.storage);
+  reopened.now = env.now;
+  reopened.mount("RestTimer", { sessionId: "session" });
+  assert.equal(reopened.vibrations.length, 0, "an expired timer cannot alert twice after a reload");
+});
+
+test("sets queued in airplane mode survive a reload, advance locally, and retain conflicting edits", async () => {
+  const env = fixture();
+  env.online = false;
+  const acknowledged = [];
+  const first = env.mount("SetInput", entryProps({ offlineLogging: true, onSaved: (...args) => acknowledged.push(args) }));
+  first.change("reps", "11");
+  first.submit();
+  await flush();
+  assert.equal(env.requests.length, 0);
+  assert.equal(acknowledged[0][3], true);
+  const reopened = fixture(env.storage);
+  reopened.online = false;
+  const host = reopened.mount("SessionLogger", loggerProps({ offlineLogging: true }));
+  assert.equal(host.nodes("SetInput")[0].props.setNumber, 2);
+  assert.equal(host.button("Finish session").props.disabled, true);
+  assert.match(text(host.tree), /1 set on this device awaiting sync/);
+  reopened.actions.logSet = async form => {
+    reopened.requests.push(Object.fromEntries(form));
+    return { error: "Set changed on another device", conflict: true, savedSet: saved };
+  };
+  reopened.online = true;
+  host.render();
+  await flush();
+  host.render();
+  const key = reopened.lib.workoutDraftKey("session", "Machine Row", 1);
+  assert.equal(reopened.lib.parseWorkoutDraft(reopened.lib.readWorkoutStorage(key)).fields.reps, "11");
+  assert.equal(reopened.lib.parseWorkoutDraft(reopened.lib.readWorkoutStorage(key)).conflict.savedSet.repsCompleted, 10);
+  assert.equal(reopened.requests.length, 1);
+  assert.equal(host.button("Finish session").props.disabled, true);
+});
+
+test("an offline workout is available only for the current account on the browser", () => {
+  const env = fixture();
+  const session = { ...loggerProps(), id: "session", sets: [] };
+  env.offline.bindOfflineWorkoutAccount("owner");
+  assert.equal(env.offline.rememberOfflineWorkout({ accountId: "owner", session, backPainGateActive: false }), true);
+  assert.equal(env.offline.parseOfflineWorkout(env.offline.readOfflineWorkoutSnapshot()).session.id, "session");
+  env.offline.bindOfflineWorkoutAccount(null);
+  assert.equal(env.offline.readOfflineWorkoutSnapshot(), null);
+  env.offline.bindOfflineWorkoutAccount("other");
+  assert.equal(env.offline.readOfflineWorkoutSnapshot(), null);
 });
 
 test("introductory curl sets are actionable, explicit confirmation unlocks targets, and refresh retains the choice", () => {

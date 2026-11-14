@@ -50,16 +50,30 @@ const appRuntimeCaching = [
 ] satisfies RuntimeCaching[];
 
 const injectedPrecacheEntries = self.__SW_MANIFEST ?? [];
+const offlinePage = "/offline-workout";
+const offlineCache = "athanor-offline-precache-v1";
+const staticEntries = injectedPrecacheEntries.filter(entry => {
+  const url = new URL(typeof entry === "string" ? entry : entry.url, self.location.origin);
+  return url.origin === self.location.origin && url.pathname.startsWith("/_next/static/");
+});
+const buildManifest = staticEntries.find(entry => (typeof entry === "string" ? entry : entry.url).endsWith("/_buildManifest.js"));
+const shellRevision = (typeof buildManifest === "string" ? buildManifest : buildManifest?.url)?.split("/").at(-2) ?? "1";
 
 const serwist = new Serwist({
-  precacheEntries: injectedPrecacheEntries.filter(() => false),
+  // Only public assets and a page shell with no user data are precached.
+  precacheEntries: [...staticEntries, { url: offlinePage, revision: shellRevision }],
   precacheOptions: {
+    cacheName: offlineCache,
     cleanupOutdatedCaches: true,
   },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [...pwaControlCaching, ...appRuntimeCaching],
+  fallbacks: { entries: [{
+    url: offlinePage,
+    matcher: ({ request }) => request.mode === "navigate" && request.method === "GET" && new URL(request.url).pathname === "/workout",
+  }] },
 });
 
 serwist.addEventListeners();
@@ -69,7 +83,7 @@ self.addEventListener("activate", (event) => {
     (async () => {
       const cacheNames = await caches.keys();
 
-      await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
+      await Promise.all(cacheNames.filter(name => name !== offlineCache).map(name => caches.delete(name)));
     })(),
   );
 });

@@ -2,10 +2,7 @@
  * Training day and timezone-safe date helpers.
  */
 
-import {
-  TRAINING_DAY_BOUNDARY_HOUR,
-  TRAINING_TIMEZONE,
-} from "./constants";
+import { DEFAULT_TRAINING_DAYS, TRAINING_TIMEZONE } from "./constants";
 
 function getDateTimeParts(date: Date, timezone: string) {
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -16,7 +13,7 @@ function getDateTimeParts(date: Date, timezone: string) {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    hour12: false,
+    hourCycle: "h23",
   });
 
   const parts = formatter.formatToParts(date);
@@ -52,18 +49,14 @@ export function getTodayDateString(timezone: string = TRAINING_TIMEZONE) {
 }
 
 /**
- * Get the training date for a given timestamp.
- * Before boundary hour -> current calendar date.
- * At or after boundary hour -> next calendar date.
- * Returns UTC midnight to match Prisma @db.Date values on every server timezone.
+ * The local calendar day, stored at UTC midnight for Prisma @db.Date.
  */
 export function getTrainingDate(
   timestamp: Date,
   userTimezone: string = TRAINING_TIMEZONE
 ): Date {
   const parts = getDateTimeParts(timestamp, userTimezone);
-  const day = parts.day + (parts.hour >= TRAINING_DAY_BOUNDARY_HOUR ? 1 : 0);
-  return new Date(Date.UTC(parts.year, parts.month - 1, day));
+  return new Date(Date.UTC(parts.year, parts.month - 1, parts.day));
 }
 
 export function startOfDay(date: Date): Date {
@@ -122,11 +115,7 @@ export function getTrainingDayNumber(
 ): number | null {
   const trainingDate = getTrainingDate(timestamp, userTimezone);
   const jsDay = trainingDate.getUTCDay();
-  if (jsDay >= 1 && jsDay <= 5) {
-    return jsDay;
-  }
-
-  return null;
+  return DEFAULT_TRAINING_DAYS.includes(jsDay) ? jsDay : null;
 }
 
 export function getTrainingDayLabel(
@@ -134,7 +123,8 @@ export function getTrainingDayLabel(
   userTimezone: string = TRAINING_TIMEZONE
 ): string {
   const dayNum = getTrainingDayNumber(timestamp, userTimezone);
-  return dayNum ? `Day ${dayNum}` : "Rest Day";
+  if (dayNum === 0) return "Sunday accessories";
+  return dayNum === null ? "Rest Day" : `Day ${dayNum}`;
 }
 
 export function isTrainingDay(date: Date, trainingDays: number[]): boolean {

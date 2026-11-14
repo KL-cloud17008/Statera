@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Timer } from "lucide-react";
+import { Bell, BellOff, Timer } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { parseRestState, readWorkoutStorage, restSecondsRemaining, restStorageKey, startSessionRest, subscribeWorkoutStorage, writeWorkoutStorage } from "@/lib/workout-entry-state";
 
+const CUE_SETTING = "athanor:rest-cues";
+
 export function RestTimer({ defaultSeconds = 90, sessionId = "preview" }: { defaultSeconds?: number; sessionId?: string }) {
   const key = restStorageKey(sessionId);
   const raw = useSyncExternalStore(subscribeWorkoutStorage, () => readWorkoutStorage(key), () => null);
+  const cuesOn = useSyncExternalStore(subscribeWorkoutStorage, () => readWorkoutStorage(CUE_SETTING) !== "off", () => true);
   const state = parseRestState(raw) ?? { duration: defaultSeconds, deadline: null };
   const [now, setNow] = useState(() => Date.now());
   const hasAlerted = useRef<number | null>(null);
@@ -17,19 +21,24 @@ export function RestTimer({ defaultSeconds = 90, sessionId = "preview" }: { defa
   const running = state.deadline !== null && !finished;
 
   useEffect(() => {
+    if (state.deadline === null) return;
     const tick = () => setNow(Date.now());
     const timer = window.setInterval(tick, 250);
     window.addEventListener("focus", tick);
     document.addEventListener("visibilitychange", tick);
     return () => { window.clearInterval(timer); window.removeEventListener("focus", tick); document.removeEventListener("visibilitychange", tick); };
-  }, []);
+  }, [state.deadline]);
 
   useEffect(() => {
-    if (finished && state.deadline !== hasAlerted.current) {
-      hasAlerted.current = state.deadline;
-      if (document.visibilityState === "visible") navigator.vibrate?.([150, 75, 150]);
-    }
-  }, [finished, state.deadline]);
+    if (!finished || state.deadline === null || state.deadline === hasAlerted.current || document.visibilityState !== "visible") return;
+    hasAlerted.current = state.deadline;
+    const cueKey = `${key}:alerted`;
+    if (readWorkoutStorage(cueKey) === String(state.deadline)) return;
+    writeWorkoutStorage(cueKey, String(state.deadline));
+    if (!cuesOn) return;
+    navigator.vibrate?.(80);
+    toast.success("Rest complete", { id: `rest-${sessionId}`, duration: 3000 });
+  }, [finished, state.deadline, now, key, cuesOn, sessionId]);
 
   function adjust(delta: number) {
     const next = state.deadline !== null && !finished
@@ -47,6 +56,7 @@ export function RestTimer({ defaultSeconds = 90, sessionId = "preview" }: { defa
         <span role="timer" aria-label={finished ? "Rest complete" : `${remaining} seconds remaining`} className={cn("min-w-14 text-xl font-medium tabular-nums", finished ? "text-accent" : "text-primary")}>{Math.floor(remaining / 60)}:{String(remaining % 60).padStart(2, "0")}</span>
       </div>
       <div className="flex items-center gap-1">
+        <Button type="button" variant="ghost" className="min-h-12 min-w-12 px-2" aria-label="Rest alerts" aria-pressed={cuesOn} title={cuesOn ? "Rest alerts on" : "Rest alerts off"} onClick={() => writeWorkoutStorage(CUE_SETTING, cuesOn ? "off" : "on")}>{cuesOn ? <Bell className="size-4" /> : <BellOff className="size-4" />}</Button>
         <Button type="button" variant="ghost" className="min-h-12 min-w-12 px-2 tabular-nums" onClick={() => adjust(-15)} aria-label="Reduce rest by 15 seconds" disabled={!running && state.duration <= 15}>−15</Button>
         <Button type="button" variant="ghost" className="min-h-12 min-w-12 px-2 tabular-nums" onClick={() => adjust(15)} aria-label="Increase rest by 15 seconds">+15</Button>
         <Button type="button" variant="secondary" className="min-h-12 min-w-16" onClick={() => {

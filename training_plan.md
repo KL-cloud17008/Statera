@@ -1,128 +1,74 @@
-# Revised Training Programme
+# Athanor training programme
 
-Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.
+Train Sunday through Friday and keep Saturday for rest. Gym sessions are estimated from the working sets, rest and lower-body ramp-ups. Equipment waits and travel vary. The exercise prescriptions live in `src/lib/default-workout-plan.ts`.
 
-5 Strength / 0 Recovery / 2 Full Rest.
+| Day | Session | Planned working sets or rounds | Estimated gym time |
+|---|---|---:|---:|
+| Sunday | Carries, forearms, glutes and abs | 13 | 25–30 min |
+| Monday | Lower A and triceps | 19 | 45 min |
+| Tuesday | Upper A and abs | 21 | 45–50 min |
+| Wednesday | Lower B and biceps | 20 | 50 min |
+| Thursday | Upper B and abs | 21 | 45–50 min |
+| Friday | Upper C and light hips | 14 | 25–30 min |
+| Saturday | Rest | — | — |
 
-Training loads in kg; bodyweight remains canonical in lb.
+## Sunday
 
-No treadmill or bike warm-up requirement, running, jumping, HIIT, conditioning finishers, failure or grinding.
+1. Kettlebell farmer walk · 5 rounds of 60 seconds walking and 60 seconds resting · log kilograms per hand and seconds completed.
+2. Reverse EZ-bar curl · 2 × 12–15.
+3. Machine hip thrust · 2 × 10–15. Substitute a floor glute bridge if the glute-drive machine is unavailable. Leave a few reps in reserve for Monday.
+4. Abdominal crunch machine · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
 
-No conventional deadlifts, barbell squats, barbell bench press or aggressive loaded spinal flexion.
+Pick a steady walking pace and a light pair of kettlebells. Start with three rounds if you are unsure how your feet will respond. Build to five once your gait and next-morning symptoms stay steady.
 
-Wednesday warm-up: lying leg curl, 1-2 easy sets of 12-15; not working hamstring sets.
+## Monday and Wednesday
 
-Add clean reps before load.
+Start with one or two easy lying leg curl sets of 12–15. Use the following order on both days. Perform both sides before resting on unilateral work.
 
-Increase load only when all sets reach the top of the rep range with clean form and assigned RPE.
+| Order | Monday · Lower A | Wednesday · Lower B |
+|---:|---|---|
+| 1 | Lying leg curl · 1 × 10–15 working | Lying leg curl · 1 × 10–15 working |
+| 2 | Hip adduction → hip abduction · 2 × 12–20 each | Hip adduction → hip abduction · 2 × 12–20 each |
+| 3 | Bodyweight lunge warm-up, then dumbbell walking lunges · 2 × 6–10 steps per leg | Bodyweight lunge warm-up, then supported Bulgarian split squat · 3 × 8–10 per leg |
+| 4 | Pendulum squat · 3 × 8–12 → seated calf raise · 3 × 12–20 | Pendulum squat · 3 × 8–12 → seated calf raise · 3 × 12–20 |
+| 5 | Seated leg curl · 2 × 10–15 | Seated leg curl · 2 × 10–15 |
+| 6 | Seated leg extension · 2 × 10–15 | Seated leg extension · 2 × 10–15 |
+| 7 | Straight-bar triceps pressdown · 2 × 10–15 | Machine preacher curl · 2 × 10–15 |
 
-RPE 7 is approximately three clean repetitions in reserve. No failure or grinding.
+The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four supported Bulgarian split squats and four reverse lunges per leg. Rest 60–75 seconds after each hip pair and 150–180 seconds after each squat and calf pair. If calf work affects squat stability, take the full squat rest and do the movements separately.
 
-Working hamstring curls: Monday 2 introductory / 3 target; Wednesday 3 introductory / 4 target. Confirm tolerable recovery, normal gait and stable performance before enabling optional final sets. No calendar-based increase.
+## Tuesday
 
-Protected lower-body work: rest approximately 2-3 minutes. Working hamstring curls: 90-120 seconds.
+1. Machine chest press · 3 × 8–12. Use a supported incline machine as an alternative and note which you used.
+2. Wide-grip pulldown · 3 × 8–12 → close-grip pulldown · 3 × 10–12. Rest two minutes after each pair. If the close-grip handle is unavailable, use a comfortable shoulder-width reverse grip and record it in the notes.
+3. Chest-supported machine row · 3 × 8–12.
+4. Reverse pec deck · 2 × 12–20.
+5. Cable lateral raise · 3 × 12–20 per arm.
+6. Abdominal crunch machine · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
 
-Supersets: quick safe transition, then enough recovery to retain control; do not chase breathlessness.
+## Thursday
 
-## Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips
+1. Machine chest press · 3 × 8–12.
+2. Chest-supported T-bar row · 3 × 8–12.
+3. Straight-bar overhead cable triceps extension · 3 × 12–18.
+4. Cable lateral raise · 3 × 12–20 per arm.
+5. Face-away Bayesian cable curl · 3 × 10–15 per arm.
+6. Abdominal crunch machine · 3 × 10–15 → rotary torso machine · 3 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
 
-- A1 Lying Leg Curl — Easy Primer: 2 × 10-15, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Keep lying, not seated. Preparation, not pre-exhaustion. Hips heavy on pad, smooth curl, controlled return, no jerking or lower-back arching.
-- B1 Walking Lunges: 2 × 6-10 steps per leg, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking. Bodyweight initially or minimal load. Controlled stride, front foot stable, knee tracks naturally, and do not rush. Use support or regress to a supported stationary split squat if necessary. If ankle or sole symptoms meaningfully worsen, reduce or skip this movement according to the existing pain logic.
-- B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. Three sets of 12-20 at RPE 5-6; rest 90 seconds between sets.
-- C1 Pendulum Squat: 3 × 8-12, RPE 6-7. Week 4 controlled progressive overload. Stay 2-3 reps in reserve. Add reps before load. Kg load. This is the primary stable lower-body loading movement. Use controlled depth and tempo, no bouncing, and no grinding. Keep the back supported against the pad and reduce range or load if foot, ankle, knee, hip, or lower-back symptoms increase.
-- D1 Seated Leg Extension: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Hips heavy on pad, smooth reps, no knee snapping, controlled comfortable range.
-- E1 Seated Leg Curl — Working Sets: 3 × 10-15, RPE 7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Introduction: 2 working sets; target: 3. Final set optional only after confirming tolerable recovery, normal gait and stable performance. No automatic weekly increase. Lying Leg Curl is the equipment alternative if seated is occupied; this working slot is distinct from the easy primer. Hips heavy, smooth curl, slow return. Rest 90-120 seconds.
-- F1 Hip Abduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
-- F2 Hip Adduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
-- G1 Seated Machine Preacher Curl: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session. Rest 90 seconds between sets.
+## Friday
 
-## Upper A — Machine Chest Press + Row / Pulldowns + Shoulders
+1. Machine chest fly · 3 × 12–15 → reverse pec deck · 3 × 12–20. Rest 90 seconds after each pair.
+2. High-to-low cable chest press · 2 × 10–15.
+3. Reverse cable crossover · 2 × 12–20.
+4. Triceps · 2 × 10–15. Choose straight-bar cable pressdown, rope cable pressdown or straight-bar overhead cable extension. Select your variation in the set log.
+5. Hip adduction machine · 1 × 15–20 → hip abduction machine · 1 × 15–20. Use a lighter load than on leg days and leave at least four reps in reserve.
 
-- A1 Machine Chest Press: 3 × 8-12, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated standard chest press, handles at mid-chest. Back supported, shoulder blades back/down, elbows slightly tucked, controlled comfortable range, no bounce or shoulder pinch. Remains first.
-- A2 Seated Chest-Supported Machine Row: 3 × 8-12, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Standalone. Kg load. Chest supported, feet planted, row toward ribs, pause, controlled return, no body swing or lumbar extension.
-- B1 Neutral-Grip Lat Pulldown: 3 × 8-12, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Three superset rounds: neutral-grip set → close-grip set → rest 120 seconds. Ribs down, pull to upper chest, no yanking or excessive lean.
-- B2 Close-Grip Lat Pulldown: 3 × 10-12, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Three sets, paired with neutral-grip pulldowns. Keep these lighter at RPE 5-6. Controlled pull and return, no swinging. Rest 120 seconds after each pair; recover enough to retain control.
-- C1 Seated Machine Shoulder Press: 3 × 8-12, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Back supported, ribs down, no lumbar extension or heavy bracing. Remove when lower-back pain is 3/10 or higher; omit if it provokes symptoms.
-- D1 Seated Machine Chest Fly: 3 × 12-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Seated and supported. Kg load. Comfortable stretch, smooth squeeze, no shoulder pinch. Quick safe transition to reverse fly, then recover; do not chase breathlessness.
-- D2 Reverse Pec Deck / Seated Machine Reverse Fly: 3 × 12-20, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. One exercise: Reverse Pec Deck and Seated Machine Reverse Fly are synonymous names. Chest supported, soft elbows, controlled return, no shrugging or jerking. Rest after the pair.
+## Progression and recovery
 
-## Lower B — Split Squat → Calves → Pendulum / Hamstrings + Hips
+- Use a consistent setup and controlled range. On the ab machines, start around RPE 6–7 and keep the same seat setting. When both sets reach 15 controlled reps at that effort, use the smallest increase next time. For rotations, meet the target on both sides before increasing.
+- Keep an easy 75 seconds between most small accessory sets and about two minutes after the main upper-body presses and rows.
+- Skip loaded carries and calf raises at foot or ankle pain of 3/10 or higher, if pain increases or if your gait changes. If symptoms are worse the next morning, reduce the next dose.
+- Skip machine crunches, rotary torso and overhead pressing at lower-back pain of 3/10 or higher. Stop a movement that increases symptoms. The optional home core routine remains available under Mobility.
+- On a short work day, preserve rest on the main lifts and trim a final accessory if needed.
 
-- A1 Lying Leg Curl (warm-up): 2 × 12-15, RPE 4-5. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. 1-2 easy warm-up sets. Keep lying. Not working hamstring volume. Hips heavy, smooth curl, slow return, no jerking or lower-back arching.
-- B1 Supported Stationary Bulgarian Split Squat: 3 × 8-10 per leg, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Bodyweight only. Use support as needed, controlled range, front foot flat, knee tracks over middle toes, do not chase depth, no bouncing. Pain rule: skip if sole pain, ankle pain, knee pain, hip pinch, lower-back irritation, or balance loss appears.
-- B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. Three sets of 12-20 at RPE 5-6; rest 90 seconds between sets.
-- B3 Pendulum Squat: 3 × 8-12, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Back supported, controlled comfortable depth, no bouncing or grinding. Reduce range or load if symptoms increase.
-- C1 Seated Leg Extension: 2 × 10-15, RPE 6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Smooth reps, no knee snapping, controlled comfortable range. Scheduled sets remain available if equipment is busy; do not add waiting-time sets.
-- C2 Seated Leg Curl: 4 × 10-12, RPE 7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Introduction: 3 working sets; target: 4. Final set optional only after confirming tolerable recovery, normal gait and stable performance. No automatic weekly increase. Hips heavy, smooth curl, pause gently, slow return, no jerking. Rest 90-120 seconds.
-- D1 Hip Adduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
-- D2 Hip Abduction Machine: 3 × 12-20, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.
-- E1 Seated Machine Preacher Curl: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session. Rest 90 seconds between sets.
-
-## Upper B — Machine Chest + Dual Pulldown / Arms
-
-- A1 Chest Machine Press: 3 × 8-12, RPE 6-7. Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. Neutral/mid-chest press angle, back supported, handles track mid-chest, controlled range, no shoulder pinch, no grinding. Reason: balances repeated incline pressing with more neutral chest work.
-- A2 Chest-Supported Row or Seated Cable Row: 3 × 8-12, RPE 6-7. Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. Equipment alternates: Chest-Supported Row or Seated Cable Row — use whichever is free. Tall posture, feet planted, row to lower ribs, pause, return under control, no body swing.
-- B1 Neutral-Grip Lat Pulldown: 3 × 8-12, RPE 6-7. Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. First half of the paired lat block; move to B2, then rest 120 seconds. Stay 2-3 reps in reserve. Pull to the upper chest with ribs down, do not lean far back, do not yank, and return smoothly.
-- B2 Close-Grip Lat Pulldown: 2 × 10-12, RPE 5-6. Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Complementary volume, not a second maximal pulldown block. Keep 2-3 reps in reserve, use a controlled tempo, pull without swinging or yanking, return smoothly, and rest 120 seconds after the pair.
-- C1 Overhead Cable Triceps Extension: 3 × 15-20, RPE 6-7. Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a bar attachment and a light starting load for this new movement. Upper arms overhead, elbows comfortable, ribs down and trunk still; extend smoothly without arching the lower back or forcing shoulder range. Stop if the overhead position provokes pain. Triset order: C1, C2, C3; recover enough to keep control.
-- C2 Cable Lateral Raise: 3 × 15-20 per arm, RPE 5-6. Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a D-handle or cuff, one arm at a time. Soft elbow; raise out and slightly forward through a comfortable range, then lower slowly without shrugging or swinging the torso. Each set includes both arms; log the reps per arm. Triset order: C1, C2, C3; recover enough to keep control.
-- C3 Face-Away Bayesian Cable Curl: 3 × 10-15, RPE 6-7. Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Face away from the stack, elbows slightly behind the torso and pinned, tall posture with ribs down, no torso swing, controlled stretch at the bottom, smooth curl.
-
-## Upper C — Chest / Rear Delts + Shoulders / Arms
-
-- A1 Seated Machine Chest Fly: 2 × 12-15, RPE 6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Seated and supported. Kg load. Comfortable stretch, smooth squeeze, no shoulder pinch. Quick safe transition to reverse fly, then recover; do not chase breathlessness.
-- A2 Reverse Pec Deck / Seated Machine Reverse Fly: 2 × 12-20, RPE 6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. One exercise: Reverse Pec Deck and Seated Machine Reverse Fly are synonymous names. Chest supported, soft elbows, controlled return, no shrugging or jerking. Rest after the pair.
-- B1 Back Extension — Hyperextension Bench: 2 × 10-15, RPE 5-6. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Bodyweight initially. Controlled comfortable range. Finish aligned, without deliberately arching beyond neutral. Omit if it provokes lower-back symptoms. Two rounds of back extension → lateral raise, then lateral-raise set 3 alone.
-- B2 Seated Dumbbell Lateral Raise: 3 × 12-20, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, light load, elbows soft, raise to shoulder height or below, no shrugging or swinging. Rest after each pair; third set alone.
-- C1 Seated Barbell Preacher Curl: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported, smooth curl, controlled return, no swinging. Pair where equipment permits.
-- C2 Seated Triceps-Extension Machine: 2 × 10-15, RPE 6-7. Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated and supported, elbows stable, controlled comfortable range. Alternative: securely positioned seated cable triceps extension. Two superset rounds where equipment permits.
-
-Saturday / Sunday: Complete rest from scheduled strength training.
-
-Quads: exactly 15 weekly sets.
-
-Working hamstring curls: 5 introductory / 7 target; Monday primer and Wednesday warm-up are separate preparation.
-
-Hips: three rounds of abduction/adduction each lower day.
-
-Chest, back/lats, rear delts and arms: supported work across upper days.
-
-Direct biceps: nine weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3, barbell preacher curl Friday 2.
-
-Side delts: cable lateral raises Thursday 3 / seated dumbbell lateral raises Friday 3; front delts also receive pressing.
-
-Calves: three conditional seated straight-leg sets per lower day; six weekly sets.
-
-Home core twice weekly (Tuesday/Friday): lying leg raises, reach-up crunches, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression.
-
-Pain 0-2/10: acceptable only if stable.
-
-Pain 3/10: continue only if stable, gait/form normal and symptoms settle, subject to the stricter calf rule.
-
-Above 3/10 or increasing: reduce load, range or pace.
-
-Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening or new/worsening rest/night pain.
-
-Protected exercise preferences do not override stopping rules.
-
-Numbness, tingling, weakness, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.
-
-Calves: three sets per lower day, conditional on foot tolerance. Skip at sole/plantar pain 3/10 or higher, increasing pain, or symptoms worse afterwards or the following morning.
-
-No standing calf substitution. Slow reps, no bouncing or forced end-range stretch. Seated calf work still loads the foot.
-
-Use the fastest pace that keeps gait normal and sole discomfort mild. Speed is optional; tolerable volume matters more.
-
-Pain 0-2/10: acceptable only if stable.
-
-Pain 3/10: continue only if stable, gait/form normal and symptoms settle, subject to the stricter calf rule.
-
-Above 3/10 or increasing: reduce load, range or pace.
-
-Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening or new/worsening rest/night pain.
-
-Protected exercise preferences do not override stopping rules.
-
-Numbness, tingling, weakness, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.
-
-No aggressive loaded spinal flexion, heavy bracing, max effort or failure training.
+The week programmes 15 quad sets, 6 leg-curl sets, up to 6 seated calf sets, and 2 dedicated glute-drive sets plus the squat and lunge work. Hip adduction and hip abduction each get 5 sets, including one light Friday set. Upper-body totals include 11 chest sets, 6 pulldowns, 6 supported rows, 6 side-delt sets and 7 rear-delt isolation sets. The arm plan has 5 dedicated biceps sets and 7 dedicated triceps sets, with additional work from pulling and pressing. Forearms and grip get 2 reverse curl sets and up to 5 carries. Gym core adds 7 crunch sets and 7 rotations per side across Sunday, Tuesday and Thursday.

@@ -24,14 +24,12 @@ export default async function WorkoutPage() {
 
   const plans = await getWorkoutPlans(user.id);
   const painCheckIn = await getLatestPainCheckIn(user.id);
-  const todayBackPain =
-    painCheckIn && painCheckIn.date === getTodayDateString(user.timezone)
-      ? (painCheckIn.lowerBackPain ?? null)
-      : null;
-  const currentTrainingDate = getTrainingDate(new Date(), user.timezone);
-  const trainingDayOfWeek = getTrainingDayOfWeek(new Date(), user.timezone);
-  const trainingDayNum = getTrainingDayNumber(new Date(), user.timezone);
-  const todayPlan = trainingDayNum ? plans.find((plan) => plan.dayOfWeek === trainingDayNum) ?? null : null;
+  const todaysPain = painCheckIn?.date === getTodayDateString(user.timezone) ? painCheckIn : null;
+  const now = new Date();
+  const currentTrainingDate = getTrainingDate(now, user.timezone);
+  const trainingDayOfWeek = getTrainingDayOfWeek(now, user.timezone);
+  const trainingDayNum = getTrainingDayNumber(now, user.timezone);
+  const todayPlan = trainingDayNum === null ? null : plans.find((plan) => plan.dayOfWeek === trainingDayNum) ?? null;
 
   const openSessions = await prisma.workoutSession.findMany({
     where: {
@@ -91,6 +89,7 @@ export default async function WorkoutPage() {
           repsCompleted: set.repsCompleted,
           actualRPE: set.actualRPE,
           notes: set.notes,
+          duration: set.duration,
         })),
       previousSets,
     };
@@ -98,6 +97,7 @@ export default async function WorkoutPage() {
 
   return (
     <WorkoutPageClient
+      offlineAccountId={user.supabaseUserId}
       todayPlan={todayPlan ? {
         id: todayPlan.id,
         sessionName: todayPlan.sessionName,
@@ -105,7 +105,8 @@ export default async function WorkoutPage() {
       } : null}
       activeSession={activeSession}
       trainingDayOfWeek={trainingDayOfWeek}
-      todayBackPain={todayBackPain}
+      todayBackPain={todaysPain?.lowerBackPain}
+      footPainGateActive={(todaysPain?.footPain ?? 0) >= 3}
     />
   );
 }

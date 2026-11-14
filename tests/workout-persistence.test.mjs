@@ -30,6 +30,7 @@ function fixture({ now } = {}) {
       if ("not" in value && current === value.not) return false;
       if ("in" in value && !value.in.includes(current)) return false;
       if ("gte" in value && !(current >= value.gte)) return false;
+      if ("lte" in value && !(current <= value.lte)) return false;
       return true;
     }
     return current === value;
@@ -246,7 +247,7 @@ test("a completed workout can move from Monday to Sunday without changing sets, 
   assert.deepEqual(f.state.sets, before.sets);
   assert.deepEqual(f.state.plans, before.plans);
   assert.equal(f.state.sessions.length, 2, "two workouts on Sunday remain separate");
-  assert.equal((await f.actions.getWorkoutPlanDayStatuses("owner")).find(day => day.dayOfWeek === 1).status, "start", "Sunday belongs to the previous training week");
+  assert.equal((await f.actions.getWorkoutPlanDayStatuses("owner")).find(day => day.dayOfWeek === 1).status, "view", "corrected Sunday is in the same plan week and still belongs to Lower A");
   assert.equal((await f.actions.getRecentSessions("owner")).find(item => item.id === session.id).trainingDate.toISOString(), "2026-11-01T00:00:00.000Z");
   for (const path of ["/", "/workout", "/workout/plan", "/workout/history", `/workout/history/${session.id}`, "/workout/exercise/Saved%20row"]) assert.ok(f.state.invalidations.includes(path));
 });
@@ -290,7 +291,7 @@ test("date corrections reject invalid, future, foreign and open sessions before 
   assert.equal(f.state.writes, 0);
 });
 
-test("manual history dates use the user's calendar today rather than the noon training boundary", async () => {
+test("manual history dates use the user's calendar today", async () => {
   for (const [timezone, allowed] of [["America/New_York", false], ["Asia/Tokyo", true]]) {
     const f = fixture({ now: "2026-11-02T00:30:00Z" });
     f.setAuth({ id: "owner", timezone });
@@ -422,17 +423,18 @@ test("concurrent first plan reads do not create duplicate defaults", async () =>
   const f = fixture(); f.state.plans = [];
   const ensure = f.load("src/lib/workout-plan-seed.ts").ensureDefaultWorkoutPlans;
   await Promise.all([ensure(f.client, "owner"), ensure(f.client, "owner")]);
-  assert.equal(f.state.plans.length, 5); assert.equal(new Set(f.state.plans.map((plan) => plan.dayOfWeek)).size, 5);
+  assert.equal(f.state.plans.length, 6); assert.equal(new Set(f.state.plans.map((plan) => plan.dayOfWeek)).size, 6);
 });
 
-test("an open Upper C keeps the four saved fly sets and can log the new third sets after refresh", async () => {
+test("an open Upper C keeps both fly records while adopting the same-station superset", async () => {
   const f = fixture();
   const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === 5);
-  const retired = ["B2 Seated Dumbbell Lateral Raise", "C1 Seated Barbell Preacher Curl", "C2 Seated Triceps-Extension Machine"];
-  oldPlan.exercises.forEach((exercise, index) => {
-    exercise.sets = index === 3 ? 3 : 2;
-    if (index >= 3) exercise.exerciseName = retired[index - 3];
-  });
+  const savedFly = oldPlan.exercises.find((exercise) => /Chest Fly/.test(exercise.exerciseName));
+  const savedReverseFly = oldPlan.exercises.find((exercise) => /Reverse Pec Deck/.test(exercise.exerciseName));
+  oldPlan.exercises = [
+    { ...savedFly, sets: 2, sortOrder: 0, supersetGroup: null },
+    { ...savedReverseFly, sets: 2, sortOrder: 1, supersetGroup: null },
+  ];
   const notes = JSON.stringify({ label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek: 5, planTemplateVersion: "five-day-mon-fri-v13" });
   const open = f.addSession({ workoutPlanId: oldPlan.id, notes });
   const completed = f.addSession({ workoutPlanId: oldPlan.id, notes, completed: true });
@@ -446,8 +448,11 @@ test("an open Upper C keeps the four saved fly sets and can log the new third se
   const session = await f.actions.getSessionWithSets(open.id);
   assert.equal(session.id, open.id);
   const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(session.workoutPlan.exercises, session.sets);
-  assert.deepEqual(Array.from(visible.slice(-3), exercise => exercise.exerciseName), ["Triceps Pressdown, bar", "Reverse Cable Crossover", "Cable Chest Press"]);
-  assert.ok(visible.every(exercise => exercise.sets === 3));
+  assert.equal(visible[0].exerciseName, savedFly.exerciseName);
+  assert.equal(visible[1].exerciseName, savedReverseFly.exerciseName);
+  assert.equal(visible[0].supersetGroup, visible[1].supersetGroup);
+  assert.equal(visible[0].sets, 3);
+  assert.equal(visible[1].sets, 3);
   assert.deepEqual(f.state.sets, saved);
   for (const exercise of visible.slice(0, 2)) {
     const result = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, setNumber: "3" }));
@@ -503,11 +508,13 @@ test("both lower-day calf increases retain set one, allow sets two and three, an
   }
 });
 
-test("both lower-day preacher curl additions refresh open sessions and future plans without changing completed history", async () => {
+test("the lower-day arm finishers refresh open sessions separately and preserve completed history", async () => {
   for (const dayOfWeek of [1, 3]) {
     const f = fixture();
     const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === dayOfWeek);
-    oldPlan.exercises = oldPlan.exercises.filter((exercise) => !exercise.exerciseName.includes("Machine Preacher Curl"));
+    const previousFinisher = oldPlan.exercises.at(-1);
+    oldPlan.exercises = oldPlan.exercises.map((exercise) => exercise === previousFinisher
+      ? { ...exercise, exerciseName: "G1 Legacy Arm Finisher" } : exercise);
     const notes = JSON.stringify({
       label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek,
       planTemplateVersion: "five-day-mon-fri-v9",
@@ -524,7 +531,7 @@ test("both lower-day preacher curl additions refresh open sessions and future pl
     const plans = await f.actions.getWorkoutPlans("owner");
     for (const day of [1, 3]) {
       const lastExercise = plans.find((plan) => plan.dayOfWeek === day).exercises.at(-1);
-      assert.match(lastExercise.exerciseName, /Seated Machine Preacher Curl$/);
+      assert.equal(lastExercise.exerciseName, day === 1 ? "Triceps Pressdown, bar" : "E1 Seated Machine Preacher Curl");
       assert.equal(lastExercise.sets, 2);
     }
     const current = await f.actions.getSessionWithSets(open.id);
@@ -533,7 +540,7 @@ test("both lower-day preacher curl additions refresh open sessions and future pl
     assert.equal(JSON.parse(current.notes).planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     const curl = visible.at(-1);
-    assert.match(curl.exerciseName, /Seated Machine Preacher Curl$/);
+    assert.equal(curl.exerciseName, dayOfWeek === 1 ? "Triceps Pressdown, bar" : "E1 Seated Machine Preacher Curl");
     assert.equal(curl.sets, 2);
     assert.equal(curl.supersetGroup, null);
     assert.deepEqual(f.state.sets, originalSets);
@@ -554,16 +561,16 @@ test("both lower-day preacher curl additions refresh open sessions and future pl
   }
 });
 
-test("Tuesday chest press and three-set increases refresh open sessions while retaining saved work and completed history", async () => {
+test("Tuesday refresh keeps old incline records and drafts separate from the new press and paired pulls", async () => {
   for (const hasSavedInclineSet of [false, true]) {
     const f = fixture();
     const oldPlan = f.state.plans.find(plan => plan.dayOfWeek === 2);
     oldPlan.sessionName = "Upper A — Incline Machine Press + Row / Pulldowns + Shoulders";
-    oldPlan.exercises[0].exerciseName = "A1 Incline Machine Chest Press";
-    oldPlan.exercises[0].cues = "Supported incline pressing.";
-    oldPlan.exercises[2].sets = 2;
-    oldPlan.exercises[3].sets = 1;
-    for (const exercise of oldPlan.exercises.slice(4)) exercise.sets = 2;
+    const movements = oldPlan.exercises;
+    const press = { ...movements[0], exerciseName: "A1 Incline Machine Chest Press", cues: "Supported incline pressing." };
+    const neutral = { ...movements[1], exerciseName: "B1 Neutral-Grip Lat Pulldown", sets: 2 };
+    oldPlan.exercises = [press, movements[3], neutral, { ...movements[2], sets: 1 }, movements[4]]
+      .map((exercise, sortOrder) => ({ ...exercise, sortOrder }));
     const oldExercises = copy(oldPlan.exercises);
     const notes = JSON.stringify({ label: oldPlan.sessionName, source: "plan", loadUnit: "kg", dayOfWeek: 2,
       planTemplateVersion: "five-day-mon-fri-v11", planContentHash: f.load("src/lib/workout-plan-version.ts").getWorkoutPlanContentHash(oldPlan) });
@@ -577,12 +584,12 @@ test("Tuesday chest press and three-set increases refresh open sessions while re
     const originalSets = copy(f.state.sets), originalCompleted = copy(completed);
     const plans = await f.actions.getWorkoutPlans("owner");
     const updated = plans.find(plan => plan.dayOfWeek === 2);
-    assert.equal(updated.sessionName, "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders");
+    assert.match(updated.sessionName, /paired pulldowns, row and abs/);
     assert.equal(updated.exercises[0].exerciseName, "A1 Machine Chest Press");
     assert.equal(updated.exercises[0].sets, 3);
     assert.equal(updated.exercises[0].reps, "8-12");
     assert.equal(updated.exercises[0].targetRPE, "6-7");
-    assert.deepEqual(updated.exercises.slice(2).map(exercise => exercise.sets), [3, 3, 3, 3, 3]);
+    assert.deepEqual(updated.exercises.map(exercise => exercise.sets), [3, 3, 3, 3, 2, 3, 2, 2]);
     const current = await f.actions.getSessionWithSets(open.id);
     assert.equal(current.id, open.id);
     assert.equal(current.workoutPlanId, updated.id);
@@ -593,8 +600,9 @@ test("Tuesday chest press and three-set increases refresh open sessions while re
     assert.ok(meta.retainedExerciseNames.includes("A1 Incline Machine Chest Press"), "old device drafts remain recoverable");
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     assert.equal(visible[0].exerciseName, "A1 Machine Chest Press");
-    assert.deepEqual(Array.from(visible.slice(2, 7), exercise => exercise.sets), [3, 3, 3, 3, 3]);
-    assert.deepEqual(Array.from(visible.slice(7), exercise => exercise.exerciseName), hasSavedInclineSet ? ["A1 Incline Machine Chest Press"] : []);
+    assert.deepEqual(Array.from(visible.slice(0, 8), exercise => exercise.sets), [3, 3, 3, 3, 2, 3, 2, 2]);
+    const retained = ["B1 Neutral-Grip Lat Pulldown", ...(hasSavedInclineSet ? ["A1 Incline Machine Chest Press"] : [])];
+    assert.deepEqual(Array.from(visible.slice(8), exercise => exercise.exerciseName), retained);
     assert.deepEqual(f.state.sets, originalSets, "incline performance must never be relabelled as standard pressing");
     const historical = await f.actions.getSessionWithSets(completed.id);
     assert.equal(historical.workoutPlan.sessionName, oldPlan.sessionName);
@@ -603,9 +611,9 @@ test("Tuesday chest press and three-set increases refresh open sessions while re
     const result = await f.actions.logSet(f.form(open.id, { exerciseName: "A1 Machine Chest Press", weightUsed: "35", repsCompleted: "10", actualRPE: "6" }));
     assert.ok(!result.error, result.error);
     assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === "A1 Machine Chest Press").planExerciseId, updated.exercises[0].id);
-    const closeSecond = await f.actions.logSet(f.form(open.id, { exerciseName: updated.exercises[3].exerciseName, setNumber: "2", weightUsed: "45", repsCompleted: "10", actualRPE: "6" }));
+    const closeSecond = await f.actions.logSet(f.form(open.id, { exerciseName: updated.exercises[2].exerciseName, setNumber: "2", weightUsed: "45", repsCompleted: "10", actualRPE: "6" }));
     assert.ok(!closeSecond.error, closeSecond.error);
-    for (const exercise of updated.exercises.slice(2)) {
+    for (const exercise of updated.exercises.slice(1, 4)) {
       const added = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, setNumber: "3", weightUsed: "15", repsCompleted: "12", actualRPE: "6" }));
       assert.ok(!added.error, added.error);
       assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === exercise.exerciseName && set.setNumber === 3).planExerciseId, exercise.id);
@@ -617,7 +625,7 @@ test("Tuesday chest press and three-set increases refresh open sessions while re
   }
 });
 
-test("Upper B cable substitutions refresh the open session without losing saved sets or rewriting completed history", async () => {
+test("Upper B adds T-bar and abs while retaining earlier sets and completed history", async () => {
   for (const retainOldCableSets of [false, true]) {
     const f = fixture();
     const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === 4);
@@ -645,13 +653,16 @@ test("Upper B cable substitutions refresh the open session without losing saved 
     assert.equal(current.workoutPlanId, updatedPlan.id);
     assert.notEqual(current.workoutPlanId, oldPlan.id);
     assert.equal(JSON.parse(current.notes).planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
-    const expectedNames = ["C1 Overhead Cable Triceps Extension", "C2 Cable Lateral Raise", "C3 Face-Away Bayesian Cable Curl"];
-    assert.deepEqual(updatedPlan.exercises.slice(-3).map(exercise => exercise.exerciseName), expectedNames);
-    assert.ok(updatedPlan.exercises.slice(-3).every(exercise => exercise.sets === 3 && exercise.supersetGroup === "C"));
+    assert.equal(updatedPlan.exercises[0].exerciseName, "A1 Chest Machine Press");
+    assert.equal(updatedPlan.exercises[1].exerciseName, "Chest-Supported T-Bar Row");
+    assert.deepEqual(updatedPlan.exercises.slice(-2).map(exercise => exercise.exerciseName), ["Abdominal Crunch Machine", "Rotary Torso Machine"]);
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
-    assert.deepEqual(Array.from(visible.slice(0,7), exercise => exercise.exerciseName), updatedPlan.exercises.map(exercise => exercise.exerciseName));
-    assert.equal(visible.slice(0,7).reduce((sum, exercise) => sum + exercise.sets, 0), 20);
-    assert.deepEqual(Array.from(visible.slice(7), exercise => exercise.exerciseName), retainOldCableSets ? oldExercises.slice(4,6).map(exercise => exercise.exerciseName) : []);
+    const count = updatedPlan.exercises.length;
+    assert.deepEqual(Array.from(visible.slice(0, count), exercise => exercise.exerciseName), updatedPlan.exercises.map(exercise => exercise.exerciseName));
+    assert.equal(updatedPlan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0), 21);
+    assert.equal(visible.find(exercise => exercise.exerciseName === oldExercises[0].exerciseName).sets, 3, "all previously logged press sets remain visible");
+    const retained = [oldExercises[1], ...(retainOldCableSets ? oldExercises.slice(4, 6) : [])];
+    assert.deepEqual(Array.from(visible.slice(count), exercise => exercise.exerciseName), retained.map(exercise => exercise.exerciseName));
     assert.deepEqual(f.state.sets, originalSets);
     for (const exercise of updatedPlan.exercises.slice(-3)) {
       const result = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, weightUsed: "10", repsCompleted: "15", actualRPE: "6" }));
@@ -709,6 +720,46 @@ test("correcting an open set preserves stored duration and AMRAP when the editor
   assert.equal(f.state.sets[0].duration, 45); assert.equal(f.state.sets[0].isAMRAP, true); assert.equal(f.state.sets[0].repsCompleted, 13);
 });
 
+test("Sunday afternoon offers the carry plan and timed sets save, retry and edit on that calendar day", async () => {
+  const f = fixture({ now: "2026-11-15T17:30:00Z" });
+  const plan = await f.actions.getTodaysPlan("owner");
+  assert.equal(plan.dayOfWeek, 0);
+  const { sessionId } = await f.actions.startWorkoutSession(plan.id);
+  const movement = { exerciseName: "Kettlebell Farmer Walk", weightUsed: "12", repsCompleted: undefined };
+  const initial = f.form(sessionId, { ...movement, duration: "60" });
+  const saved = await f.actions.logSet(initial);
+  assert.equal(saved.savedSet.duration, 60);
+  assert.equal(saved.savedSet.repsCompleted, null);
+  assert.deepEqual(await f.actions.logSet(initial), saved);
+  assert.equal(f.state.sets.length, 1);
+  assert.equal(f.state.sessions[0].trainingDate.toISOString(), "2026-11-15T00:00:00.000Z");
+
+  const expectedSet = JSON.stringify(saved.savedSet);
+  assert.ok(!(await f.actions.logSet(f.form(sessionId, { ...movement, duration: "54", expectedSet }))).error);
+  const conflict = await f.actions.logSet(f.form(sessionId, { ...movement, duration: "58", expectedSet }));
+  assert.equal(conflict.conflict, true);
+  assert.equal(conflict.savedSet.duration, 54);
+  assert.ok(!(await f.actions.completeSession(sessionId)).error);
+  const edit = await f.actions.saveCompletedWorkoutSet(f.form(sessionId, { ...movement, duration: "56", expectedSet: JSON.stringify(conflict.savedSet) }));
+  assert.equal(edit.savedSet.duration, 56);
+  const previous = await f.actions.getPreviousSessionSets("owner", plan.id);
+  assert.equal(previous[0].duration, 56);
+});
+
+test("the plan starts a new status week on Sunday", async () => {
+  const f = fixture({ now: "2026-11-15T19:30:00Z" });
+  f.addSession({ completed: true, trainingDate: new Date("2026-11-09") });
+  let statuses = await f.actions.getWorkoutPlanDayStatuses("owner");
+  assert.equal(statuses.find((status) => status.dayOfWeek === 1).status, "start");
+  const { sessionId } = await f.actions.startWorkoutSession("plan-0");
+  statuses = await f.actions.getWorkoutPlanDayStatuses("owner");
+  assert.equal(statuses.find((status) => status.dayOfWeek === 0).status, "resume");
+  await f.actions.logSet(f.form(sessionId, { exerciseName: "Abdominal Crunch Machine" }));
+  await f.actions.completeSession(sessionId);
+  statuses = await f.actions.getWorkoutPlanDayStatuses("owner");
+  assert.equal(statuses.find((status) => status.dayOfWeek === 0).status, "view");
+});
+
 test("unmatched open plans remain recoverable with their sets", async () => {
   const f = fixture(); const unusualPlan = copy(f.state.plans[0]);
   unusualPlan.id = "unmatched"; unusualPlan.dayOfWeek = 6; unusualPlan.isActive = false; f.state.plans.push(unusualPlan);
@@ -720,13 +771,16 @@ test("unmatched open plans remain recoverable with their sets", async () => {
   assert.equal((await f.actions.startWorkoutSession("plan-1")).sessionId, session.id);
 });
 
-test("training date storage and weekdays are independent of process timezone across noon and DST", () => {
+test("training dates stay on the local calendar across noon, midnight and DST", () => {
   const cases = [
     ["2026-09-10T15:59:59Z", "America/New_York", "2026-09-10T00:00:00.000Z", 4],
-    ["2026-09-10T16:00:00Z", "America/New_York", "2026-09-11T00:00:00.000Z", 5],
+    ["2026-09-10T16:00:00Z", "America/New_York", "2026-09-10T00:00:00.000Z", 4],
     ["2026-09-10T04:00:00Z", "America/New_York", "2026-09-10T00:00:00.000Z", 4],
     ["2026-03-08T07:30:00Z", "America/New_York", "2026-03-08T00:00:00.000Z", 0],
     ["2026-11-01T06:30:00Z", "America/New_York", "2026-11-01T00:00:00.000Z", 0],
+    ["2026-11-14T18:30:00Z", "Europe/London", "2026-11-14T00:00:00.000Z", 6],
+    ["2026-11-15T18:30:00Z", "Europe/London", "2026-11-15T00:00:00.000Z", 0],
+    ["2026-11-16T00:00:00Z", "Europe/London", "2026-11-16T00:00:00.000Z", 1],
     ["2026-09-09T15:00:00Z", "Asia/Tokyo", "2026-09-10T00:00:00.000Z", 4],
   ];
   const script = `
@@ -745,7 +799,7 @@ test("training date storage and weekdays are independent of process timezone acr
       return [dates.getTrainingDate(instant, timezone).toISOString(), dates.getTrainingDayOfWeek(instant, timezone), dates.getTrainingDayNumber(instant, timezone)];
     })));
   `;
-  const expected = cases.map(([, , iso, weekday]) => [iso, weekday, weekday >= 1 && weekday <= 5 ? weekday : null]);
+  const expected = cases.map(([, , iso, weekday]) => [iso, weekday, weekday === 6 ? null : weekday]);
   for (const timezone of ["UTC", "America/New_York", "Asia/Tokyo"]) {
     const result = spawnSync(process.execPath, ["-e", script, JSON.stringify(cases)], { cwd: process.cwd(), env: { ...process.env, TZ: timezone }, encoding: "utf8" });
     assert.equal(result.status, 0, result.stderr);

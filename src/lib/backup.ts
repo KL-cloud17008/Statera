@@ -1,4 +1,5 @@
 import { NUTRITION_LIMITS } from "@/lib/nutrition";
+import { CLOCK_TIME, JOURNAL_NOTES_LIMIT, SUPPLEMENT_AMOUNT_LIMIT, SUPPLEMENT_NAME_LIMIT } from "@/lib/training-journal";
 
 export const MAX_BACKUP_FILE_BYTES = 5 * 1024 * 1024;
 
@@ -13,6 +14,8 @@ export const BACKUP_COLLECTION_KEYS = [
   "savedMeals",
   "progressPhotos",
   "painCheckIns",
+  "recoveryCheckIns",
+  "supplementEntries",
 ] as const;
 
 export type BackupCollectionKey = (typeof BACKUP_COLLECTION_KEYS)[number];
@@ -169,7 +172,7 @@ function validateCollection(
   errors: string[],
   dates: string[]
 ) {
-  if (key === "dailyLogs" || key === "nutritionDays" || key === "painCheckIns") {
+  if (key === "dailyLogs" || key === "nutritionDays" || key === "painCheckIns" || key === "recoveryCheckIns") {
     const seenDates = new Set<string>();
     items.forEach((item, index) => {
       if (!isRecord(item) || typeof item.date !== "string" || !isDateString(item.date)) {
@@ -222,6 +225,14 @@ function validateCollection(
         validateOptionalNumber(item.weekNumber, `${path}.weekNumber`, errors, 1, 52, true);
         validateOptionalBoolean(item.completed, `${path}.completed`, errors);
         validateSessionSets(item.sets, `${path}.sets`, errors);
+        if (item.checkIn != null) {
+          if (!isRecord(item.checkIn) || item.completed !== true) {
+            errors.push(`${path}.checkIn must belong to a completed workout.`);
+          } else {
+            requireNumber(item.checkIn.effort, `${path}.checkIn.effort`, errors, 1, 10, true);
+            validateOptionalString(item.checkIn.notes, `${path}.checkIn.notes`, errors, JOURNAL_NOTES_LIMIT);
+          }
+        }
         break;
       case "mobilityLogs":
         requireDate(item.date, `${path}.date`, errors, dates);
@@ -256,6 +267,20 @@ function validateCollection(
         requireDate(item.date, `${path}.date`, errors, dates);
         requireNumber(item.footPain, `${path}.footPain`, errors, 0, 10, true);
         validateOptionalNumber(item.lowerBackPain, `${path}.lowerBackPain`, errors, 0, 10, true);
+        break;
+      case "recoveryCheckIns":
+        requireDate(item.date, `${path}.date`, errors, dates);
+        requireNumber(item.energy, `${path}.energy`, errors, 1, 5, true);
+        requireNumber(item.soreness, `${path}.soreness`, errors, 0, 10, true);
+        validateOptionalNumber(item.sleepHours, `${path}.sleepHours`, errors, 0, 24);
+        validateOptionalString(item.notes, `${path}.notes`, errors, JOURNAL_NOTES_LIMIT);
+        break;
+      case "supplementEntries":
+        requireDate(item.date, `${path}.date`, errors, dates);
+        requireString(item.name, `${path}.name`, errors, SUPPLEMENT_NAME_LIMIT);
+        validateOptionalString(item.amount, `${path}.amount`, errors, SUPPLEMENT_AMOUNT_LIMIT);
+        if (item.time != null && (typeof item.time !== "string" || !CLOCK_TIME.test(item.time))) errors.push(`${path}.time must use HH:MM.`);
+        validateOptionalString(item.notes, `${path}.notes`, errors, JOURNAL_NOTES_LIMIT);
         break;
     }
   });

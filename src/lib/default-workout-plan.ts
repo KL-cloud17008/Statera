@@ -17,520 +17,175 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "five-day-mon-fri-v14";
-export const ADJUSTED_WEEK_HEADER_COPY = "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.";
-export const LOWER_A_TAPER_TITLE = "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips";
-export const UPPER_A_TITLE = "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders";
-export const LOWER_B_TAPER_TITLE = "Lower B — Split Squat → Calves → Pendulum / Hamstrings + Hips";
-export const UPPER_B_TITLE = "Upper B — Machine Chest + Dual Pulldown / Arms";
-export const UPPER_ACCESSORY_TITLE = "Upper C — Chest / Rear Delts + Shoulders / Arms";
-export const LOWER_B_BACK_PAIN_READINESS_NOTE = "Lower-back rule: remove overhead pressing at 3/10 or higher. Omit back extensions if they provoke symptoms. Above 3/10 or increasing pain: reduce load, range or pace; stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening or new/worsening rest/night pain.";
-export const LOWER_B_BACK_SAFE_TITLE = LOWER_B_TAPER_TITLE;
-export const FULL_BODY_CIRCUIT_TITLE = UPPER_ACCESSORY_TITLE;
-export function isOverheadPressExercise(exerciseName: string) { return /overhead press|shoulder press/i.test(exerciseName); }
+export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v16";
+export const ADJUSTED_WEEK_HEADER_COPY = "Sunday through Friday, with short Sunday and Friday sessions and Saturday off. Work and commuting steps count towards total foot load.";
+export const SUNDAY_ACCESSORY_TITLE = "Sunday accessories — Farmer walks, glutes and abs";
+export const LOWER_A_TAPER_TITLE = "Lower A — Walking lunges, pendulum squat and triceps";
+export const UPPER_A_TITLE = "Upper A — Chest press, paired pulldowns, row and abs";
+export const LOWER_B_TAPER_TITLE = "Lower B — Bulgarian split squat, pendulum squat and biceps";
+export const UPPER_B_TITLE = "Upper B — Chest press, T-bar row, arms and abs";
+export const UPPER_ACCESSORY_TITLE = "Upper C — Chest, rear delts, triceps and hips";
+export const FRIDAY_TRICEPS_EXERCISE = "Triceps Pressdown or Overhead Extension";
+export const FRIDAY_TRICEPS_VARIATIONS = [
+  "Straight-bar cable pressdown",
+  "Rope cable pressdown",
+  "Straight-bar overhead cable extension",
+] as const;
+export const LOWER_B_BACK_PAIN_READINESS_NOTE = "If lower-back pain is 3/10 or higher, skip overhead presses, machine crunches and rotary torso. Stop any movement that makes symptoms worse.";
+export const BACK_PAIN_STOP_RULE = "Stop for symptoms travelling down a leg, new weakness, numbness or tingling. Seek medical evaluation for new bowel or bladder changes, fever or trauma-related pain.";
+
+export const LOWER_BODY_WARMUP = "Start with 1–2 easy lying leg curl sets of 12–15. After the working curl and hip machines, do one easy round of 4 bodyweight walking lunge steps, 4 supported Bulgarian split squats and 4 reverse lunges per leg. Begin the working lunge or split squat once your gait and balance feel steady. Use a light pendulum ramp-up set as needed.";
+export const PULLDOWN_GRIP_FALLBACK = "Use a different close-grip handle. If it is unavailable, use a shoulder-width reverse grip if it feels comfortable, and note the grip for comparing future loads.";
+
+function isOverheadPressExercise(exerciseName: string) { return /overhead press|shoulder press/i.test(exerciseName); }
+export function isBackPainGatedExercise(exerciseName: string) {
+  return isOverheadPressExercise(exerciseName) || /abdominal crunch machine|rotary torso machine/i.test(exerciseName);
+}
+
+export function isFootPainGatedExercise(exerciseName: string) {
+  return /^(kettlebell farmer walk|seated calf raise|seated straight-leg calf machine or leg press calf press)$/i.test(
+    exerciseName.trim().replace(/^[A-Z]\d+\s+/i, "")
+  );
+}
+
 export const PROGRESSIVE_OVERLOAD_RULES = [
-  "Add clean reps before load.",
-  "Increase load only when all sets reach the top of the rep range with clean form and assigned RPE.",
-  "RPE 7 is approximately three clean repetitions in reserve. No failure or grinding.",
-  "Working hamstring curls: Monday 2 introductory / 3 target; Wednesday 3 introductory / 4 target. Confirm tolerable recovery, normal gait and stable performance before enabling optional final sets. No calendar-based increase.",
-  "Protected lower-body work: rest approximately 2-3 minutes. Working hamstring curls: 90-120 seconds.",
-  "Supersets: quick safe transition, then enough recovery to retain control; do not chase breathlessness."
+  "Add clean reps before load. Increase by the smallest increment once every set reaches the top of its range at the target effort.",
+  "RPE 7 is approximately three clean repetitions in reserve. Leave room in the tank on work days.",
+  "For abs, keep the same seat setting and comfortable range so logged loads are comparable. Start light for two weeks before increasing.",
+  "For farmer walks, keep the 60-second duration. Build from three rounds toward five once your gait stays normal and symptoms are steady the following morning. Then make small load increases.",
+  "For paired sets, leave enough rest to repeat the first movement with control. Use 150–180 seconds after pendulum and calves. Separate them if calf work affects your next squat or the equipment is busy.",
 ] as const;
+
 export const FOOT_LOAD_RULES = [
-  "Pain 0-2/10: acceptable only if stable.",
-  "Pain 3/10: continue only if stable, gait/form normal and symptoms settle, subject to the stricter calf rule.",
-  "Above 3/10 or increasing: reduce load, range or pace.",
-  "Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening or new/worsening rest/night pain.",
-  "Protected exercise preferences do not override stopping rules.",
-  "Numbness, tingling, weakness, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.",
-  "Calves: three sets per lower day, conditional on foot tolerance. Skip at sole/plantar pain 3/10 or higher, increasing pain, or symptoms worse afterwards or the following morning.",
-  "No standing calf substitution. Slow reps, no bouncing or forced end-range stretch. Seated calf work still loads the foot.",
-  "Use the fastest pace that keeps gait normal and sole discomfort mild. Speed is optional; tolerable volume matters more."
+  "Pain 0–2/10: acceptable only if stable.",
+  "Pain 3/10: continue only if stable, gait and form stay normal, and symptoms settle, subject to the stricter calf and carry rule.",
+  "Skip loaded carries and calves with sole or ankle pain at 3/10 or higher, increasing pain, altered gait, or symptoms worse afterwards or the following morning.",
+  "Keep calf work seated. Use controlled reps without bouncing or forcing the bottom stretch.",
+  "Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, or new persistent worsening or rest pain.",
 ] as const;
+
 export const BACK_PAIN_RULES = [
-  "Pain 0-2/10: acceptable only if stable.",
-  "Pain 3/10: continue only if stable, gait/form normal and symptoms settle, subject to the stricter calf rule.",
-  "Above 3/10 or increasing: reduce load, range or pace.",
-  "Stop for sharp pain, limping, swelling, warmth, numbness, tingling, weakness, persistent worsening or new/worsening rest/night pain.",
-  "Protected exercise preferences do not override stopping rules.",
-  "Numbness, tingling, weakness, bowel/bladder changes, fever, or trauma-related pain: stop training and seek medical evaluation.",
-  "No aggressive loaded spinal flexion, heavy bracing, max effort or failure training."
+  "Keep discomfort mild and stable. If it increases, reduce load or range, or skip that movement.",
+  LOWER_B_BACK_PAIN_READINESS_NOTE,
+  "Avoid forcing loaded trunk flexion or rotation. Bird dogs or knee-supported side planks are optional alternatives if comfortable.",
+  BACK_PAIN_STOP_RULE,
 ] as const;
+
 export const WEEKLY_SET_SUMMARY = [
-  "Quads: exactly 15 weekly sets.",
-  "Working hamstring curls: 5 introductory / 7 target; Monday primer and Wednesday warm-up are separate preparation.",
-  "Hips: three rounds of abduction/adduction each lower day.",
-  "Chest, back/lats, rear delts and arms: supported work across upper days.",
-  "Direct biceps: seven weekly sets — machine preacher curl Monday 2 / Wednesday 2, Bayesian curl Thursday 3.",
-  "Side delts: three cable lateral raise sets Thursday. Rear delts: reverse pec deck Tuesday and Friday, plus reverse cable crossovers Friday.",
-  "Calves: three conditional seated straight-leg sets per lower day; six weekly sets.",
-  "Home core twice weekly (Tuesday/Friday): lying leg raises, reach-up crunches, bird dogs and knee-supported side planks, replacing overlapping work from the old ab circuit. Open Mobility → Home core for doses and progression."
+  "Quads: 15 sets. Walking lunges and supported Bulgarian split squats stay in, with two pendulum and leg-extension slots.",
+  "Hamstrings: 6 curl sets. Calves: up to 6 seated sets.",
+  "Hips: 2 dedicated glute-drive sets plus squat and lunge work. Adduction and abduction: 5 sets each, including a light Friday set each.",
+  "Chest: 11 sets. Vertical pulls: 6 sets. Supported rows: 6 sets.",
+  "Side delts: 6 direct sets. Rear delts: 7 direct sets plus rows. Front delts work in the chest presses.",
+  "Biceps: 5 dedicated sets. Triceps: 7 dedicated sets. Forearms and grip: 2 reverse EZ curl sets plus up to 5 farmer walks.",
+  "Loaded abs: 7 machine crunch sets and 7 rotary torso sets per side. Pair them on Sunday, Tuesday and Thursday.",
 ] as const;
+
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
-  "Five training days. Add clean reps before load. Work and commuting steps are part of total daily foot load; seated exercise still loads the feet.",
-  "5 Strength / 0 Recovery / 2 Full Rest.",
+  ADJUSTED_WEEK_HEADER_COPY,
   "Training loads in kg; bodyweight remains canonical in lb.",
-  "No treadmill or bike warm-up requirement, running, jumping, HIIT, conditioning finishers, failure or grinding.",
-  "No conventional deadlifts, barbell squats, barbell bench press or aggressive loaded spinal flexion.",
-  "Wednesday warm-up: lying leg curl, 1-2 easy sets of 12-15; not working hamstring sets."
+  "Lower days: one working lying curl set follows the warm-up. Keep it controlled so it does not limit your lunges or pendulum squat.",
+  "On a busy shift day, trim an accessory before shortening rest on your main lifts.",
 ] as const;
+
 export const DEFAULT_WEEKLY_RHYTHM = [
-  "Monday: Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips",
-  "Tuesday: Upper A — Machine Chest Press + Row / Pulldowns + Shoulders",
-  "Wednesday: Lower B — Split Squat → Calves → Pendulum / Hamstrings + Hips",
-  "Thursday: Upper B — Machine Chest + Dual Pulldown / Arms",
-  "Friday: Upper C — Chest / Rear Delts + Shoulders / Arms",
+  `Sunday: ${SUNDAY_ACCESSORY_TITLE}`,
+  `Monday: ${LOWER_A_TAPER_TITLE}`,
+  `Tuesday: ${UPPER_A_TITLE}`,
+  `Wednesday: ${LOWER_B_TAPER_TITLE}`,
+  `Thursday: ${UPPER_B_TITLE}`,
+  `Friday: ${UPPER_ACCESSORY_TITLE}`,
   "Saturday: Complete Rest",
-  "Sunday: Complete Rest"
 ] as const;
+
+function exercise(exerciseName: string, sets: number, reps: string, restSeconds: number,
+  targetRPE: string, cues: string, supersetGroup: string | null = null, exerciseType = "WORKING"): DefaultPlanExercise {
+  return { exerciseName, sets, reps, tempo: "controlled", restSeconds, targetRPE, cues, supersetGroup, exerciseType };
+}
+
+const lyingCurl = exercise("Lying Leg Curl", 1, "10-15", 90, "6-7", "Ramp up with one or two easy sets first. Keep hips on the pad. Leave at least three reps in reserve and recover before the next movement.");
+const hipAdduction = exercise("Hip Adduction Machine", 2, "12-20", 0, "5-6", "Start with a comfortable width. Move smoothly into abduction, then rest; keep both movements easy enough for your lunges.", "Hips");
+const hipAbduction = exercise("Hip Abduction Machine", 2, "12-20", 60, "5-6", "Keep your pelvis still. Rest 60–75 seconds after each pair. Then do your bodyweight lunge warm-up.", "Hips");
+const pendulum = exercise("Pendulum Squat", 3, "8-12", 0, "6-7", "Set the safeties and keep feet flat. When calves are comfortable, do a seated calf set after each squat set. If you skip calves, rest 150–180 seconds before squatting again.", "Squat and calves");
+const calves = exercise("Seated Calf Raise", 3, "12-20", 165, "5-6", "Use the seated calf raise machine. Skip if sole or ankle pain is 3/10 or higher, increasing, or worse afterwards or the following morning. Keep the reps smooth, then rest 150–180 seconds before the next squat.", "Squat and calves");
+const seatedCurl = exercise("Seated Leg Curl", 2, "10-15", 105, "7", "Align your knees with the pivot, keep your thighs down, and lower the weight under control.");
+const legExtension = exercise("Seated Leg Extension", 2, "10-15", 90, "6-7", "Keep your hips on the pad. Lift smoothly and control the return.");
+const machineCrunch = exercise("Abdominal Crunch Machine", 2, "10-15", 0, "6-7", "Set the seat to the machine placard. Curl your ribs towards your pelvis, exhale, and return slowly. Move to the rotary torso machine when ready. Skip if your lower back is 3/10 or higher or symptoms increase.", "Abs", "ACCESSORY");
+const rotaryTorso = exercise("Rotary Torso Machine", 2, "10-15 per side", 75, "6", "Follow the machine placard. Use a light load and a comfortable range. Do both sides, then rest. Skip if your lower back is 3/10 or higher or twisting provokes symptoms.", "Abs", "ACCESSORY");
+const cableLateralRaise = exercise("Cable Lateral Raise", 3, "12-20 per arm", 75, "7", "Raise out and slightly forward, with a steady torso. Train both arms before resting.", null, "ACCESSORY");
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
-    dayOfWeek: 1,
-    sessionName: "Lower A — Hamstring Primer → Lunges → Pendulum / Hamstrings + Hips",
+    dayOfWeek: 1, sessionName: LOWER_A_TAPER_TITLE,
     exercises: [
-      {
-        exerciseName: "A1 Lying Leg Curl — Easy Primer",
-        sets: 2,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Keep lying, not seated. Preparation, not pre-exhaustion. Hips heavy on pad, smooth curl, controlled return, no jerking or lower-back arching.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B1 Walking Lunges",
-        sets: 2,
-        reps: "6-10 steps per leg",
-        tempo: "controlled steps",
-        restSeconds: 180,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Walk to gym — general warm-up only if foot load is tolerable. If foot/ankle pain rises above 3/10, use transport or reduce walking. Bodyweight initially or minimal load. Controlled stride, front foot stable, knee tracks naturally, and do not rush. Use support or regress to a supported stationary split squat if necessary. If ankle or sole symptoms meaningfully worsen, reduce or skip this movement according to the existing pain logic.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. Three sets of 12-20 at RPE 5-6; rest 90 seconds between sets.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C1 Pendulum Squat",
-        sets: 3,
-        reps: "8-12",
-        tempo: "controlled lowering",
-        restSeconds: 180,
-        targetRPE: "6-7",
-        cues: "Week 4 controlled progressive overload. Stay 2-3 reps in reserve. Add reps before load. Kg load. This is the primary stable lower-body loading movement. Use controlled depth and tempo, no bouncing, and no grinding. Keep the back supported against the pad and reduce range or load if foot, ankle, knee, hip, or lower-back symptoms increase.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "D1 Seated Leg Extension",
-        sets: 2,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Hips heavy on pad, smooth reps, no knee snapping, controlled comfortable range.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "E1 Seated Leg Curl — Working Sets",
-        sets: 3,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Introduction: 2 working sets; target: 3. Final set optional only after confirming tolerable recovery, normal gait and stable performance. No automatic weekly increase. Lying Leg Curl is the equipment alternative if seated is occupied; this working slot is distinct from the easy primer. Hips heavy, smooth curl, slow return. Rest 90-120 seconds.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "F1 Hip Abduction Machine",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 0,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.",
-        supersetGroup: "F",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "F2 Hip Adduction Machine",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.",
-        supersetGroup: "F",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "G1 Seated Machine Preacher Curl",
-        sets: 2,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 90,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      }
-    ]
+      lyingCurl,
+      { ...hipAdduction, exerciseName: "F2 Hip Adduction Machine" },
+      { ...hipAbduction, exerciseName: "F1 Hip Abduction Machine" },
+      exercise("B1 Walking Lunges", 2, "6-10 steps per leg", 150, "6-7", "Do the bodyweight warm-up first. Use light dumbbells if your gait is normal and your foot and ankle feel steady. Stay at bodyweight or use support if needed."),
+      { ...pendulum, exerciseName: "C1 Pendulum Squat" },
+      calves,
+      { ...seatedCurl, exerciseName: "E1 Seated Leg Curl — Working Sets" },
+      { ...legExtension, exerciseName: "D1 Seated Leg Extension" },
+      exercise("Triceps Pressdown, bar", 2, "10-15", 75, "7", "Keep elbows at your sides and use the same straight bar each week. This is Monday’s only arm isolation.", null, "ACCESSORY"),
+    ],
   },
   {
-    dayOfWeek: 2,
-    sessionName: "Upper A — Machine Chest Press + Row / Pulldowns + Shoulders",
+    dayOfWeek: 2, sessionName: UPPER_A_TITLE,
     exercises: [
-      {
-        exerciseName: "A1 Machine Chest Press",
-        sets: 3,
-        reps: "8-12",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated standard chest press, handles at mid-chest. Back supported, shoulder blades back/down, elbows slightly tucked, controlled comfortable range, no bounce or shoulder pinch. Remains first.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "A2 Seated Chest-Supported Machine Row",
-        sets: 3,
-        reps: "8-12",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Standalone. Kg load. Chest supported, feet planted, row toward ribs, pause, controlled return, no body swing or lumbar extension.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B1 Neutral-Grip Lat Pulldown",
-        sets: 3,
-        reps: "8-12",
-        tempo: "controlled",
-        restSeconds: 0,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Three superset rounds: neutral-grip set → close-grip set → rest 120 seconds. Ribs down, pull to upper chest, no yanking or excessive lean.",
-        supersetGroup: "B",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B2 Close-Grip Lat Pulldown",
-        sets: 3,
-        reps: "10-12",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Three sets, paired with neutral-grip pulldowns. Keep these lighter at RPE 5-6. Controlled pull and return, no swinging. Rest 120 seconds after each pair; recover enough to retain control.",
-        supersetGroup: "B",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C1 Seated Machine Shoulder Press",
-        sets: 3,
-        reps: "8-12",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Back supported, ribs down, no lumbar extension or heavy bracing. Remove when lower-back pain is 3/10 or higher; omit if it provokes symptoms.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "D1 Seated Machine Chest Fly",
-        sets: 3,
-        reps: "12-15",
-        tempo: "controlled",
-        restSeconds: 0,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Seated and supported. Kg load. Comfortable stretch, smooth squeeze, no shoulder pinch. Quick safe transition to reverse fly, then recover; do not chase breathlessness.",
-        supersetGroup: "D",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "D2 Reverse Pec Deck / Seated Machine Reverse Fly",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. One exercise: Reverse Pec Deck and Seated Machine Reverse Fly are synonymous names. Chest supported, soft elbows, controlled return, no shrugging or jerking. Rest after the pair.",
-        supersetGroup: "D",
-        exerciseType: "WORKING"
-      }
-    ]
+      exercise("A1 Machine Chest Press", 3, "8-12", 120, "6-7", "Use the flat machine for a consistent baseline. A supported incline machine can fill this slot if needed. Note the angle and track its load separately."),
+      exercise("Wide-Grip Lat Pulldown", 3, "8-12", 0, "7", "Use a comfortable overhand grip slightly wider than your shoulders. Pull towards your upper chest and move into the close-grip set.", "Pulldowns"),
+      exercise("B2 Close-Grip Lat Pulldown", 3, "10-12", 120, "6-7", PULLDOWN_GRIP_FALLBACK, "Pulldowns"),
+      exercise("A2 Seated Chest-Supported Machine Row", 3, "8-12", 120, "7", "Keep the chest on the pad. Pull towards your ribs and return under control. Leave your wrists and elbows comfortable after the pulldowns."),
+      exercise("D2 Reverse Pec Deck / Seated Machine Reverse Fly", 2, "12-20", 75, "7", "Keep your chest supported and elbows soft. Sweep out to the sides without shrugging.", null, "ACCESSORY"),
+      cableLateralRaise,
+      machineCrunch, rotaryTorso,
+    ],
   },
   {
-    dayOfWeek: 3,
-    sessionName: "Lower B — Split Squat → Calves → Pendulum / Hamstrings + Hips",
+    dayOfWeek: 3, sessionName: LOWER_B_TAPER_TITLE,
     exercises: [
-      {
-        exerciseName: "A1 Lying Leg Curl (warm-up)",
-        sets: 2,
-        reps: "12-15",
-        tempo: "controlled",
-        restSeconds: 90,
-        targetRPE: "4-5",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. 1-2 easy warm-up sets. Keep lying. Not working hamstring volume. Hips heavy, smooth curl, slow return, no jerking or lower-back arching.",
-        supersetGroup: null,
-        exerciseType: "WARMUP"
-      },
-      {
-        exerciseName: "B1 Supported Stationary Bulgarian Split Squat",
-        sets: 3,
-        reps: "8-10 per leg",
-        tempo: "controlled",
-        restSeconds: 180,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Bodyweight only. Use support as needed, controlled range, front foot flat, knee tracks over middle toes, do not chase depth, no bouncing. Pain rule: skip if sole pain, ankle pain, knee pain, hip pinch, lower-back irritation, or balance loss appears.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B2 Seated Straight-Leg Calf Machine or Leg Press Calf Press",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 90,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Conditional on foot tolerance. Seated Straight-Leg Calf Machine or Leg Press Calf Press is one slot. Stay fully seated, knees soft, safety catches engaged, light load. Slow reps, no bouncing or forced end-range stretch. No standing calf substitution. Seated calf work still loads the foot; it is not foot rest. Skip if sole/plantar pain is 3/10 or higher, increases, or leaves symptoms worse afterwards or the following morning. Three sets of 12-20 at RPE 5-6; rest 90 seconds between sets.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B3 Pendulum Squat",
-        sets: 3,
-        reps: "8-12",
-        tempo: "controlled",
-        restSeconds: 180,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Back supported, controlled comfortable depth, no bouncing or grinding. Reduce range or load if symptoms increase.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C1 Seated Leg Extension",
-        sets: 2,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Smooth reps, no knee snapping, controlled comfortable range. Scheduled sets remain available if equipment is busy; do not add waiting-time sets.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C2 Seated Leg Curl",
-        sets: 4,
-        reps: "10-12",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Introduction: 3 working sets; target: 4. Final set optional only after confirming tolerable recovery, normal gait and stable performance. No automatic weekly increase. Hips heavy, smooth curl, pause gently, slow return, no jerking. Rest 90-120 seconds.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "D1 Hip Adduction Machine",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 0,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.",
-        supersetGroup: "D",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "D2 Hip Abduction Machine",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Pelvis still, controlled range, no rocking or jerking. Stop for hip/groin/knee discomfort. Three superset rounds; quick safe transition, then enough recovery to retain control. Do not chase breathlessness.",
-        supersetGroup: "D",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "E1 Seated Machine Preacher Curl",
-        sets: 2,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 90,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Kg load. Seated, upper arms supported on the pad, smooth curl and slow return. No swinging or forced elbow lockout. Stop if it provokes elbow or arm pain. Two standalone sets at the end of the session.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      }
-    ]
+      lyingCurl,
+      { ...hipAdduction, exerciseName: "D1 Hip Adduction Machine" },
+      { ...hipAbduction, exerciseName: "D2 Hip Abduction Machine" },
+      exercise("B1 Supported Stationary Bulgarian Split Squat", 3, "8-10 per leg", 150, "6-7", "Keep the rear support low and use a handhold. Keep the whole front foot planted. Use bodyweight within a steady range."),
+      { ...pendulum, exerciseName: "B3 Pendulum Squat" },
+      calves,
+      { ...seatedCurl, exerciseName: "C2 Seated Leg Curl" },
+      { ...legExtension, exerciseName: "C1 Seated Leg Extension" },
+      exercise("E1 Seated Machine Preacher Curl", 2, "10-15", 90, "7", "Use the pad to support your upper arms. Curl and lower smoothly. This is Wednesday’s only arm isolation.", null, "ACCESSORY"),
+    ],
   },
   {
-    dayOfWeek: 4,
-    sessionName: "Upper B — Machine Chest + Dual Pulldown / Arms",
+    dayOfWeek: 4, sessionName: UPPER_B_TITLE,
     exercises: [
-      {
-        exerciseName: "A1 Chest Machine Press",
-        sets: 3,
-        reps: "8-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. Neutral/mid-chest press angle, back supported, handles track mid-chest, controlled range, no shoulder pinch, no grinding. Reason: balances repeated incline pressing with more neutral chest work.",
-        supersetGroup: "A",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "A2 Chest-Supported Row or Seated Cable Row",
-        sets: 3,
-        reps: "8-12",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. Equipment alternates: Chest-Supported Row or Seated Cable Row — use whichever is free. Tall posture, feet planted, row to lower ribs, pause, return under control, no body swing.",
-        supersetGroup: "A",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B1 Neutral-Grip Lat Pulldown",
-        sets: 3,
-        reps: "8-12",
-        tempo: "2-1-2",
-        restSeconds: 0,
-        targetRPE: "6-7",
-        cues: "Controlled strength work, not conditioning. Rest until breathing recovers; do not chase breathlessness. Kg load. First half of the paired lat block; move to B2, then rest 120 seconds. Stay 2-3 reps in reserve. Pull to the upper chest with ribs down, do not lean far back, do not yank, and return smoothly.",
-        supersetGroup: "B",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B2 Close-Grip Lat Pulldown",
-        sets: 2,
-        reps: "10-12",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Complementary volume, not a second maximal pulldown block. Keep 2-3 reps in reserve, use a controlled tempo, pull without swinging or yanking, return smoothly, and rest 120 seconds after the pair.",
-        supersetGroup: "B",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C1 Overhead Cable Triceps Extension",
-        sets: 3,
-        reps: "15-20",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a bar attachment and a light starting load for this new movement. Upper arms overhead, elbows comfortable, ribs down and trunk still; extend smoothly without arching the lower back or forcing shoulder range. Stop if the overhead position provokes pain. Triset order: C1, C2, C3; recover enough to keep control.",
-        supersetGroup: "C",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C2 Cable Lateral Raise",
-        sets: 3,
-        reps: "15-20 per arm",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. Keep 1-3 reps in reserve, no failure or grinding. Kg load. Use a D-handle or cuff, one arm at a time. Soft elbow; raise out and slightly forward through a comfortable range, then lower slowly without shrugging or swinging the torso. Each set includes both arms; log the reps per arm. Triset order: C1, C2, C3; recover enough to keep control.",
-        supersetGroup: "C",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "C3 Face-Away Bayesian Cable Curl",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Week 4 controlled progressive overload. Keep 1-3 reps in reserve, no failure, and add reps before load. Kg load. Face away from the stack, elbows slightly behind the torso and pinned, tall posture with ribs down, no torso swing, controlled stretch at the bottom, smooth curl.",
-        supersetGroup: "C",
-        exerciseType: "WORKING"
-      }
-    ]
+      exercise("A1 Chest Machine Press", 3, "8-12", 120, "7", "Keep your back on the pad and use a smooth range."),
+      exercise("Chest-Supported T-Bar Row", 3, "8-12", 120, "7", "Set the pad so you can reach with a steady torso. Pull towards your lower ribs. A chest-supported machine row can fill this slot if needed."),
+      exercise("C1 Overhead Cable Triceps Extension", 3, "12-18", 75, "7", "Use the straight-bar attachment. Keep elbows steady and use a range you can control. Use a supported or seated setup if more comfortable.", null, "ACCESSORY"),
+      cableLateralRaise,
+      exercise("C3 Face-Away Bayesian Cable Curl", 3, "10-15 per arm", 75, "7", "Use a light cable and stable stance. Keep the elbow slightly behind your torso without leaning back.", null, "ACCESSORY"),
+      { ...machineCrunch, sets: 3 },
+      { ...rotaryTorso, sets: 3 },
+    ],
   },
   {
-    dayOfWeek: 5,
-    sessionName: "Upper C — Chest / Rear Delts + Shoulders / Arms",
+    dayOfWeek: 5, sessionName: UPPER_ACCESSORY_TITLE,
     exercises: [
-      {
-        exerciseName: "A1 Seated Machine Chest Fly",
-        sets: 3,
-        reps: "12-15",
-        tempo: "controlled",
-        restSeconds: 0,
-        targetRPE: "6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Seated and supported. Kg load. Comfortable stretch, smooth squeeze, no shoulder pinch. Quick safe transition to reverse fly, then recover; do not chase breathlessness.",
-        supersetGroup: "A",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "A2 Reverse Pec Deck / Seated Machine Reverse Fly",
-        sets: 3,
-        reps: "12-20",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. One exercise: Reverse Pec Deck and Seated Machine Reverse Fly are synonymous names. Chest supported, soft elbows, controlled return, no shrugging or jerking. Rest after the pair.",
-        supersetGroup: "A",
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "B1 Back Extension — Hyperextension Bench",
-        sets: 3,
-        reps: "10-15",
-        tempo: "controlled",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Add clean reps before load. RPE 7 is approximately three clean repetitions in reserve. No failure or grinding. Bodyweight initially. Controlled comfortable range. Finish aligned, without deliberately arching beyond neutral. Omit if it provokes lower-back symptoms.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "Triceps Pressdown, bar",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. Keep 1-3 reps in reserve; no failure or grinding. Kg load. Use a straight bar, keep elbows at your sides, and return under control without leaning over the cable.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "Reverse Cable Crossover",
-        sets: 3,
-        reps: "12-20",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "5-6",
-        cues: "Rear delts. Add clean reps before load. Keep 1-3 reps in reserve; no failure or grinding. Kg load. Keep elbows soft, open the arms wide under control, and avoid shrugging or swinging.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      },
-      {
-        exerciseName: "Cable Chest Press",
-        sets: 3,
-        reps: "10-15",
-        tempo: "2-1-2",
-        restSeconds: 120,
-        targetRPE: "6-7",
-        cues: "Add clean reps before load. Keep 1-3 reps in reserve; no failure or grinding. Kg load. Set the handles around chest height. Press forward from a stable position, then return slowly through a comfortable range without arching the lower back.",
-        supersetGroup: null,
-        exerciseType: "WORKING"
-      }
-    ]
-  }
+      exercise("A1 Seated Machine Chest Fly", 3, "12-15", 0, "6-7", "Set a comfortable stretch. Keep the elbow angle steady. Switch to the reverse pec deck for the next half of the round.", "Pec deck"),
+      exercise("A2 Reverse Pec Deck / Seated Machine Reverse Fly", 3, "12-20", 90, "7", "Face the pad, keep elbows soft, and sweep out without shrugging. Rest 90 seconds after each round.", "Pec deck"),
+      exercise("High-to-Low Cable Chest Press", 2, "10-15", 105, "7", "Start with the pulleys above shoulder height. Press forwards and down towards your lower chest with a steady stance or supported bench."),
+      exercise("Reverse Cable Crossover", 2, "12-20", 75, "7", "Sweep your arms out with elbows soft and torso quiet. Keep the set controlled after the reverse pec deck.", null, "ACCESSORY"),
+      exercise(FRIDAY_TRICEPS_EXERCISE, 2, "10-15", 75, "7", "Choose one for both sets: straight-bar cable pressdown, rope cable pressdown, or overhead cable extension with a straight bar. Use a comfortable elbow path and log your choice.", null, "ACCESSORY"),
+      exercise("Hip Adduction Machine", 1, "15-20", 0, "5-6", "Use a lighter load than on leg day and a comfortable starting width. Move smoothly into abduction.", "Light hips", "ACCESSORY"),
+      exercise("Hip Abduction Machine", 1, "15-20", 60, "5-6", "Use a lighter load than on leg day. Keep your pelvis still and leave at least four reps in reserve.", "Light hips", "ACCESSORY"),
+    ],
+  },
+  {
+    dayOfWeek: 0, sessionName: SUNDAY_ACCESSORY_TITLE,
+    exercises: [
+      exercise("Kettlebell Farmer Walk", 5, "60 sec", 60, "6-7", "Use two matching kettlebells and log the load per hand. Walk for 60 seconds and rest 60 seconds. Start with three rounds if foot tolerance is uncertain. Skip if sole or ankle pain reaches 3/10, gait changes, or symptoms increase.", null, "TIMED"),
+      exercise("Reverse EZ-Bar Curl", 2, "12-15", 75, "7", "Use an overhand grip with wrists straight and elbows beside you. Keep the load light enough to avoid wrist bending or swinging.", null, "ACCESSORY"),
+      exercise("Machine Hip Thrust", 2, "10-15", 90, "6-7", "Use the glute-drive machine if available. Keep feet planted, ribs steady and finish by extending your hips. If the machine is unavailable, do a floor glute bridge and note the variation. Keep a few reps in reserve for Monday.", null, "ACCESSORY"),
+      machineCrunch, rotaryTorso,
+    ],
+  },
 ];

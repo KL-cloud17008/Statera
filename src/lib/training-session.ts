@@ -9,7 +9,7 @@ export const SESSION_PREP_ITEMS = [
   },
   {
     label: "Session ledger",
-    detail: "Prescribed sets; Monday's easy primer is separate from working curls. Wednesday warm-up stays outside the ledger.",
+    detail: "Log the planned working sets. Keep easy ramp sets and bodyweight lunge practice outside the ledger.",
   },
   {
     label: "Required later recovery",
@@ -27,4 +27,8 @@ export function isLoggableTrainingExercise(exercise: {
   exerciseType?: string | null;
 }) {
   return exercise.exerciseType !== "WARMUP" && !isAtHomePrimerExerciseName(exercise.exerciseName);
+}
+
+export function isTimedTrainingExercise(exercise: { exerciseName: string; exerciseType?: string | null }) {
+  return exercise.exerciseType === "TIMED" || /^kettlebell farmer walk$/i.test(exercise.exerciseName.trim());
 }

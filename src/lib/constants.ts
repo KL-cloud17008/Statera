@@ -2,7 +2,7 @@ export const APP_NAME = "Athanor";
 
 export const DEFAULT_TIMEZONE = "America/New_York";
 
-/** All training date calculations use this timezone. */
+/** Fallback for accounts without a time zone. */
 export const TRAINING_TIMEZONE = "America/New_York";
 
 // Macro targets (defaults from spec)
@@ -11,22 +11,19 @@ export const DEFAULT_PROTEIN_TARGET = 305;
 export const DEFAULT_CARB_TARGET = 207;
 export const DEFAULT_FAT_TARGET = 83;
 
-// Training schedule — dayOfWeek values stored in DB (next-week progressive block)
-// Day 1 = Sunday night (training date Mon), Day 2 = Monday night (Tue), etc.
-export const DEFAULT_TRAINING_DAYS = [1, 2, 3, 4, 5];
-export const DEFAULT_REST_DAYS = [0, 6]; // Sat and Sun training dates = full rest
+// dayOfWeek values stored in the DB follow the local calendar (0 = Sunday).
+export const DEFAULT_TRAINING_DAYS = [0, 1, 2, 3, 4, 5];
+export const DEFAULT_REST_DAYS = [6];
 export const DEFAULT_RECOVERY_DAYS: number[] = [];
 
-// Training day boundary (hour in TRAINING_TIMEZONE)
-export const TRAINING_DAY_BOUNDARY_HOUR = 12; // noon
-
-/** Labels for training days — keyed by dayOfWeek (DB value 1-5). */
+/** Labels for training days, keyed by dayOfWeek. */
 export const TRAINING_DAY_LABELS: Record<number, string> = {
-  1: "Monday • Lower A — Hamstring Primer → Lunges → Pendulum Squat Strength",
-  2: "Tuesday • Upper A — Machine Chest Press + Row / Pulldowns + Shoulders",
-  3: "Wednesday • Lower B — Split Squat + Hamstrings / Hips + Core",
-  4: "Thursday • Upper B — Machine Chest + Dual Pulldown / Arms",
-  5: "Friday • Upper C — Chest Isolation + Upper Back / Arms + Core",
+  0: "Sunday • Farmer walks, glutes and abs",
+  1: "Monday • Lower A — Walking lunges, pendulum squat and triceps",
+  2: "Tuesday • Upper A — Chest press, paired pulldowns, row and abs",
+  3: "Wednesday • Lower B — Bulgarian split squat, pendulum squat and biceps",
+  4: "Thursday • Upper B — Chest press, T-bar row, arms and abs",
+  5: "Friday • Upper C — Chest, rear delts, triceps and hips",
 };
 
 // Navigation items

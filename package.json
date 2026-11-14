@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --webpack",
     "build": "prisma generate && next build --webpack",
+    "build:vercel": "npm run build && node scripts/apply-training-journal-migration.mjs",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",

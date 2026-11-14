@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getExerciseHistory } from "@/actions/workout";
+import { ExerciseFormGuide } from "@/components/workout/ExerciseFormGuide";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Figure, Num, PageTitle, Row, Rows, Section, Sub } from "@/components/ui/ledger";
@@ -38,6 +39,7 @@ export default async function ExerciseHistoryPage({
   }
 
   const sets = await getExerciseHistory(user.id, exerciseName);
+  const hasTimedSets = sets.some((set) => set.duration != null && set.repsCompleted == null);
 
   const byDate = new Map<string, typeof sets>();
   for (const set of sets) {
@@ -78,6 +80,8 @@ export default async function ExerciseHistoryPage({
         }
       />
 
+      <ExerciseFormGuide name={exerciseName} />
+
       {bestSet ? (
         <Section className="mt-6" title="Highest-volume set">
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
@@ -116,7 +120,7 @@ export default async function ExerciseHistoryPage({
                 <>
                   <span>Set</span>
                   <span className="text-right">Load</span>
-                  <span className="text-right">Reps</span>
+                  <span className="text-right">{hasTimedSets ? "Reps / time" : "Reps"}</span>
                   <span className="text-right">RPE</span>
                 </>
               }
@@ -125,7 +129,7 @@ export default async function ExerciseHistoryPage({
                 <Row key={set.id} columns={SET_COLUMNS} interactive>
                   <span className="num num-left text-secondary">{set.setNumber}</span>
                   <Num>{formatWorkoutLoad(set.weightUsed, getWorkoutSessionLoadUnit(set.workoutSession.notes))}</Num>
-                  <Num tone="secondary">{set.repsCompleted ?? "--"}</Num>
+                  <Num tone="secondary">{set.repsCompleted ?? (set.duration == null ? "--" : `${set.duration}s`)}</Num>
                   <Num tone="secondary">{set.actualRPE ?? "--"}</Num>
                   {set.notes ? <Sub hideOnDesktop={false} className="col-span-full">{set.notes}</Sub> : null}
                 </Row>

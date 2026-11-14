@@ -10,6 +10,7 @@ import { NAV_ITEMS } from "@/components/layout/nav-items";
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { routeTone } from "@/lib/presentation";
+import { bindOfflineWorkoutAccount } from "@/lib/offline-workout";
 
 export function MobileHeader() {
   const pathname = usePathname();
@@ -63,7 +64,7 @@ export function MobileHeader() {
                 })}
               </ul>
             </nav>
-            <form action={signOut} className="border-t border-rule p-3">
+            <form action={signOut} onSubmit={() => bindOfflineWorkoutAccount(null)} className="border-t border-rule p-3">
               <button type="submit" className="flex min-h-touch w-full items-center gap-3 rounded-control px-3 text-row text-secondary hover:bg-sunken hover:text-primary">
                 <LogOut className="size-4" /> Sign out
               </button>

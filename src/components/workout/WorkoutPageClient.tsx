@@ -4,12 +4,14 @@ import Link from "next/link";
 import { ArrowRight, ClipboardList, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Notice, PageTitle, Section } from "@/components/ui/ledger";
-import { BACK_PAIN_RULES } from "@/lib/default-workout-plan";
+import { LOWER_B_BACK_PAIN_READINESS_NOTE } from "@/lib/default-workout-plan";
 import { DAY_NAMES, buildPlanDayStats, findNextTrainingDay } from "@/lib/plan-preview";
 import { SessionLogger } from "./SessionLogger";
 import { WorkoutDayPreview } from "./WorkoutDayPreview";
 import { CustomWorkoutBuilder } from "./CustomWorkoutBuilder";
 import { WorkoutPlanResetButton } from "./WorkoutPlanResetButton";
+import { OfflineWorkoutControls } from "./OfflineWorkout";
+import type { ActiveWorkout } from "@/lib/offline-workout";
 
 type Exercise = {
   id: string;
@@ -30,34 +32,6 @@ type TodayPlan = {
   exercises: Exercise[];
 } | null;
 
-type SessionSet = {
-  exerciseName: string;
-  setNumber: number;
-  weightUsed: number | null;
-  repsCompleted: number | null;
-  actualRPE: number | null;
-  notes: string | null;
-};
-
-type PrevSet = {
-  exerciseName: string;
-  setNumber: number;
-  weightUsed: number | null;
-  repsCompleted: number | null;
-  actualRPE?: number | null;
-};
-
-type ActiveSession = {
-  id: string;
-  sessionName: string;
-  startTime: string;
-  trainingDate: string;
-  isStale: boolean;
-  exercises: Exercise[];
-  sets: SessionSet[];
-  previousSets: PrevSet[];
-} | null;
-
 type DayGuidance = {
   title: string;
   eyebrow: string;
@@ -70,13 +44,17 @@ type DayGuidance = {
 export function WorkoutPageClient({
   todayPlan,
   activeSession,
+  offlineAccountId,
   trainingDayOfWeek,
   todayBackPain = null,
+  footPainGateActive = false,
 }: {
   todayPlan: TodayPlan;
-  activeSession: ActiveSession;
+  activeSession: ActiveWorkout | null;
+  offlineAccountId: string;
   trainingDayOfWeek: number;
   todayBackPain?: number | null;
+  footPainGateActive?: boolean;
 }) {
   const dayGuidance = !todayPlan ? getDayGuidance(trainingDayOfWeek) : null;
   const backPainGateActive = todayBackPain != null && todayBackPain >= 3;
@@ -127,21 +105,28 @@ export function WorkoutPageClient({
         />
       )}
 
-      {/* Back-care block: the gate itself is enforced in the plan data; this
-          states why, and escalates its wording at 5/10. */}
+      <nav aria-label="Training tools" className="mt-4 flex flex-wrap gap-2">
+        <Button asChild variant="secondary" size="sm" className="min-h-11"><Link href="/workout/suggestions">Workout suggestions</Link></Button>
+        <Button asChild variant="secondary" size="sm" className="min-h-11"><Link href="/workout/journal">Recovery &amp; supplements</Link></Button>
+      </nav>
+
+      <OfflineWorkoutControls accountId={offlineAccountId} session={activeSession} backPainGateActive={backPainGateActive} footPainGateActive={footPainGateActive} />
+
       {backPainGateActive ? (
         <Notice className="mt-6">
-          <span className="font-medium">
-            {todayBackPain != null && todayBackPain >= 5
-              ? `Lower-back pain ${todayBackPain}/10 logged. Pain 5/10 or higher means stop that movement — back hyperextensions and overhead press stay removed.`
-              : `Lower-back pain ${todayBackPain}/10 logged. Remove back hyperextensions and overhead press first.`}
-          </span>
-          <span className="mt-1 block text-caption">{BACK_PAIN_RULES[5]}</span>
+          <span className="font-medium">Lower-back pain {todayBackPain}/10 logged.</span>
+          <span className="mt-1 block text-caption">{LOWER_B_BACK_PAIN_READINESS_NOTE}</span>
+        </Notice>
+      ) : null}
+      {footPainGateActive ? (
+        <Notice className="mt-6">
+          Foot pain 3/10 or higher logged today. Skip loaded carries and seated calf raises.
         </Notice>
       ) : null}
 
       {activeSession ? (
         <SessionLogger
+          key={activeSession.id}
           sessionId={activeSession.id}
           sessionName={activeSession.sessionName}
           exercises={activeSession.exercises}
@@ -151,6 +136,8 @@ export function WorkoutPageClient({
           trainingDate={activeSession.trainingDate}
           isStale={activeSession.isStale}
           backPainGateActive={backPainGateActive}
+          footPainGateActive={footPainGateActive}
+          offlineLogging
         />
       ) : todayPlan ? (
         <>
@@ -233,15 +220,6 @@ function getDayGuidance(dayOfWeek: number): DayGuidance | null {
         "Optional recovery only if helpful: supported breathing, ankle pumps, ankle circles, and gentle calf stretches.",
         "No gym. No make-up sets. No step chasing.",
       ],
-    };
-  }
-
-  if (dayOfWeek === 0) {
-    return {
-      eyebrow: "Full Rest",
-      title: "Complete Rest",
-      description: "Full rest. Keep the day deliberately empty.",
-      details: ["No make-up training. Start the next week fresh."],
     };
   }
 

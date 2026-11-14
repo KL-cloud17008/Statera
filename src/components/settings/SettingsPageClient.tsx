@@ -38,6 +38,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PageTitle } from "@/components/ui/ledger";
 import { MAX_BACKUP_FILE_BYTES, analyzeBackupPayload, unwrapBackupEnvelope, type BackupPreview } from "@/lib/backup";
 import { normalizeGoalTargetDate, parseAppSettings } from "@/lib/app-settings";
+import { clearOfflineWorkout } from "@/lib/offline-workout";
 import { BODYWEIGHT_UNIT, WORKOUT_LOAD_UNIT, formatBodyweightConversion, inchesToCm } from "@/lib/units";
 
 type SettingsPageClientProps = {
@@ -251,6 +252,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
       }
 
       toast.success("Backup imported");
+      clearOfflineWorkout();
       setPendingImport(null);
       setImportConfirmation("");
     } catch {
@@ -266,6 +268,7 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
     try {
       const result = await clearAllUserData();
       if (result.error) { toast.error(result.error); return; }
+      clearOfflineWorkout();
       resetSettings();
       setIsClearOpen(false);
       toast.success("All tracker data cleared");
@@ -603,12 +606,14 @@ export function SettingsPageClient({ profile }: SettingsPageClientProps) {
                 <ImportCount label="Nutrition" value={pendingImport.preview.counts.nutritionDays} />
                 <ImportCount label="Saved foods" value={pendingImport.preview.counts.savedFoods} />
                 <ImportCount label="Pain check-ins" value={pendingImport.preview.counts.painCheckIns} />
+                <ImportCount label="Recovery check-ins" value={pendingImport.preview.counts.recoveryCheckIns} />
+                <ImportCount label="Supplements" value={pendingImport.preview.counts.supplementEntries} />
               </div>
 
               <div className="rounded-control border-l-2 border-critical-line bg-critical-surface px-3 py-2 text-row text-critical">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-                  <p>This import replaces steps, weight entries, training sessions, mobility logs, nutrition records, saved foods, saved meals, progress photos, and pain check-ins.</p>
+                  <p>This import replaces saved tracker data, including workouts, steps, weight, mobility, check-ins, supplements, nutrition records, and progress photos.</p>
                 </div>
               </div>
 

@@ -1,18 +1,16 @@
-export type SavedEntry = {
-  weightUsed: number | null;
-  repsCompleted: number | null;
-  actualRPE: number | null;
-  notes: string | null;
-};
+import type { SavedWorkoutSet } from "@/lib/workout-set-input";
 
-export type EntryFields = { weight: string; reps: string; rpe: string; notes: string };
+export type SavedEntry = SavedWorkoutSet;
+export type EntryFields = { weight: string; reps: string; rpe: string; notes: string; duration?: string };
 export type WorkoutDraft = {
   version: 1;
   fields: EntryFields;
   baseline: SavedEntry | null;
   revision: string;
-  status: "draft" | "pending" | "error";
+  status: "draft" | "pending" | "error" | "queued";
   error?: string;
+  upload?: SavedEntry;
+  conflict?: { savedSet: SavedEntry | null };
 };
 export type RestState = { duration: number; deadline: number | null };
 
@@ -41,19 +39,21 @@ export function draftTargets(sessionId: string, keys: string[]) {
   });
 }
 
-export function entryFields(entry?: SavedEntry | null): EntryFields {
+export function entryFields(entry?: SavedEntry | null, timed = false): EntryFields {
   return {
     weight: entry?.weightUsed?.toString() ?? "",
     reps: entry?.repsCompleted?.toString() ?? "",
     rpe: entry?.actualRPE?.toString() ?? "",
     notes: entry?.notes ?? "",
+    ...(timed ? { duration: entry?.duration?.toString() ?? "" } : {}),
   };
 }
 
-export function parseEntry(fields: EntryFields, isFinisher = false): { values: SavedEntry } | { error: string } {
+export function parseEntry(fields: EntryFields, isFinisher = false, timed = false): { values: SavedEntry } | { error: string } {
   const parseNumber = (value: string) => value.trim() === "" ? null : /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(value.trim()) ? Number(value) : NaN;
   const weightUsed = parseNumber(fields.weight);
-  const repsCompleted = isFinisher ? null : parseNumber(fields.reps);
+  const repsCompleted = isFinisher || timed ? null : parseNumber(fields.reps);
+  const duration = timed ? parseNumber(fields.duration ?? "") : null;
   const actualRPE = parseNumber(fields.rpe);
   if (weightUsed !== null && (!Number.isFinite(weightUsed) || weightUsed < 0 || weightUsed > 1500)) {
     return { error: "Enter a weight from 0 to 1,500 kg." };
@@ -64,12 +64,15 @@ export function parseEntry(fields: EntryFields, isFinisher = false): { values: S
   if (actualRPE !== null && (!Number.isInteger(actualRPE) || actualRPE < 1 || actualRPE > 10)) {
     return { error: "Enter a whole-number RPE from 1 to 10." };
   }
+  if (timed && (duration === null || !Number.isInteger(duration) || duration < 1 || duration > 7200)) {
+    return { error: "Enter your actual time in whole seconds." };
+  }
   const notes = fields.notes.trim() || null;
   if (notes && notes.length > 240) return { error: "Keep notes to 240 characters or fewer." };
-  if (weightUsed === null && repsCompleted === null && !notes) {
+  if (weightUsed === null && repsCompleted === null && duration === null && !notes) {
     return { error: "Enter your set before saving." };
   }
-  return { values: { weightUsed, repsCompleted, actualRPE, notes } };
+  return { values: { weightUsed, repsCompleted, actualRPE, notes, ...(timed ? { duration } : {}) } };
 }
 
 export function parseWorkoutDraft(raw: string | null): WorkoutDraft | null {
@@ -78,6 +81,7 @@ export function parseWorkoutDraft(raw: string | null): WorkoutDraft | null {
     const parsed = JSON.parse(raw) as WorkoutDraft;
     if (parsed.version !== 1 || !parsed.fields || typeof parsed.revision !== "string") return null;
     if (!["weight", "reps", "rpe", "notes"].every((field) => typeof parsed.fields[field as keyof EntryFields] === "string")) return null;
+    if (parsed.fields.duration !== undefined && typeof parsed.fields.duration !== "string") return null;
     return parsed;
   } catch { return null; }
 }
@@ -137,6 +141,44 @@ export function sessionDraftSnapshot(sessionId: string): string {
   } catch { /* Memory drafts remain visible when browser storage is unavailable. */ }
   return JSON.stringify([...keys].filter((key) => key.startsWith(sessionDraftPrefix(sessionId)))
     .sort().flatMap((key) => parseWorkoutDraft(readWorkoutStorage(key)) ? [key] : []));
+}
+
+export function queuedWorkoutSets(sessionId: string) {
+  if (typeof window === "undefined") return [];
+  const keys: string[] = JSON.parse(sessionDraftSnapshot(sessionId));
+  return keys.flatMap(key => {
+    const draft = parseWorkoutDraft(readWorkoutStorage(key));
+    const [target] = draftTargets(sessionId, [key]);
+    return target && draft?.status === "queued" && draft.upload
+      ? [{ ...target, key, draft, values: draft.upload }]
+      : [];
+  });
+}
+
+export function queuedWorkoutSnapshot(sessionId: string) {
+  return JSON.stringify(queuedWorkoutSets(sessionId));
+}
+
+export function workoutSetForm(sessionId: string, exerciseName: string, setNumber: number, draft: WorkoutDraft, values: SavedEntry, planExerciseId?: string | null) {
+  const form = new FormData();
+  form.set("sessionId", sessionId);
+  if (planExerciseId) form.set("planExerciseId", planExerciseId);
+  form.set("exerciseName", exerciseName);
+  form.set("setNumber", String(setNumber));
+  form.set("expectedSet", JSON.stringify(draft.baseline));
+  for (const [field, value] of Object.entries(values)) {
+    if (value != null) form.set(field, String(value));
+  }
+  return form;
+}
+
+export function subscribeNetwork(onChange: () => void) {
+  window.addEventListener("online", onChange);
+  window.addEventListener("offline", onChange);
+  return () => {
+    window.removeEventListener("online", onChange);
+    window.removeEventListener("offline", onChange);
+  };
 }
 
 export function restStorageKey(sessionId: string) { return `athanor:rest:${encodeURIComponent(sessionId)}`; }

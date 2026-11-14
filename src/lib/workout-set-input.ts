@@ -3,6 +3,7 @@ export type SavedWorkoutSet = {
   repsCompleted: number | null;
   actualRPE: number | null;
   notes: string | null;
+  duration?: number | null;
 };
 
 export function sameSavedWorkoutSet(a: SavedWorkoutSet | null, b: SavedWorkoutSet | null) {
@@ -36,7 +37,8 @@ export function parseWorkoutSetBaseline(formData: FormData): { expectedSet?: Sav
       !["weightUsed", "repsCompleted", "actualRPE"].every((key) => {
         const value = expectedSet[key];
         return value === null || (typeof value === "number" && Number.isFinite(value));
-      }) || !(expectedSet.notes === null || typeof expectedSet.notes === "string"))) {
+      }) || !(expectedSet.notes === null || typeof expectedSet.notes === "string") ||
+      (expectedSet.duration != null && (!Number.isInteger(expectedSet.duration) || expectedSet.duration < 0)))) {
       throw new Error("Invalid baseline");
     }
     return { expectedSet };

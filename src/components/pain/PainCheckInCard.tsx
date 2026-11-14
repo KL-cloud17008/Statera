@@ -5,25 +5,23 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { logPainCheckIn, type SerializedPainCheckIn } from "@/actions/pain";
-import { BACK_PAIN_RULES } from "@/lib/default-workout-plan";
+import { BACK_PAIN_STOP_RULE, LOWER_B_BACK_PAIN_READINESS_NOTE } from "@/lib/default-workout-plan";
 import { getTodayDateString } from "@/lib/dates";
 import { getPainGuidance } from "@/lib/movement-guidance";
 import { cn } from "@/lib/utils";
 
 const PAIN_VALUES = Array.from({ length: 11 }, (_, value) => value);
 
-const BACK_REMOVE_RULE =
-  "If lower back rises above 3/10, remove back hyperextensions and overhead press first.";
-const BACK_RED_FLAG = BACK_PAIN_RULES[5];
+const BACK_RED_FLAG = BACK_PAIN_STOP_RULE;
 
 function footGuidance(footPain: number) { return getPainGuidance(footPain).text; }
 
 function backGuidance(backPain: number) {
   if (backPain >= 5) {
-    return `${BACK_PAIN_RULES[2]} ${BACK_REMOVE_RULE}`;
+    return `Stop movements that provoke symptoms. ${LOWER_B_BACK_PAIN_READINESS_NOTE}`;
   }
-  if (backPain > 3) {
-    return BACK_REMOVE_RULE;
+  if (backPain >= 3) {
+    return LOWER_B_BACK_PAIN_READINESS_NOTE;
   }
   return getPainGuidance(backPain).text;
 }
