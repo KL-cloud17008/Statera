@@ -12,6 +12,7 @@ export function ExerciseFormGuide({ name, cues }: { name: string; cues?: string 
         <div><dt className="font-medium text-primary">Movement</dt><dd>{guide.movement}</dd></div>
         <div><dt className="font-medium text-primary">Common mistake</dt><dd>{guide.commonMistake}</dd></div>
       </dl> : null}
+      {guide?.video ? <a href={guide.video.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-medium text-primary underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-accent">{guide.video.label}</a> : null}
       {cues ? <p><span className="block font-medium text-primary">Session cues</span>{cues}</p> : null}
     </div>
   </details>;

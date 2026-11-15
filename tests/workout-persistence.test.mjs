@@ -655,7 +655,7 @@ test("Upper B adds T-bar and abs while retaining earlier sets and completed hist
     assert.equal(JSON.parse(current.notes).planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
     assert.equal(updatedPlan.exercises[0].exerciseName, "A1 Chest Machine Press");
     assert.equal(updatedPlan.exercises[1].exerciseName, "Chest-Supported T-Bar Row");
-    assert.deepEqual(updatedPlan.exercises.slice(-2).map(exercise => exercise.exerciseName), ["Abdominal Crunch Machine", "Rotary Torso Machine"]);
+    assert.deepEqual(updatedPlan.exercises.slice(-2).map(exercise => exercise.exerciseName), ["Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine"]);
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     const count = updatedPlan.exercises.length;
     assert.deepEqual(Array.from(visible.slice(0, count), exercise => exercise.exerciseName), updatedPlan.exercises.map(exercise => exercise.exerciseName));
@@ -754,7 +754,7 @@ test("the plan starts a new status week on Sunday", async () => {
   const { sessionId } = await f.actions.startWorkoutSession("plan-0");
   statuses = await f.actions.getWorkoutPlanDayStatuses("owner");
   assert.equal(statuses.find((status) => status.dayOfWeek === 0).status, "resume");
-  await f.actions.logSet(f.form(sessionId, { exerciseName: "Abdominal Crunch Machine" }));
+  await f.actions.logSet(f.form(sessionId, { exerciseName: "Plate-Weighted Decline Bench Crunch" }));
   await f.actions.completeSession(sessionId);
   statuses = await f.actions.getWorkoutPlanDayStatuses("owner");
   assert.equal(statuses.find((status) => status.dayOfWeek === 0).status, "view");

@@ -2,6 +2,7 @@ type FormGuide = {
   setup: string;
   movement: string;
   commonMistake: string;
+  video?: { url: string; label: string };
 };
 
 const guides = {
@@ -170,6 +171,12 @@ const guides = {
     movement: "Exhale and bring your ribs towards your pelvis. Control the return and keep your neck relaxed.",
     commonMistake: "Pulling with your arms, bouncing the stack, or forcing the end of the range.",
   },
+  declineBenchCrunch: {
+    setup: "Secure your feet under the rollers at the high end, with your head at the low end. Use a shallow decline if adjustable. Try it with bodyweight first, then hold a light plate flat against your chest with both hands.",
+    movement: "Breathe out and curl your ribs towards your hips until your shoulder blades lift. Keep your lower back supported. Pause briefly, then lower under control over two to three seconds.",
+    commonMistake: "Swinging the plate, pulling against the rollers to sit all the way up, or arching off the bench at the bottom.",
+    video: { url: "https://www.youtube.com/watch?v=gYXr-AbnCYk", label: "Watch the decline crunch on YouTube" },
+  },
   rotaryTorso: {
     setup: "Follow the machine placard to secure your knees or chest. Set a small starting angle and select a light load.",
     movement: "Turn smoothly within a comfortable range. Return with control and match the reps on both sides.",
@@ -264,6 +271,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "hanging knee raise": "kneeRaise",
   "cable crunch": "cableCrunch",
   "abdominal crunch machine": "machineCrunch",
+  "plate-weighted decline bench crunch": "declineBenchCrunch",
   "rotary torso machine": "rotaryTorso",
   "machine hip thrust": "hipThrust",
   "farmer's carry": "carry",

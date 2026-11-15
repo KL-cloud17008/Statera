@@ -17,7 +17,7 @@ Train Sunday through Friday and keep Saturday for rest. Gym sessions are estimat
 1. Kettlebell farmer walk · 5 rounds of 60 seconds walking and 60 seconds resting · log kilograms per hand and seconds completed.
 2. Reverse EZ-bar curl · 2 × 12–15.
 3. Machine hip thrust · 2 × 10–15. Substitute a floor glute bridge if the glute-drive machine is unavailable. Leave a few reps in reserve for Monday.
-4. Abdominal crunch machine · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
+4. Plate-weighted decline bench crunch · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
 
 Pick a steady walking pace and a light pair of kettlebells. Start with three rounds if you are unsure how your feet will respond. Build to five once your gait and next-morning symptoms stay steady.
 
@@ -44,7 +44,7 @@ The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four
 3. Chest-supported machine row · 3 × 8–12.
 4. Reverse pec deck · 2 × 12–20.
 5. Cable lateral raise · 3 × 12–20 per arm.
-6. Abdominal crunch machine · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
+6. Plate-weighted decline bench crunch · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
 
 ## Thursday
 
@@ -53,7 +53,7 @@ The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four
 3. Straight-bar overhead cable triceps extension · 3 × 12–18.
 4. Cable lateral raise · 3 × 12–20 per arm.
 5. Face-away Bayesian cable curl · 3 × 10–15 per arm.
-6. Abdominal crunch machine · 3 × 10–15 → rotary torso machine · 3 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
+6. Plate-weighted decline bench crunch · 3 × 10–15 → rotary torso machine · 3 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
 
 ## Friday
 
@@ -65,10 +65,10 @@ The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four
 
 ## Progression and recovery
 
-- Use a consistent setup and controlled range. On the ab machines, start around RPE 6–7 and keep the same seat setting. When both sets reach 15 controlled reps at that effort, use the smallest increase next time. For rotations, meet the target on both sides before increasing.
+- Start decline crunches at bodyweight. Secure your feet at the high end, curl your ribs towards your hips and lower slowly. Hold a light plate against your chest once you can do 15 clean reps in each set. Keep the bench angle consistent and log the plate alone, using 0 kg for bodyweight. Use the same seat setting for rotary torso and meet the target on both sides before adding weight. [Decline crunch form demo](https://www.youtube.com/watch?v=gYXr-AbnCYk)
 - Keep an easy 75 seconds between most small accessory sets and about two minutes after the main upper-body presses and rows.
 - Skip loaded carries and calf raises at foot or ankle pain of 3/10 or higher, if pain increases or if your gait changes. If symptoms are worse the next morning, reduce the next dose.
-- Skip machine crunches, rotary torso and overhead pressing at lower-back pain of 3/10 or higher. Stop a movement that increases symptoms. The optional home core routine remains available under Mobility.
+- Skip loaded crunches, rotary torso and overhead pressing at lower-back pain of 3/10 or higher. Stop a movement that increases symptoms. The optional home core routine remains available under Mobility.
 - On a short work day, preserve rest on the main lifts and trim a final accessory if needed.
 
 The week programmes 15 quad sets, 6 leg-curl sets, up to 6 seated calf sets, and 2 dedicated glute-drive sets plus the squat and lunge work. Hip adduction and hip abduction each get 5 sets, including one light Friday set. Upper-body totals include 11 chest sets, 6 pulldowns, 6 supported rows, 6 side-delt sets and 7 rear-delt isolation sets. The arm plan has 5 dedicated biceps sets and 7 dedicated triceps sets, with additional work from pulling and pressing. Forearms and grip get 2 reverse curl sets and up to 5 carries. Gym core adds 7 crunch sets and 7 rotations per side across Sunday, Tuesday and Thursday.

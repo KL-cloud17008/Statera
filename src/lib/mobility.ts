@@ -2170,7 +2170,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Machine chest press, paired pulldowns, supported row, rear and side delts, and paired ab machines." },
+      { label: "Training match", value: "Upper A setup", note: "Machine chest press, paired pulldowns, supported row, rear and side delts, and paired ab exercises." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
@@ -2237,7 +2237,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare your chest, upper back, shoulders and trunk for machine chest press, supported T-bar rows, arm work and machine abs.",
+      "Prepare your chest, upper back, shoulders and trunk for machine chest press, supported T-bar rows, arm work and abs.",
     previousDayReason:
       "Wednesday was Lower B, so this keeps lower-leg work quiet before upper-body training.",
     adaptationNote:
@@ -2245,7 +2245,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper B setup", note: "Machine chest press, supported T-bar row, overhead bar extensions, cable laterals, Bayesian curls and paired ab machines." },
+      { label: "Training match", value: "Upper B setup", note: "Machine chest press, supported T-bar row, overhead bar extensions, cable laterals, Bayesian curls and paired ab exercises." },
       { label: "Back rule", value: "Supported pulling", note: "Keep the torso controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
@@ -2369,7 +2369,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Finish with easy breathing and a steady gait.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, reverse EZ-bar curls, machine hip thrusts and paired ab machines." },
+      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, reverse EZ-bar curls, machine hip thrusts, decline crunches and rotary torso." },
       { label: "Foot rule", value: "Steady gait", note: "Short, easy steps before adding any load." },
     ],
     blocks: [

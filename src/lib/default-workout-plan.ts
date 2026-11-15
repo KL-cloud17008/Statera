@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v16";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v17";
 export const ADJUSTED_WEEK_HEADER_COPY = "Sunday through Friday, with short Sunday and Friday sessions and Saturday off. Work and commuting steps count towards total foot load.";
 export const SUNDAY_ACCESSORY_TITLE = "Sunday accessories — Farmer walks, glutes and abs";
 export const LOWER_A_TAPER_TITLE = "Lower A — Walking lunges, pendulum squat and triceps";
@@ -31,7 +31,7 @@ export const FRIDAY_TRICEPS_VARIATIONS = [
   "Rope cable pressdown",
   "Straight-bar overhead cable extension",
 ] as const;
-export const LOWER_B_BACK_PAIN_READINESS_NOTE = "If lower-back pain is 3/10 or higher, skip overhead presses, machine crunches and rotary torso. Stop any movement that makes symptoms worse.";
+export const LOWER_B_BACK_PAIN_READINESS_NOTE = "If lower-back pain is 3/10 or higher, skip overhead presses, loaded crunches and rotary torso. Stop any movement that makes symptoms worse.";
 export const BACK_PAIN_STOP_RULE = "Stop for symptoms travelling down a leg, new weakness, numbness or tingling. Seek medical evaluation for new bowel or bladder changes, fever or trauma-related pain.";
 
 export const LOWER_BODY_WARMUP = "Start with 1–2 easy lying leg curl sets of 12–15. After the working curl and hip machines, do one easy round of 4 bodyweight walking lunge steps, 4 supported Bulgarian split squats and 4 reverse lunges per leg. Begin the working lunge or split squat once your gait and balance feel steady. Use a light pendulum ramp-up set as needed.";
@@ -39,7 +39,7 @@ export const PULLDOWN_GRIP_FALLBACK = "Use a different close-grip handle. If it 
 
 function isOverheadPressExercise(exerciseName: string) { return /overhead press|shoulder press/i.test(exerciseName); }
 export function isBackPainGatedExercise(exerciseName: string) {
-  return isOverheadPressExercise(exerciseName) || /abdominal crunch machine|rotary torso machine/i.test(exerciseName);
+  return isOverheadPressExercise(exerciseName) || /abdominal crunch machine|decline bench crunch|rotary torso machine/i.test(exerciseName);
 }
 
 export function isFootPainGatedExercise(exerciseName: string) {
@@ -51,7 +51,7 @@ export function isFootPainGatedExercise(exerciseName: string) {
 export const PROGRESSIVE_OVERLOAD_RULES = [
   "Add clean reps before load. Increase by the smallest increment once every set reaches the top of its range at the target effort.",
   "RPE 7 is approximately three clean repetitions in reserve. Leave room in the tank on work days.",
-  "For abs, keep the same seat setting and comfortable range so logged loads are comparable. Start light for two weeks before increasing.",
+  "For abs, keep the same bench angle or machine seat setting and use a comfortable range. On the bench, log the plate weight in kg, or 0 kg for bodyweight.",
   "For farmer walks, keep the 60-second duration. Build from three rounds toward five once your gait stays normal and symptoms are steady the following morning. Then make small load increases.",
   "For paired sets, leave enough rest to repeat the first movement with control. Use 150–180 seconds after pendulum and calves. Separate them if calf work affects your next squat or the equipment is busy.",
 ] as const;
@@ -78,7 +78,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Chest: 11 sets. Vertical pulls: 6 sets. Supported rows: 6 sets.",
   "Side delts: 6 direct sets. Rear delts: 7 direct sets plus rows. Front delts work in the chest presses.",
   "Biceps: 5 dedicated sets. Triceps: 7 dedicated sets. Forearms and grip: 2 reverse EZ curl sets plus up to 5 farmer walks.",
-  "Loaded abs: 7 machine crunch sets and 7 rotary torso sets per side. Pair them on Sunday, Tuesday and Thursday.",
+  "Loaded abs: 7 weighted decline crunch sets and 7 rotary torso sets per side. Pair them on Sunday, Tuesday and Thursday.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
@@ -110,7 +110,11 @@ const pendulum = exercise("Pendulum Squat", 3, "8-12", 0, "6-7", "Set the safeti
 const calves = exercise("Seated Calf Raise", 3, "12-20", 165, "5-6", "Use the seated calf raise machine. Skip if sole or ankle pain is 3/10 or higher, increasing, or worse afterwards or the following morning. Keep the reps smooth, then rest 150–180 seconds before the next squat.", "Squat and calves");
 const seatedCurl = exercise("Seated Leg Curl", 2, "10-15", 105, "7", "Align your knees with the pivot, keep your thighs down, and lower the weight under control.");
 const legExtension = exercise("Seated Leg Extension", 2, "10-15", 90, "6-7", "Keep your hips on the pad. Lift smoothly and control the return.");
-const machineCrunch = exercise("Abdominal Crunch Machine", 2, "10-15", 0, "6-7", "Set the seat to the machine placard. Curl your ribs towards your pelvis, exhale, and return slowly. Move to the rotary torso machine when ready. Skip if your lower back is 3/10 or higher or symptoms increase.", "Abs", "ACCESSORY");
+const declineBenchCrunch = exercise(
+  "Plate-Weighted Decline Bench Crunch", 2, "10-15", 0, "6-7",
+  "Try bodyweight first, then hold a light plate against your chest. Use the same bench angle each time and log the plate weight only. Move to rotary torso when ready. Skip if lower-back pain is 3/10 or higher or symptoms increase.",
+  "Abs", "ACCESSORY",
+);
 const rotaryTorso = exercise("Rotary Torso Machine", 2, "10-15 per side", 75, "6", "Follow the machine placard. Use a light load and a comfortable range. Do both sides, then rest. Skip if your lower back is 3/10 or higher or twisting provokes symptoms.", "Abs", "ACCESSORY");
 const cableLateralRaise = exercise("Cable Lateral Raise", 3, "12-20 per arm", 75, "7", "Raise out and slightly forward, with a steady torso. Train both arms before resting.", null, "ACCESSORY");
 
@@ -138,7 +142,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("A2 Seated Chest-Supported Machine Row", 3, "8-12", 120, "7", "Keep the chest on the pad. Pull towards your ribs and return under control. Leave your wrists and elbows comfortable after the pulldowns."),
       exercise("D2 Reverse Pec Deck / Seated Machine Reverse Fly", 2, "12-20", 75, "7", "Keep your chest supported and elbows soft. Sweep out to the sides without shrugging.", null, "ACCESSORY"),
       cableLateralRaise,
-      machineCrunch, rotaryTorso,
+      declineBenchCrunch, rotaryTorso,
     ],
   },
   {
@@ -163,7 +167,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("C1 Overhead Cable Triceps Extension", 3, "12-18", 75, "7", "Use the straight-bar attachment. Keep elbows steady and use a range you can control. Use a supported or seated setup if more comfortable.", null, "ACCESSORY"),
       cableLateralRaise,
       exercise("C3 Face-Away Bayesian Cable Curl", 3, "10-15 per arm", 75, "7", "Use a light cable and stable stance. Keep the elbow slightly behind your torso without leaning back.", null, "ACCESSORY"),
-      { ...machineCrunch, sets: 3 },
+      { ...declineBenchCrunch, sets: 3 },
       { ...rotaryTorso, sets: 3 },
     ],
   },
@@ -185,7 +189,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("Kettlebell Farmer Walk", 5, "60 sec", 60, "6-7", "Use two matching kettlebells and log the load per hand. Walk for 60 seconds and rest 60 seconds. Start with three rounds if foot tolerance is uncertain. Skip if sole or ankle pain reaches 3/10, gait changes, or symptoms increase.", null, "TIMED"),
       exercise("Reverse EZ-Bar Curl", 2, "12-15", 75, "7", "Use an overhand grip with wrists straight and elbows beside you. Keep the load light enough to avoid wrist bending or swinging.", null, "ACCESSORY"),
       exercise("Machine Hip Thrust", 2, "10-15", 90, "6-7", "Use the glute-drive machine if available. Keep feet planted, ribs steady and finish by extending your hips. If the machine is unavailable, do a floor glute bridge and note the variation. Keep a few reps in reserve for Monday.", null, "ACCESSORY"),
-      machineCrunch, rotaryTorso,
+      declineBenchCrunch, rotaryTorso,
     ],
   },
 ];

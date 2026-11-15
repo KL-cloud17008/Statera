@@ -91,6 +91,7 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "hanging-knee-raise", name: "Hanging Knee Raise", muscleGroup: "Core", defaultSets: 3, defaultReps: "10-15", defaultRestSeconds: 60, source: "builtin" },
   { id: "cable-crunch", name: "Cable Crunch", muscleGroup: "Core", defaultSets: 2, defaultReps: "10-15", defaultRestSeconds: 90, source: "builtin" },
   { id: "abdominal-crunch-machine", name: "Abdominal Crunch Machine", muscleGroup: "Core", defaultSets: 2, defaultReps: "10-15", defaultRestSeconds: 75, source: "builtin" },
+  { id: "plate-weighted-decline-bench-crunch", name: "Plate-Weighted Decline Bench Crunch", muscleGroup: "Core", defaultSets: 2, defaultReps: "10-15", defaultRestSeconds: 75, source: "builtin" },
   { id: "rotary-torso-machine", name: "Rotary Torso Machine", muscleGroup: "Core", defaultSets: 2, defaultReps: "10-15 per side", defaultRestSeconds: 75, source: "builtin" },
   { id: "kettlebell-farmer-walk", name: "Kettlebell Farmer Walk", muscleGroup: "Full Body", defaultSets: 5, defaultReps: "60 sec", defaultRestSeconds: 60, source: "builtin" },
   { id: "farmers-carry", name: "Farmer's Carry", muscleGroup: "Full Body", defaultSets: 3, defaultReps: "40 m", defaultRestSeconds: 90, source: "builtin" },

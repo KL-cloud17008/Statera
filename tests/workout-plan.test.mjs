@@ -53,7 +53,7 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const day = (number) => days.find((entry) => entry.dayOfWeek === number);
   const exerciseNames = (number) => Array.from(day(number).exercises, (exercise) => exercise.exerciseName);
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v16");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v17");
   assert.deepEqual(Array.from(days, (entry) => entry.dayOfWeek), [1, 2, 3, 4, 5, 0]);
   const totals = Array.from(days, (entry) => entry.exercises.reduce((sets, exercise) => sets + exercise.sets, 0));
   assert.deepEqual(totals, [19, 21, 20, 21, 14, 13]);
@@ -85,24 +85,25 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   assert.match(day(2).exercises[2].cues, /reverse grip/);
   assert.deepEqual(exerciseNames(4), [
     "A1 Chest Machine Press", "Chest-Supported T-Bar Row", "C1 Overhead Cable Triceps Extension",
-    "Cable Lateral Raise", "C3 Face-Away Bayesian Cable Curl", "Abdominal Crunch Machine", "Rotary Torso Machine",
+    "Cable Lateral Raise", "C3 Face-Away Bayesian Cable Curl", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
   ]);
   assert.ok(day(4).exercises.every((exercise) => exercise.sets === 3));
   assert.match(day(4).exercises[2].cues, /straight-bar attachment/);
   assert.deepEqual(exerciseNames(0), [
-    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Machine Hip Thrust", "Abdominal Crunch Machine", "Rotary Torso Machine",
+    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Machine Hip Thrust", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
   ]);
   assert.equal(day(0).exercises[2].sets, 2);
   const carry = day(0).exercises[0];
   assert.deepEqual([carry.sets, carry.reps, carry.restSeconds, carry.exerciseType], [5, "60 sec", 60, "TIMED"]);
   for (const number of [0, 2, 4]) {
     const [crunch, rotation] = day(number).exercises.slice(-2);
-    assert.deepEqual([crunch.exerciseName, rotation.exerciseName], ["Abdominal Crunch Machine", "Rotary Torso Machine"]);
+    assert.deepEqual([crunch.exerciseName, rotation.exerciseName], ["Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine"]);
     assert.ok(crunch.supersetGroup);
     assert.equal(crunch.supersetGroup, rotation.supersetGroup);
     assert.equal(crunch.restSeconds, 0);
     assert.equal(rotation.restSeconds, 75);
     assert.equal(rotation.reps, "10-15 per side");
+    assert.equal(crunch.reps, "10-15");
     assert.equal(crunch.sets, number === 4 ? 3 : 2);
     assert.equal(crunch.sets, rotation.sets);
   }
@@ -132,12 +133,15 @@ test("the load rules and form guides cover the new accessories", () => {
   for (const name of ["Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Wide-Grip Lat Pulldown", "Chest-Supported T-Bar Row", "Abdominal Crunch Machine", "Rotary Torso Machine", "Machine Hip Thrust", "High-to-Low Cable Chest Press"]) {
     assert.ok(getExerciseFormGuide(name), name);
   }
-  for (const name of ["Seated Machine Shoulder Press", "Abdominal Crunch Machine", "Rotary Torso Machine"]) {
+  for (const name of ["Seated Machine Shoulder Press", "Abdominal Crunch Machine", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine"]) {
     assert.ok(workoutPlan.isBackPainGatedExercise(name), name);
   }
   assert.ok(!workoutPlan.isBackPainGatedExercise("Overhead Cable Triceps Extension"));
   assert.match(workoutPlan.PROGRESSIVE_OVERLOAD_RULES.join(" "), /three clean repetitions in reserve/);
-  assert.match(workoutPlan.WEEKLY_SET_SUMMARY.join(" "), /7 machine crunch sets and 7 rotary torso sets per side/);
+  const declineGuide = getExerciseFormGuide("Plate-Weighted Decline Bench Crunch");
+  assert.match(declineGuide.setup, /plate flat against your chest/);
+  assert.match(declineGuide.video.url, /^https:\/\/www\.youtube\.com\/watch\?v=/);
+  assert.match(workoutPlan.WEEKLY_SET_SUMMARY.join(" "), /7 weighted decline crunch sets and 7 rotary torso sets per side/);
 });
 
 test("session actions remain prominent and stateful", () => {
