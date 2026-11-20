@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v19";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v20";
 export const ADJUSTED_WEEK_HEADER_COPY = "Sunday through Friday, with short Sunday and Friday sessions and Saturday off. Work and commuting steps count towards total foot load.";
 export const SUNDAY_ACCESSORY_TITLE = "Sunday accessories — Farmer walks, glutes and abs";
 export const LOWER_A_TAPER_TITLE = "Lower A — Walking lunges, pendulum squat and triceps";
@@ -74,7 +74,7 @@ export const BACK_PAIN_RULES = [
 export const WEEKLY_SET_SUMMARY = [
   "Quads: 15 sets. Walking lunges and supported Bulgarian split squats stay in, with two pendulum and leg-extension slots.",
   "Hamstrings: 6 curl sets. Calves: up to 6 seated sets.",
-  "Hips: 2 dedicated glute-drive sets plus squat and lunge work. Adduction and abduction: 5 sets each, including a light Friday set each.",
+  "Hips: 2 cable glute kickback sets per leg plus squat and lunge work. Adduction and abduction: 5 sets each, including a light Friday set each.",
   "Chest: 11 sets. Vertical pulls: 6 sets. Supported rows: 6 sets.",
   "Side delts: 6 direct sets. Rear delts: 7 direct sets plus rows. Front delts work in the chest presses.",
   "Biceps: 5 dedicated sets. Triceps: 7 dedicated sets. Forearms and grip: 2 reverse EZ curl sets plus up to 5 farmer walks.",
@@ -188,7 +188,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     exercises: [
       exercise("Kettlebell Farmer Walk", 5, "60 sec", 60, "6-7", "Use two matching kettlebells and log the load per hand. Walk for 60 seconds and rest 60 seconds. Start with three rounds if foot tolerance is uncertain. Skip if sole or ankle pain reaches 3/10, gait changes, or symptoms increase.", null, "TIMED"),
       exercise("Reverse EZ-Bar Curl", 2, "8-12", 75, "7", "Use an overhand grip with wrists straight and elbows beside you. Keep the load light enough to avoid wrist bending or swinging.", null, "ACCESSORY"),
-      exercise("Machine Hip Thrust", 2, "8-12", 90, "6-7", "Use the glute-drive machine if available. Keep feet planted, ribs steady and finish by extending your hips. If the machine is unavailable, do a floor glute bridge and note the variation. Keep a few reps in reserve for Monday.", null, "ACCESSORY"),
+      exercise("Cable Glute Kickback", 2, "8-12 per leg", 75, "6-7", "Use a low pulley and ankle strap. Hold the frame for balance and keep your hips square. Train both legs before resting.", null, "ACCESSORY"),
       declineBenchCrunch, rotaryTorso,
     ],
   },

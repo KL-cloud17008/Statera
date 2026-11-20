@@ -77,6 +77,12 @@ export function CustomWorkoutBuilder({
     ]);
   }
 
+  function updateExercise(index: number, updates: Partial<WorkoutTemplateExercise>) {
+    setSelectedExercises((current) =>
+      current.map((exercise, position) => position === index ? { ...exercise, ...updates } : exercise)
+    );
+  }
+
   function saveCustomExercise() {
     const trimmed = customName.trim();
     if (!trimmed) {
@@ -265,7 +271,7 @@ export function CustomWorkoutBuilder({
           <span className="num text-right text-caption text-tertiary">{selectedExercises.length} queued</span>
         </div>
         <p className="mt-1 text-caption text-tertiary">
-          Adjust the working details directly in the list.
+          Give adjacent exercises the same group name to alternate them before resting.
         </p>
 
         {selectedExercises.length === 0 ? (
@@ -308,26 +314,14 @@ export function CustomWorkoutBuilder({
                   max="10"
                   value={exercise.sets}
                   onChange={(event) =>
-                    setSelectedExercises((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? { ...item, sets: Number.parseInt(event.target.value || "1", 10) || 1 }
-                          : item
-                      )
-                    )
+                    updateExercise(index, { sets: Number.parseInt(event.target.value, 10) || 1 })
                   }
                   className="h-9 px-2 text-right"
                   aria-label={`${exercise.name} sets`}
                 />
                 <Input
                   value={exercise.reps}
-                  onChange={(event) =>
-                    setSelectedExercises((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index ? { ...item, reps: event.target.value } : item
-                      )
-                    )
-                  }
+                  onChange={(event) => updateExercise(index, { reps: event.target.value })}
                   className="h-9 px-2 text-right"
                   aria-label={`${exercise.name} reps`}
                 />
@@ -340,13 +334,7 @@ export function CustomWorkoutBuilder({
                   max="600"
                   value={exercise.restSeconds}
                   onChange={(event) =>
-                    setSelectedExercises((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? { ...item, restSeconds: Number.parseInt(event.target.value || "0", 10) || 0 }
-                          : item
-                      )
-                    )
+                    updateExercise(index, { restSeconds: Number.parseInt(event.target.value, 10) || 0 })
                   }
                   className="hidden h-9 px-2 text-right md:block"
                   aria-label={`${exercise.name} rest seconds`}
@@ -366,6 +354,34 @@ export function CustomWorkoutBuilder({
                 >
                   <Trash2 className="size-3.5" />
                 </Button>
+
+                <details className="col-span-full text-caption text-secondary">
+                  <summary className="cursor-pointer py-2 font-medium focus-visible:outline-2 focus-visible:outline-accent">
+                    Grouping and cues{exercise.supersetGroup ? ` · ${exercise.supersetGroup}` : ""}
+                  </summary>
+                  <div className="grid gap-3 pb-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+                    <div>
+                      <Label htmlFor={`builder-group-${index}`}>Group name</Label>
+                      <Input
+                        id={`builder-group-${index}`}
+                        aria-label={`${exercise.name} group name`}
+                        maxLength={20}
+                        value={exercise.supersetGroup ?? ""}
+                        onChange={(event) => updateExercise(index, { supersetGroup: event.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`builder-cue-${index}`}>Session cue</Label>
+                      <Input
+                        id={`builder-cue-${index}`}
+                        aria-label={`${exercise.name} session cue`}
+                        maxLength={2000}
+                        value={exercise.notes ?? ""}
+                        onChange={(event) => updateExercise(index, { notes: event.target.value })}
+                      />
+                    </div>
+                  </div>
+                </details>
               </Row>
             ))}
           </Rows>

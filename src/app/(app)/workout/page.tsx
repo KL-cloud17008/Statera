@@ -63,7 +63,7 @@ export default async function WorkoutPage() {
         restSeconds: exercise.restSeconds,
         targetRPE: null,
         cues: exercise.notes ?? null,
-        supersetGroup: null,
+        supersetGroup: exercise.supersetGroup ?? null,
         exerciseType: "WORKING",
       })) ??
       []

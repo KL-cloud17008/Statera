@@ -53,7 +53,7 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const day = (number) => days.find((entry) => entry.dayOfWeek === number);
   const exerciseNames = (number) => Array.from(day(number).exercises, (exercise) => exercise.exerciseName);
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v19");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v20");
   assert.deepEqual(Array.from(days, (entry) => entry.dayOfWeek), [1, 2, 3, 4, 5, 0]);
   const totals = Array.from(days, (entry) => entry.exercises.reduce((sets, exercise) => sets + exercise.sets, 0));
   assert.deepEqual(totals, [19, 21, 20, 21, 14, 13]);
@@ -109,9 +109,10 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   assert.equal(day(4).exercises[4].reps, "8-12 per arm");
   assert.match(day(4).exercises[2].cues, /straight-bar attachment/);
   assert.deepEqual(exerciseNames(0), [
-    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Machine Hip Thrust", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
+    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Cable Glute Kickback", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
   ]);
   assert.equal(day(0).exercises[2].sets, 2);
+  assert.equal(day(0).exercises[2].reps, "8-12 per leg");
   const carry = day(0).exercises[0];
   assert.deepEqual([carry.sets, carry.reps, carry.restSeconds, carry.exerciseType], [5, "60 sec", 60, "TIMED"]);
   for (const number of [0, 2, 4]) {
@@ -149,7 +150,7 @@ test("the load rules and form guides cover the new accessories", () => {
     assert.match(exercise.cues, /3\/10/);
     assert.ok(workoutPlan.isFootPainGatedExercise(exercise.exerciseName));
   }
-  for (const name of ["Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Wide-Grip Lat Pulldown", "Chest-Supported T-Bar Row", "Abdominal Crunch Machine", "Rotary Torso Machine", "Machine Hip Thrust", "High-to-Low Cable Chest Press"]) {
+  for (const name of ["Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Wide-Grip Lat Pulldown", "Chest-Supported T-Bar Row", "Abdominal Crunch Machine", "Rotary Torso Machine", "Machine Hip Thrust", "Cable Glute Kickback", "Incline Machine Chest Press", "High-to-Low Cable Chest Press"]) {
     assert.ok(getExerciseFormGuide(name), name);
   }
   for (const name of ["Seated Machine Shoulder Press", "Abdominal Crunch Machine", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine"]) {
@@ -407,13 +408,13 @@ test("primary app routes remain mounted", () => {
 test("custom exercise library stays available without changing active plan constraints", () => {
   const { DEFAULT_EXERCISE_LIBRARY: library } = loadTypescriptModule("src/lib/exercise-library.ts");
   const mainLifts = new Set([
-    "machine-chest-press", "incline-dumbbell-press", "chest-supported-row", "chest-supported-t-bar-row",
+    "machine-chest-press", "incline-machine-chest-press", "incline-dumbbell-press", "chest-supported-row", "chest-supported-t-bar-row",
     "machine-row", "lat-pulldown", "neutral-grip-lat-pulldown", "wide-grip-lat-pulldown",
     "seated-cable-row", "single-leg-leg-press", "leg-press", "pendulum-squat",
   ]);
   for (const movement of library) {
     if (movement.id === "walking-lunges" || / (sec|m)$/.test(movement.defaultReps)) continue;
-    const expectedRange = mainLifts.has(movement.id) ? /^4-6(?: per side)?$/ : /^8-12(?: per (?:arm|side))?$/;
+    const expectedRange = mainLifts.has(movement.id) ? /^4-6(?: per side)?$/ : /^8-12(?: per (?:leg|arm|side))?$/;
     assert.match(movement.defaultReps, expectedRange, movement.name);
   }
   assert.match(exerciseLibrarySource, /Machine Chest Press/);

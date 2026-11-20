@@ -158,6 +158,33 @@ test("planned and custom starts share the same concurrency boundary", async () =
   assert.equal(results[0].sessionId, results[1].sessionId); assert.equal(f.state.sessions.length, 1);
 });
 
+test("custom workouts persist ordered groups and visible load cues", async () => {
+  const f = fixture({ now: "2026-11-20T15:00:00Z" });
+  const definition = [
+    { exerciseId: "chest-fly", name: "Chest Fly", muscleGroup: "Chest", sets: 2, reps: "8-12", restSeconds: 0, supersetGroup: "  Pec deck  " },
+    { exerciseId: "reverse-fly", name: "Reverse Pec Deck", muscleGroup: "Shoulders", sets: 2, reps: "8-12", restSeconds: 90, supersetGroup: "Pec deck" },
+    { exerciseId: "crunch", name: "Decline Bench Crunch", muscleGroup: "Core", sets: 3, reps: "8-12 · 5 kg plate", restSeconds: 90, notes: "Log the plate weight." },
+  ];
+  const form = new FormData();
+  form.set("label", "Accessory circuit");
+  form.set("exercises", JSON.stringify([{ ...definition[0], supersetGroup: 123 }]));
+  assert.ok((await f.actions.startCustomWorkoutSession(form)).error);
+  assert.equal(f.state.sessions.length, 0);
+
+  form.set("exercises", JSON.stringify(definition));
+  const result = await f.actions.startCustomWorkoutSession(form);
+  assert.ok(!result.error, result.error);
+  const session = await f.actions.getSessionWithSets(result.sessionId);
+  assert.equal(session.trainingDate.toISOString().slice(0, 10), "2026-11-20");
+  assert.deepEqual(session.sets, []);
+  const saved = JSON.parse(session.notes).exercises;
+  assert.deepEqual(saved, [{ ...definition[0], supersetGroup: "Pec deck" }, ...definition.slice(1)]);
+
+  const { parseAppSettings } = f.load("src/lib/app-settings.ts");
+  const reloaded = parseAppSettings(JSON.stringify({ workoutTemplates: [{ exercises: saved }] }));
+  assert.equal(reloaded.workoutTemplates[0].exercises[0].supersetGroup, "Pec deck");
+});
+
 test("duplicate save requests create one set and resolve a lost-response retry", async () => {
   const f = fixture(); const session = f.addSession();
   const results = await Promise.all([f.actions.logSet(f.form(session.id)), f.actions.logSet(f.form(session.id))]);

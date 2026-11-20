@@ -30,7 +30,7 @@ export default async function EditWorkoutSessionPage({ params }: { params: Promi
   const exercises = (session.workoutPlan?.exercises ?? meta?.exercises?.map((exercise, index) => ({
     id: `custom-${index}`, exerciseName: exercise.name, sets: exercise.sets, reps: exercise.reps,
     tempo: null, restSeconds: exercise.restSeconds, targetRPE: null, cues: exercise.notes ?? null,
-    supersetGroup: null, exerciseType: "WORKING",
+    supersetGroup: exercise.supersetGroup ?? null, exerciseType: "WORKING",
   })) ?? []).filter(isLoggableTrainingExercise);
   const sets = session.sets.filter((set) => !isAtHomePrimerExerciseName(set.exerciseName));
 

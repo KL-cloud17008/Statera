@@ -102,6 +102,7 @@ function parseWorkoutTemplates(value: unknown): WorkoutTemplate[] {
               sets: Math.min(20, Math.max(1, exercise.sets as number)),
               reps: exercise.reps as string,
               restSeconds: Math.min(7200, Math.max(0, exercise.restSeconds as number)),
+              supersetGroup: typeof exercise.supersetGroup === "string" ? exercise.supersetGroup : undefined,
               notes: typeof exercise.notes === "string" ? exercise.notes : undefined,
             }))
         : [];

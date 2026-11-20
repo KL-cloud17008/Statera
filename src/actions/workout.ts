@@ -310,6 +310,7 @@ export async function startCustomWorkoutSession(formData: FormData): Promise<Wor
     isAtHomePrimerExerciseName(exercise.name) || !Number.isInteger(exercise.sets) || exercise.sets < 1 || exercise.sets > 50 ||
     typeof exercise.reps !== "string" || !exercise.reps.trim() || exercise.reps.length > 80 ||
     !Number.isInteger(exercise.restSeconds) || exercise.restSeconds < 0 || exercise.restSeconds > 7200 ||
+    (exercise.supersetGroup != null && (typeof exercise.supersetGroup !== "string" || exercise.supersetGroup.length > 20)) ||
     (exercise.notes != null && (typeof exercise.notes !== "string" || exercise.notes.length > 2000))
   ) || new Set(exercises.map((exercise) => exercise.name.trim())).size !== exercises.length) {
     return { error: "Add valid exercises, sets, reps and rest times before starting a session" };
@@ -325,6 +326,7 @@ export async function startCustomWorkoutSession(formData: FormData): Promise<Wor
           exerciseId: typeof exercise.exerciseId === "string" ? exercise.exerciseId : exercise.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
           name: exercise.name.trim(), muscleGroup: exercise.muscleGroup,
           sets: exercise.sets, reps: exercise.reps.trim(), restSeconds: exercise.restSeconds, notes: exercise.notes,
+          supersetGroup: exercise.supersetGroup?.trim() || undefined,
         })),
       }),
     } });

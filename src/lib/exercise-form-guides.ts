@@ -76,6 +76,16 @@ const guides = {
     movement: "Press forward with your wrists in line with your forearms, then return slowly to a comfortable stretch.",
     commonMistake: "Flaring your elbows straight out or rolling your shoulders forward at the bottom.",
   },
+  inclineMachinePress: {
+    setup: "Adjust the seat so the handles start around your upper chest. Plant your feet and support your back on the pad.",
+    movement: "Press up along the machine's path, then lower with control through a comfortable range.",
+    commonMistake: "Lifting your hips off the seat or shrugging as you press.",
+  },
+  cableGluteKickback: {
+    setup: "Attach an ankle strap to a low pulley, face the stack and hold the frame for balance.",
+    movement: "Keep your hips square and extend the working leg behind you. Bring it forwards slowly and repeat on the other side.",
+    commonMistake: "Arching your lower back or rotating your hips to lift the weight higher.",
+  },
   row: {
     setup: "Set the chest pad or seat so you can reach the handles with a long spine and relaxed shoulders.",
     movement: "Pull your elbows back toward your ribs. Pause briefly, then reach forward under control.",
@@ -238,6 +248,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "hip adduction machine": "adduction",
   "seated machine preacher curl": "preacher",
   "machine chest press": "chestPress",
+  "incline machine chest press": "inclineMachinePress",
   "chest machine press": "chestPress",
   "seated chest-supported machine row": "row",
   "chest-supported row or seated cable row": "row",
@@ -274,6 +285,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "plate-weighted decline bench crunch": "declineBenchCrunch",
   "rotary torso machine": "rotaryTorso",
   "machine hip thrust": "hipThrust",
+  "cable glute kickback": "cableGluteKickback",
   "farmer's carry": "carry",
   "kettlebell farmer walk": "carry",
   "reverse ez-bar curl": "reverseCurl",

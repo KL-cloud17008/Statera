@@ -26,6 +26,7 @@ export type WorkoutTemplateExercise = {
   sets: number;
   reps: string;
   restSeconds: number;
+  supersetGroup?: string;
   notes?: string;
 };
 
@@ -44,8 +45,11 @@ export type FreeWorkoutSessionDraft = {
 
 export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "machine-chest-press", name: "Machine Chest Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 120, source: "builtin" },
+  { id: "incline-machine-chest-press", name: "Incline Machine Chest Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 120, source: "builtin" },
   { id: "incline-dumbbell-press", name: "Incline Dumbbell Press", muscleGroup: "Chest", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 90, source: "builtin" },
   { id: "chest-fly", name: "Chest Fly", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
+  { id: "seated-machine-chest-fly", name: "Seated Machine Chest Fly", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
+  { id: "high-to-low-cable-chest-press", name: "High-to-Low Cable Chest Press", muscleGroup: "Chest", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 105, source: "builtin" },
   { id: "high-to-low-cable-fly", name: "High-to-Low Cable Fly", muscleGroup: "Chest", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "single-arm-pec-deck", name: "Single-Arm Pec Deck", muscleGroup: "Chest", defaultSets: 2, defaultReps: "8-12 per arm", defaultRestSeconds: 120, source: "builtin" },
   { id: "two-arm-reverse-pec-deck", name: "Two-Arm Reverse Pec Deck", muscleGroup: "Shoulders", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
@@ -63,13 +67,18 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "pendulum-squat", name: "Pendulum Squat", muscleGroup: "Legs", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 180, source: "builtin" },
   { id: "back-extension-machine", name: "Back Extension Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "leg-curl", name: "Leg Curl", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 75, source: "builtin" },
+  { id: "seated-leg-curl", name: "Seated Leg Curl", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 105, source: "builtin" },
   { id: "lying-leg-curl", name: "Lying Leg Curl", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "machine-hip-thrust", name: "Machine Hip Thrust", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
+  { id: "cable-glute-kickback", name: "Cable Glute Kickback", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12 per leg", defaultRestSeconds: 75, source: "builtin" },
+  { id: "hip-adduction-machine", name: "Hip Adduction Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
+  { id: "hip-abduction-machine", name: "Hip Abduction Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
   { id: "leg-extension", name: "Leg Extension", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   // No standing calf raise: the gym has no standing calf machine. Both seated
   // machines are listed, plus the fallbacks used when one is out of service.
   { id: "seated-straight-leg-calf-machine", name: "Seated Straight-Leg Calf Machine", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "seated-bent-leg-calf-raise", name: "Seated Bent-Leg Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
+  { id: "seated-calf-raise", name: "Seated Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "leg-press-calf-press", name: "Leg Press Calf Press", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "seated-dumbbell-calf-raise", name: "Seated Dumbbell Calf Raise", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "machine-lateral-raise", name: "Machine Lateral Raise", muscleGroup: "Shoulders", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
@@ -86,6 +95,7 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "rope-triceps-pressdown", name: "Rope Triceps Pressdown", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "overhead-cable-triceps-extension", name: "Overhead Cable Triceps Extension", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "cable-curl", name: "Cable Curl", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
+  { id: "face-away-bayesian-cable-curl", name: "Face-Away Bayesian Cable Curl", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12 per arm", defaultRestSeconds: 75, source: "builtin" },
   { id: "skull-crusher", name: "Skull Crusher", muscleGroup: "Arms", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 75, source: "builtin" },
   { id: "plank", name: "Plank", muscleGroup: "Core", defaultSets: 3, defaultReps: "30-60 sec", defaultRestSeconds: 45, source: "builtin" },
   { id: "hanging-knee-raise", name: "Hanging Knee Raise", muscleGroup: "Core", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
