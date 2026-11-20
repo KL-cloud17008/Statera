@@ -53,7 +53,7 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const day = (number) => days.find((entry) => entry.dayOfWeek === number);
   const exerciseNames = (number) => Array.from(day(number).exercises, (exercise) => exercise.exerciseName);
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v20");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v21");
   assert.deepEqual(Array.from(days, (entry) => entry.dayOfWeek), [1, 2, 3, 4, 5, 0]);
   const totals = Array.from(days, (entry) => entry.exercises.reduce((sets, exercise) => sets + exercise.sets, 0));
   assert.deepEqual(totals, [19, 21, 20, 21, 14, 13]);
@@ -109,7 +109,7 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   assert.equal(day(4).exercises[4].reps, "8-12 per arm");
   assert.match(day(4).exercises[2].cues, /straight-bar attachment/);
   assert.deepEqual(exerciseNames(0), [
-    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Cable Glute Kickback", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
+    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Machine Glute Kickback", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
   ]);
   assert.equal(day(0).exercises[2].sets, 2);
   assert.equal(day(0).exercises[2].reps, "8-12 per leg");
@@ -158,6 +158,7 @@ test("the load rules and form guides cover the new accessories", () => {
   }
   assert.ok(!workoutPlan.isBackPainGatedExercise("Overhead Cable Triceps Extension"));
   assert.match(workoutPlan.PROGRESSIVE_OVERLOAD_RULES.join(" "), /three clean repetitions in reserve/);
+  assert.match(getExerciseFormGuide("Machine Glute Kickback").setup, /machine's placard/);
   const declineGuide = getExerciseFormGuide("Plate-Weighted Decline Bench Crunch");
   assert.match(declineGuide.setup, /plate flat against your chest/);
   assert.match(declineGuide.video.url, /^https:\/\/www\.youtube\.com\/watch\?v=/);

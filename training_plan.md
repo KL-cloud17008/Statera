@@ -18,7 +18,7 @@ Use 4–6 working reps on machine chest presses, pendulum squats, chest-supporte
 
 1. Kettlebell farmer walk · 5 rounds of 60 seconds walking and 60 seconds resting · log kilograms per hand and seconds completed.
 2. Reverse EZ-bar curl · 2 × 8–12.
-3. Cable glute kickback · 2 × 8–12 per leg. Use a low pulley and ankle strap. Keep your hips square and do both sides before resting 75 seconds.
+3. Machine glute kickback · 2 × 8–12 per leg. Follow the machine's setup placard. Keep your hips square and do both sides before resting 75 seconds.
 4. Plate-weighted decline bench crunch · 2 × 8–12 → rotary torso machine · 2 × 8–12 per side. Rest 75 seconds after the rotation on both sides.
 
 Pick a steady walking pace and a light pair of kettlebells. Start with three rounds if you are unsure how your feet will respond. Build to five once your gait and next-morning symptoms stay steady.
@@ -74,4 +74,4 @@ The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four
 - Skip loaded crunches, rotary torso and overhead pressing at lower-back pain of 3/10 or higher. Stop a movement that increases symptoms. The optional home core routine remains available under Mobility.
 - On a short work day, preserve rest on the main lifts and trim a final accessory if needed.
 
-The week programmes 15 quad sets, 6 leg-curl sets, up to 6 seated calf sets, and 2 cable glute kickback sets per leg plus the squat and lunge work. Hip adduction and hip abduction each get 5 sets, including one light Friday set. Upper-body totals include 11 chest sets, 6 pulldowns, 6 supported rows, 6 side-delt sets and 7 rear-delt isolation sets. The arm plan has 5 dedicated biceps sets and 7 dedicated triceps sets, with additional work from pulling and pressing. Forearms and grip get 2 reverse curl sets and up to 5 carries. Gym core adds 7 crunch sets and 7 rotations per side across Sunday, Tuesday and Thursday.
+The week programmes 15 quad sets, 6 leg-curl sets, up to 6 seated calf sets, and 2 machine glute kickback sets per leg plus the squat and lunge work. Hip adduction and hip abduction each get 5 sets, including one light Friday set. Upper-body totals include 11 chest sets, 6 pulldowns, 6 supported rows, 6 side-delt sets and 7 rear-delt isolation sets. The arm plan has 5 dedicated biceps sets and 7 dedicated triceps sets, with additional work from pulling and pressing. Forearms and grip get 2 reverse curl sets and up to 5 carries. Gym core adds 7 crunch sets and 7 rotations per side across Sunday, Tuesday and Thursday.

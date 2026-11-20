@@ -71,6 +71,7 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "lying-leg-curl", name: "Lying Leg Curl", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "machine-hip-thrust", name: "Machine Hip Thrust", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 90, source: "builtin" },
   { id: "cable-glute-kickback", name: "Cable Glute Kickback", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12 per leg", defaultRestSeconds: 75, source: "builtin" },
+  { id: "machine-glute-kickback", name: "Machine Glute Kickback", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12 per leg", defaultRestSeconds: 75, source: "builtin" },
   { id: "hip-adduction-machine", name: "Hip Adduction Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
   { id: "hip-abduction-machine", name: "Hip Abduction Machine", muscleGroup: "Legs", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 60, source: "builtin" },
   { id: "leg-extension", name: "Leg Extension", muscleGroup: "Legs", defaultSets: 3, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },

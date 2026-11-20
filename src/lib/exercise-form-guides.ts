@@ -86,6 +86,11 @@ const guides = {
     movement: "Keep your hips square and extend the working leg behind you. Bring it forwards slowly and repeat on the other side.",
     commonMistake: "Arching your lower back or rotating your hips to lift the weight higher.",
   },
+  machineGluteKickback: {
+    setup: "Follow the machine's placard to set the supports and position your working leg. Use the pads or handles to keep your torso steady.",
+    movement: "Press back from the hip while keeping your pelvis square. Return slowly through a comfortable range, then switch legs.",
+    commonMistake: "Arching your lower back or turning your hips to push the lever farther.",
+  },
   row: {
     setup: "Set the chest pad or seat so you can reach the handles with a long spine and relaxed shoulders.",
     movement: "Pull your elbows back toward your ribs. Pause briefly, then reach forward under control.",
@@ -286,6 +291,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "rotary torso machine": "rotaryTorso",
   "machine hip thrust": "hipThrust",
   "cable glute kickback": "cableGluteKickback",
+  "machine glute kickback": "machineGluteKickback",
   "farmer's carry": "carry",
   "kettlebell farmer walk": "carry",
   "reverse ez-bar curl": "reverseCurl",
