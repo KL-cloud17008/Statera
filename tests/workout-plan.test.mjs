@@ -53,12 +53,17 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const day = (number) => days.find((entry) => entry.dayOfWeek === number);
   const exerciseNames = (number) => Array.from(day(number).exercises, (exercise) => exercise.exerciseName);
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v17");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v18");
   assert.deepEqual(Array.from(days, (entry) => entry.dayOfWeek), [1, 2, 3, 4, 5, 0]);
   const totals = Array.from(days, (entry) => entry.exercises.reduce((sets, exercise) => sets + exercise.sets, 0));
   assert.deepEqual(totals, [19, 21, 20, 21, 14, 13]);
   assert.equal(totals.reduce((sum, sets) => sum + sets, 0), 108);
   const exercises = days.flatMap((entry) => entry.exercises);
+  for (const movement of exercises) {
+    if (movement.exerciseType === "TIMED" || movement.exerciseName.endsWith("Walking Lunges")) continue;
+    const range = /^(\d+)-(\d+)(?: per (?:leg|arm|side))?$/.exec(movement.reps);
+    assert.ok(range && Number(range[2]) <= 12, `${movement.exerciseName} must cap working reps at 12`);
+  }
   const quadSets = exercises.filter((exercise) => /Lunges|Bulgarian|Pendulum|Leg Extension/.test(exercise.exerciseName))
     .reduce((sets, exercise) => sets + exercise.sets, 0);
   assert.equal(quadSets, 15);
@@ -72,6 +77,10 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
       number === 1 ? "Triceps Pressdown, bar" : "Seated Machine Preacher Curl",
     ]);
     assert.equal(moves[0].sets, 1);
+    assert.equal(moves[3].reps, number === 1 ? "6-10 steps per leg" : "6-8 per leg");
+    assert.equal(moves[4].reps, "4-6");
+    assert.equal(moves[6].reps, "4-8");
+    assert.equal(moves[7].reps, "4-8");
     assert.equal(moves[4].supersetGroup, moves[5].supersetGroup);
     assert.equal(moves[4].restSeconds, 0);
     assert.equal(moves[5].restSeconds, 165);
@@ -81,6 +90,8 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
     "A1 Machine Chest Press", "Wide-Grip Lat Pulldown", "B2 Close-Grip Lat Pulldown", "A2 Seated Chest-Supported Machine Row",
   ]);
   assert.ok(day(2).exercises.slice(0, 4).every((exercise) => exercise.sets === 3));
+  assert.deepEqual(Array.from(day(2).exercises.slice(0, 3), (exercise) => exercise.reps), ["4-6", "4-12", "4-12"]);
+  assert.equal(day(2).exercises[5].reps, "8-12 per arm");
   assert.equal(day(2).exercises[1].supersetGroup, day(2).exercises[2].supersetGroup);
   assert.match(day(2).exercises[2].cues, /reverse grip/);
   assert.deepEqual(exerciseNames(4), [
@@ -88,6 +99,9 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
     "Cable Lateral Raise", "C3 Face-Away Bayesian Cable Curl", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
   ]);
   assert.ok(day(4).exercises.every((exercise) => exercise.sets === 3));
+  assert.equal(day(4).exercises[0].reps, "4-6");
+  assert.equal(day(4).exercises[3].reps, "8-12 per arm");
+  assert.equal(day(4).exercises[4].reps, "8-12 per arm");
   assert.match(day(4).exercises[2].cues, /straight-bar attachment/);
   assert.deepEqual(exerciseNames(0), [
     "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Machine Hip Thrust", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine",
@@ -102,8 +116,8 @@ test("the six-day programme preserves leg volume and adds the requested pairs an
     assert.equal(crunch.supersetGroup, rotation.supersetGroup);
     assert.equal(crunch.restSeconds, 0);
     assert.equal(rotation.restSeconds, 75);
-    assert.equal(rotation.reps, "10-15 per side");
-    assert.equal(crunch.reps, "10-15");
+    assert.equal(rotation.reps, "8-12 per side");
+    assert.equal(crunch.reps, "8-12");
     assert.equal(crunch.sets, number === 4 ? 3 : 2);
     assert.equal(crunch.sets, rotation.sets);
   }
@@ -386,6 +400,12 @@ test("primary app routes remain mounted", () => {
 });
 
 test("custom exercise library stays available without changing active plan constraints", () => {
+  const { DEFAULT_EXERCISE_LIBRARY: library } = loadTypescriptModule("src/lib/exercise-library.ts");
+  for (const movement of library) {
+    if (movement.id === "walking-lunges" || / (sec|m)$/.test(movement.defaultReps)) continue;
+    const range = /^(\d+)-(\d+)(?: per (?:leg|arm|side))?$/.exec(movement.defaultReps);
+    assert.ok(range && Number(range[2]) <= 12, `${movement.name} must cap the built-in rep range at 12`);
+  }
   assert.match(exerciseLibrarySource, /Machine Chest Press/);
   assert.match(exerciseLibrarySource, /Single-Leg Leg Press/);
   assert.match(exerciseLibrarySource, /Back Extension Machine/);

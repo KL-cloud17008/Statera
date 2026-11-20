@@ -587,7 +587,7 @@ test("Tuesday refresh keeps old incline records and drafts separate from the new
     assert.match(updated.sessionName, /paired pulldowns, row and abs/);
     assert.equal(updated.exercises[0].exerciseName, "A1 Machine Chest Press");
     assert.equal(updated.exercises[0].sets, 3);
-    assert.equal(updated.exercises[0].reps, "8-12");
+    assert.equal(updated.exercises[0].reps, "4-6");
     assert.equal(updated.exercises[0].targetRPE, "6-7");
     assert.deepEqual(updated.exercises.map(exercise => exercise.sets), [3, 3, 3, 3, 2, 3, 2, 2]);
     const current = await f.actions.getSessionWithSets(open.id);

@@ -15,57 +15,58 @@ Train Sunday through Friday and keep Saturday for rest. Gym sessions are estimat
 ## Sunday
 
 1. Kettlebell farmer walk · 5 rounds of 60 seconds walking and 60 seconds resting · log kilograms per hand and seconds completed.
-2. Reverse EZ-bar curl · 2 × 12–15.
-3. Machine hip thrust · 2 × 10–15. Substitute a floor glute bridge if the glute-drive machine is unavailable. Leave a few reps in reserve for Monday.
-4. Plate-weighted decline bench crunch · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
+2. Reverse EZ-bar curl · 2 × 8–12.
+3. Machine hip thrust · 2 × 6–10. Substitute a floor glute bridge if the glute-drive machine is unavailable. Leave a few reps in reserve for Monday.
+4. Plate-weighted decline bench crunch · 2 × 8–12 → rotary torso machine · 2 × 8–12 per side. Rest 75 seconds after the rotation on both sides.
 
 Pick a steady walking pace and a light pair of kettlebells. Start with three rounds if you are unsure how your feet will respond. Build to five once your gait and next-morning symptoms stay steady.
 
 ## Monday and Wednesday
 
-Start with one or two easy lying leg curl sets of 12–15. Use the following order on both days. Perform both sides before resting on unilateral work.
+Start with one or two easy lying leg curl sets of 8–10. Use the following order on both days. Perform both sides before resting on unilateral work.
 
 | Order | Monday · Lower A | Wednesday · Lower B |
 |---:|---|---|
-| 1 | Lying leg curl · 1 × 10–15 working | Lying leg curl · 1 × 10–15 working |
-| 2 | Hip adduction → hip abduction · 2 × 12–20 each | Hip adduction → hip abduction · 2 × 12–20 each |
-| 3 | Bodyweight lunge warm-up, then dumbbell walking lunges · 2 × 6–10 steps per leg | Bodyweight lunge warm-up, then supported Bulgarian split squat · 3 × 8–10 per leg |
-| 4 | Pendulum squat · 3 × 8–12 → seated calf raise · 3 × 12–20 | Pendulum squat · 3 × 8–12 → seated calf raise · 3 × 12–20 |
-| 5 | Seated leg curl · 2 × 10–15 | Seated leg curl · 2 × 10–15 |
-| 6 | Seated leg extension · 2 × 10–15 | Seated leg extension · 2 × 10–15 |
-| 7 | Straight-bar triceps pressdown · 2 × 10–15 | Machine preacher curl · 2 × 10–15 |
+| 1 | Lying leg curl · 1 × 6–8 working | Lying leg curl · 1 × 6–8 working |
+| 2 | Hip adduction → hip abduction · 2 × 8–12 each | Hip adduction → hip abduction · 2 × 8–12 each |
+| 3 | Bodyweight lunge warm-up, then dumbbell walking lunges · 2 × 6–10 steps per leg | Bodyweight lunge warm-up, then supported Bulgarian split squat · 3 × 6–8 per leg |
+| 4 | Pendulum squat · 3 × 4–6 → seated calf raise · 3 × 8–12 | Pendulum squat · 3 × 4–6 → seated calf raise · 3 × 8–12 |
+| 5 | Seated leg curl · 2 × 4–8 | Seated leg curl · 2 × 4–8 |
+| 6 | Seated leg extension · 2 × 4–8 | Seated leg extension · 2 × 4–8 |
+| 7 | Straight-bar triceps pressdown · 2 × 8–12 | Machine preacher curl · 2 × 8–12 |
 
 The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four supported Bulgarian split squats and four reverse lunges per leg. Rest 60–75 seconds after each hip pair and 150–180 seconds after each squat and calf pair. If calf work affects squat stability, take the full squat rest and do the movements separately.
 
 ## Tuesday
 
-1. Machine chest press · 3 × 8–12. Use a supported incline machine as an alternative and note which you used.
-2. Wide-grip pulldown · 3 × 8–12 → close-grip pulldown · 3 × 10–12. Rest two minutes after each pair. If the close-grip handle is unavailable, use a comfortable shoulder-width reverse grip and record it in the notes.
-3. Chest-supported machine row · 3 × 8–12.
-4. Reverse pec deck · 2 × 12–20.
-5. Cable lateral raise · 3 × 12–20 per arm.
-6. Plate-weighted decline bench crunch · 2 × 10–15 → rotary torso machine · 2 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
+1. Machine chest press · 3 × 4–6. Use a supported incline machine as an alternative and note which you used.
+2. Wide-grip pulldown · 3 × 4–12 → close-grip pulldown · 3 × 4–12. Rest two minutes after each pair. If the close-grip handle is unavailable, use a comfortable shoulder-width reverse grip and record it in the notes.
+3. Chest-supported machine row · 3 × 6–10.
+4. Reverse pec deck · 2 × 8–12.
+5. Cable lateral raise · 3 × 8–12 per arm.
+6. Plate-weighted decline bench crunch · 2 × 8–12 → rotary torso machine · 2 × 8–12 per side. Rest 75 seconds after the rotation on both sides.
 
 ## Thursday
 
-1. Machine chest press · 3 × 8–12.
-2. Chest-supported T-bar row · 3 × 8–12.
-3. Straight-bar overhead cable triceps extension · 3 × 12–18.
-4. Cable lateral raise · 3 × 12–20 per arm.
-5. Face-away Bayesian cable curl · 3 × 10–15 per arm.
-6. Plate-weighted decline bench crunch · 3 × 10–15 → rotary torso machine · 3 × 10–15 per side. Rest 75 seconds after the rotation on both sides.
+1. Machine chest press · 3 × 4–6.
+2. Chest-supported T-bar row · 3 × 6–10.
+3. Straight-bar overhead cable triceps extension · 3 × 8–12.
+4. Cable lateral raise · 3 × 8–12 per arm.
+5. Face-away Bayesian cable curl · 3 × 8–12 per arm.
+6. Plate-weighted decline bench crunch · 3 × 8–12 → rotary torso machine · 3 × 8–12 per side. Rest 75 seconds after the rotation on both sides.
 
 ## Friday
 
-1. Machine chest fly · 3 × 12–15 → reverse pec deck · 3 × 12–20. Rest 90 seconds after each pair.
-2. High-to-low cable chest press · 2 × 10–15.
-3. Reverse cable crossover · 2 × 12–20.
-4. Triceps · 2 × 10–15. Choose straight-bar cable pressdown, rope cable pressdown or straight-bar overhead cable extension. Select your variation in the set log.
-5. Hip adduction machine · 1 × 15–20 → hip abduction machine · 1 × 15–20. Use a lighter load than on leg days and leave at least four reps in reserve.
+1. Machine chest fly · 3 × 8–12 → reverse pec deck · 3 × 8–12. Rest 90 seconds after each pair.
+2. High-to-low cable chest press · 2 × 6–10.
+3. Reverse cable crossover · 2 × 8–12.
+4. Triceps · 2 × 8–12. Choose straight-bar cable pressdown, rope cable pressdown or straight-bar overhead cable extension. Select your variation in the set log.
+5. Hip adduction machine · 1 × 8–12 → hip abduction machine · 1 × 8–12. Use a lighter load than on leg days and leave at least four reps in reserve.
 
 ## Progression and recovery
 
-- Start decline crunches at bodyweight. Secure your feet at the high end, curl your ribs towards your hips and lower slowly. Hold a light plate against your chest once you can do 15 clean reps in each set. Keep the bench angle consistent and log the plate alone, using 0 kg for bodyweight. Use the same seat setting for rotary torso and meet the target on both sides before adding weight. [Decline crunch form demo](https://www.youtube.com/watch?v=gYXr-AbnCYk)
+- Ramp up with lighter sets before the chest press and pendulum squat. Add the smallest load increment once every working set reaches the top of its range at the target effort.
+- Start decline crunches at bodyweight. Secure your feet at the high end, curl your ribs towards your hips and lower slowly. Hold a light plate against your chest once you can do 12 clean reps in each set. Keep the bench angle consistent and log the plate alone, using 0 kg for bodyweight. Use the same seat setting for rotary torso and meet the target on both sides before adding weight. [Decline crunch form demo](https://www.youtube.com/watch?v=gYXr-AbnCYk)
 - Keep an easy 75 seconds between most small accessory sets and about two minutes after the main upper-body presses and rows.
 - Skip loaded carries and calf raises at foot or ankle pain of 3/10 or higher, if pain increases or if your gait changes. If symptoms are worse the next morning, reduce the next dose.
 - Skip loaded crunches, rotary torso and overhead pressing at lower-back pain of 3/10 or higher. Stop a movement that increases symptoms. The optional home core routine remains available under Mobility.
