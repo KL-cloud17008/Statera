@@ -207,6 +207,11 @@ const guides = {
     movement: "Hinge at your hips and lower to a comfortable depth. Return until your torso and legs line up.",
     commonMistake: "Arching past a straight body line at the top.",
   },
+  backExtensionMachine: {
+    setup: "Use the machine placard to set the pads, supports and starting position. Choose a comfortable range.",
+    movement: "Extend smoothly against the resistance and return slowly to the starting position.",
+    commonMistake: "Bouncing at the start or arching past a neutral position at the end of the rep.",
+  },
   pressdown: {
     setup: "Set the pulley high. Hold the bar or rope with elbows at your sides and wrists in line with your forearms.",
     movement: "Straighten your elbows to press down, then let the attachment rise slowly while keeping your upper arms still.",
@@ -296,7 +301,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "kettlebell farmer walk": "carry",
   "reverse ez-bar curl": "reverseCurl",
   "back extension — hyperextension bench": "backExtension",
-  "back extension machine": "backExtension",
+  "back extension machine": "backExtensionMachine",
   "triceps pressdown, bar": "pressdown",
   "triceps pushdown": "pressdown",
   "rope triceps pressdown": "pressdown",

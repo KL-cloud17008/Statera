@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v21";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v22";
 export const ADJUSTED_WEEK_HEADER_COPY = "Sunday through Friday, with short Sunday and Friday sessions and Saturday off. Work and commuting steps count towards total foot load.";
 export const SUNDAY_ACCESSORY_TITLE = "Sunday accessories — Farmer walks, glutes and abs";
 export const LOWER_A_TAPER_TITLE = "Lower A — Walking lunges, pendulum squat and triceps";
@@ -31,7 +31,7 @@ export const FRIDAY_TRICEPS_VARIATIONS = [
   "Rope cable pressdown",
   "Straight-bar overhead cable extension",
 ] as const;
-export const LOWER_B_BACK_PAIN_READINESS_NOTE = "If lower-back pain is 3/10 or higher, skip overhead presses, loaded crunches and rotary torso. Stop any movement that makes symptoms worse.";
+export const LOWER_B_BACK_PAIN_READINESS_NOTE = "If lower-back pain is 3/10 or higher, skip overhead presses, loaded crunches, rotary torso and machine back extensions. Stop any movement that makes symptoms worse.";
 export const BACK_PAIN_STOP_RULE = "Stop for symptoms travelling down a leg, new weakness, numbness or tingling. Seek medical evaluation for new bowel or bladder changes, fever or trauma-related pain.";
 
 export const LOWER_BODY_WARMUP = "Start with 1–2 easy lying leg curl sets of 8–10. After the working curl and hip machines, do one easy round of 4 bodyweight walking lunge steps, 4 supported Bulgarian split squats and 4 reverse lunges per leg. Begin the working lunge or split squat once your gait and balance feel steady. Ramp up the pendulum squat with lighter sets before your working weight.";
@@ -39,7 +39,7 @@ export const PULLDOWN_GRIP_FALLBACK = "Use a different close-grip handle and a l
 
 function isOverheadPressExercise(exerciseName: string) { return /overhead press|shoulder press/i.test(exerciseName); }
 export function isBackPainGatedExercise(exerciseName: string) {
-  return isOverheadPressExercise(exerciseName) || /abdominal crunch machine|decline bench crunch|rotary torso machine/i.test(exerciseName);
+  return isOverheadPressExercise(exerciseName) || /abdominal crunch machine|decline bench crunch|rotary torso machine|back extension machine/i.test(exerciseName);
 }
 
 export function isFootPainGatedExercise(exerciseName: string) {
@@ -79,6 +79,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Side delts: 6 direct sets. Rear delts: 7 direct sets plus rows. Front delts work in the chest presses.",
   "Biceps: 5 dedicated sets. Triceps: 7 dedicated sets. Forearms and grip: 2 reverse EZ curl sets plus up to 5 farmer walks.",
   "Loaded abs: 7 weighted decline crunch sets and 7 rotary torso sets per side. Pair them on Sunday, Tuesday and Thursday.",
+  "Lower back: 7 direct back extension machine sets. Do 2 on Sunday, 2 on Tuesday and 3 on Thursday.",
 ] as const;
 
 export const DEFAULT_WORKOUT_PLAN_NOTES = [
@@ -117,6 +118,11 @@ const declineBenchCrunch = exercise(
 );
 const rotaryTorso = exercise("Rotary Torso Machine", 2, "8-12 per side", 75, "6", "Follow the machine placard. Use a light load and a comfortable range. Do both sides, then rest. Skip if your lower back is 3/10 or higher or twisting provokes symptoms.", "Abs", "ACCESSORY");
 const cableLateralRaise = exercise("Cable Lateral Raise", 3, "8-12 per arm", 75, "7", "Raise out and slightly forward, with a steady torso. Train both arms before resting.", null, "ACCESSORY");
+const backExtension = exercise(
+  "Back Extension Machine", 2, "8-12", 120, "6-7",
+  "On your first session, start at the lightest machine setting or with no added plates. Use a load that leaves 3–4 clean reps in reserve and log the load in kg. Increase by one small increment once every set reaches 12 with that effort and your lower back feels normal the next day.",
+  null, "ACCESSORY",
+);
 
 export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
   {
@@ -143,6 +149,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("D2 Reverse Pec Deck / Seated Machine Reverse Fly", 2, "8-12", 75, "7", "Keep your chest supported and elbows soft. Sweep out to the sides without shrugging.", null, "ACCESSORY"),
       cableLateralRaise,
       declineBenchCrunch, rotaryTorso,
+      backExtension,
     ],
   },
   {
@@ -169,6 +176,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("C3 Face-Away Bayesian Cable Curl", 3, "8-12 per arm", 75, "7", "Use a light cable and stable stance. Keep the elbow slightly behind your torso without leaning back.", null, "ACCESSORY"),
       { ...declineBenchCrunch, sets: 3 },
       { ...rotaryTorso, sets: 3 },
+      { ...backExtension, sets: 3 },
     ],
   },
   {
@@ -190,6 +198,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("Reverse EZ-Bar Curl", 2, "8-12", 75, "7", "Use an overhand grip with wrists straight and elbows beside you. Keep the load light enough to avoid wrist bending or swinging.", null, "ACCESSORY"),
       exercise("Machine Glute Kickback", 2, "8-12 per leg", 75, "6-7", "Follow the machine's setup placard. Use its handles or pads for support and keep your hips square. Train both legs before resting.", null, "ACCESSORY"),
       declineBenchCrunch, rotaryTorso,
+      backExtension,
     ],
   },
 ];
