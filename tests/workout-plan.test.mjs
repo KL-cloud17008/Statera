@@ -53,18 +53,18 @@ test("the reviewed six-day programme uses the approved order, sets, and rep rang
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const day = (number) => days.find((entry) => entry.dayOfWeek === number);
   const exerciseNames = (number) => Array.from(day(number).exercises, (exercise) => exercise.exerciseName);
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v23");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v24");
   assert.deepEqual(Array.from(days, (entry) => entry.dayOfWeek), [1, 2, 3, 4, 5, 0]);
   const totals = Array.from(days, (entry) => entry.exercises.reduce((sets, exercise) => sets + exercise.sets, 0));
-  assert.deepEqual(totals, [19, 21, 18, 24, 14, 15]);
-  assert.equal(totals.reduce((sum, sets) => sum + sets, 0), 111);
+  assert.deepEqual(totals, [19, 21, 18, 24, 14, 18]);
+  assert.equal(totals.reduce((sum, sets) => sum + sets, 0), 114);
   const exercises = days.flatMap((entry) => entry.exercises);
   const mainLifts = new Set([
     "Machine Chest Press", "Incline Machine Chest Press", "Pendulum Squat", "Wide-Grip Lat Pulldown",
     "Chest-Supported T-Bar Row",
   ]);
   for (const movement of exercises) {
-    if (movement.exerciseType === "TIMED" || movement.exerciseName.endsWith("Walking Lunges")) continue;
+    if (movement.exerciseType === "TIMED" || movement.exerciseName.endsWith("Walking Lunges") || movement.exerciseName === "Kettlebell Halo") continue;
     const name = movement.exerciseName.replace(/^[A-Z]\d+ /, "");
     const expectedRange = mainLifts.has(name) ? /^4-6$/ : name === "Cable Lateral Raise" ? /^10-12 per arm$/ : /^8-12(?: per (?:leg|arm|side))?$/;
     assert.match(movement.reps, expectedRange, name);
@@ -116,13 +116,17 @@ test("the reviewed six-day programme uses the approved order, sets, and rep rang
   assert.equal(day(4).exercises[3].supersetGroup, "Arms");
   assert.match(day(4).exercises[2].cues, /straight-bar attachment/);
   assert.deepEqual(exerciseNames(0), [
-    "Kettlebell Farmer Walk", "Machine Glute Kickback", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Reverse EZ-Bar Curl", "Back Extension Machine",
+    "Kettlebell Farmer Walk", "Kettlebell Halo", "Bench-Supported Cross-Body Kettlebell Row", "Machine Glute Kickback",
+    "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Reverse EZ-Bar Curl", "Back Extension Machine",
   ]);
-  assert.equal(day(0).exercises[1].sets, 2);
-  assert.equal(day(0).exercises[1].reps, "8-12 per leg");
-  const carry = day(0).exercises[0];
+  const [carry, halo, crossBodyRow, kickback] = day(0).exercises;
+  assert.deepEqual([halo.sets, halo.reps, halo.restSeconds, halo.exerciseType], [1, "8-10 total", 60, "ACCESSORY"]);
+  assert.match(halo.cues, /4–5 slow circles in each direction/);
+  assert.deepEqual([crossBodyRow.sets, crossBodyRow.reps, crossBodyRow.restSeconds, crossBodyRow.exerciseType], [2, "8-12 per side", 75, "ACCESSORY"]);
+  assert.equal(kickback.sets, 2);
+  assert.equal(kickback.reps, "8-12 per leg");
   assert.deepEqual([carry.sets, carry.reps, carry.restSeconds, carry.exerciseType], [5, "60 sec", 60, "TIMED"]);
-  for (const [number, crunchIndex] of [[0, 2], [2, 4], [4, 5]]) {
+  for (const [number, crunchIndex] of [[0, 4], [2, 4], [4, 5]]) {
     const [crunch, rotation] = day(number).exercises.slice(crunchIndex, crunchIndex + 2);
     const extension = day(number).exercises.at(-1);
     assert.deepEqual([crunch.exerciseName, rotation.exerciseName], ["Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine"]);
@@ -174,6 +178,10 @@ test("the load rules and form guides cover the new accessories", () => {
   assert.ok(!workoutPlan.isBackPainGatedExercise("Overhead Cable Triceps Extension"));
   assert.match(workoutPlan.PROGRESSIVE_OVERLOAD_RULES.join(" "), /three clean repetitions in reserve/);
   assert.match(getExerciseFormGuide("Machine Glute Kickback").setup, /machine's placard/);
+  assert.equal(getExerciseFormGuide("Kettlebell Halo").video.url, "https://www.youtube.com/watch?v=gKi_KT9kuMs&t=156s");
+  const crossBodyGuide = getExerciseFormGuide("Bench-Supported Cross-Body Kettlebell Row");
+  assert.match(crossBodyGuide.setup, /stable bench/);
+  assert.equal(crossBodyGuide.video.url, "https://www.youtube.com/watch?v=gKi_KT9kuMs&t=260s");
   assert.match(getExerciseFormGuide("Back Extension Machine").setup, /machine placard/);
   assert.match(getExerciseFormGuide("Back Extension — Hyperextension Bench").setup, /hip crease/);
   const declineGuide = getExerciseFormGuide("Plate-Weighted Decline Bench Crunch");
@@ -432,6 +440,10 @@ test("custom exercise library stays available without changing active plan const
   ]);
   for (const movement of library) {
     if (movement.id === "walking-lunges" || / (sec|m)$/.test(movement.defaultReps)) continue;
+    if (movement.id === "kettlebell-halo") {
+      assert.equal(movement.defaultReps, "8-10 total");
+      continue;
+    }
     const expectedRange = mainLifts.has(movement.id) ? /^4-6(?: per side)?$/ : /^8-12(?: per (?:leg|arm|side))?$/;
     assert.match(movement.defaultReps, expectedRange, movement.name);
   }

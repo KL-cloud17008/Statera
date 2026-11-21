@@ -17,7 +17,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v23";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v24";
 export const ADJUSTED_WEEK_HEADER_COPY = "Sunday through Friday, with short Sunday and Friday sessions and Saturday off. Work and commuting steps count towards total foot load.";
 export const SUNDAY_ACCESSORY_TITLE = "Sunday accessories — Farmer walks, glutes and abs";
 export const LOWER_A_TAPER_TITLE = "Lower A — Walking lunges, pendulum squat and triceps";
@@ -79,7 +79,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Quads: 13 sets from walking lunges, supported Bulgarian split squats, pendulum squats and leg extensions.",
   "Hamstrings: 8 curl sets. Calves: up to 6 seated sets.",
   "Hips: 4 machine glute kickback sets per leg plus squat and lunge work. Adduction and abduction: 4 sets each, including a light Friday set each.",
-  "Chest: 11 sets. Vertical pulls: 5 sets. Supported rows: 6 sets.",
+  "Chest: 11 sets. Vertical pulls: 5 sets. Supported rows: 8 sets, including 2 bench-supported kettlebell row sets.",
   "Side delts: 5 direct sets. Rear delts: 5 direct sets plus rows. Front delts work in the chest presses.",
   "Biceps: 5 dedicated sets. Triceps: 7 dedicated sets. Forearms and grip: 2 reverse EZ curl sets plus up to 5 farmer walks.",
   "Loaded abs: 7 weighted decline crunch sets and 7 rotary torso sets per side. Pair them on Sunday, Tuesday and Thursday.",
@@ -201,6 +201,8 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     dayOfWeek: 0, sessionName: SUNDAY_ACCESSORY_TITLE,
     exercises: [
       exercise("Kettlebell Farmer Walk", 5, "60 sec", 60, "6-7", "Use two matching kettlebells and log the load per hand. Walk for 60 seconds and rest 60 seconds. Start with three rounds if foot tolerance is uncertain. Skip if sole or ankle pain reaches 3/10, gait changes, or symptoms increase.", null, "TIMED"),
+      exercise("Kettlebell Halo", 1, "8-10 total", 60, "4-5", "Use a very light bell for this shoulder drill. Do 4–5 slow circles in each direction and log the total. Keep the range comfortable.", null, "ACCESSORY"),
+      exercise("Bench-Supported Cross-Body Kettlebell Row", 2, "8-12 per side", 75, "6-7", "Support yourself with your free hand on a bench. Use a light bell and leave 3–4 clean reps in reserve. Do both sides before resting and log reps per side. On a short Sunday, prioritise the kickbacks and abs.", null, "ACCESSORY"),
       gluteKickback,
       declineBenchCrunch, rotaryTorso,
       exercise("Reverse EZ-Bar Curl", 2, "8-12", 75, "7", "Use an overhand grip with wrists straight and elbows beside you. Keep the load light enough to avoid wrist bending or swinging.", null, "ACCESSORY"),

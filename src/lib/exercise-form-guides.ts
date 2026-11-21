@@ -212,6 +212,18 @@ const guides = {
     movement: "Extend smoothly against the resistance and return slowly to the starting position.",
     commonMistake: "Bouncing at the start or arching past a neutral position at the end of the rep.",
   },
+  kettlebellHalo: {
+    setup: "Stand steady and hold a light kettlebell upside down by the sides of the handle at chest height.",
+    movement: "Keep your head still and circle the bell close around it at a comfortable height. Return to your chest and repeat in both directions.",
+    commonMistake: "Moving your head to clear the bell, flaring your ribs or forcing a deeper circle.",
+    video: { url: "https://www.youtube.com/watch?v=gKi_KT9kuMs&t=156s", label: "Watch Stefan’s kettlebell halo" },
+  },
+  crossBodyKettlebellRow: {
+    setup: "Plant your feet, hinge at the hips and brace your free hand on a stable bench. Start with the bell just inside the opposite knee if you can reach it comfortably.",
+    movement: "Row the bell diagonally towards the ribs on your working side. Keep your chest and hips steady and lower slowly. Use the same range on both sides.",
+    commonMistake: "Twisting your lower back, reaching farther than you can control or jerking the bell off the floor.",
+    video: { url: "https://www.youtube.com/watch?v=gKi_KT9kuMs&t=260s", label: "Watch Stefan’s cross-body row. Use the bench-supported setup above." },
+  },
   pressdown: {
     setup: "Set the pulley high. Hold the bar or rope with elbows at your sides and wrists in line with your forearms.",
     movement: "Straighten your elbows to press down, then let the attachment rise slowly while keeping your upper arms still.",
@@ -299,6 +311,8 @@ const aliases: Record<string, keyof typeof guides> = {
   "machine glute kickback": "machineGluteKickback",
   "farmer's carry": "carry",
   "kettlebell farmer walk": "carry",
+  "kettlebell halo": "kettlebellHalo",
+  "bench-supported cross-body kettlebell row": "crossBodyKettlebellRow",
   "reverse ez-bar curl": "reverseCurl",
   "back extension — hyperextension bench": "backExtension",
   "back extension machine": "backExtensionMachine",

@@ -2369,7 +2369,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Finish with easy breathing and a steady gait.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, reverse EZ-bar curls, machine glute kickbacks, decline crunches, rotary torso and machine back extensions." },
+      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, kettlebell halos and rows, machine glute kickbacks, decline crunches, rotary torso, reverse EZ-bar curls and machine back extensions." },
       { label: "Foot rule", value: "Steady gait", note: "Short, easy steps before adding any load." },
     ],
     blocks: [

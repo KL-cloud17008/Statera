@@ -6,7 +6,7 @@ Use 4–6 working reps on machine chest presses, pendulum squats, the wide-grip 
 
 | Day | Session | Planned working sets or rounds | Estimated gym time |
 |---|---|---:|---:|
-| Sunday | Carries, forearms, glutes, abs and lower back | 15 | 30–35 min |
+| Sunday | Carries, kettlebells, forearms, glutes, abs and lower back | 18 | 35–40 min |
 | Monday | Lower A and triceps | 19 | 45 min |
 | Tuesday | Upper A, abs and lower back | 21 | 50–55 min |
 | Wednesday | Lower B and biceps | 18 | 50 min |
@@ -14,17 +14,20 @@ Use 4–6 working reps on machine chest presses, pendulum squats, the wide-grip 
 | Friday | Upper C and light hips | 14 | 25–30 min |
 | Saturday | Rest | — | — |
 
-The week contains 111 planned working sets and carry rounds.
+The week contains 114 planned sets and carry rounds, including Sunday's easy halo set.
 
 ## Sunday
 
 1. Kettlebell farmer walk · 5 rounds of 60 seconds walking and 60 seconds resting · log kilograms per hand and seconds completed.
-2. Machine glute kickback · 2 × 8–12 per leg. Follow the machine's setup placard. Keep your hips square and do both sides before resting 75 seconds.
-3. Plate-weighted decline bench crunch · 2 × 8–12 → rotary torso machine · 2 × 8–12 per side. Rest 75 seconds after the rotation on both sides.
-4. Reverse EZ-bar curl · 2 × 8–12.
-5. Back extension machine · 2 × 8–12. Rest two minutes between sets.
+2. Kettlebell halo · 1 × 8–10 total. Use a light bell for 4–5 slow circles in each direction. [Halo demo](https://www.youtube.com/watch?v=gKi_KT9kuMs&t=156s)
+3. Bench-supported cross-body kettlebell row · 2 × 8–12 per side. Brace your free hand on a bench, row diagonally and keep your hips steady. Rest 75 seconds after both sides. Stay three to four clean reps from your limit. [Cross-body row demo](https://www.youtube.com/watch?v=gKi_KT9kuMs&t=260s)
+4. Machine glute kickback · 2 × 8–12 per leg. Follow the machine's setup placard. Keep your hips square and do both sides before resting 75 seconds.
+5. Plate-weighted decline bench crunch · 2 × 8–12 → rotary torso machine · 2 × 8–12 per side. Rest 75 seconds after the rotation on both sides.
+6. Reverse EZ-bar curl · 2 × 8–12.
+7. Back extension machine · 2 × 8–12. Rest two minutes between sets.
 
 Pick a steady walking pace and a light pair of kettlebells. Start with three rounds if you are unsure how your feet will respond. Build to five once your gait and next-morning symptoms stay steady.
+On a short Sunday, prioritise kickbacks and abs ahead of the added kettlebell work.
 
 ## Monday and Wednesday
 
@@ -80,4 +83,4 @@ The bodyweight lunge warm-up is one easy round of four walking-lunge steps, four
 - Skip loaded crunches, rotary torso, overhead presses and machine back extensions at lower-back pain of 3/10 or higher. Stop a movement that increases symptoms. The optional home core routine remains available under Mobility.
 - On a short Tuesday, trim close-grip pulldowns or rear-delt sets before the ab pair. On a short Wednesday, trim leg extension and preacher curls first. Preserve the squat and at least the first two seated curl and calf sets when the foot rule allows calves.
 
-The week programmes 13 quad sets, 8 leg-curl sets, up to 6 seated calf sets and 4 machine glute kickback sets per leg plus the squat and lunge work. Hip adduction and hip abduction each get 4 sets, including one light Friday set. Upper-body totals include 11 chest sets, 5 pulldowns, 6 supported rows, 5 side-delt sets and 5 rear-delt isolation sets. The arm plan has 5 dedicated biceps sets and 7 dedicated triceps sets, with additional work from pulling and pressing. Forearms and grip get 2 reverse curl sets and up to 5 carries. Sunday, Tuesday and Thursday provide 7 decline crunch sets, 7 rotary torso sets per side and 7 back extension sets.
+The week programmes 13 quad sets, 8 leg-curl sets, up to 6 seated calf sets and 4 machine glute kickback sets per leg plus the squat and lunge work. Hip adduction and hip abduction each get 4 sets, including one light Friday set. Upper-body totals include 11 chest sets, 5 pulldowns, 8 supported rows, 5 side-delt sets and 5 rear-delt isolation sets. The arm plan has 5 dedicated biceps sets and 7 dedicated triceps sets, with additional work from pulling and pressing. Forearms and grip get 2 reverse curl sets and up to 5 carries. Sunday, Tuesday and Thursday provide 7 decline crunch sets, 7 rotary torso sets per side and 7 back extension sets.
