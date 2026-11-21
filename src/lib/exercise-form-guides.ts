@@ -302,6 +302,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "reverse ez-bar curl": "reverseCurl",
   "back extension — hyperextension bench": "backExtension",
   "back extension machine": "backExtensionMachine",
+  "triceps pressdown": "pressdown",
   "triceps pressdown, bar": "pressdown",
   "triceps pushdown": "pressdown",
   "rope triceps pressdown": "pressdown",

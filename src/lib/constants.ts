@@ -20,9 +20,9 @@ export const DEFAULT_RECOVERY_DAYS: number[] = [];
 export const TRAINING_DAY_LABELS: Record<number, string> = {
   0: "Sunday • Farmer walks, glutes and abs",
   1: "Monday • Lower A — Walking lunges, pendulum squat and triceps",
-  2: "Tuesday • Upper A — Chest press, paired pulldowns, row and abs",
-  3: "Wednesday • Lower B — Bulgarian split squat, pendulum squat and biceps",
-  4: "Thursday • Upper B — Chest press, T-bar row, arms and abs",
+  2: "Tuesday • Upper A — Chest press, pulldowns, row and abs",
+  3: "Wednesday • Lower B — Pendulum squat, Bulgarian split squat and biceps",
+  4: "Thursday • Upper B — Incline chest press, T-bar row, arms and abs",
   5: "Friday • Upper C — Chest, rear delts, triceps and hips",
 };
 

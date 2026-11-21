@@ -164,28 +164,35 @@ test("history set entry uses the explicit correction action and retains interrup
   assert.equal(env.lib.readWorkoutStorage(env.lib.workoutDraftKey("session", "Machine Row", 1)), null);
 });
 
-test("Friday triceps variation is saved with an offline set and shown when reopening its history", async () => {
-  const env = fixture();
-  env.online = false;
-  const exerciseName = "Triceps Pressdown or Overhead Extension";
-  const variation = "Straight-bar overhead cable extension";
-  const props = entryProps({ exerciseName, offlineLogging: true });
-  const host = env.mount("SetInput", props);
-  host.nodes("select")[0].props.onChange({ target: { value: variation } });
-  host.render();
-  assert.equal(host.button("Save set 1").props.disabled, true);
-  host.change("weight", "17.5").change("reps", "12");
-  host.button("Add note").props.onClick();
-  host.render().change("notes", "Seat supported");
-  host.submit();
-  await flush();
+test("Friday triceps preserves offline entries and history for current and older variations", async () => {
+  const bar = "Straight-bar cable pressdown";
+  const rope = "Rope cable pressdown";
+  const overhead = "Straight-bar overhead cable extension";
+  for (const [exerciseName, variation, options] of [
+    ["Triceps Pressdown", rope, [bar, rope]],
+    ["Triceps Pressdown or Overhead Extension", overhead, [bar, rope, overhead]],
+  ]) {
+    const env = fixture();
+    env.online = false;
+    const props = entryProps({ exerciseName, offlineLogging: true });
+    const host = env.mount("SetInput", props);
+    assert.deepEqual(host.nodes("option").slice(1).map(option => text(option)), options);
+    host.nodes("select")[0].props.onChange({ target: { value: variation } });
+    host.render();
+    assert.equal(host.button("Save set 1").props.disabled, true);
+    host.change("weight", "17.5").change("reps", "12");
+    host.button("Add note").props.onClick();
+    host.render().change("notes", "Kept elbows steady");
+    host.submit();
+    await flush();
 
-  const [queued] = env.lib.queuedWorkoutSets("session");
-  assert.equal(queued.values.notes, `${variation}\nSeat supported`);
-  assert.equal(env.lib.workoutSetForm("session", exerciseName, 1, queued.draft, queued.values).get("notes"), queued.values.notes);
-  const history = fixture().mount("SetInput", { ...props, saveMode: "history", logged: { ...queued.values, setNumber: 1 } });
-  assert.equal(history.nodes("select")[0].props.value, variation);
-  assert.equal(history.input("notes").props.value, "Seat supported");
+    const [queued] = env.lib.queuedWorkoutSets("session");
+    assert.equal(queued.values.notes, `${variation}\nKept elbows steady`);
+    assert.equal(env.lib.workoutSetForm("session", exerciseName, 1, queued.draft, queued.values).get("notes"), queued.values.notes);
+    const history = fixture().mount("SetInput", { ...props, saveMode: "history", logged: { ...queued.values, setNumber: 1 } });
+    assert.equal(history.nodes("select")[0].props.value, variation);
+    assert.equal(history.input("notes").props.value, "Kept elbows steady");
+  }
 });
 
 test("history editor exposes missing sets, additional exercises and saved-set removal without starting a session", async () => {

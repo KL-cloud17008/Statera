@@ -1699,7 +1699,7 @@ function footFlareFullBodyBlock(dayOfWeek: number, idPrefix = "foot-flare"): Mob
       id: `${idPrefix}-weekly-reset-downshift`,
       title: "Weekly downshift reset",
       duration: "4-6 min",
-      purpose: "After Friday chest-isolation, row, shoulder, and arm work, finish with easy balance, pelvic tilts, upper-back rotation, and breathing.",
+      purpose: "After Friday chest, rear delt, triceps and hip work, finish with easy balance, pelvic tilts, upper-back rotation and breathing.",
       exercises: [
         footFlareMovement("supportedSingleLegBalanceKickstand", `${idPrefix}-single-leg-kickstand`, {
           dose: "10-20 seconds per side",
@@ -2030,7 +2030,7 @@ const DAY_5_LATER_RECOVERY: MobilityBlock = block({
   title: "Weekly Downshift / Foot-Flare Recovery",
   duration: "12-16 min",
   purpose:
-    "Complete later the same day after Friday chest-isolation, row, shoulder, and arm work. End the week with easy foot, ankle, balance, spine, and breathing work.",
+    "Complete later the same day after Friday chest, rear delt, triceps and hip work. End the week with easy foot, ankle, balance, spine and breathing work.",
   adaptationNote: RECOVERY_STOP_NOTE,
   recoveryIntro: true,
   exercises: [
@@ -2162,7 +2162,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper A primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare your upper back, shoulders, chest and elbows for the chest press, paired pulldowns and supported row.",
+      "Prepare your upper back, shoulders, chest and elbows for the chest press, pulldowns and supported row.",
     previousDayReason:
       "Monday was Lower A, so this keeps lower-leg prep low-dose before upper-body training.",
     adaptationNote:
@@ -2170,7 +2170,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Machine chest press, paired pulldowns, supported row, rear and side delts, and paired ab exercises." },
+      { label: "Training match", value: "Upper A setup", note: "Machine chest press, pulldowns, supported row, paired ab exercises and side and rear delts." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
@@ -2207,7 +2207,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means hips and ankles feel easier to position without adding fatigue.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Lower B setup", note: "Supported split squat, pendulum squat, hip machines, leg curls, leg extension, calves, and preacher curls." },
+      { label: "Training match", value: "Lower B setup", note: "Hip machines, pendulum squat, supported split squat, leg curls, seated calves, leg extension and preacher curls." },
       { label: "Foot rule", value: "No step chasing", note: "Gym walking is removed if soles are flaring." },
       { label: "Feel target", value: "Stable", note: "Hips stay quiet and breathing stays easy." },
     ],
@@ -2237,7 +2237,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper B primer",
     totalDuration: "6-10 min",
     todayPurpose:
-      "Prepare your chest, upper back, shoulders and trunk for machine chest press, supported T-bar rows, arm work and abs.",
+      "Prepare your chest, upper back, shoulders and trunk for incline machine chest press, supported T-bar rows, arm work and abs.",
     previousDayReason:
       "Wednesday was Lower B, so this keeps lower-leg work quiet before upper-body training.",
     adaptationNote:
@@ -2245,7 +2245,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper B setup", note: "Machine chest press, supported T-bar row, overhead bar extensions, cable laterals, Bayesian curls and paired ab exercises." },
+      { label: "Training match", value: "Upper B setup", note: "Incline machine chest press, supported T-bar row, overhead bar extensions, Bayesian curls, cable laterals and paired ab exercises." },
       { label: "Back rule", value: "Supported pulling", note: "Keep the torso controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
@@ -2274,7 +2274,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     sessionTitle: "Upper C primer",
     totalDuration: "12-16 min",
     todayPurpose:
-      "Prepare your chest, shoulders and upper back for the pec deck pair, cable work and light hip machines.",
+      "Prepare your chest, shoulders and hips for the pec deck pair, cable work and glute kickbacks.",
     previousDayReason:
       "Thursday was Upper B, so Friday keeps prep simple before accessory strength work.",
     adaptationNote:
@@ -2282,7 +2282,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper C setup", note: "Chest fly and reverse pec deck, cable chest press and crossovers, triceps and light hip machines." },
+      { label: "Training match", value: "Upper C setup", note: "Chest fly and reverse pec deck, cable chest press, glute kickbacks, triceps pressdowns and light hip machines." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [

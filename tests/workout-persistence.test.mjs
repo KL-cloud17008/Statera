@@ -588,7 +588,7 @@ test("the lower-day arm finishers refresh open sessions separately and preserve 
   }
 });
 
-test("Tuesday refresh keeps old incline records and drafts separate from the new press and paired pulls", async () => {
+test("Tuesday refresh keeps old incline records and drafts separate from the flat press", async () => {
   for (const hasSavedInclineSet of [false, true]) {
     const f = fixture();
     const oldPlan = f.state.plans.find(plan => plan.dayOfWeek === 2);
@@ -611,12 +611,12 @@ test("Tuesday refresh keeps old incline records and drafts separate from the new
     const originalSets = copy(f.state.sets), originalCompleted = copy(completed);
     const plans = await f.actions.getWorkoutPlans("owner");
     const updated = plans.find(plan => plan.dayOfWeek === 2);
-    assert.match(updated.sessionName, /paired pulldowns, row and abs/);
+    assert.match(updated.sessionName, /pulldowns, row and abs/);
     assert.equal(updated.exercises[0].exerciseName, "A1 Machine Chest Press");
     assert.equal(updated.exercises[0].sets, 3);
     assert.equal(updated.exercises[0].reps, "4-6");
     assert.equal(updated.exercises[0].targetRPE, "6-7");
-    assert.deepEqual(updated.exercises.map(exercise => exercise.sets), [3, 3, 3, 3, 2, 3, 2, 2, 2]);
+    assert.deepEqual(updated.exercises.map(exercise => exercise.sets), [3, 3, 2, 3, 2, 2, 2, 2, 2]);
     const current = await f.actions.getSessionWithSets(open.id);
     assert.equal(current.id, open.id);
     assert.equal(current.workoutPlanId, updated.id);
@@ -627,7 +627,7 @@ test("Tuesday refresh keeps old incline records and drafts separate from the new
     assert.ok(meta.retainedExerciseNames.includes("A1 Incline Machine Chest Press"), "old device drafts remain recoverable");
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     assert.equal(visible[0].exerciseName, "A1 Machine Chest Press");
-    assert.deepEqual(Array.from(visible.slice(0, 9), exercise => exercise.sets), [3, 3, 3, 3, 2, 3, 2, 2, 2]);
+    assert.deepEqual(Array.from(visible.slice(0, 9), exercise => exercise.sets), [3, 3, 2, 3, 2, 2, 2, 2, 2]);
     const retained = ["B1 Neutral-Grip Lat Pulldown", ...(hasSavedInclineSet ? ["A1 Incline Machine Chest Press"] : [])];
     assert.deepEqual(Array.from(visible.slice(9), exercise => exercise.exerciseName), retained);
     assert.deepEqual(f.state.sets, originalSets, "incline performance must never be relabelled as standard pressing");
@@ -635,13 +635,13 @@ test("Tuesday refresh keeps old incline records and drafts separate from the new
     assert.equal(historical.workoutPlan.sessionName, oldPlan.sessionName);
     assert.deepEqual(historical.workoutPlan.exercises, oldExercises);
     assert.deepEqual(f.state.sessions.find(session => session.id === completed.id), originalCompleted);
-    const result = await f.actions.logSet(f.form(open.id, { exerciseName: "A1 Machine Chest Press", weightUsed: "35", repsCompleted: "10", actualRPE: "6" }));
+    const result = await f.actions.logSet(f.form(open.id, { exerciseName: "A1 Machine Chest Press", weightUsed: "35", repsCompleted: "6", actualRPE: "6" }));
     assert.ok(!result.error, result.error);
     assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === "A1 Machine Chest Press").planExerciseId, updated.exercises[0].id);
     const closeSecond = await f.actions.logSet(f.form(open.id, { exerciseName: updated.exercises[2].exerciseName, setNumber: "2", weightUsed: "45", repsCompleted: "10", actualRPE: "6" }));
     assert.ok(!closeSecond.error, closeSecond.error);
-    for (const exercise of updated.exercises.slice(1, 4)) {
-      const added = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, setNumber: "3", weightUsed: "15", repsCompleted: "12", actualRPE: "6" }));
+    for (const [exercise, repsCompleted] of [[updated.exercises[1], "6"], [updated.exercises[3], "12"]]) {
+      const added = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, setNumber: "3", weightUsed: "15", repsCompleted, actualRPE: "6" }));
       assert.ok(!added.error, added.error);
       assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === exercise.exerciseName && set.setNumber === 3).planExerciseId, exercise.id);
     }
@@ -652,7 +652,7 @@ test("Tuesday refresh keeps old incline records and drafts separate from the new
   }
 });
 
-test("Upper B adds T-bar, abs and back extensions while retaining earlier sets and completed history", async () => {
+test("Upper B refresh preserves flat press records separately from the incline press", async () => {
   for (const retainOldCableSets of [false, true]) {
     const f = fixture();
     const oldPlan = f.state.plans.find((plan) => plan.dayOfWeek === 4);
@@ -680,7 +680,7 @@ test("Upper B adds T-bar, abs and back extensions while retaining earlier sets a
     assert.equal(current.workoutPlanId, updatedPlan.id);
     assert.notEqual(current.workoutPlanId, oldPlan.id);
     assert.equal(JSON.parse(current.notes).planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
-    assert.equal(updatedPlan.exercises[0].exerciseName, "A1 Chest Machine Press");
+    assert.equal(updatedPlan.exercises[0].exerciseName, "A1 Incline Machine Chest Press");
     assert.equal(updatedPlan.exercises[1].exerciseName, "Chest-Supported T-Bar Row");
     assert.deepEqual(updatedPlan.exercises.slice(-3).map(exercise => exercise.exerciseName), ["Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Back Extension Machine"]);
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
@@ -688,7 +688,7 @@ test("Upper B adds T-bar, abs and back extensions while retaining earlier sets a
     assert.deepEqual(Array.from(visible.slice(0, count), exercise => exercise.exerciseName), updatedPlan.exercises.map(exercise => exercise.exerciseName));
     assert.equal(updatedPlan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0), 24);
     assert.equal(visible.find(exercise => exercise.exerciseName === oldExercises[0].exerciseName).sets, 3, "all previously logged press sets remain visible");
-    const retained = [oldExercises[1], ...(retainOldCableSets ? oldExercises.slice(4, 6) : [])];
+    const retained = [...oldExercises.slice(0, 2), ...(retainOldCableSets ? oldExercises.slice(4, 6) : [])];
     assert.deepEqual(Array.from(visible.slice(count), exercise => exercise.exerciseName), retained.map(exercise => exercise.exerciseName));
     assert.deepEqual(f.state.sets, originalSets);
     for (const exercise of updatedPlan.exercises.slice(-4)) {
@@ -696,6 +696,10 @@ test("Upper B adds T-bar, abs and back extensions while retaining earlier sets a
       assert.ok(!result.error, result.error);
       assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === exercise.exerciseName).planExerciseId, exercise.id);
     }
+    const incline = updatedPlan.exercises[0];
+    const inclineResult = await f.actions.logSet(f.form(open.id, { exerciseName: incline.exerciseName, weightUsed: "35", repsCompleted: "6", actualRPE: "7" }));
+    assert.ok(!inclineResult.error, inclineResult.error);
+    assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === incline.exerciseName).planExerciseId, incline.id);
     for (const set of originalSets) assert.deepEqual(f.state.sets.find(currentSet => currentSet.id === set.id), set);
     assert.deepEqual(f.state.sessions.find(session => session.id === completed.id), originalCompleted);
     assert.deepEqual(oldPlan.exercises, oldExercises);

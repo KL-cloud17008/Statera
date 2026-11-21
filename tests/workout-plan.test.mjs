@@ -49,74 +49,82 @@ const mobility = loadTypescriptModule("src/lib/mobility.ts");
 const workoutPlan = loadTypescriptModule("src/lib/default-workout-plan.ts");
 const workoutPlanVersion = loadTypescriptModule("src/lib/workout-plan-version.ts");
 
-test("the six-day programme preserves leg volume, paired exercises and back extension targets", () => {
+test("the reviewed six-day programme uses the approved order, sets, and rep ranges", () => {
   const days = workoutPlan.DEFAULT_WORKOUT_PLAN;
   const day = (number) => days.find((entry) => entry.dayOfWeek === number);
   const exerciseNames = (number) => Array.from(day(number).exercises, (exercise) => exercise.exerciseName);
-  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v22");
+  assert.equal(workoutPlan.DEFAULT_WORKOUT_PLAN_VERSION, "six-day-sun-fri-v23");
   assert.deepEqual(Array.from(days, (entry) => entry.dayOfWeek), [1, 2, 3, 4, 5, 0]);
   const totals = Array.from(days, (entry) => entry.exercises.reduce((sets, exercise) => sets + exercise.sets, 0));
-  assert.deepEqual(totals, [19, 23, 20, 24, 14, 15]);
-  assert.equal(totals.reduce((sum, sets) => sum + sets, 0), 115);
+  assert.deepEqual(totals, [19, 21, 18, 24, 14, 15]);
+  assert.equal(totals.reduce((sum, sets) => sum + sets, 0), 111);
   const exercises = days.flatMap((entry) => entry.exercises);
   const mainLifts = new Set([
-    "Machine Chest Press", "Chest Machine Press", "Pendulum Squat", "Wide-Grip Lat Pulldown",
-    "Seated Chest-Supported Machine Row", "Chest-Supported T-Bar Row",
+    "Machine Chest Press", "Incline Machine Chest Press", "Pendulum Squat", "Wide-Grip Lat Pulldown",
+    "Chest-Supported T-Bar Row",
   ]);
   for (const movement of exercises) {
     if (movement.exerciseType === "TIMED" || movement.exerciseName.endsWith("Walking Lunges")) continue;
     const name = movement.exerciseName.replace(/^[A-Z]\d+ /, "");
-    const expectedRange = mainLifts.has(name) ? /^4-6$/ : /^8-12(?: per (?:leg|arm|side))?$/;
+    const expectedRange = mainLifts.has(name) ? /^4-6$/ : name === "Cable Lateral Raise" ? /^10-12 per arm$/ : /^8-12(?: per (?:leg|arm|side))?$/;
     assert.match(movement.reps, expectedRange, name);
   }
   const quadSets = exercises.filter((exercise) => /Lunges|Bulgarian|Pendulum|Leg Extension/.test(exercise.exerciseName))
     .reduce((sets, exercise) => sets + exercise.sets, 0);
-  assert.equal(quadSets, 15);
-  for (const number of [1, 3]) {
-    const moves = day(number).exercises;
-    assert.deepEqual(Array.from(moves, (exercise) => exercise.exerciseName.replace(/^[A-Z]\d+ /, "")), [
-      "Lying Leg Curl", "Hip Adduction Machine", "Hip Abduction Machine",
-      number === 1 ? "Walking Lunges" : "Supported Stationary Bulgarian Split Squat",
-      "Pendulum Squat", "Seated Calf Raise",
-      number === 1 ? "Seated Leg Curl — Working Sets" : "Seated Leg Curl", "Seated Leg Extension",
-      number === 1 ? "Triceps Pressdown, bar" : "Seated Machine Preacher Curl",
-    ]);
-    assert.equal(moves[0].sets, 1);
-    assert.equal(moves[3].reps, number === 1 ? "6-10 steps per leg" : "8-12 per leg");
-    assert.equal(moves[4].reps, "4-6");
-    assert.equal(moves[6].reps, "8-12");
-    assert.equal(moves[7].reps, "8-12");
-    assert.equal(moves[4].supersetGroup, moves[5].supersetGroup);
-    assert.equal(moves[4].restSeconds, 0);
-    assert.equal(moves[5].restSeconds, 165);
-  }
-  assert.match(workoutPlan.LOWER_BODY_WARMUP, /bodyweight walking lunge.*Bulgarian split squats.*reverse lunges/);
-  assert.deepEqual(exerciseNames(2).slice(0, 4), [
-    "A1 Machine Chest Press", "Wide-Grip Lat Pulldown", "B2 Close-Grip Lat Pulldown", "A2 Seated Chest-Supported Machine Row",
+  assert.equal(quadSets, 13);
+  assert.deepEqual(exerciseNames(1), [
+    "Lying Leg Curl", "F2 Hip Adduction Machine", "F1 Hip Abduction Machine",
+    "B1 Walking Lunges", "C1 Pendulum Squat", "Seated Calf Raise", "E1 Seated Leg Curl — Working Sets",
+    "D1 Seated Leg Extension", "Triceps Pressdown, bar",
   ]);
-  assert.ok(day(2).exercises.slice(0, 4).every((exercise) => exercise.sets === 3));
-  assert.deepEqual(Array.from(day(2).exercises.slice(0, 4), (exercise) => exercise.reps), ["4-6", "4-6", "8-12", "4-6"]);
-  assert.equal(day(2).exercises[5].reps, "8-12 per arm");
-  assert.equal(day(2).exercises[1].supersetGroup, day(2).exercises[2].supersetGroup);
-  assert.match(day(2).exercises[2].cues, /reverse grip/);
+  assert.deepEqual(exerciseNames(3), [
+    "Lying Leg Curl", "D1 Hip Adduction Machine", "D2 Hip Abduction Machine",
+    "B3 Pendulum Squat", "B1 Supported Stationary Bulgarian Split Squat", "C2 Seated Leg Curl",
+    "Seated Straight-Leg Calf Machine", "C1 Seated Leg Extension", "E1 Seated Machine Preacher Curl",
+  ]);
+  const monday = day(1).exercises;
+  const wednesday = day(3).exercises;
+  assert.deepEqual(Array.from(monday, (exercise) => exercise.sets), [1, 2, 2, 2, 3, 3, 3, 1, 2]);
+  assert.deepEqual(Array.from(wednesday, (exercise) => exercise.sets), [1, 1, 1, 3, 3, 3, 3, 1, 2]);
+  assert.equal(monday[3].reps, "6-10 steps per leg");
+  assert.equal(monday[4].supersetGroup, "Squat and calves");
+  assert.equal(monday[4].supersetGroup, monday[5].supersetGroup);
+  assert.equal(monday[4].restSeconds, 0);
+  assert.equal(monday[5].restSeconds, 165);
+  assert.equal(wednesday[3].supersetGroup, null);
+  assert.equal(wednesday[6].supersetGroup, null);
+  assert.equal(wednesday[3].restSeconds, 165);
+  assert.match(workoutPlan.LOWER_BODY_WARMUP, /bodyweight walking lunge.*Bulgarian split squats.*reverse lunges/);
+  assert.deepEqual(exerciseNames(2), [
+    "A1 Machine Chest Press", "Wide-Grip Lat Pulldown", "B2 Close-Grip Lat Pulldown", "A2 Seated Chest-Supported Machine Row",
+    "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Cable Lateral Raise", "D2 Reverse Pec Deck / Seated Machine Reverse Fly", "Back Extension Machine",
+  ]);
+  const tuesday = day(2).exercises;
+  assert.deepEqual(Array.from(tuesday, (exercise) => exercise.sets), [3, 3, 2, 3, 2, 2, 2, 2, 2]);
+  assert.deepEqual(Array.from(tuesday.slice(0, 4), (exercise) => exercise.reps), ["4-6", "4-6", "8-12", "8-12"]);
+  assert.equal(tuesday[1].supersetGroup, null);
+  assert.equal(tuesday[2].supersetGroup, null);
+  assert.match(tuesday[2].cues, /reverse grip/);
   assert.deepEqual(exerciseNames(4), [
-    "A1 Chest Machine Press", "Chest-Supported T-Bar Row", "C1 Overhead Cable Triceps Extension",
-    "Cable Lateral Raise", "C3 Face-Away Bayesian Cable Curl", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Back Extension Machine",
+    "A1 Incline Machine Chest Press", "Chest-Supported T-Bar Row", "C1 Overhead Cable Triceps Extension",
+    "C3 Face-Away Bayesian Cable Curl", "Cable Lateral Raise", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Back Extension Machine",
   ]);
   assert.ok(day(4).exercises.every((exercise) => exercise.sets === 3));
   assert.equal(day(4).exercises[0].reps, "4-6");
   assert.equal(day(4).exercises[3].reps, "8-12 per arm");
-  assert.equal(day(4).exercises[4].reps, "8-12 per arm");
+  assert.equal(day(4).exercises[2].supersetGroup, "Arms");
+  assert.equal(day(4).exercises[3].supersetGroup, "Arms");
   assert.match(day(4).exercises[2].cues, /straight-bar attachment/);
   assert.deepEqual(exerciseNames(0), [
-    "Kettlebell Farmer Walk", "Reverse EZ-Bar Curl", "Machine Glute Kickback", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Back Extension Machine",
+    "Kettlebell Farmer Walk", "Machine Glute Kickback", "Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Reverse EZ-Bar Curl", "Back Extension Machine",
   ]);
-  assert.equal(day(0).exercises[2].sets, 2);
-  assert.equal(day(0).exercises[2].reps, "8-12 per leg");
+  assert.equal(day(0).exercises[1].sets, 2);
+  assert.equal(day(0).exercises[1].reps, "8-12 per leg");
   const carry = day(0).exercises[0];
   assert.deepEqual([carry.sets, carry.reps, carry.restSeconds, carry.exerciseType], [5, "60 sec", 60, "TIMED"]);
-  for (const number of [0, 2, 4]) {
-    const [crunch, rotation, extension] = day(number).exercises.slice(-3);
+  for (const [number, crunchIndex] of [[0, 2], [2, 4], [4, 5]]) {
+    const [crunch, rotation] = day(number).exercises.slice(crunchIndex, crunchIndex + 2);
+    const extension = day(number).exercises.at(-1);
     assert.deepEqual([crunch.exerciseName, rotation.exerciseName], ["Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine"]);
     assert.ok(crunch.supersetGroup);
     assert.equal(crunch.supersetGroup, rotation.supersetGroup);
@@ -125,6 +133,7 @@ test("the six-day programme preserves leg volume, paired exercises and back exte
     assert.equal(rotation.reps, "8-12 per side");
     assert.equal(crunch.reps, "8-12");
     assert.equal(crunch.sets, number === 4 ? 3 : 2);
+    assert.match(crunch.cues, new RegExp(`${number === 4 ? 25 : 20} kg plate`));
     assert.equal(crunch.sets, rotation.sets);
     assert.deepEqual([extension.exerciseName, extension.sets, extension.reps, extension.targetRPE, extension.restSeconds, extension.supersetGroup],
       ["Back Extension Machine", number === 4 ? 3 : 2, "8-12", "6-7", 120, null]);
@@ -134,14 +143,16 @@ test("the six-day programme preserves leg volume, paired exercises and back exte
   const friday = day(5).exercises;
   assert.deepEqual(exerciseNames(5), [
     "A1 Seated Machine Chest Fly", "A2 Reverse Pec Deck / Seated Machine Reverse Fly",
-    "High-to-Low Cable Chest Press", "Reverse Cable Crossover", workoutPlan.FRIDAY_TRICEPS_EXERCISE,
+    "High-to-Low Cable Chest Press", "Machine Glute Kickback", workoutPlan.FRIDAY_TRICEPS_EXERCISE,
     "Hip Adduction Machine", "Hip Abduction Machine",
   ]);
   assert.equal(friday[0].supersetGroup, friday[1].supersetGroup);
   assert.ok(friday[0].supersetGroup);
   assert.deepEqual(Array.from(friday.slice(0, 2), (exercise) => [exercise.sets, exercise.restSeconds]), [[3, 0], [3, 90]]);
+  assert.match(friday[1].cues, /reverse cable crossover/);
+  assert.deepEqual([friday[3].sets, friday[3].reps, friday[4].sets], [2, "8-12 per leg", 2]);
   assert.ok(friday.slice(-2).every((exercise) => exercise.sets === 1 && exercise.targetRPE === "5-6"));
-  assert.equal(workoutPlan.FRIDAY_TRICEPS_VARIATIONS.length, 3);
+  assert.deepEqual(Array.from(workoutPlan.FRIDAY_TRICEPS_VARIATIONS), ["Straight-bar cable pressdown", "Rope cable pressdown"]);
 });
 
 test("the load rules and form guides cover the new accessories", () => {
@@ -447,7 +458,7 @@ test("custom exercise library stays available without changing active plan const
     .flatMap((day) => day.exercises)
     .map((exercise) => exercise.exerciseName)
     .join("\n");
-  assert.equal(activeNames.match(/Seated Calf Raise/g).length, 2);
+  assert.equal(activeNames.match(/Seated (?:Calf Raise|Straight-Leg Calf Machine)/g).length, 2);
   assert.doesNotMatch(activeNames, /standing calf/i);
   assert.doesNotMatch(exerciseLibrarySource, /"Standing Calf Raise"/);
   for (const seated of [

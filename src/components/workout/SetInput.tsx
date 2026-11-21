@@ -5,7 +5,9 @@ import { Check, Loader2, RotateCcw } from "lucide-react";
 import { logSet, saveCompletedWorkoutSet } from "@/actions/workout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FRIDAY_TRICEPS_EXERCISE, FRIDAY_TRICEPS_VARIATIONS } from "@/lib/default-workout-plan";
+import {
+  FRIDAY_TRICEPS_EXERCISE, FRIDAY_TRICEPS_VARIATIONS, LEGACY_FRIDAY_TRICEPS_EXERCISE, LEGACY_FRIDAY_TRICEPS_VARIATIONS,
+} from "@/lib/default-workout-plan";
 import {
   acknowledgeSubmittedDraft, entryFields, isWorkoutStorageDurable, parseEntry, parseWorkoutDraft, readWorkoutStorage,
   subscribeWorkoutStorage, workoutDraftKey, workoutSetForm, writeWorkoutStorage,
@@ -44,12 +46,14 @@ export function SetInput({
   const key = workoutDraftKey(sessionId, exerciseName, setNumber);
   const rawDraft = useSyncExternalStore(subscribeWorkoutStorage, () => readWorkoutStorage(key), () => null);
   const draft = parseWorkoutDraft(rawDraft);
-  const hasVariationPicker = exerciseName === FRIDAY_TRICEPS_EXERCISE;
+  const variations = exerciseName === FRIDAY_TRICEPS_EXERCISE ? FRIDAY_TRICEPS_VARIATIONS
+    : exerciseName === LEGACY_FRIDAY_TRICEPS_EXERCISE ? LEGACY_FRIDAY_TRICEPS_VARIATIONS : null;
+  const hasVariationPicker = variations !== null;
   const fields = draft?.fields ?? entryFields(logged ?? (prefill ? {
     ...prefill, duration: null, actualRPE: null,
-    notes: hasVariationPicker ? tricepsSetNote(prefill.notes ?? "").variation : null,
+    notes: hasVariationPicker ? tricepsSetNote(prefill.notes ?? "", variations).variation : null,
   } : null), timed);
-  const { variation, note } = hasVariationPicker ? tricepsSetNote(fields.notes) : { variation: "", note: fields.notes };
+  const { variation, note } = hasVariationPicker ? tricepsSetNote(fields.notes, variations) : { variation: "", note: fields.notes };
   const [pending, setPending] = useState(false);
   const requestInFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
@@ -161,7 +165,7 @@ export function SetInput({
         <select value={variation} onChange={(event) => updateNotes(event.target.value, note)} disabled={pending || disabled || queued}
           className="h-12 min-w-0 rounded-control border border-control-border bg-raised px-3 text-row text-primary">
           <option value="">Choose an attachment or movement</option>
-          {FRIDAY_TRICEPS_VARIATIONS.map((option) => <option key={option}>{option}</option>)}
+          {variations.map((option) => <option key={option}>{option}</option>)}
         </select>
       </label> : null}
       <fieldset disabled={pending || disabled || queued} className="grid grid-cols-3 gap-3">
@@ -204,8 +208,8 @@ export function SetInput({
   );
 }
 
-function tricepsSetNote(text: string) {
-  for (const variation of FRIDAY_TRICEPS_VARIATIONS) {
+function tricepsSetNote(text: string, variations: readonly string[]) {
+  for (const variation of variations) {
     if (text === variation) return { variation, note: "" };
     if (text.startsWith(`${variation}\n`)) return { variation, note: text.slice(variation.length + 1) };
   }
