@@ -12,7 +12,7 @@ import { SetInput } from "@/components/workout/SetInput";
 import { WorkoutHistoryDateEditor } from "@/components/workout/WorkoutHistoryDateEditor";
 import { mergeSavedSessionExercises, type SessionExercise } from "@/lib/workout-session-exercises";
 import { draftTargets, sessionDraftSnapshot, subscribeWorkoutStorage, workoutDraftKey, writeWorkoutStorage, type SavedEntry } from "@/lib/workout-entry-state";
-import { isAtHomePrimerExerciseName, isTimedTrainingExercise } from "@/lib/training-session";
+import { isAtHomePrimerExerciseName, isContinuousTrainingExercise, isTimedTrainingExercise } from "@/lib/training-session";
 import { cn } from "@/lib/utils";
 
 export type HistoricalWorkoutSet = SavedEntry & {
@@ -62,6 +62,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
     ?? targets.find((candidate) => draftKeys.includes(workoutDraftKey(sessionId, candidate.exerciseName, candidate.setNumber)))
     ?? targets.find((candidate) => !isSaved(candidate)) ?? targets[0];
   const currentExercise = movements.find((exercise) => exercise.exerciseName === target?.exerciseName);
+  const currentIsFlow = currentExercise ? isContinuousTrainingExercise(currentExercise.exerciseName) : false;
   const currentSet = loggedSets.find((set) => set.exerciseName === target?.exerciseName && set.setNumber === target?.setNumber) ?? null;
   const busy = saving || removing || savingDate;
 
@@ -84,7 +85,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
     setLoggedSets((current) => [...current.filter((set) => !(set.exerciseName === target.exerciseName && set.setNumber === target.setNumber)), {
       ...target, duration: currentSet?.duration ?? null, isAMRAP: currentSet?.isAMRAP ?? false, ...values,
     }]);
-    setNotice("Set saved to this completed workout.");
+    setNotice(currentIsFlow ? "Flow saved to this completed workout." : "Set saved to this completed workout.");
     setError(null);
     if (!currentSet && advance) {
       const remaining = targets.filter((candidate) => !isSaved(candidate) && !(candidate.exerciseName === target.exerciseName && candidate.setNumber === target.setNumber));
@@ -95,7 +96,8 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
 
   async function removeSet() {
     if (!target || !currentSet || operationInFlight.current) return;
-    if (!window.confirm(`Remove saved set ${target.setNumber} of ${target.exerciseName}? The workout will stay completed.`)) return;
+    const entry = currentIsFlow ? "flow" : `set ${target.setNumber}`;
+    if (!window.confirm(`Remove saved ${entry} for ${target.exerciseName}? The workout will stay completed.`)) return;
     operationInFlight.current = true;
     setRemoving(true);
     setError(null);
@@ -163,7 +165,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
     <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
       <section ref={editorRef} aria-label="Edit workout sets" className="min-w-0 scroll-mt-24 border border-rule-strong bg-raised p-4 sm:p-6">
         {target && currentExercise ? <>
-          <div className="mb-3 flex justify-between gap-3 text-caption text-secondary"><span>Exercise {movements.indexOf(currentExercise) + 1} of {movements.length}</span><span className="font-medium tabular-nums text-primary">Set {target.setNumber}</span></div>
+          <div className="mb-3 flex justify-between gap-3 text-caption text-secondary"><span>Exercise {movements.indexOf(currentExercise) + 1} of {movements.length}</span><span className="font-medium tabular-nums text-primary">{currentIsFlow ? "Continuous flow" : `Set ${target.setNumber}`}</span></div>
           <label htmlFor="history-exercise" className="sr-only">Choose exercise</label>
           <div className="relative mb-3 min-h-12 rounded-control border border-control-border bg-raised focus-within:outline-2 focus-within:outline-accent">
             <span aria-hidden className="pointer-events-none block py-3 pr-9 pl-3 text-body font-medium text-primary">{target.exerciseName}</span>
@@ -173,7 +175,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
             </select>
           </div>
           {currentExercise.reps ? <p className="mb-4 text-caption text-secondary">Planned: {currentExercise.reps}{currentExercise.targetRPE ? ` · RPE ${currentExercise.targetRPE}` : ""}</p> : null}
-          <div className="mb-5 flex flex-wrap gap-2" aria-label="Choose set">
+          {(!currentIsFlow || currentExercise.sets > 1) ? <div className="mb-5 flex flex-wrap gap-2" aria-label="Choose set">
             {Array.from({ length: currentExercise.sets }, (_, index) => index + 1).map((setNumber) => {
               const saved = isSaved({ exerciseName: target.exerciseName, setNumber });
               return <Button key={setNumber} type="button" variant={target.setNumber === setNumber ? "primary" : "secondary"} disabled={busy} aria-pressed={target.setNumber === setNumber} aria-label={`Set ${setNumber}, ${saved ? "saved" : "unlogged"}`} className="min-h-11 min-w-11 gap-1 px-2" onClick={() => { setSelected({ exerciseName: target.exerciseName, setNumber }); setError(null); }}>
@@ -186,7 +188,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
               setSetCounts((current) => new Map(current).set(target.exerciseName, count));
               setSelected({ exerciseName: target.exerciseName, setNumber: count });
             }}><Plus className="size-4" aria-hidden />Add set</Button>
-          </div>
+          </div> : null}
           <SetInput key={`${target.exerciseName}:${target.setNumber}`} sessionId={sessionId} planExerciseId={null} exerciseName={target.exerciseName} setNumber={target.setNumber}
             isFinisher={currentExercise.exerciseType === "FINISHER"} timed={isTimedTrainingExercise(currentExercise)} logged={currentSet} previous={null} showPrevious={false} saveMode="history" disabled={removing || savingDate}
             onSaved={onSaved} onMissing={() => {
@@ -195,7 +197,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
             }} onPendingChange={(pending) => { operationInFlight.current = pending; setSaving(pending); }} />
           {currentSet?.duration != null && !isTimedTrainingExercise(currentExercise) ? <p className="mt-3 text-caption text-secondary">Recorded duration: {currentSet.duration}s{currentSet.isAMRAP ? " · AMRAP" : ""}.</p> : null}
           {currentSet ? <Button type="button" variant="link" className="mt-4 min-h-11 text-critical" disabled={busy} onClick={() => void removeSet()}>
-            {removing ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />}Remove saved set
+            {removing ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />}{currentIsFlow ? "Remove saved flow" : "Remove saved set"}
           </Button> : null}
         </> : <p className="text-body text-secondary">Add an exercise to enter what you did.</p>}
       </section>
@@ -207,7 +209,7 @@ export function WorkoutHistoryEditor({ sessionId, sessionName, trainingDate, tod
             return <button key={exercise.exerciseName} type="button" disabled={busy} aria-pressed={exercise.exerciseName === target?.exerciseName} onClick={() => selectExercise(exercise.exerciseName)} className={cn(
               "flex min-h-14 w-full items-center justify-between gap-3 border-l-2 py-3 pr-2 pl-3 text-left text-caption hover:bg-row-hover focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-60",
               exercise.exerciseName === target?.exerciseName ? "border-accent bg-accent-subtle" : "border-transparent"
-            )}><span className="min-w-0 font-medium text-primary">{exercise.exerciseName}</span><span className="shrink-0 tabular-nums text-secondary">{count}/{exercise.sets}</span></button>;
+            )}><span className="min-w-0 font-medium text-primary">{exercise.exerciseName}</span><span className="shrink-0 tabular-nums text-secondary">{isContinuousTrainingExercise(exercise.exerciseName) ? (count ? "Logged" : "Unlogged") : `${count}/${exercise.sets}`}</span></button>;
           })}
         </div>
         <form onSubmit={addExercise} className="mt-5 grid gap-3 border-t border-rule-strong pt-4">

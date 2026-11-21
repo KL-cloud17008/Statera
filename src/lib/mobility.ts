@@ -2170,7 +2170,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means shoulders and upper back feel mobile while the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper A setup", note: "Machine chest press, pulldowns, supported row, paired ab exercises and side and rear delts." },
+      { label: "Training match", value: "Upper A setup", note: "Machine chest press, pulldowns, supported row, decline crunches, kettlebell uppercuts and pullovers, and delts." },
       { label: "Load rule", value: "Foot-controlled", note: "Walk to the gym only if foot load is tolerable." },
       { label: "Feel target", value: "Shoulders quiet", note: "No shrugging, no pinch, calm breathing." },
     ],
@@ -2245,7 +2245,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper B setup", note: "Incline machine chest press, supported T-bar row, overhead bar extensions, Bayesian curls, cable laterals and paired ab exercises." },
+      { label: "Training match", value: "Upper B setup", note: "Incline machine chest press, supported T-bar row, arms, cable laterals, decline crunches and the kettlebell core flow." },
       { label: "Back rule", value: "Supported pulling", note: "Keep the torso controlled and stop for nerve-like symptoms." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
@@ -2282,7 +2282,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Done means upper-back motion feels smooth and the lower legs stay calm.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Upper C setup", note: "Chest fly and reverse pec deck, cable chest press, glute kickbacks, triceps pressdowns and light hip machines." },
+      { label: "Training match", value: "Upper C setup", note: "Pec deck, cable chest press, glute kickbacks, triceps, light hip machines and the kettlebell finisher." },
       { label: "Feel target", value: "Fresh", note: "Finish the primer with quiet breathing." },
     ],
     blocks: [
@@ -2369,7 +2369,7 @@ const MOBILITY_PROGRAMS: Record<number, MobilityDayProgram> = {
     completionSummary: "Finish with easy breathing and a steady gait.",
     logType: "PRE_WORKOUT",
     focus: [
-      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, kettlebell halos and rows, machine glute kickbacks, decline crunches, rotary torso, reverse EZ-bar curls and machine back extensions." },
+      { label: "Training match", value: "Carry, glute and core setup", note: "Farmer walks, machine glute kickbacks, decline crunches, the kettlebell core flow, reverse EZ-bar curls and machine back extensions." },
       { label: "Foot rule", value: "Steady gait", note: "Short, easy steps before adding any load." },
     ],
     blocks: [

@@ -8,8 +8,8 @@ import { SessionPrepStrip } from "@/components/workout/SessionPrepStrip";
 import { ExerciseFormGuide } from "./ExerciseFormGuide";
 import { WorkoutSessionActionButton } from "@/components/workout/WorkoutSessionActionButton";
 import { LOWER_BODY_WARMUP, LOWER_B_BACK_PAIN_READINESS_NOTE, isBackPainGatedExercise } from "@/lib/default-workout-plan";
-import { isLoggableTrainingExercise } from "@/lib/training-session";
-import { getIntroductorySets, formatSetPrescription } from "@/lib/workout-prescription";
+import { isContinuousTrainingExercise, isLoggableTrainingExercise } from "@/lib/training-session";
+import { getIntroductorySets, formatExerciseDose } from "@/lib/workout-prescription";
 import type { PlanExercise } from "./ExerciseCard";
 
 type Plan = { id: string; sessionName: string; exercises: PlanExercise[] };
@@ -18,13 +18,15 @@ export function WorkoutDayPreview({ plan, hideHeader, backPainGateActive = false
   plan: Plan; hideHeader?: boolean; backPainGateActive?: boolean;
 }) {
   const exercises = plan.exercises.filter(isLoggableTrainingExercise);
-  const totalSets = exercises.reduce((sum, exercise) => sum + getIntroductorySets(exercise), 0);
+  const flows = exercises.filter((exercise) => isContinuousTrainingExercise(exercise.exerciseName));
+  const totalSets = exercises.filter((exercise) => !isContinuousTrainingExercise(exercise.exerciseName))
+    .reduce((sum, exercise) => sum + getIntroductorySets(exercise), 0);
   const showReadiness = exercises.some((exercise) => isBackPainGatedExercise(exercise.exerciseName));
   return (
     <div>
       {!hideHeader ? <PageTitle eyebrow="Today" title="Training" lead={plan.sessionName} action={<div className="flex gap-2"><Button asChild variant="secondary" size="sm"><Link href="/workout/history"><History className="size-4" />History</Link></Button><Button asChild variant="secondary" size="sm"><Link href="/workout/plan"><ClipboardList className="size-4" />Full plan</Link></Button></div>} /> : null}
       <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-b border-rule pb-5">
-        <p className="text-body text-secondary"><span className="font-medium tabular-nums text-primary">{exercises.length}</span> exercises <span aria-hidden className="px-2">·</span><span className="font-medium tabular-nums text-primary">{totalSets}</span> planned sets</p>
+        <p className="text-body text-secondary"><span className="font-medium tabular-nums text-primary">{exercises.length}</span> exercises <span aria-hidden className="px-2">·</span><span className="font-medium tabular-nums text-primary">{totalSets}</span> planned sets{flows.length === 1 ? " + 1 flow" : flows.length > 1 ? ` + ${flows.length} flows` : ""}</p>
         <WorkoutSessionActionButton planId={plan.id} status="start" prominent fullWidth className="min-h-12 sm:w-auto sm:min-w-48" />
       </div>
       {showReadiness ? <Notice tone="accent" className="mt-5">{LOWER_B_BACK_PAIN_READINESS_NOTE}</Notice> : null}
@@ -35,7 +37,7 @@ export function WorkoutDayPreview({ plan, hideHeader, backPainGateActive = false
             <span className="pt-0.5 text-caption tabular-nums text-tertiary">{String(index + 1).padStart(2, "0")}</span>
             <div>
               <p className="text-body font-medium text-primary">{exercise.exerciseName}</p>
-              <p className="mt-1 text-caption text-secondary">{formatSetPrescription(exercise)} × {exercise.reps}{exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}{exercise.tempo ? ` · Tempo ${exercise.tempo}` : ""}</p>
+              <p className="mt-1 text-caption text-secondary">{formatExerciseDose(exercise)}{exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}{exercise.tempo ? ` · Tempo ${exercise.tempo}` : ""}</p>
               {backPainGateActive && isBackPainGatedExercise(exercise.exerciseName) ? <p className="mt-2 text-caption text-ember">Skip today · lower-back pain 3/10 or higher</p> : null}
               <ExerciseFormGuide name={exercise.exerciseName} cues={exercise.cues} />
             </div>

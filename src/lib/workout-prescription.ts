@@ -1,3 +1,5 @@
+import { isContinuousTrainingExercise } from "@/lib/training-session";
+
 type Prescription = { exerciseName: string; sets: number; cues?: string | null };
 
 /** Only the revised working curl slots have a voluntary final target set. */
@@ -12,6 +14,12 @@ export function getIntroductorySets(exercise: Prescription) {
 export function formatSetPrescription(exercise: Prescription) {
   const intro = getIntroductorySets(exercise);
   return intro < exercise.sets ? `${intro} intro / ${exercise.sets} target` : String(exercise.sets);
+}
+
+export function formatExerciseDose(exercise: Prescription & { reps: string }, separator = " × ") {
+  return isContinuousTrainingExercise(exercise.exerciseName)
+    ? exercise.reps
+    : `${formatSetPrescription(exercise)}${separator}${exercise.reps}`;
 }
 
 /** History display only: never use this to reassign saved sets or drafts. */

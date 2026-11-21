@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   FRIDAY_TRICEPS_EXERCISE, FRIDAY_TRICEPS_VARIATIONS, LEGACY_FRIDAY_TRICEPS_EXERCISE, LEGACY_FRIDAY_TRICEPS_VARIATIONS,
 } from "@/lib/default-workout-plan";
+import { isContinuousTrainingExercise } from "@/lib/training-session";
 import {
   acknowledgeSubmittedDraft, entryFields, isWorkoutStorageDurable, parseEntry, parseWorkoutDraft, readWorkoutStorage,
   subscribeWorkoutStorage, workoutDraftKey, workoutSetForm, writeWorkoutStorage,
@@ -68,9 +69,11 @@ export function SetInput({
   const isSaved = Boolean(logged) && !draft;
   const queued = draft?.status === "queued";
   const conflict = localConflict ?? draft?.conflict;
-  const weightLabel = isFinisher ? "Score" : timed && /farmer walk/i.test(exerciseName) ? "kg per hand" : "Weight · kg";
+  const isFlow = isContinuousTrainingExercise(exerciseName);
+  const entryName = `${exerciseName} ${isFlow ? "flow" : `set ${setNumber}`}`;
+  const weightLabel = isFinisher ? "Score" : isFlow ? "Bell · kg" : timed && /farmer walk/i.test(exerciseName) ? "kg per hand" : "Weight · kg";
   const measurement = isFinisher ? "notes" : timed ? "duration" : "reps";
-  const measurementLabel = isFinisher ? "Notes" : timed ? "Seconds" : "Reps";
+  const measurementLabel = isFinisher ? "Notes" : isFlow ? "Total seconds" : timed ? "Seconds" : "Reps";
 
   useEffect(() => {
     if (shouldAdvance) weightRef.current?.focus({ preventScroll: true });
@@ -171,18 +174,18 @@ export function SetInput({
       <fieldset disabled={pending || disabled || queued} className="grid grid-cols-3 gap-3">
         <label className="grid gap-2 text-caption text-secondary">
           {weightLabel}
-          <Input ref={weightRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); repsRef.current?.focus(); } }} aria-label={`${exerciseName} set ${setNumber} weight`} aria-describedby={statusId} type="number" inputMode="decimal" min="0" max="1500" step="any" value={fields.weight} placeholder="0" onChange={(event) => updateFields({ ...fields, weight: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
+          <Input ref={weightRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); repsRef.current?.focus(); } }} aria-label={`${entryName} weight`} aria-describedby={statusId} type="number" inputMode="decimal" min="0" max="1500" step="any" value={fields.weight} placeholder="0" onChange={(event) => updateFields({ ...fields, weight: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
         </label>
         <label className="grid gap-2 text-caption text-secondary">
           {measurementLabel}
-          <Input ref={repsRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); rpeRef.current?.focus(); } }} aria-label={`${exerciseName} set ${setNumber} ${measurement}`} type={isFinisher ? "text" : "number"} inputMode={isFinisher ? "text" : "numeric"} min={timed ? 1 : 0} max={timed ? 7200 : 1000} maxLength={isFinisher ? 240 : undefined} step="1" value={fields[measurement] ?? ""} placeholder={isFinisher ? "Optional" : timed ? "60" : "0"} onChange={(event) => updateFields({ ...fields, [measurement]: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
+          <Input ref={repsRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); rpeRef.current?.focus(); } }} aria-label={`${entryName} ${measurement}`} type={isFinisher ? "text" : "number"} inputMode={isFinisher ? "text" : "numeric"} min={timed ? 1 : 0} max={timed ? 7200 : 1000} maxLength={isFinisher ? 240 : undefined} step="1" value={fields[measurement] ?? ""} placeholder={isFinisher ? "Optional" : isFlow ? undefined : timed ? "60" : "0"} onChange={(event) => updateFields({ ...fields, [measurement]: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
         </label>
         <label className="grid gap-2 text-caption text-secondary">
           RPE
-          <Input ref={rpeRef} enterKeyHint="done" aria-label={`${exerciseName} set ${setNumber} RPE`} type="number" inputMode="numeric" min="1" max="10" step="1" value={fields.rpe} placeholder="1–10" onChange={(event) => updateFields({ ...fields, rpe: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
+          <Input ref={rpeRef} enterKeyHint="done" aria-label={`${entryName} RPE`} type="number" inputMode="numeric" min="1" max="10" step="1" value={fields.rpe} placeholder="1–10" onChange={(event) => updateFields({ ...fields, rpe: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
         </label>
       </fieldset>
-      {!isFinisher && (showNotes || note) ? <label className="grid gap-2 text-caption text-secondary">Notes<Input aria-label={`${exerciseName} set ${setNumber} notes`} value={note} disabled={pending || disabled || queued} maxLength={variation ? 239 - variation.length : 240} onChange={(event) => updateNotes(variation, event.target.value)} className="min-h-12" placeholder="Optional" /></label> : null}
+      {!isFinisher && (showNotes || note) ? <label className="grid gap-2 text-caption text-secondary">Notes<Input aria-label={`${entryName} notes`} value={note} disabled={pending || disabled || queued} maxLength={variation ? 239 - variation.length : 240} onChange={(event) => updateNotes(variation, event.target.value)} className="min-h-12" placeholder="Optional" /></label> : null}
       <div id={statusId} role="status" aria-live="polite" className={cn("text-caption", error || draft?.status === "error" ? "text-ember" : "text-secondary")}>
         {isSaved ? <Check className="mr-1 inline size-4 text-accent" /> : null}{statusText}
         {storageUnavailable ? <p className="mt-1 text-ember">Browser storage is unavailable. Keep this page open until the set is saved.</p> : null}
@@ -197,7 +200,7 @@ export function SetInput({
         {!isFinisher && !showNotes && !note ? <Button type="button" variant="link" className="min-h-12 text-caption" disabled={pending || disabled} onClick={() => setShowNotes(true)}>Add note</Button> : null}
         <Button type="submit" variant="primary" disabled={!hasValue || pending || disabled || isSaved} className="min-h-12 flex-1 text-body">
           {pending ? <Loader2 className="size-4 animate-spin" /> : error || draft?.status === "pending" ? <RotateCcw className="size-4" /> : <Check className="size-4" />}
-          {pending ? "Saving…" : isSaved ? "Saved" : error || draft?.status === "pending" ? "Retry save" : logged ? "Save changes" : `Save set ${setNumber}`}
+          {pending ? "Saving…" : isSaved ? "Saved" : error || draft?.status === "pending" ? "Retry save" : logged ? "Save changes" : isFlow ? "Save flow" : `Save set ${setNumber}`}
         </Button>
       </div>}
       {draft && !pending ? <Button type="button" variant="link" disabled={disabled} className="min-h-10 justify-self-start text-caption text-secondary" onClick={() => {

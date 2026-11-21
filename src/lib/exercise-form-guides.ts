@@ -1,8 +1,17 @@
+import { KETTLEBELL_FLOWS } from "@/lib/training-session";
+
 type FormGuide = {
   setup: string;
   movement: string;
   commonMistake: string;
   video?: { url: string; label: string };
+};
+
+const uppercutPullover: FormGuide = {
+  setup: "Use one light kettlebell and leave space around and above you. Practice the two movements unloaded first.",
+  movement: "Guide the bell up and across on the uppercut as your hips turn. Work both sides. For the pullover, keep a soft bend in your elbows as the bell moves overhead and back. Keep your ribs down.",
+  commonMistake: "Forcing a twist through your lower back, arching to reach farther or changing the elbow angle to finish the pullover.",
+  video: { url: "https://www.youtube.com/watch?v=kt9QyErXJZs&t=335s", label: "Watch the uppercut and pullover" },
 };
 
 const guides = {
@@ -218,6 +227,18 @@ const guides = {
     commonMistake: "Moving your head to clear the bell, flaring your ribs or forcing a deeper circle.",
     video: { url: "https://www.youtube.com/watch?v=gKi_KT9kuMs&t=156s", label: "Watch Stefan’s kettlebell halo" },
   },
+  kettlebellCoreFlow: {
+    ...uppercutPullover,
+    movement: `Circle the bell slowly around your head in each direction. ${uppercutPullover.movement}`,
+    video: { url: "https://www.youtube.com/watch?v=kt9QyErXJZs&t=323s", label: "Watch Stefan’s halo, uppercut and pullover" },
+  },
+  uppercutPullover,
+  kettlebellWarriorFlow: {
+    setup: "Choose one light kettlebell and clear space for the hinge, squat and floor press.",
+    movement: "Start with two-hand swings driven by the hips, or practise the hinge with deadlifts. Hold the bell at your chest for the goblet squat. Set the bell down to move to the floor, then press with both hands.",
+    commonMistake: "Rushing the transition to the floor or continuing when you lose control of the bell.",
+    video: { url: "https://www.youtube.com/watch?v=kt9QyErXJZs&t=83s", label: "Watch Stefan’s kettlebell movement demos" },
+  },
   crossBodyKettlebellRow: {
     setup: "Plant your feet, hinge at the hips and brace your free hand on a stable bench. Start with the bell just inside the opposite knee if you can reach it comfortably.",
     movement: "Row the bell diagonally towards the ribs on your working side. Keep your chest and hips steady and lower slowly. Use the same range on both sides.",
@@ -312,6 +333,9 @@ const aliases: Record<string, keyof typeof guides> = {
   "farmer's carry": "carry",
   "kettlebell farmer walk": "carry",
   "kettlebell halo": "kettlebellHalo",
+  [KETTLEBELL_FLOWS.sundayCore.toLowerCase()]: "kettlebellCoreFlow",
+  [KETTLEBELL_FLOWS.coreSuperset.toLowerCase()]: "uppercutPullover",
+  [KETTLEBELL_FLOWS.fridayWarrior.toLowerCase()]: "kettlebellWarriorFlow",
   "bench-supported cross-body kettlebell row": "crossBodyKettlebellRow",
   "reverse ez-bar curl": "reverseCurl",
   "back extension — hyperextension bench": "backExtension",

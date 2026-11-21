@@ -22,8 +22,8 @@ import {
 } from "@/lib/default-workout-plan";
 import { getRequiredLaterRecoveryTitle } from "@/lib/mobility";
 import { DAY_NAMES, getPlanDay } from "@/lib/plan-preview";
-import { formatSetPrescription } from "@/lib/workout-prescription";
-import { isLoggableTrainingExercise } from "@/lib/training-session";
+import { formatExerciseDose } from "@/lib/workout-prescription";
+import { isContinuousTrainingExercise, isLoggableTrainingExercise } from "@/lib/training-session";
 
 const PLAN_DAYS = [0, 1, 2, 3, 4, 5, 6] as const;
 
@@ -110,7 +110,10 @@ export default async function WorkoutPlanPage() {
             const plan = plansByDay.get(dayOfWeek);
             const loggableExercises = plan?.exercises.filter(isLoggableTrainingExercise) ?? [];
             const workingCount = loggableExercises.length;
-            const totalSets = loggableExercises.reduce((sum, exercise) => sum + exercise.sets, 0);
+            const flows = loggableExercises.filter((exercise) => isContinuousTrainingExercise(exercise.exerciseName));
+            const totalSets = loggableExercises
+              .filter((exercise) => !isContinuousTrainingExercise(exercise.exerciseName))
+              .reduce((sum, exercise) => sum + exercise.sets, 0);
             const showBackReadiness = loggableExercises.some((exercise) => isBackPainGatedExercise(exercise.exerciseName));
 
             return (
@@ -122,9 +125,10 @@ export default async function WorkoutPlanPage() {
 
                 {plan ? (
                   <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-                    <dl className="flex gap-8">
+                    <dl className="flex flex-wrap gap-x-6 gap-y-3">
                       <Figure label="Exercises" value={workingCount} />
                       <Figure label="Working sets" value={totalSets} />
+                      {flows.length > 0 ? <Figure label="Flows" value={flows.length} /> : null}
                     </dl>
                     <WorkoutSessionActionButton
                       planId={plan.id}
@@ -152,7 +156,7 @@ export default async function WorkoutPlanPage() {
                     mdColumns={PLAN_COLUMNS_MD}
                   >
                     {loggableExercises.map((exercise) => {
-                      const programming = `${formatSetPrescription(exercise)} x ${exercise.reps}${
+                      const programming = `${formatExerciseDose(exercise, " x ")}${
                         exercise.tempo ? `, tempo ${exercise.tempo}` : ""
                       }${exercise.targetRPE ? `, RPE ${exercise.targetRPE}` : ""}${
                         exercise.restSeconds != null && exercise.restSeconds > 0

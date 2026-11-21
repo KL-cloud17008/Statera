@@ -55,7 +55,6 @@ export const DEFAULT_EXERCISE_LIBRARY: LibraryExercise[] = [
   { id: "two-arm-reverse-pec-deck", name: "Two-Arm Reverse Pec Deck", muscleGroup: "Shoulders", defaultSets: 2, defaultReps: "8-12", defaultRestSeconds: 120, source: "builtin" },
   { id: "chest-supported-row", name: "Chest-Supported Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 120, source: "builtin" },
   { id: "chest-supported-t-bar-row", name: "Chest-Supported T-Bar Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 120, source: "builtin" },
-  { id: "bench-supported-cross-body-kettlebell-row", name: "Bench-Supported Cross-Body Kettlebell Row", muscleGroup: "Back", defaultSets: 2, defaultReps: "8-12 per side", defaultRestSeconds: 75, source: "builtin" },
   { id: "machine-row", name: "Machine Row", muscleGroup: "Back", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 120, source: "builtin" },
   { id: "lat-pulldown", name: "Lat Pulldown", muscleGroup: "Back", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 90, source: "builtin" },
   { id: "neutral-grip-lat-pulldown", name: "Neutral-Grip Lat Pulldown", muscleGroup: "Back", defaultSets: 3, defaultReps: "4-6", defaultRestSeconds: 120, source: "builtin" },

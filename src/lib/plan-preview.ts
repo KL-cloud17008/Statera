@@ -1,6 +1,6 @@
 import { DEFAULT_WORKOUT_PLAN, type DefaultWorkoutDay } from "@/lib/default-workout-plan";
 import { parseDate } from "@/lib/dates";
-import { isLoggableTrainingExercise } from "@/lib/training-session";
+import { isContinuousTrainingExercise, isLoggableTrainingExercise } from "@/lib/training-session";
 
 export type PlanDayStats = {
   exerciseCount: number;
@@ -35,6 +35,10 @@ export function isStepGoalSuspendedByPlan(date: string): boolean {
 export function buildPlanDayStats(day: DefaultWorkoutDay): PlanDayStats {
   const loggable = day.exercises.filter(isLoggableTrainingExercise);
   const estimatedSeconds = loggable.reduce((sum, exercise) => {
+    if (isContinuousTrainingExercise(exercise.exerciseName)) {
+      const minutes = /^Up to (\d+) min/.exec(exercise.reps);
+      return sum + (minutes ? Number(minutes[1]) * 60 : 120);
+    }
     const sets = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
     const timedSeconds = /^(\d+) sec$/.exec(exercise.reps);
     const workSeconds = timedSeconds ? Number(timedSeconds[1]) : / per (arm|leg|side)$/.test(exercise.reps) ? 75 : 45;

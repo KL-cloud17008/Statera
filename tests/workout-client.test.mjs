@@ -195,6 +195,37 @@ test("Friday triceps preserves offline entries and history for current and older
   }
 });
 
+test("a continuous kettlebell flow queues one duration and reopens without extra set targets", async () => {
+  const env = fixture();
+  env.online = false;
+  const exerciseName = "Kettlebell Halo → Uppercut → Pullover";
+  const props = entryProps({ exerciseName, timed: true, offlineLogging: true });
+  const editor = env.mount("SetInput", props);
+  editor.change("weight", "6").change("duration", "115");
+  assert.equal(editor.nodes("Input").some((input) => input.props["aria-label"]?.endsWith("reps")), false);
+  assert.equal(editor.button("Save flow").props.disabled, false);
+  editor.submit();
+  await flush();
+
+  const [queued] = env.lib.queuedWorkoutSets("session");
+  assert.equal(env.lib.queuedWorkoutSets("session").length, 1);
+  assert.equal(queued.values.duration, 115);
+  assert.equal(queued.values.repsCompleted, null);
+  const { exercises } = loggerProps();
+  const plan = [{ ...exercises[0], exerciseName, sets: 1, reps: "Self-paced flow", exerciseType: "TIMED", restSeconds: 0 }];
+  const reopened = env.mount("SessionLogger", loggerProps({ exercises: plan, offlineLogging: true, offlineMode: true }));
+  assert.equal(reopened.nodes("SetInput")[0].props.timed, true);
+  assert.match(text(reopened.tree), /Continuous flow/);
+  assert.doesNotMatch(text(reopened.tree), /Set 1 \/ 1/);
+
+  const history = fixture().mount("WorkoutHistoryEditor", loggerProps({
+    exercises: plan,
+    existingSets: [{ ...queued.values, exerciseName, setNumber: 1, isAMRAP: false }],
+  }));
+  assert.equal(history.nodes("SetInput")[0].props.logged.duration, 115);
+  assert.doesNotMatch(text(history.tree), /Add set/);
+});
+
 test("history editor exposes missing sets, additional exercises and saved-set removal without starting a session", async () => {
   const env = fixture(), props = loggerProps();
   const host = env.mount("WorkoutHistoryEditor", props);

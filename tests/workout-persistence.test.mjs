@@ -616,7 +616,7 @@ test("Tuesday refresh keeps old incline records and drafts separate from the fla
     assert.equal(updated.exercises[0].sets, 3);
     assert.equal(updated.exercises[0].reps, "4-6");
     assert.equal(updated.exercises[0].targetRPE, "6-7");
-    assert.deepEqual(updated.exercises.map(exercise => exercise.sets), [3, 3, 2, 3, 2, 2, 2, 2, 2]);
+    assert.deepEqual(updated.exercises.map(exercise => exercise.sets), [3, 3, 2, 3, 2, 1, 2, 2, 2]);
     const current = await f.actions.getSessionWithSets(open.id);
     assert.equal(current.id, open.id);
     assert.equal(current.workoutPlanId, updated.id);
@@ -627,7 +627,7 @@ test("Tuesday refresh keeps old incline records and drafts separate from the fla
     assert.ok(meta.retainedExerciseNames.includes("A1 Incline Machine Chest Press"), "old device drafts remain recoverable");
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     assert.equal(visible[0].exerciseName, "A1 Machine Chest Press");
-    assert.deepEqual(Array.from(visible.slice(0, 9), exercise => exercise.sets), [3, 3, 2, 3, 2, 2, 2, 2, 2]);
+    assert.deepEqual(Array.from(visible.slice(0, 9), exercise => exercise.sets), [3, 3, 2, 3, 2, 1, 2, 2, 2]);
     const retained = ["B1 Neutral-Grip Lat Pulldown", ...(hasSavedInclineSet ? ["A1 Incline Machine Chest Press"] : [])];
     assert.deepEqual(Array.from(visible.slice(9), exercise => exercise.exerciseName), retained);
     assert.deepEqual(f.state.sets, originalSets, "incline performance must never be relabelled as standard pressing");
@@ -682,17 +682,18 @@ test("Upper B refresh preserves flat press records separately from the incline p
     assert.equal(JSON.parse(current.notes).planTemplateVersion, f.load("src/lib/default-workout-plan.ts").DEFAULT_WORKOUT_PLAN_VERSION);
     assert.equal(updatedPlan.exercises[0].exerciseName, "A1 Incline Machine Chest Press");
     assert.equal(updatedPlan.exercises[1].exerciseName, "Chest-Supported T-Bar Row");
-    assert.deepEqual(updatedPlan.exercises.slice(-3).map(exercise => exercise.exerciseName), ["Plate-Weighted Decline Bench Crunch", "Rotary Torso Machine", "Back Extension Machine"]);
+    assert.deepEqual(updatedPlan.exercises.slice(-3).map(exercise => exercise.exerciseName), ["Plate-Weighted Decline Bench Crunch", "Kettlebell Uppercut → Pullover", "Back Extension Machine"]);
     const visible = f.load("src/lib/workout-session-exercises.ts").mergeSavedSessionExercises(current.workoutPlan.exercises, current.sets);
     const count = updatedPlan.exercises.length;
     assert.deepEqual(Array.from(visible.slice(0, count), exercise => exercise.exerciseName), updatedPlan.exercises.map(exercise => exercise.exerciseName));
-    assert.equal(updatedPlan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0), 24);
+    assert.equal(updatedPlan.exercises.reduce((sum, exercise) => sum + exercise.sets, 0), 22);
     assert.equal(visible.find(exercise => exercise.exerciseName === oldExercises[0].exerciseName).sets, 3, "all previously logged press sets remain visible");
     const retained = [...oldExercises.slice(0, 2), ...(retainOldCableSets ? oldExercises.slice(4, 6) : [])];
     assert.deepEqual(Array.from(visible.slice(count), exercise => exercise.exerciseName), retained.map(exercise => exercise.exerciseName));
     assert.deepEqual(f.state.sets, originalSets);
     for (const exercise of updatedPlan.exercises.slice(-4)) {
-      const result = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, weightUsed: "10", repsCompleted: "12", actualRPE: "6" }));
+      const performance = exercise.exerciseType === "TIMED" ? { repsCompleted: undefined, duration: "95" } : { repsCompleted: "12" };
+      const result = await f.actions.logSet(f.form(open.id, { exerciseName: exercise.exerciseName, weightUsed: "10", actualRPE: "6", ...performance }));
       assert.ok(!result.error, result.error);
       assert.equal(f.state.sets.find(set => set.workoutSessionId === open.id && set.exerciseName === exercise.exerciseName).planExerciseId, exercise.id);
     }

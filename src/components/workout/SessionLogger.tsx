@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Notice, Section } from "@/components/ui/ledger";
 import { Progress } from "@/components/ui/progress";
 import { LOWER_BODY_WARMUP, LOWER_B_BACK_PAIN_READINESS_NOTE, isBackPainGatedExercise, isFootPainGatedExercise } from "@/lib/default-workout-plan";
-import { isLoggableTrainingExercise, isTimedTrainingExercise } from "@/lib/training-session";
+import { isContinuousTrainingExercise, isLoggableTrainingExercise, isTimedTrainingExercise } from "@/lib/training-session";
 import { acknowledgeSubmittedDraft, draftTargets, parseWorkoutDraft, queuedWorkoutSets, queuedWorkoutSnapshot, readWorkoutStorage, restStorageKey, sessionDraftSnapshot, startSessionRest, subscribeNetwork, subscribeWorkoutStorage, workoutDraftKey, workoutSetForm, writeWorkoutStorage, type SavedEntry } from "@/lib/workout-entry-state";
 import { forgetOfflineWorkout, rememberOfflineSets } from "@/lib/offline-workout";
 import { mergeSavedSessionExercises } from "@/lib/workout-session-exercises";
@@ -76,6 +76,8 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
   const draftTarget = allTargets.find((target) => unsavedKeys.includes(workoutDraftKey(sessionId, target.exerciseName, target.setNumber)));
   const target = (selected && allTargets.find((candidate) => candidate.exerciseName === selected.exerciseName && candidate.setNumber === selected.setNumber)) || draftTarget || firstUnsaved || allTargets.at(-1) || null;
   const currentExercise = loggableExercises.find((exercise) => exercise.exerciseName === target?.exerciseName);
+  const currentIsFlow = currentExercise ? isContinuousTrainingExercise(currentExercise.exerciseName) : false;
+  const entryLabel = loggableExercises.some((exercise) => isContinuousTrainingExercise(exercise.exerciseName)) ? "entries" : "sets";
   const currentIndex = currentExercise ? loggableExercises.indexOf(currentExercise) : -1;
   const currentBlock = currentExercise ? getPairedExercises(loggableExercises, currentExercise) : [];
   const roundMembers = currentBlock.filter(exercise => target && target.setNumber <= (exercise.exerciseType === "FINISHER" ? 1 : exercise.sets));
@@ -175,7 +177,8 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
       if (next) { setSelected(next); setAdvanceFocus(true); }
       const partnerIsNext = currentExercise.restSeconds === 0 && next?.setNumber === target.setNumber &&
         pairedExercises.some((exercise) => exercise.exerciseName === next.exerciseName);
-      if (!partnerIsNext) startSessionRest(sessionId, getProgrammedRestSeconds(loggableExercises, currentExercise));
+      const restSeconds = getProgrammedRestSeconds(loggableExercises, currentExercise);
+      if (!partnerIsNext && restSeconds > 0) startSessionRest(sessionId, restSeconds);
     }
     setSessionError(null);
   }
@@ -186,7 +189,7 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
       setSessionError("Save or resolve your draft sets before finishing this session.");
       return;
     }
-    if (!complete && !window.confirm(`Finish with ${savedCount} of ${allTargets.length} sets saved? Unlogged sets will remain empty.`)) return;
+    if (!complete && !window.confirm(`Finish with ${savedCount} of ${allTargets.length} ${entryLabel} saved? Unlogged ${entryLabel} will remain empty.`)) return;
     operationInFlight.current = true;
     setPending("complete");
     setSessionError(null);
@@ -237,20 +240,20 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
       {loggableExercises.some((exercise) => exercise.id.startsWith("retained-")) ? <Notice className="mb-4">The plan was updated. Earlier saved sets and drafts remain under their original exercise names; they have not been reassigned. Unlogged sets can be left empty when finishing.</Notice> : null}
       {isStale ? <Notice className="mb-4 flex items-start gap-2"><AlertTriangle className="mt-0.5 size-4 shrink-0" /><span>Open session from {formatSessionDate(trainingDate)}. Continue it or discard it to start today’s training.</span></Notice> : null}
       <div className="mb-5 space-y-2">
-        <div className="flex flex-wrap items-baseline justify-between gap-2 text-caption text-secondary"><span><span className="font-medium text-primary tabular-nums">{confirmedCount}/{allTargets.length}</span> sets synced{queued.length ? ` · ${queued.length} queued` : ""}{unsavedKeys.length ? ` · ${unsavedKeys.length} draft${unsavedKeys.length === 1 ? "" : "s"}` : ""}</span><span className="tabular-nums">{elapsedMinutes} min</span></div>
+        <div className="flex flex-wrap items-baseline justify-between gap-2 text-caption text-secondary"><span><span className="font-medium text-primary tabular-nums">{confirmedCount}/{allTargets.length}</span> {entryLabel} synced{queued.length ? ` · ${queued.length} queued` : ""}{unsavedKeys.length ? ` · ${unsavedKeys.length} draft${unsavedKeys.length === 1 ? "" : "s"}` : ""}</span><span className="tabular-nums">{elapsedMinutes} min</span></div>
         <Progress value={progressPercent} />
       </div>
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
         <section ref={editorRef} id="current-set" className="scroll-mt-24 border border-rule-strong bg-raised p-4 sm:p-6">
           {target && currentExercise ? <FocusedSetPanel>
-            <div className="mb-3 flex items-center justify-between gap-3"><p className="text-caption font-medium text-accent">Exercise {currentIndex + 1} of {loggableExercises.length}</p><span className="text-caption font-medium tabular-nums text-primary">Set {target.setNumber} / {currentExercise.exerciseType === "FINISHER" ? 1 : currentExercise.sets}</span></div>
+            <div className="mb-3 flex items-center justify-between gap-3"><p className="text-caption font-medium text-accent">Exercise {currentIndex + 1} of {loggableExercises.length}</p><span className="text-caption font-medium tabular-nums text-primary">{currentIsFlow ? "Continuous flow" : `Set ${target.setNumber} / ${currentExercise.exerciseType === "FINISHER" ? 1 : currentExercise.sets}`}</span></div>
             <h2 className="text-xl leading-tight font-semibold text-primary sm:text-2xl">{currentExercise.exerciseName}</h2>
             <p className="mt-2 text-caption text-secondary">{currentExercise.reps}{currentExercise.targetRPE ? ` · RPE ${currentExercise.targetRPE}` : ""}{currentExercise.tempo ? ` · Tempo ${currentExercise.tempo}` : ""}</p>
             {roundMembers.length > 1 ? <p className="mt-2 border-l-2 border-accent pl-3 text-caption text-secondary">{roundMembers.length === 2 ? "Superset" : "Triset"} · Round {target.setNumber} · Movement {roundMembers.indexOf(currentExercise) + 1} of {roundMembers.length}</p> : null}
             <ExerciseFormGuide key={currentExercise.id} name={currentExercise.exerciseName} cues={currentExercise.cues} />
             <SetInput key={`${sessionId}:${currentExercise.id}:${target.setNumber}`} sessionId={sessionId} planExerciseId={currentExercise.id || null} exerciseName={currentExercise.exerciseName} setNumber={target.setNumber} isFinisher={currentExercise.exerciseType === "FINISHER"} timed={isTimedTrainingExercise(currentExercise)} logged={currentLogged} previous={previousSet} prefill={prefill} shouldAdvance={advanceFocus} disabled={pending !== null || syncing} offlineLogging={offlineLogging} offlineMode={offlineMode} onPendingChange={(nextSaving) => { saveInFlight.current = nextSaving; setSaving(nextSaving); }} onSaved={onSaved} className="mt-4" />
-            {nextTarget && !currentLogged ? <p className="mt-3 text-caption text-secondary">After saving: <span className="font-medium text-primary">{nextTarget.exerciseName}</span> · Set {nextTarget.setNumber}</p> : null}
-            <div className="mt-4"><RestTimer sessionId={sessionId} defaultSeconds={getProgrammedRestSeconds(loggableExercises, currentExercise)} /></div>
+            {nextTarget && !currentLogged ? <p className="mt-3 text-caption text-secondary">After saving: <span className="font-medium text-primary">{nextTarget.exerciseName}</span>{isContinuousTrainingExercise(nextTarget.exerciseName) ? " · Flow" : ` · Set ${nextTarget.setNumber}`}</p> : null}
+            <div className="mt-4"><RestTimer sessionId={sessionId} defaultSeconds={currentIsFlow ? undefined : getProgrammedRestSeconds(loggableExercises, currentExercise)} /></div>
             <div className="mt-4 flex items-center gap-2 border-t border-rule pt-3">
               <Button type="button" variant="ghost" aria-label="Previous exercise" className="min-h-12 min-w-12 px-2" disabled={currentIndex <= 0 || saving || syncing || pending !== null} onClick={() => selectExercise(loggableExercises[currentIndex - 1])}><ChevronLeft className="size-4" /></Button>
               <label className="min-w-0 flex-1" htmlFor="session-exercise-jump"><span className="sr-only">Jump to exercise</span>
@@ -271,7 +274,7 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
         </section>
       </div>
       <Section>
-        {complete ? <p className="mb-4 flex items-center gap-2 text-body font-medium text-accent"><CheckCircle2 className="size-5" />{queued.length ? "All planned sets recorded on this device" : "All planned sets saved"}</p> : null}
+        {complete ? <p className="mb-4 flex items-center gap-2 text-body font-medium text-accent"><CheckCircle2 className="size-5" />{queued.length ? `All planned ${entryLabel} recorded on this device` : `All planned ${entryLabel} saved`}</p> : null}
         {sessionError ? <div role="alert"><Notice className="mb-4">{sessionError}</Notice></div> : null}
         <div className="flex flex-wrap gap-3"><Button type="button" className="min-h-12 w-full sm:w-auto" onClick={() => void handleComplete()} disabled={pending !== null || saving || syncing || draftKeys.length > 0 || offlineMode || !online}>{pending === "complete" ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle2 className="size-4" />}Finish session</Button>
           {isStale && !offlineMode ? <Button type="button" variant="secondary" className="min-h-12" onClick={() => void handleDiscard()} disabled={pending !== null || saving || syncing || !online}>{pending === "discard" ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}Discard old session</Button> : null}

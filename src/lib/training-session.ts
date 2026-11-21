@@ -1,3 +1,9 @@
+export const KETTLEBELL_FLOWS = {
+  sundayCore: "Kettlebell Halo → Uppercut → Pullover",
+  coreSuperset: "Kettlebell Uppercut → Pullover",
+  fridayWarrior: "Kettlebell Warrior Flow",
+} as const;
+
 export const SESSION_PREP_ITEMS = [
   {
     label: "Walk to gym",
@@ -29,6 +35,11 @@ export function isLoggableTrainingExercise(exercise: {
   return exercise.exerciseType !== "WARMUP" && !isAtHomePrimerExerciseName(exercise.exerciseName);
 }
 
+export function isContinuousTrainingExercise(exerciseName: string) {
+  return Object.values(KETTLEBELL_FLOWS).some((name) => name === exerciseName.trim());
+}
+
 export function isTimedTrainingExercise(exercise: { exerciseName: string; exerciseType?: string | null }) {
-  return exercise.exerciseType === "TIMED" || /^kettlebell farmer walk$/i.test(exercise.exerciseName.trim());
+  return exercise.exerciseType === "TIMED" || /^kettlebell farmer walk$/i.test(exercise.exerciseName.trim()) ||
+    isContinuousTrainingExercise(exercise.exerciseName);
 }
