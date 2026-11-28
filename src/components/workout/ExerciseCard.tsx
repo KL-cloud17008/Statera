@@ -24,6 +24,7 @@ export function ExerciseCard({ exercise, index, loggedSets, selectedSet, draftSe
 }) {
   const count = exercise.exerciseType === "FINISHER" ? 1 : exercise.sets;
   const complete = Array.from({ length: count }, (_, i) => i + 1).every((setNumber) => loggedSets.some((set) => set.setNumber === setNumber));
+  const partial = loggedSets.length > 0 && !complete;
   const firstMissing = Array.from({ length: count }, (_, i) => i + 1).find((setNumber) => !loggedSets.some((set) => set.setNumber === setNumber)) ?? 1;
   const isFlow = isContinuousTrainingExercise(exercise.exerciseName);
   const status = isFlow
@@ -32,16 +33,19 @@ export function ExerciseCard({ exercise, index, loggedSets, selectedSet, draftSe
   return (
     <div className={cn("border-b border-rule py-3", selectedSet && "border-l-2 border-l-accent pl-3")}>
       <button type="button" disabled={disabled} onClick={() => onSelect(draftSetNumbers[0] ?? firstMissing)} aria-current={selectedSet ? "step" : undefined} className="flex min-h-12 w-full items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60">
-        <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-control text-caption tabular-nums", complete ? "bg-accent-subtle text-accent" : "bg-sunken text-secondary")}>
+        <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-control text-caption tabular-nums", complete ? "bg-accent-subtle text-accent" : partial ? "border border-accent/50 bg-accent-subtle text-accent" : "bg-sunken text-secondary")}>
           {complete ? <Check className="size-4" /> : String(index + 1).padStart(2, "0")}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-row font-medium text-primary">{exercise.exerciseName}</span>
-          <span className="mt-1 block text-caption text-secondary">{status}{queuedSetNumbers.length ? ` · ${queuedSetNumbers.length} queued` : ""}{draftSetNumbers.length ? " · Draft" : ""}</span>
+          <span className="flex flex-wrap items-center gap-1.5 text-row font-medium text-primary">
+            <span>{exercise.exerciseName}</span>
+            {exercise.supersetGroup ? <span className="rounded-control bg-accent-subtle px-1.5 py-0.5 text-[11px] font-medium text-accent">{exercise.supersetGroup}</span> : null}
+          </span>
+          <span className="mt-1 block text-caption text-secondary">{status}{!isFlow && exercise.targetRPE ? ` · RPE ${exercise.targetRPE}` : ""}{queuedSetNumbers.length ? ` · ${queuedSetNumbers.length} queued` : ""}{draftSetNumbers.length ? " · Draft" : ""}</span>
         </span>
         <ChevronRight className="size-4 shrink-0 text-tertiary" />
       </button>
-      {selectedSet !== null && (!isFlow || count > 1) ? <div className="mt-2 flex flex-wrap gap-2 pl-11" aria-label={`${exercise.exerciseName} sets`}>
+      {selectedSet !== null && (!isFlow || count > 1) ? <div className="mt-2 flex flex-wrap gap-2 pl-0 sm:pl-11" aria-label={`${exercise.exerciseName} sets`}>
         {Array.from({ length: count }, (_, i) => i + 1).map((number) => {
           const saved = loggedSets.find((set) => set.setNumber === number);
           return <button key={number} type="button" disabled={disabled} onClick={() => onSelect(number)} aria-pressed={selectedSet === number} className={cn("min-h-12 min-w-12 rounded-control border px-3 py-2 text-caption focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60", selectedSet === number ? "border-accent bg-accent-subtle text-accent" : "border-rule text-secondary hover:bg-sunken")}>

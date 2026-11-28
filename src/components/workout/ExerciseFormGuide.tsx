@@ -5,7 +5,7 @@ export function ExerciseFormGuide({ name, cues }: { name: string; cues?: string 
   if (!guide && !cues) return null;
 
   return <details className="mt-2 text-caption text-secondary">
-    <summary className="flex min-h-10 cursor-pointer items-center font-medium text-primary focus-visible:outline-2 focus-visible:outline-accent">Form guide</summary>
+    <summary className="flex min-h-12 cursor-pointer items-center font-medium text-primary focus-visible:outline-2 focus-visible:outline-accent">Form guide</summary>
     <div className="space-y-3 border-l-2 border-rule pb-2 pl-3 leading-relaxed">
       {guide ? <dl className="grid gap-2">
         <div><dt className="font-medium text-primary">Setup</dt><dd>{guide.setup}</dd></div>

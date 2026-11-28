@@ -19,6 +19,7 @@ import { acknowledgeSubmittedDraft, draftTargets, parseWorkoutDraft, queuedWorko
 import { forgetOfflineWorkout, rememberOfflineSets } from "@/lib/offline-workout";
 import { mergeSavedSessionExercises } from "@/lib/workout-session-exercises";
 import { getIntroductorySets, formatSetPrescription, previousPerformanceIdentity } from "@/lib/workout-prescription";
+import { cn } from "@/lib/utils";
 
 type SessionSet = SavedEntry & { exerciseName: string; setNumber: number };
 type PrevSet = Pick<SessionSet, "exerciseName" | "setNumber" | "weightUsed" | "repsCompleted" | "duration"> & { actualRPE?: number | null };
@@ -239,17 +240,17 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
       {offlineMode && footPainGateActive ? <Notice className="mb-4">Foot pain 3/10 or higher was logged. Skip loaded carries and seated calf raises.</Notice> : null}
       {loggableExercises.some((exercise) => exercise.id.startsWith("retained-")) ? <Notice className="mb-4">The plan was updated. Earlier saved sets and drafts remain under their original exercise names; they have not been reassigned. Unlogged sets can be left empty when finishing.</Notice> : null}
       {isStale ? <Notice className="mb-4 flex items-start gap-2"><AlertTriangle className="mt-0.5 size-4 shrink-0" /><span>Open session from {formatSessionDate(trainingDate)}. Continue it or discard it to start today’s training.</span></Notice> : null}
-      <div className="mb-5 space-y-2">
+      <div className={cn("sticky z-20 -mx-4 mb-5 space-y-2 border-b border-rule bg-raised/95 px-4 py-3 backdrop-blur-sm sm:static sm:mx-0 sm:border-b-0 sm:bg-transparent sm:p-0", offlineMode ? "top-0" : "top-[calc(3.5rem+env(safe-area-inset-top))]")}>
         <div className="flex flex-wrap items-baseline justify-between gap-2 text-caption text-secondary"><span><span className="font-medium text-primary tabular-nums">{confirmedCount}/{allTargets.length}</span> {entryLabel} synced{queued.length ? ` · ${queued.length} queued` : ""}{unsavedKeys.length ? ` · ${unsavedKeys.length} draft${unsavedKeys.length === 1 ? "" : "s"}` : ""}</span><span className="tabular-nums">{elapsedMinutes} min</span></div>
         <Progress value={progressPercent} />
       </div>
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
-        <section ref={editorRef} id="current-set" className="scroll-mt-24 border border-rule-strong bg-raised p-4 sm:p-6">
+        <section ref={editorRef} id="current-set" className="scroll-mt-32 border border-rule-strong bg-raised p-4 sm:scroll-mt-24 sm:p-6">
           {target && currentExercise ? <FocusedSetPanel>
             <div className="mb-3 flex items-center justify-between gap-3"><p className="text-caption font-medium text-accent">Exercise {currentIndex + 1} of {loggableExercises.length}</p><span className="text-caption font-medium tabular-nums text-primary">{currentIsFlow ? "Continuous flow" : `Set ${target.setNumber} / ${currentExercise.exerciseType === "FINISHER" ? 1 : currentExercise.sets}`}</span></div>
             <h2 className="text-xl leading-tight font-semibold text-primary sm:text-2xl">{currentExercise.exerciseName}</h2>
             <p className="mt-2 text-caption text-secondary">{currentExercise.reps}{currentExercise.targetRPE ? ` · RPE ${currentExercise.targetRPE}` : ""}{currentExercise.tempo ? ` · Tempo ${currentExercise.tempo}` : ""}</p>
-            {roundMembers.length > 1 ? <p className="mt-2 border-l-2 border-accent pl-3 text-caption text-secondary">{roundMembers.length === 2 ? "Superset" : "Triset"} · Round {target.setNumber} · Movement {roundMembers.indexOf(currentExercise) + 1} of {roundMembers.length}</p> : null}
+            {roundMembers.length > 1 ? <p className="mt-2 inline-flex flex-wrap items-center gap-1.5 rounded-control border border-accent/40 bg-accent-subtle px-2.5 py-1 text-caption font-medium text-accent">{roundMembers.length === 2 ? "Superset" : "Triset"} · Round {target.setNumber} · Movement {roundMembers.indexOf(currentExercise) + 1} of {roundMembers.length}</p> : null}
             <ExerciseFormGuide key={currentExercise.id} name={currentExercise.exerciseName} cues={currentExercise.cues} />
             <SetInput key={`${sessionId}:${currentExercise.id}:${target.setNumber}`} sessionId={sessionId} planExerciseId={currentExercise.id || null} exerciseName={currentExercise.exerciseName} setNumber={target.setNumber} isFinisher={currentExercise.exerciseType === "FINISHER"} timed={isTimedTrainingExercise(currentExercise)} logged={currentLogged} previous={previousSet} prefill={prefill} shouldAdvance={advanceFocus} disabled={pending !== null || syncing} offlineLogging={offlineLogging} offlineMode={offlineMode} onPendingChange={(nextSaving) => { saveInFlight.current = nextSaving; setSaving(nextSaving); }} onSaved={onSaved} className="mt-4" />
             {nextTarget && !currentLogged ? <p className="mt-3 text-caption text-secondary">After saving: <span className="font-medium text-primary">{nextTarget.exerciseName}</span>{isContinuousTrainingExercise(nextTarget.exerciseName) ? " · Flow" : ` · Set ${nextTarget.setNumber}`}</p> : null}
@@ -257,7 +258,7 @@ export function SessionLogger({ sessionId, sessionName, exercises, existingSets,
             <div className="mt-4 flex items-center gap-2 border-t border-rule pt-3">
               <Button type="button" variant="ghost" aria-label="Previous exercise" className="min-h-12 min-w-12 px-2" disabled={currentIndex <= 0 || saving || syncing || pending !== null} onClick={() => selectExercise(loggableExercises[currentIndex - 1])}><ChevronLeft className="size-4" /></Button>
               <label className="min-w-0 flex-1" htmlFor="session-exercise-jump"><span className="sr-only">Jump to exercise</span>
-              <select id="session-exercise-jump" className="h-12 w-full min-w-0 rounded-control border border-control-border bg-raised px-3 text-row text-primary" value={currentExercise.exerciseName} disabled={saving || syncing || pending !== null} onChange={event => {
+              <select id="session-exercise-jump" className="h-12 w-full min-w-0 truncate rounded-control border border-control-border bg-raised px-3 text-row text-primary" value={currentExercise.exerciseName} disabled={saving || syncing || pending !== null} onChange={event => {
                 const exercise = loggableExercises.find(item => item.exerciseName === event.target.value);
                 if (exercise) selectExercise(exercise);
               }}>

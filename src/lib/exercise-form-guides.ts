@@ -195,6 +195,12 @@ const guides = {
     movement: "Exhale and bring your ribs towards your pelvis. Control the return and keep your neck relaxed.",
     commonMistake: "Pulling with your arms, bouncing the stack, or forcing the end of the range.",
   },
+  crunchMachineOrDecline: {
+    setup: "Use the abdominal crunch machine (adjusting seat and pads per the placard) or secure your feet on a shallow decline bench with a plate held flat against your chest.",
+    movement: "Exhale and curl your ribs towards your pelvis through a controlled range, pause briefly, then lower slowly over two to three seconds with your neck relaxed.",
+    commonMistake: "Pulling with your arms, swinging the plate, sitting all the way up from the hips, or arching at the bottom.",
+    video: { url: "https://www.youtube.com/watch?v=gYXr-AbnCYk", label: "Watch the decline crunch on YouTube" },
+  },
   declineBenchCrunch: {
     setup: "Secure your feet under the rollers at the high end, with your head at the low end. Use a shallow decline if adjustable. Try it with bodyweight first, then hold a light plate flat against your chest with both hands.",
     movement: "Breathe out and curl your ribs towards your hips until your shoulder blades lift. Keep your lower back supported. Pause briefly, then lower under control over two to three seconds.",
@@ -325,6 +331,7 @@ const aliases: Record<string, keyof typeof guides> = {
   "hanging knee raise": "kneeRaise",
   "cable crunch": "cableCrunch",
   "abdominal crunch machine": "machineCrunch",
+  "abdominal crunch machine / plate-weighted decline bench crunch": "crunchMachineOrDecline",
   "plate-weighted decline bench crunch": "declineBenchCrunch",
   "rotary torso machine": "rotaryTorso",
   "machine hip thrust": "hipThrust",

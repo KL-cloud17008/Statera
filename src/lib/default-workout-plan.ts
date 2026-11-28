@@ -19,7 +19,7 @@ export type DefaultWorkoutDay = {
 };
 
 export const NEXT_WEEK_TAPER_TITLE = "Revised Training Programme";
-export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v25";
+export const DEFAULT_WORKOUT_PLAN_VERSION = "six-day-sun-fri-v26";
 export const ADJUSTED_WEEK_HEADER_COPY = "Sunday through Friday, with short Sunday and Friday sessions and Saturday off. Work and commuting steps count towards total foot load.";
 export const SUNDAY_ACCESSORY_TITLE = "Sunday accessories — Farmer walks, glutes and abs";
 export const LOWER_A_TAPER_TITLE = "Lower A — Walking lunges, pendulum squat and triceps";
@@ -58,8 +58,8 @@ export function isFootPainGatedExercise(exerciseName: string) {
 export const PROGRESSIVE_OVERLOAD_RULES = [
   "Main lifts use 4–6 working reps with 2–3 minutes of rest. Use the smallest load increase once all sets reach 6 with at least two clean reps in reserve. For accessories, reach the top of the listed range on every set at the target effort before adding load.",
   "RPE 7 is approximately three clean repetitions in reserve. Leave room in the tank on work days.",
-  "For decline crunches, use a consistent bench angle and comfortable range. Log the plate weight in kg, or 0 kg for bodyweight.",
-  "For kettlebell flows, move at a controlled pace with a light bell and log the total time once. Take a break whenever your form needs it.",
+  "For crunches, use the abdominal crunch machine or a consistent decline bench angle and comfortable range. On the decline bench, log the plate weight in kg, or 0 kg for bodyweight.",
+  "For Friday's kettlebell flow, move at a controlled pace with a light bell and log the total time once. Take a break whenever your form needs it.",
   "For farmer walks, keep the 60-second duration. Build from three rounds toward five once your gait stays normal and symptoms are steady the following morning. Then make small load increases.",
   "For paired sets, leave enough rest to repeat the first movement with control. On Monday, use 150–180 seconds after pendulum and calves. Separate them if calf work affects your next squat or the equipment is busy.",
 ] as const;
@@ -86,7 +86,7 @@ export const WEEKLY_SET_SUMMARY = [
   "Chest: 11 sets. Vertical pulls: 5 sets. Supported rows: 6 sets.",
   "Side delts: 5 direct sets. Rear delts: 5 direct sets plus rows. Front delts work in the chest presses.",
   "Biceps: 5 dedicated sets. Triceps: 7 dedicated sets. Forearms and grip: 2 reverse EZ curl sets plus up to 5 farmer walks.",
-  "Core: 7 weighted decline crunch sets and one self-paced kettlebell core flow each on Sunday, Tuesday and Thursday.",
+  "Core: 9 abdominal crunch sets (machine or plate-weighted decline bench) and 9 rotary torso machine sets across Sunday, Tuesday and Thursday.",
   "Friday: Up to 5 minutes of kettlebell swings, goblet squats and floor presses as a continuous finisher. Use deadlifts if you are learning the swing.",
   "Lower back: 7 direct back extension machine sets. Do 2 on Sunday, 2 on Tuesday and 3 on Thursday.",
 ] as const;
@@ -120,14 +120,16 @@ const pendulum = exercise("Pendulum Squat", 3, "4-6", 0, "6-7", "Set the safetie
 const calves = exercise("Seated Calf Raise", 3, "8-12", 165, "5-6", "Use the seated bent-knee calf raise machine. Skip if sole or ankle pain is 3/10 or higher, increasing, or worse afterwards or the following morning. Keep the reps smooth, then rest 150–180 seconds before the next squat.", "Squat and calves");
 const seatedCurl = exercise("Seated Leg Curl", 3, "8-12", 105, "7", "Align your knees with the pivot, keep your thighs down, and lower the weight under control.");
 const legExtension = exercise("Seated Leg Extension", 1, "8-12", 90, "6-7", "Keep your hips on the pad. Lift smoothly and control the return.");
-const crunchLoadCue = "Use the same bench angle and hold the plate against your chest. Leave about two clean reps in reserve. Use a lighter plate or bodyweight if needed. Log only the plate weight in kg. Finish your crunch sets before starting the kettlebell flow. Skip if lower-back pain is 3/10 or higher or symptoms increase.";
-const declineBenchCrunch = exercise(
-  "Plate-Weighted Decline Bench Crunch", 2, "8-12", 75, "8",
-  `Start with a 20 kg plate if you can control it. ${crunchLoadCue}`,
+const abCrunchMachine = exercise(
+  "Abdominal Crunch Machine / Plate-Weighted Decline Bench Crunch", 3, "8-12", 75, "8",
+  "Use either the abdominal crunch machine or a plate-weighted decline bench crunch (20–25 kg plate if controlled). Leave about two clean reps in reserve. On the decline bench, log only the plate weight in kg (0 kg for bodyweight). Skip if lower-back pain is 3/10 or higher or symptoms increase.",
   null, "ACCESSORY",
 );
-const coreFlowCue = "Alternate uppercut sides with a light bell, then move straight into controlled pullovers. Move at your own pace and log the bell weight and total time once. Skip if lower-back pain is 3/10 or higher or symptoms increase.";
-const uppercutPullover = exercise(KETTLEBELL_FLOWS.coreSuperset, 1, "Self-paced superset", 0, "", coreFlowCue, null, "TIMED");
+const rotaryTorsoMachine = exercise(
+  "Rotary Torso Machine", 3, "10-12 per side", 75, "7",
+  "Set the seat and range stops comfortably. Rotate under control with a steady pelvis and train both sides before resting. Skip if lower-back pain is 3/10 or higher or symptoms increase.",
+  null, "ACCESSORY",
+);
 const cableLateralRaise = exercise("Cable Lateral Raise", 3, "10-12 per arm", 75, "7", "Raise out and slightly forward, with a steady torso. Train both arms before resting.", null, "ACCESSORY");
 const gluteKickback = exercise("Machine Glute Kickback", 2, "8-12 per leg", 75, "6-7", "Follow the machine's setup placard. Use its handles or pads for support and keep your hips square. Train both legs before resting.", null, "ACCESSORY");
 const backExtension = exercise(
@@ -158,7 +160,7 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("Wide-Grip Lat Pulldown", 3, "4-6", 135, "7", "Use a comfortable overhand grip slightly wider than your shoulders. Pull towards your upper chest. Finish all three sets before changing grips."),
       exercise("B2 Close-Grip Lat Pulldown", 2, "8-12", 105, "6-7", PULLDOWN_GRIP_FALLBACK),
       exercise("A2 Seated Chest-Supported Machine Row", 3, "8-12", 105, "7", "Keep the chest on the pad. Pull towards your ribs and return under control. Use this session for controlled reps and save heavy rows for Thursday."),
-      declineBenchCrunch, uppercutPullover,
+      abCrunchMachine, rotaryTorsoMachine,
       { ...cableLateralRaise, sets: 2 },
       exercise("D2 Reverse Pec Deck / Seated Machine Reverse Fly", 2, "8-12", 75, "7", "Keep your chest supported and elbows soft. Sweep out to the sides without shrugging. Skip these sets before cutting core work on a short session.", null, "ACCESSORY"),
       backExtension,
@@ -186,8 +188,8 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
       exercise("C1 Overhead Cable Triceps Extension", 3, "8-12", 0, "7", "Use the straight-bar attachment and keep elbows steady. Pair with Bayesian curls when nearby stations are free. If busy, use the exercise picker to finish this movement first and rest 75–90 seconds between sets.", "Arms", "ACCESSORY"),
       exercise("C3 Face-Away Bayesian Cable Curl", 3, "8-12 per arm", 75, "7", "Use a light cable and stable stance. Keep the elbow slightly behind your torso without leaning back. Do both arms before resting.", "Arms", "ACCESSORY"),
       cableLateralRaise,
-      { ...declineBenchCrunch, sets: 3, cues: `Use a 25 kg plate if you have about two clean reps in reserve at the same bench angle. ${crunchLoadCue}` },
-      uppercutPullover,
+      abCrunchMachine,
+      rotaryTorsoMachine,
       { ...backExtension, sets: 3 },
     ],
   },
@@ -209,9 +211,8 @@ export const DEFAULT_WORKOUT_PLAN: DefaultWorkoutDay[] = [
     exercises: [
       exercise("Kettlebell Farmer Walk", 5, "60 sec", 60, "6-7", "Use two matching kettlebells and log the load per hand. Walk for 60 seconds and rest 60 seconds. Start with three rounds if foot tolerance is uncertain. Skip if sole or ankle pain reaches 3/10, gait changes, or symptoms increase.", null, "TIMED"),
       gluteKickback,
-      declineBenchCrunch,
-      { ...uppercutPullover, exerciseName: KETTLEBELL_FLOWS.sundayCore, reps: "Self-paced flow",
-        cues: `Begin with easy halos in both directions. ${coreFlowCue}` },
+      abCrunchMachine,
+      rotaryTorsoMachine,
       exercise("Reverse EZ-Bar Curl", 2, "8-12", 75, "7", "Use an overhand grip with wrists straight and elbows beside you. Keep the load light enough to avoid wrist bending or swinging.", null, "ACCESSORY"),
       backExtension,
     ],

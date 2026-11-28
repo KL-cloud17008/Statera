@@ -157,11 +157,11 @@ export function SetInput({
 
   return (
     <form className={cn("grid gap-4", className)} onSubmit={(event) => { event.preventDefault(); void handleSave(); }} aria-busy={pending}>
-      {showPrevious && !hasVariationPicker ? <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule pb-3">
+      {showPrevious ? <div className="flex flex-wrap items-center justify-between gap-2 border-b border-rule pb-3">
         <p className="text-caption text-secondary">
           {previous ? <>Previous: <span className="num font-medium text-primary">{formatPerformance(previous, timed)}{previous.actualRPE != null ? ` · RPE ${previous.actualRPE}` : ""}</span></> : "No previous result"}
         </p>
-        {previous ? <Button type="button" variant="link" className="min-h-10 text-caption" disabled={pending || disabled || queued} onClick={() => updateFields({ ...fields, weight: previous.weightUsed?.toString() ?? "", reps: previous.repsCompleted?.toString() ?? "" })}>{timed ? "Use previous weight" : "Use previous"}</Button> : null}
+        {previous ? <Button type="button" variant="link" className="min-h-12 px-0 text-caption" disabled={pending || disabled || queued} onClick={() => updateFields({ ...fields, weight: previous.weightUsed?.toString() ?? "", reps: previous.repsCompleted?.toString() ?? "" })}>{timed ? "Use previous weight" : "Use previous"}</Button> : null}
       </div> : null}
       {hasVariationPicker ? <label className="grid gap-2 text-caption text-secondary">
         Triceps variation
@@ -171,7 +171,7 @@ export function SetInput({
           {variations.map((option) => <option key={option}>{option}</option>)}
         </select>
       </label> : null}
-      <fieldset disabled={pending || disabled || queued} className="grid grid-cols-3 gap-3">
+      <fieldset disabled={pending || disabled || queued} className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <label className="grid gap-2 text-caption text-secondary">
           {weightLabel}
           <Input ref={weightRef} enterKeyHint="next" onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); repsRef.current?.focus(); } }} aria-label={`${entryName} weight`} aria-describedby={statusId} type="number" inputMode="decimal" min="0" max="1500" step="any" value={fields.weight} placeholder="0" onChange={(event) => updateFields({ ...fields, weight: event.target.value })} className="h-14 min-w-0 px-3 text-xl font-medium tabular-nums" />
@@ -203,7 +203,7 @@ export function SetInput({
           {pending ? "Saving…" : isSaved ? "Saved" : error || draft?.status === "pending" ? "Retry save" : logged ? "Save changes" : isFlow ? "Save flow" : `Save set ${setNumber}`}
         </Button>
       </div>}
-      {draft && !pending ? <Button type="button" variant="link" disabled={disabled} className="min-h-10 justify-self-start text-caption text-secondary" onClick={() => {
+      {draft && !pending ? <Button type="button" variant="link" disabled={disabled} className="min-h-12 justify-self-start px-0 text-caption text-secondary" onClick={() => {
         if (!window.confirm("Discard this draft and return to the saved set?")) return;
         writeWorkoutStorage(key, null); setError(null); setConflict(null);
       }}>{queued ? "Discard queued set" : "Discard draft"}</Button> : null}

@@ -631,3 +631,38 @@ test("shoulder press is gated but existing entries survive; previous performance
  const host=env.mount("SessionLogger",props);assert.equal(host.nodes("SetInput")[0].props.exerciseName,"D1 Seated Leg Extension");assert.equal(host.nodes("SetInput")[0].props.previous.weightUsed,42.5);
  const retained=env.mount("SessionLogger",{...props,existingSets:[{exerciseName:"C1 Seated Machine Shoulder Press",setNumber:1,...saved}]});assert.ok(retained.nodes("ExerciseCard").some(n=>n.props.exercise.exerciseName==="C1 Seated Machine Shoulder Press"));
 });
+
+test("mobile workout UI surfaces partial badges, superset badges, RPE hints, previous variation sets, and 48px touch targets", () => {
+  const env = fixture();
+  const baseExercise = { id: "fly", exerciseName: "Seated Machine Chest Fly", sets: 3, reps: "8-12", tempo: "controlled", restSeconds: 0, targetRPE: "6-7", cues: null, supersetGroup: "Pec deck", exerciseType: "WORKING" };
+  const unstarted = env.mount("ExerciseCard", { exercise: baseExercise, index: 0, loggedSets: [], selectedSet: null, draftSetNumbers: [], onSelect() {} });
+  assert.match(text(unstarted.tree), /Pec deck/);
+  assert.match(text(unstarted.tree), /0\/3 sets · 8-12 · RPE 6-7/);
+
+  const partial = env.mount("ExerciseCard", { exercise: baseExercise, index: 0, loggedSets: [{ setNumber: 1, ...saved }], selectedSet: 2, draftSetNumbers: [], onSelect() {} });
+  const badgeNode = partial.nodes("span").find((node) => node.props.className?.includes("size-8"));
+  assert.match(badgeNode.props.className, /border-accent\/50/);
+  const pillRow = partial.nodes("div").find((node) => node.props["aria-label"] === "Seated Machine Chest Fly sets");
+  assert.match(pillRow.props.className, /pl-0 sm:pl-11/);
+
+  const flowCard = env.mount("ExerciseCard", { exercise: { ...baseExercise, exerciseName: "Kettlebell Warrior Flow", sets: 1, reps: "Up to 5 min · self-paced", targetRPE: "5-6", supersetGroup: null, exerciseType: "TIMED" }, index: 7, loggedSets: [], selectedSet: 1, draftSetNumbers: [], onSelect() {} });
+  assert.doesNotMatch(text(flowCard.tree), / · RPE /);
+
+  const triceps = env.mount("SetInput", entryProps({ exerciseName: "Triceps Pressdown", previous: { weightUsed: 22.5, repsCompleted: 12, actualRPE: 7 } }));
+  assert.match(text(triceps.tree), /Previous: 22\.5 kg × 12 · RPE 7/);
+  assert.match(triceps.button("Use previous").props.className, /min-h-12/);
+  assert.match(triceps.nodes("fieldset")[0].props.className, /grid-cols-2 gap-3 sm:grid-cols-3/);
+  triceps.button("Use previous").props.onClick();
+  triceps.render();
+  assert.equal(triceps.input("weight").props.value, "22.5");
+  assert.equal(triceps.input("reps").props.value, "12");
+  assert.match(triceps.button("Discard draft").props.className, /min-h-12/);
+
+  const logger = fixture().mount("SessionLogger", loggerProps({ exercises: [
+    baseExercise,
+    { ...baseExercise, id: "rev", exerciseName: "Reverse Pec Deck", restSeconds: 90 },
+  ] }));
+  assert.ok(logger.nodes("div").some((node) => node.props.className?.includes("sticky") && node.props.className?.includes("sm:static")));
+  const supersetPill = logger.nodes("p").find((node) => text(node).includes("Superset · Round 1"));
+  assert.match(supersetPill.props.className, /bg-accent-subtle/);
+});

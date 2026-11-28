@@ -70,8 +70,8 @@ test('only a signed-in website user can provision additive, RLS-protected pairin
   f.auth(f.state.users[0]); const created=await f.actions.createStepPairingCode();
   assert.match(created.code,/^[A-HJ-NP-Z2-9]{4}(-[A-HJ-NP-Z2-9]{4}){2}$/);
   assert.equal(f.state.sql.length,4); assert.equal(f.state.connections[0].pairCodeHash.includes(created.code),false);
-  const migration=readFileSync('prisma/migrations/20261106_step_sync/migration.sql','utf8');
-  for(const sql of f.state.sql) assert.ok(migration.includes(sql));
+  const migration=readFileSync('prisma/migrations/20261106_step_sync/migration.sql','utf8').replace(/\r\n/g,'\n');
+  for(const sql of f.state.sql) assert.ok(migration.includes(sql.replace(/\r\n/g,'\n')));
   assert.equal(f.state.sql.filter(sql=>sql.includes('ENABLE ROW LEVEL SECURITY')).length,2);
   await f.actions.createStepPairingCode(); assert.equal(f.state.sql.length,4);
 });
